@@ -16,11 +16,13 @@
  */
 package com.rackspace.cloud.sense.config;
 
+import com.rackspace.cloud.sense.abdera.AbderaAdapterTools;
 import com.rackspace.cloud.util.StringUtilities;
 import com.rackspace.cloud.util.servlet.context.ApplicationContextAdapter;
 import org.apache.abdera.protocol.server.impl.TemplateTargetBuilder;
 import com.rackspace.cloud.sense.abdera.SenseFeedAdapter;
 import com.rackspace.cloud.sense.abdera.TargetResolverField;
+import com.rackspace.cloud.sense.client.adapter.AdapterTools;
 import com.rackspace.cloud.sense.client.adapter.FeedSourceAdapter;
 import com.rackspace.cloud.sense.config.v1_0.FeedConfig;
 import com.rackspace.cloud.sense.config.v1_0.WorkspaceConfig;
@@ -42,11 +44,14 @@ public class WorkspaceConfigProcessor {
     private final Abdera abderaReference;
     private final ApplicationContextAdapter contextAdapter;
     private final WorkspaceConfig config;
+    private final AdapterTools adapterTools;
 
     public WorkspaceConfigProcessor(WorkspaceConfig workspace, ApplicationContextAdapter contextAdapter, Abdera abderaReference) {
         this.config = workspace;
         this.contextAdapter = contextAdapter;
         this.abderaReference = abderaReference;
+
+        adapterTools = new AbderaAdapterTools(abderaReference);
     }
 
     public WorkspaceHandler toHandler() {
@@ -85,9 +90,9 @@ public class WorkspaceConfigProcessor {
 //            templateTargetBuilder.setTemplate(TargetType.TYPE_CATEGORIES, baseTemplate + "/{collection};categories");
 //            templateTargetBuilder.setTemplate(TargetType.TYPE_ENTRY, baseTemplate + "/{collection}/{entry}");
 
-        for (SenseFeedAdapter info : assembleFeedAdapters(feedServices, namespace, regexTargetResolver)) {
-            collections.add(info);
-            namespaceCollectionAdapters.add(info);
+        for (SenseFeedAdapter adapter : assembleFeedAdapters(feedServices, namespace, regexTargetResolver)) {
+            collections.add(adapter);
+            namespaceCollectionAdapters.add(adapter);
         }
 
         return collections;
@@ -98,8 +103,10 @@ public class WorkspaceConfigProcessor {
 
         for (FeedConfig feed : feeds) {
             final FeedSourceAdapter feedSource = getFeedAdapterFromAppContext(feed);
-            final SenseFeedAdapter adapter = new SenseFeedAdapter(abderaReference, feed, feedSource);
+            feedSource.setAdapterTools(adapterTools);
 
+            final SenseFeedAdapter adapter = new SenseFeedAdapter(abderaReference, feed, feedSource);
+            
             final String resource = StringUtilities.trim(feed.getResource(), "/");
 
             final String feedRegex = join("/(", namespace, ")/(", resource, ")(\\?[^#]*)?");

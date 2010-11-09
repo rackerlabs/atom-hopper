@@ -16,14 +16,11 @@
  */
 package com.rackspace.cloud.sense.client.adapter;
 
-import com.rackspace.cloud.sense.domain.response.EntryResponse;
-import com.rackspace.cloud.sense.domain.response.FeedResponse;
-import com.rackspace.cloud.sense.domain.entry.GetEntryRequest;
-import com.rackspace.cloud.sense.domain.entry.PostEntryRequest;
-import com.rackspace.cloud.sense.domain.entry.PutEntryRequest;
-import com.rackspace.cloud.sense.domain.feed.GetFeedRequest;
+import com.rackspace.cloud.sense.domain.response.EmptyBody;
+import com.rackspace.cloud.sense.domain.response.GenericAdapterResponse;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
+import org.apache.abdera.protocol.server.RequestContext;
 
 /**
  *
@@ -31,11 +28,15 @@ import org.apache.abdera.model.Feed;
  */
 public interface FeedSourceAdapter {
 
-    FeedResponse getFeed(GetFeedRequest feedInfo, Feed copy);
+    void setAdapterTools(AdapterTools tools);
 
-    EntryResponse getEntry(GetEntryRequest entryInfo, Entry copy);
+    GenericAdapterResponse<Feed> getFeed(RequestContext request) throws UnsupportedOperationException;
 
-    EntryResponse postEntry(PostEntryRequest postRequest);
+    GenericAdapterResponse<Entry> getEntry(RequestContext request, String id) throws UnsupportedOperationException;
 
-    EntryResponse putEntry(PutEntryRequest putRequest);
+    GenericAdapterResponse<Entry> postEntry(RequestContext request, Entry e) throws UnsupportedOperationException;
+
+    GenericAdapterResponse<Entry> putEntry(RequestContext request, String id, Entry e) throws UnsupportedOperationException;
+
+    GenericAdapterResponse<EmptyBody> deleteEntry(RequestContext request, String id) throws UnsupportedOperationException;
 }

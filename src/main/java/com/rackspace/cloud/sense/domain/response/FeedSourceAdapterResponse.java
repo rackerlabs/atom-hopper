@@ -16,22 +16,33 @@
  */
 package com.rackspace.cloud.sense.domain.response;
 
-import com.rackspace.cloud.sense.domain.http.HttpResponseCode;
-import com.rackspace.cloud.util.StringUtilities;
-
+import com.rackspace.cloud.util.http.HttpStatusCode;
 
 /**
  *
  * @author zinic
  */
-public class AbstractResponse implements SimpleResponse {
+public class FeedSourceAdapterResponse<T> implements GenericAdapterResponse<T> {
 
-    private final HttpResponseCode responseCode;
+    public static final HttpStatusCode DEFAULT_HTTP_STATUS_CODE = HttpStatusCode.OK;
+    
+    private final T responseBody;
+    private final HttpStatusCode statusCode;
     private final String message;
 
-    public AbstractResponse(HttpResponseCode responseCode, String message) {
-        this.responseCode = responseCode;
+    public FeedSourceAdapterResponse(T responseBody) {
+        this(responseBody, DEFAULT_HTTP_STATUS_CODE, "");
+    }
+
+    public FeedSourceAdapterResponse(T responseBody, HttpStatusCode statusCode, String message) {
+        this.responseBody = responseBody;
+        this.statusCode = statusCode;
         this.message = message;
+    }
+
+    @Override
+    public T getBody() {
+        return responseBody;
     }
 
     @Override
@@ -40,12 +51,7 @@ public class AbstractResponse implements SimpleResponse {
     }
 
     @Override
-    public HttpResponseCode getResponseCode() {
-        return responseCode;
-    }
-
-    @Override
-    public boolean hasMessage() {
-        return !StringUtilities.isBlank(message);
+    public HttpStatusCode getResponseStatus() {
+        return statusCode;
     }
 }

@@ -16,13 +16,11 @@
  */
 package com.rackspace.cloud.sense.client.adapter.impl;
 
-import com.rackspace.cloud.sense.domain.entry.PutEntryRequest;
-import com.rackspace.cloud.sense.domain.response.EntryResponse;
-import com.rackspace.cloud.sense.domain.response.FeedResponse;
+import com.rackspace.cloud.sense.client.adapter.AdapterTools;
 import com.rackspace.cloud.sense.client.adapter.FeedSourceAdapter;
-import com.rackspace.cloud.sense.domain.entry.GetEntryRequest;
-import com.rackspace.cloud.sense.domain.entry.PostEntryRequest;
-import com.rackspace.cloud.sense.domain.feed.GetFeedRequest;
+import com.rackspace.cloud.sense.client.adapter.ResponseBuilder;
+import com.rackspace.cloud.sense.domain.response.EmptyBody;
+import com.rackspace.cloud.sense.domain.response.GenericAdapterResponse;
 import com.rackspace.cloud.util.logging.Logger;
 import com.rackspace.cloud.util.logging.RCLogger;
 
@@ -35,8 +33,6 @@ import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.RequestContext;
 
-import static com.rackspace.cloud.sense.client.adapter.ResponseBuilder.*;
-
 /**
  *
  * @author zinic
@@ -45,6 +41,7 @@ public class HashMapFeedAdapter implements FeedSourceAdapter {
 
     private static final Logger log = new RCLogger("HashMapFeedAdapter", "com.rackspace.cloud.sense.client.adapter.impl");
     private final Map<String, Entry> entries;
+    private AdapterTools tools;
     private int count;
 
     public HashMapFeedAdapter() {
@@ -53,50 +50,61 @@ public class HashMapFeedAdapter implements FeedSourceAdapter {
     }
 
     @Override
-    public EntryResponse getEntry(GetEntryRequest entryInfo, Entry copy) {
-        if (entries.containsKey(entryInfo.getEntryId())) {
-            return ok(entries.get(entryInfo.getEntryId()));
-        }
-
-        return notFound("Entry ", entryInfo.getEntryId(), " not found.");
+    public void setAdapterTools(AdapterTools tools) {
+        this.tools = tools;
     }
 
     @Override
-    public FeedResponse getFeed(GetFeedRequest feedInfo, Feed copy) {
+    public GenericAdapterResponse<EmptyBody> deleteEntry(RequestContext request, String id) {
+        final Entry removedEntry = entries.remove(id);
+
+        return removedEntry != null ? ResponseBuilder.ok() : ResponseBuilder.<EmptyBody>notFound();
+    }
+
+    @Override
+    public GenericAdapterResponse<Entry> getEntry(RequestContext request, String id) {
+        final Entry e = entries.get(id);
+
+        return e != null ? ResponseBuilder.found(e) : ResponseBuilder.<Entry>notFound();
+    }
+
+    @Override
+    public GenericAdapterResponse<Feed> getFeed(RequestContext request) {
+        final Feed f = tools.newFeed();
+
         for (Entry storedEntry : entries.values()) {
-            copy.addEntry(storedEntry);
+            f.addEntry(storedEntry);
         }
 
-        return ok(copy);
+        return ResponseBuilder.found(f);
     }
 
     @Override
-    public EntryResponse postEntry(PostEntryRequest postRequest) {
-        final Entry entry = postRequest.getEntryToPost();
+    public GenericAdapterResponse<Entry> postEntry(RequestContext request, Entry e) {
+        final Entry entry = e;
 
         entry.setUpdated(Calendar.getInstance().getTime());
         entries.put("" + (++count), entry);
 
         try {
-            final RequestContext requestContext = postRequest.getRequestContext();
-            final IRI base = requestContext.getBaseUri();
-
-            entry.addLink(base.toURL().toString() + requestContext.getTargetPath() + "/" + count);
+            final IRI base = request.getBaseUri();
+            entry.addLink(base.toURL().toString() + request.getTargetPath() + "/" + count);
         } catch (Exception ex) {
             log.error(ex.getMessage(), ex);
         }
 
-        return created(entry);
+        return ResponseBuilder.found(e);
     }
 
     @Override
-    public EntryResponse putEntry(PutEntryRequest putRequest) {
-        if (entries.containsKey(putRequest.getEntryId())) {
-            entries.put(putRequest.getEntryId(), putRequest.getEntryToUpdate());
+    public GenericAdapterResponse<Entry> putEntry(RequestContext request, String id, Entry e) {
+        final Entry oldEntry = entries.get(id);
 
-            return ok();
+        if (oldEntry != null) {
+            entries.put(id, e);
+            return ResponseBuilder.found(e);
         }
 
-        return notFound("Entry ", putRequest.getEntryId(), " not found.");
+        return ResponseBuilder.notFound();
     }
 }

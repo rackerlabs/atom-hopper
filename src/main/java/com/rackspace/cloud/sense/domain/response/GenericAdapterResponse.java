@@ -14,16 +14,19 @@
  *  limitations under the License.
  *  under the License.
  */
-package com.rackspace.cloud.sense.domain.entry;
+package com.rackspace.cloud.sense.domain.response;
 
-import com.rackspace.cloud.sense.domain.AbderaRequestContextAware;
-import org.apache.abdera.model.Entry;
+import com.rackspace.cloud.util.http.HttpStatusCode;
 
 /**
  *
  * @author zinic
  */
-public interface PostEntryRequest extends AbderaRequestContextAware {
+public interface GenericAdapterResponse<T> {
 
-    Entry getEntryToPost();
+    T getBody();
+
+    String getMessage();
+
+    HttpStatusCode getResponseStatus();
 }

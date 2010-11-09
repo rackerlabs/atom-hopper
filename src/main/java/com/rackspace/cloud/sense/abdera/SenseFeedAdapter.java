@@ -18,24 +18,17 @@ package com.rackspace.cloud.sense.abdera;
 
 import com.rackspace.cloud.sense.config.v1_0.FeedConfig;
 import org.apache.abdera.model.Document;
-import com.rackspace.cloud.sense.domain.response.EntryResponse;
-import com.rackspace.cloud.sense.domain.feed.GetFeedRequest;
 import com.rackspace.cloud.sense.client.adapter.FeedSourceAdapter;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.abdera.protocol.server.TargetType;
 import com.rackspace.cloud.sense.util.RegexList;
-import com.rackspace.cloud.sense.domain.entry.GetEntryRequest;
-import com.rackspace.cloud.sense.domain.entry.PostEntryRequest;
-import com.rackspace.cloud.sense.domain.entry.PutEntryRequest;
-import com.rackspace.cloud.sense.domain.entry.SenseGetEntryRequest;
-import com.rackspace.cloud.sense.domain.entry.SensePostEntryRequest;
-import com.rackspace.cloud.sense.domain.entry.SensePutEntryRequest;
-import com.rackspace.cloud.sense.domain.feed.SenseGetFeedRequest;
-import com.rackspace.cloud.sense.domain.response.FeedResponse;
+
+import com.rackspace.cloud.sense.domain.response.EmptyBody;
+import com.rackspace.cloud.sense.domain.response.GenericAdapterResponse;
 import org.apache.abdera.model.Entry;
 
-import java.util.Calendar;
+import java.util.Date;
 import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.ProviderHelper;
@@ -43,16 +36,15 @@ import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.ResponseContext;
 import org.apache.abdera.protocol.server.impl.AbstractCollectionAdapter;
 
-import static com.rackspace.cloud.sense.domain.http.HttpResponseCode.*;
-
 /**
  *
  * @author John Hopper
  */
 public class SenseFeedAdapter extends AbstractCollectionAdapter {
 
-    private static final Calendar CALENDAR_INSTANCE = Calendar.getInstance();
+    //TODO: Consider removing abdera reference
     private final Abdera abdera;
+
     private final FeedConfig feedConfig;
     private final RegexList feedTargets;
     private final FeedSourceAdapter configuredDatasourceAdapter;
@@ -64,14 +56,6 @@ public class SenseFeedAdapter extends AbstractCollectionAdapter {
         this.configuredDatasourceAdapter = configuredDatasourceAdapter;
 
         feedTargets = new RegexList();
-    }
-
-    protected Feed newFeed() {
-        return abdera.newFeed();
-    }
-
-    protected Entry newEntry() {
-        return abdera.newEntry();
     }
 
     public FeedConfig getFeedConfiguration() {
@@ -96,11 +80,11 @@ public class SenseFeedAdapter extends AbstractCollectionAdapter {
 
     @Override
     public String getAuthor(RequestContext rc) {
-//        return getFeedConfiguration().getAuthor();
-        return "TODO: AUTHOR";
+        return getFeedConfiguration().getAuthor().getName();
     }
 
     @Override
+    //TODO: Reimplement this
     public String getId(RequestContext rc) {
 //        return new StringBuilder("tag:").append(feedConfig.getFullUri()).append(",").append(CALENDAR_INSTANCE.get(Calendar.YEAR)).append(":").append(config.getBaseUrn()).toString();
         return "TODO: ID";
@@ -112,67 +96,9 @@ public class SenseFeedAdapter extends AbstractCollectionAdapter {
     }
 
     @Override
-    public ResponseContext deleteEntry(RequestContext rc) {
-        return ProviderHelper.nocontent();
-    }
-
-    @Override
-    public ResponseContext getEntry(RequestContext rc) {
-        final String entityId = rc.getTarget().getParameter(TargetResolverField.ENTRY.name());
-        final GetEntryRequest info = new SenseGetEntryRequest(rc, entityId);
-
-        try {
-            return handleEntryResponse(rc, configuredDatasourceAdapter.getEntry(info, newEntry()));
-        } catch (Throwable t) {
-            return ProviderHelper.servererror(rc, t.getMessage(), t);
-        }
-    }
-
-    private ResponseContext handleEntryResponse(RequestContext rc, EntryResponse response) {
-        final Entry e = response.hasEntry() ? response.getEntry() : newEntry();
-
-        switch (response.getResponseCode()) {
-            case OK:
-                return ProviderHelper.returnBase(e, response.getResponseCode().getRawHttpCode(), e.getUpdated());
-
-            case CREATED:
-                return ProviderHelper.returnBase(e, response.getResponseCode().getRawHttpCode(), e.getUpdated());
-
-            case NOT_FOUND:
-                return ProviderHelper.notfound(rc, response.getMessage());
-
-            case INTERNAL_SERVER_ERROR:
-                return ProviderHelper.servererror(rc, response.getMessage(), new Exception());
-
-            default:
-                return ProviderHelper.notfound(rc);
-        }
-    }
-
-    private ResponseContext handleFeedResponse(RequestContext rc, FeedResponse response) {
-        final Feed f = response.hasFeed() ? response.getFeed() : newFeed();
-
-        switch (response.getResponseCode()) {
-            case OK:
-                return ProviderHelper.returnBase(f, response.getResponseCode().getRawHttpCode(), f.getUpdated());
-
-            case NOT_FOUND:
-                return ProviderHelper.notfound(rc, response.getMessage());
-
-            case INTERNAL_SERVER_ERROR:
-                return ProviderHelper.servererror(rc, response.getMessage(), new Exception());
-
-            default:
-                return ProviderHelper.notfound(rc);
-        }
-    }
-
-    @Override
     public ResponseContext getFeed(RequestContext rc) {
-        final GetFeedRequest feedInfo = new SenseGetFeedRequest(rc, rc.getTargetPath(), rc.getParameter(TargetResolverField.FEED.name()));
-
         try {
-            return handleFeedResponse(rc, configuredDatasourceAdapter.getFeed(feedInfo, newFeed()));
+            return handleFeedResponse(rc, configuredDatasourceAdapter.getFeed(rc));
         } catch (Throwable t) {
             return ProviderHelper.servererror(rc, t.getMessage(), t);
         }
@@ -182,9 +108,8 @@ public class SenseFeedAdapter extends AbstractCollectionAdapter {
     public ResponseContext postEntry(RequestContext rc) {
         try {
             final Document<Entry> entryToPost = rc.getDocument();
-            final PostEntryRequest postRequest = new SensePostEntryRequest(rc, entryToPost.getRoot());
 
-            return handleEntryResponse(rc, configuredDatasourceAdapter.postEntry(postRequest));
+            return handleEntryResponse(rc, configuredDatasourceAdapter.postEntry(rc, entryToPost.getRoot()));
         } catch (Throwable t) {
             return ProviderHelper.servererror(rc, t.getMessage(), t);
         }
@@ -193,12 +118,83 @@ public class SenseFeedAdapter extends AbstractCollectionAdapter {
     @Override
     public ResponseContext putEntry(RequestContext rc) {
         try {
-            final Document<Entry> entryToPost = rc.getDocument();
-            final PutEntryRequest putRequest = new SensePutEntryRequest(rc, entryToPost.getRoot(), rc.getParameter(TargetResolverField.ENTRY.name()));
+            final Document<Entry> entryToUpdate = rc.getDocument();
 
-            return handleEntryResponse(rc, configuredDatasourceAdapter.putEntry(putRequest));
+            return handleEntryResponse(rc, configuredDatasourceAdapter.putEntry(rc, rc.getParameter(TargetResolverField.ENTRY.name()), entryToUpdate.getRoot()));
         } catch (Throwable t) {
             return ProviderHelper.servererror(rc, t.getMessage(), t);
+        }
+    }
+
+    @Override
+    public ResponseContext deleteEntry(RequestContext rc) {
+        final String entityId = rc.getTarget().getParameter(TargetResolverField.ENTRY.name());
+
+        try {
+            return handleEmptyResponse(rc, configuredDatasourceAdapter.deleteEntry(rc, entityId));
+        } catch (Throwable t) {
+            return ProviderHelper.servererror(rc, t.getMessage(), t);
+        }
+    }
+
+    @Override
+    public ResponseContext getEntry(RequestContext rc) {
+        final String entityId = rc.getTarget().getParameter(TargetResolverField.ENTRY.name());
+
+        try {
+            return handleEntryResponse(rc, configuredDatasourceAdapter.getEntry(rc, entityId));
+        } catch (Throwable t) {
+            return ProviderHelper.servererror(rc, t.getMessage(), t);
+        }
+    }
+
+    private ResponseContext handleEmptyResponse(RequestContext rc, GenericAdapterResponse<EmptyBody> response) {
+        switch (response.getResponseStatus()) {
+            case NOT_FOUND:
+                return ProviderHelper.notfound(rc, response.getMessage());
+
+            case INTERNAL_SERVER_ERROR:
+                return ProviderHelper.servererror(rc, response.getMessage(), new Exception());
+
+            default:
+                return ProviderHelper.nocontent();
+        }
+    }
+
+    private ResponseContext handleEntryResponse(RequestContext rc, GenericAdapterResponse<Entry> response) {
+        final Date lastUpdated = response.getBody() != null ? response.getBody().getUpdated() : null;
+
+        switch (response.getResponseStatus()) {
+            case OK:
+            case CREATED:
+                return ProviderHelper.returnBase(response.getBody(), response.getResponseStatus().intValue(), lastUpdated);
+
+            case NOT_FOUND:
+                return ProviderHelper.notfound(rc, response.getMessage());
+
+            case INTERNAL_SERVER_ERROR:
+                return ProviderHelper.servererror(rc, response.getMessage(), new Exception());
+
+            default:
+                return ProviderHelper.notfound(rc);
+        }
+    }
+
+    private ResponseContext handleFeedResponse(RequestContext rc, GenericAdapterResponse<Feed> response) {
+        final Date lastUpdated = response.getBody() != null ? response.getBody().getUpdated() : null;
+
+        switch (response.getResponseStatus()) {
+            case OK:
+                return ProviderHelper.returnBase(response.getBody(), response.getResponseStatus().intValue(), lastUpdated);
+
+            case NOT_FOUND:
+                return ProviderHelper.notfound(rc, response.getMessage());
+
+            case INTERNAL_SERVER_ERROR:
+                return ProviderHelper.servererror(rc, response.getMessage(), new Exception());
+
+            default:
+                return ProviderHelper.notfound(rc);
         }
     }
 }
