@@ -23,10 +23,13 @@ import com.rackspace.cloud.sense.client.adapter.FeedSourceAdapter;
 import com.rackspace.cloud.sense.domain.entry.GetEntryRequest;
 import com.rackspace.cloud.sense.domain.entry.PostEntryRequest;
 import com.rackspace.cloud.sense.domain.feed.GetFeedRequest;
-import com.rackspace.cloud.sense.util.StaticLoggingFacade;
+import com.rackspace.cloud.util.logging.Logger;
+import com.rackspace.cloud.util.logging.RCLogger;
+
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.abdera.i18n.iri.IRI;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
@@ -40,6 +43,7 @@ import static com.rackspace.cloud.sense.client.adapter.ResponseBuilder.*;
  */
 public class HashMapFeedAdapter implements FeedSourceAdapter {
 
+    private static final Logger log = new RCLogger("HashMapFeedAdapter", "com.rackspace.cloud.sense.client.adapter.impl");
     private final Map<String, Entry> entries;
     private int count;
 
@@ -75,12 +79,11 @@ public class HashMapFeedAdapter implements FeedSourceAdapter {
 
         try {
             final RequestContext requestContext = postRequest.getRequestContext();
-
             final IRI base = requestContext.getBaseUri();
 
             entry.addLink(base.toURL().toString() + requestContext.getTargetPath() + "/" + count);
         } catch (Exception ex) {
-            StaticLoggingFacade.logFatal(ex.getMessage());
+            log.error(ex.getMessage(), ex);
         }
 
         return created(entry);

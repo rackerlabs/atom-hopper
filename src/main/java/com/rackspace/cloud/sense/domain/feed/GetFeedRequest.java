@@ -24,6 +24,8 @@ import com.rackspace.cloud.sense.domain.AbderaRequestContextAware;
  */
 public interface GetFeedRequest extends AbderaRequestContextAware {
 
+    String getLastRequestedEntryId();
+
     String getFeedName();
 
     String getPath();

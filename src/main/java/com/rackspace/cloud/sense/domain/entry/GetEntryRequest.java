@@ -17,7 +17,6 @@
 package com.rackspace.cloud.sense.domain.entry;
 
 import com.rackspace.cloud.sense.domain.AbderaRequestContextAware;
-import com.rackspace.cloud.sense.domain.feed.GetFeedRequest;
 
 /**
  *

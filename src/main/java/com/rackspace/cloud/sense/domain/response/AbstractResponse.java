@@ -17,7 +17,8 @@
 package com.rackspace.cloud.sense.domain.response;
 
 import com.rackspace.cloud.sense.domain.http.HttpResponseCode;
-import com.rackspace.cloud.sense.util.Utilities;
+import com.rackspace.cloud.util.StringUtilities;
+
 
 /**
  *
@@ -45,6 +46,6 @@ public class AbstractResponse implements SimpleResponse {
 
     @Override
     public boolean hasMessage() {
-        return !Utilities.stringIsBlank(message);
+        return !StringUtilities.isBlank(message);
     }
 }

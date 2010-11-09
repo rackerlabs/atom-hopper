@@ -16,6 +16,7 @@
  */
 package com.rackspace.cloud.sense.abdera;
 
+import com.rackspace.cloud.sense.config.v1_0.FeedConfig;
 import org.apache.abdera.model.Document;
 import com.rackspace.cloud.sense.domain.response.EntryResponse;
 import com.rackspace.cloud.sense.domain.feed.GetFeedRequest;
@@ -24,7 +25,6 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.abdera.protocol.server.TargetType;
 import com.rackspace.cloud.sense.util.RegexList;
-import com.rackspace.cloud.sense.config.SenseFeedConfiguration;
 import com.rackspace.cloud.sense.domain.entry.GetEntryRequest;
 import com.rackspace.cloud.sense.domain.entry.PostEntryRequest;
 import com.rackspace.cloud.sense.domain.entry.PutEntryRequest;
@@ -36,13 +36,11 @@ import com.rackspace.cloud.sense.domain.response.FeedResponse;
 import org.apache.abdera.model.Entry;
 
 import java.util.Calendar;
-import java.util.Date;
 import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.ProviderHelper;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.ResponseContext;
-import org.apache.abdera.protocol.server.context.ResponseContextException;
 import org.apache.abdera.protocol.server.impl.AbstractCollectionAdapter;
 
 import static com.rackspace.cloud.sense.domain.http.HttpResponseCode.*;
@@ -55,11 +53,11 @@ public class SenseFeedAdapter extends AbstractCollectionAdapter {
 
     private static final Calendar CALENDAR_INSTANCE = Calendar.getInstance();
     private final Abdera abdera;
-    private final SenseFeedConfiguration feedConfig;
+    private final FeedConfig feedConfig;
     private final RegexList feedTargets;
     private final FeedSourceAdapter configuredDatasourceAdapter;
 
-    public SenseFeedAdapter(Abdera abdera, SenseFeedConfiguration feedConfig, FeedSourceAdapter configuredDatasourceAdapter) {
+    public SenseFeedAdapter(Abdera abdera, FeedConfig feedConfig, FeedSourceAdapter configuredDatasourceAdapter) {
         this.abdera = abdera;
         this.feedConfig = feedConfig;
 
@@ -76,7 +74,7 @@ public class SenseFeedAdapter extends AbstractCollectionAdapter {
         return abdera.newEntry();
     }
 
-    public SenseFeedConfiguration getFeedConfiguration() {
+    public FeedConfig getFeedConfiguration() {
         return feedConfig;
     }
 
@@ -97,15 +95,15 @@ public class SenseFeedAdapter extends AbstractCollectionAdapter {
     }
 
     @Override
-    public String getAuthor(RequestContext rc) throws ResponseContextException {
-        return getFeedConfiguration().getAuthor();
+    public String getAuthor(RequestContext rc) {
+//        return getFeedConfiguration().getAuthor();
+        return "TODO: AUTHOR";
     }
 
     @Override
     public String getId(RequestContext rc) {
-        final SenseFeedConfiguration config = getFeedConfiguration();
-
-        return new StringBuilder("tag:").append(config.getFullUri()).append(",").append(CALENDAR_INSTANCE.get(Calendar.YEAR)).append(":").append(config.getBaseUrn()).toString();
+//        return new StringBuilder("tag:").append(feedConfig.getFullUri()).append(",").append(CALENDAR_INSTANCE.get(Calendar.YEAR)).append(":").append(config.getBaseUrn()).toString();
+        return "TODO: ID";
     }
 
     @Override

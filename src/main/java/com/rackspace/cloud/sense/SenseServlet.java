@@ -16,19 +16,22 @@
  */
 package com.rackspace.cloud.sense;
 
+import com.rackspace.cloud.util.servlet.context.ApplicationContextAdapter;
+import com.rackspace.cloud.sense.config.v1_0.SenseConfig;
+import com.rackspace.cloud.powerapi.config.ConfigurationParserException;
+import com.rackspace.cloud.powerapi.config.jaxb.JAXBConfigurationParser;
 import com.rackspace.cloud.sense.exceptions.ServletInitException;
-import com.rackspace.cloud.sense.config.SenseXmlConfiguration;
-import com.rackspace.cloud.sense.config.SenseNamespaceConfiguration;
-import com.rackspace.cloud.sense.context.ApplicationContextAdapter;
-import com.rackspace.cloud.sense.abdera.SenseProvider;
+import com.rackspace.cloud.sense.abdera.SenseWorkspaceProvider;
+import com.rackspace.cloud.sense.config.WorkspaceConfigProcessor;
+import com.rackspace.cloud.sense.config.v1_0.WorkspaceConfig;
 import com.rackspace.cloud.sense.exceptions.ContextAdapterResolutionException;
-import java.io.IOException;
+import com.rackspace.cloud.util.logging.Logger;
+import com.rackspace.cloud.util.logging.RCLogger;
+import java.util.HashMap;
 import javax.servlet.ServletException;
 import org.apache.abdera.Abdera;
 import org.apache.abdera.protocol.server.Provider;
 import org.apache.abdera.protocol.server.servlet.AbderaServlet;
-
-import static com.rackspace.cloud.sense.util.StaticLoggingFacade.*;
 
 /**
  *
@@ -36,26 +39,28 @@ import static com.rackspace.cloud.sense.util.StaticLoggingFacade.*;
  */
 public final class SenseServlet extends AbderaServlet {
 
+    private static final Logger log = new RCLogger("SenseServlet", "com.rackspace.cloud.sense");
+
     public static final String CONTEXT_ADAPTER_CLASS = "context-adapter-class";
     public static final String CONFIG_DIRECTORY = "sense-config-directory";
     public static final String DEFAULT_CONFIG_DIRECTORY = "/etc/rackspace-cloud/sense";
 
     private ApplicationContextAdapter applicationContextAdapter;
     private Abdera abderaObject;
-    private SenseNamespaceConfiguration serverConfig;
+    private SenseConfig configuration;
 
     @Override
     public void init() throws ServletException {
         abderaObject = getAbdera();
 
-        final String configuration = getConfigDirectory() + "/default.cfg.xml";
+        final String configLocation = getConfigDirectory() + "/sense.cfg.xml";
 
         try {
-            logInfo("Reading configuration file: " + configuration);
+            log.info("Reading configuration file: " + configLocation);
 
-            serverConfig = SenseXmlConfiguration.fromFile(configuration).toConfig(getServletContext().getContextPath());
-        } catch (IOException ioe) {
-            throw newException("Failed to read configuration file: " + configuration, ioe, ServletInitException.class);
+            configuration = JAXBConfigurationParser.fromFile(configLocation, SenseConfig.class, "com.rackspace.cloud.sense.config.v1_0").read();
+        } catch (ConfigurationParserException cpe) {
+            throw log.newException("Failed to read configuration file: " + configLocation, cpe, ServletInitException.class);
         }
 
         applicationContextAdapter = getContextAdapter();
@@ -68,7 +73,7 @@ public final class SenseServlet extends AbderaServlet {
         final String adapterClass = getInitParameter(CONTEXT_ADAPTER_CLASS);
 
         if (adapterClass == null || adapterClass.equals("")) {
-            throw newException("Missing context adapter init-parameter for servlet: " + CONTEXT_ADAPTER_CLASS, ContextAdapterResolutionException.class);
+            throw log.newException("Missing context adapter init-parameter for servlet: " + CONTEXT_ADAPTER_CLASS, ContextAdapterResolutionException.class);
         }
 
         try {
@@ -78,10 +83,10 @@ public final class SenseServlet extends AbderaServlet {
                 return (ApplicationContextAdapter) freshAdapter;
             }
         } catch (Exception ex) {
-            throw wrapFatal(ex, ContextAdapterResolutionException.class);
+            throw log.wrapError(ex, ContextAdapterResolutionException.class);
         }
 
-        throw newException("Unknwon application context adapter class: " + adapterClass, ContextAdapterResolutionException.class);
+        throw log.newException("Unknwon application context adapter class: " + adapterClass, ContextAdapterResolutionException.class);
     }
 
     protected String getConfigDirectory() {
@@ -92,6 +97,16 @@ public final class SenseServlet extends AbderaServlet {
 
     @Override
     protected Provider createProvider() {
-        return new SenseProvider(serverConfig, applicationContextAdapter, abderaObject);
+        final SenseWorkspaceProvider provider = new SenseWorkspaceProvider();
+
+        //TODO: Provide property injection via config here
+        provider.init(abderaObject, new HashMap<String, String>());
+
+        for (WorkspaceConfig workspaceCfg : configuration.getWorkspace()) {
+            provider.getWorkspaceManager().addWorkspace(
+                    new WorkspaceConfigProcessor(workspaceCfg, applicationContextAdapter, abderaObject).toHandler());
+        }
+
+        return provider;
     }
 }

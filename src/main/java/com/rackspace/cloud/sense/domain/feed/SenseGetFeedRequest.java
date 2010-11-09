@@ -35,6 +35,18 @@ public class SenseGetFeedRequest extends AbstractRequest implements GetFeedReque
         this.feedName = feedName;
     }
 
+    /**
+     * In the case of an archive, the last requested id marks the last entry
+     * in the archive that was sent. This would happen in the case that a client
+     * follows the next link in the feed.
+     * 
+     * @return
+     */
+    @Override
+    public String getLastRequestedEntryId() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
     @Override
     public String getFeedName() {
         return feedName;

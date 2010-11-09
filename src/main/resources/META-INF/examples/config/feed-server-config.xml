@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<config xmlns="http://docs.rackspacecloud.com/cloud-sense/sense-config/v1.0"
+<sense-config xmlns="http://docs.rackspacecloud.com/cloud-sense/sense-config/v1.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://docs.rackspacecloud.com/cloud-sense/sense-config/v1.0 ./../../xsd/config/config.v1.0.xsd">
 
@@ -8,14 +8,10 @@
         <author name="Default Author" />
     </defaults>
 
-    <!-- http://localhost:8080/namespace -->
-    <namespace title="my server" url="http://localhost:8080/" resource="/namespace">
+    <!-- http://localhost:8080/namespace_a/ -->
+    <workspace title="A Testing Namespace" resource-base="/namespace_a/" default-adapter-ref="zf-adapter">
         
-        <!-- http://localhost:8080/namespace/service_a -->
-        <service title="feedService1" resource="/service_a/" adapter-ref="zf-adapters">
-
-            <!-- http://localhost:8080/namespace/service_a/feed_1 -->
-            <feed title="feed_1" resource="feed_1" />
-        </service>
-    </namespace>
-</config>
+        <!-- http://localhost:8080/namespace_a/feed_1 -->
+        <feed title="feed_1" resource="/feed_1" />
+    </workspace>
+</sense-config>

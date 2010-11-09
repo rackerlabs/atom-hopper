@@ -1,98 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<xsd:schema xmlns="http://docs.rackspacecloud.com/cloud-sense/sense-config/v1.0"
-            targetNamespace="http://docs.rackspacecloud.com/cloud-sense/sense-config/v1.0"
-            xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<xs:schema elementFormDefault="qualified" attributeFormDefault="unqualified"
+           targetNamespace="http://docs.rackspacecloud.com/cloud-sense/sense-config/v1.0"
+           xmlns:sense="http://docs.rackspacecloud.com/cloud-sense/sense-config/v1.0"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-    <xsd:element name="config">
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element ref="defaults" minOccurs="0" maxOccurs="1" />
-                <xsd:element ref="namespace" minOccurs="0" maxOccurs="1" />
-            </xsd:sequence>
-        </xsd:complexType>
-    </xsd:element>
+    <xs:element name="sense-config" type="sense:sense-config" />
+    
+    <xs:complexType name="sense-config">
+        <xs:sequence>
+            <xs:element name="defaults" type="sense:defaults" minOccurs="0" maxOccurs="1" />
+            <xs:element name="workspace" type="sense:workspace-config" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
 
-    <xsd:element name="defaults">
-        <xsd:annotation>
-            <xsd:documentation>
+    <xs:complexType name="defaults">
+        <xs:annotation>
+            <xs:documentation>
                 Defines certain defaults which will be merged down into configuration elements that have comparable analogues
-            </xsd:documentation>
-        </xsd:annotation>
+            </xs:documentation>
+        </xs:annotation>
 
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element ref="author" minOccurs="0" maxOccurs="1" />
-            </xsd:sequence>
-        </xsd:complexType>
-    </xsd:element>
+        <xs:sequence>
+            <xs:element name="author" type="sense:author" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
 
-    <xsd:element name="namespace">
-        <xsd:annotation>
-            <xsd:documentation>
+    <xs:complexType name="workspace-config">
+        <xs:annotation>
+            <xs:documentation>
                 Describe an ATOMpub server
-            </xsd:documentation>
-        </xsd:annotation>
+            </xs:documentation>
+        </xs:annotation>
 
-        <xsd:complexType>
-            <xsd:sequence>
-<!--                <xsd:element ref="adapters" minOccurs="1" maxOccurs="1" />-->
-                <xsd:element ref="service" minOccurs="1" maxOccurs="unbounded" />
-            </xsd:sequence>
+        <xs:sequence>
+            <xs:element name="feed" type="sense:feed-config" minOccurs="1" maxOccurs="unbounded" />
+            <xs:element name="property" type="sense:property" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
 
-            <xsd:attribute name="title" type="xsd:string" use="required" />
-            <xsd:attribute name="url" type="xsd:string" use="required" />
+        <xs:attribute name="title" type="xs:string" use="required" />
+        <xs:attribute name="resource-base" type="xs:string" use="required" />
 
-            <xsd:attribute name="resource" type="xsd:string" />
-        </xsd:complexType>
-    </xsd:element>
+        <xs:attribute name="default-adapter-ref" type="xs:string" use="optional" />
+        <xs:attribute name="default-adapter-class" type="xs:string" use="optional" />
+    </xs:complexType>
 
-    <xsd:element name="property">
-        <xsd:complexType>
-            <xsd:attribute name="name" type="xsd:string" use="required" />
-            <xsd:attribute name="value" type="xsd:string" use="required" />
-        </xsd:complexType>
-    </xsd:element>
+    <xs:complexType name="property">
+        <xs:attribute name="name" type="xs:string" use="required" />
+        <xs:attribute name="value" type="xs:string" use="required" />
+    </xs:complexType>
 
-    <xsd:element name="service">
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element ref="feed" minOccurs="0" maxOccurs="unbounded" />
-            </xsd:sequence>
+    <xs:complexType name="feed-config">
+        <xs:sequence>
+            <xs:element name="author" type="sense:author" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
 
-            <xsd:attribute name="title" type="xsd:string" use="required" />
+        <xs:attribute name="title" type="xs:string" use="required" />
+        <xs:attribute name="resource" type="xs:string" use="required" />
 
-            <xsd:attribute name="adapter-ref" type="xsd:string" />
-            <xsd:attribute name="adapter-class" type="xsd:string" />
-            <xsd:attribute name="resource" type="xsd:string" />
-        </xsd:complexType>
-    </xsd:element>
+        <xs:attribute name="adapter-ref" type="xs:string" use="optional" />
+        <xs:attribute name="adapter-class" type="xs:string" use="optional" />
+    </xs:complexType>
 
-    <xsd:element name="service-extension">
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element ref="feed" minOccurs="0" maxOccurs="unbounded" />
-            </xsd:sequence>
-
-            <xsd:attribute name="id" type="xsd:string" use="required" />
-            <xsd:attribute name="service-id" type="xsd:string" use="required" />
-        </xsd:complexType>
-    </xsd:element>
-
-    <xsd:element name="feed">
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element ref="author" minOccurs="0" maxOccurs="1" />
-            </xsd:sequence>
-
-            <xsd:attribute name="title" type="xsd:string" use="required" />
-            <xsd:attribute name="resource" type="xsd:string" />
-        </xsd:complexType>
-    </xsd:element>
-
-    <xsd:element name="author">
-        <xsd:complexType>
-            <xsd:attribute name="name" type="xsd:string" use="required" />
-        </xsd:complexType>
-    </xsd:element>
-</xsd:schema>
+    <xs:complexType name="author">
+        <xs:attribute name="name" type="xs:string" use="required" />
+    </xs:complexType>
+</xs:schema>

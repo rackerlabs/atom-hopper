@@ -19,7 +19,8 @@ package com.rackspace.cloud.sense.client.adapter;
 import com.rackspace.cloud.sense.domain.response.EntryResponse;
 import com.rackspace.cloud.sense.domain.response.FeedResponse;
 import com.rackspace.cloud.sense.domain.http.HttpResponseCode;
-import com.rackspace.cloud.sense.util.Utilities;
+import com.rackspace.cloud.util.StringUtilities;
+
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 
@@ -34,7 +35,7 @@ public class ResponseBuilder {
     }
 
     public static EntryResponse notFound(Object... messageArray) {
-        return new EntryResponse(HttpResponseCode.NOT_FOUND, Utilities.join(messageArray), null);
+        return new EntryResponse(HttpResponseCode.NOT_FOUND, StringUtilities.join(messageArray), null);
     }
 
     public static EntryResponse ok() {
