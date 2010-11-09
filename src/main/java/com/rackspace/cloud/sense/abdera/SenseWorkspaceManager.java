@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.rackspace.cloud.sense.abdera;
 
 import com.rackspace.cloud.sense.config.WorkspaceHandler;
@@ -14,10 +10,6 @@ import org.apache.abdera.protocol.server.Target;
 import org.apache.abdera.protocol.server.WorkspaceInfo;
 import org.apache.abdera.protocol.server.WorkspaceManager;
 
-/**
- *
- * @author zinic
- */
 public class SenseWorkspaceManager implements WorkspaceManager {
 
     private final List<WorkspaceHandler> handlers;
