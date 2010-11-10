@@ -6,6 +6,10 @@ public interface AdapterResponse<T> {
 
     T getBody();
 
+    String getParameter(ResponseParameter name);
+
+    void setParameter(ResponseParameter name, String value);
+
     String getMessage();
 
     HttpStatusCode getResponseStatus();

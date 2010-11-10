@@ -41,14 +41,14 @@ public class WorkspaceConfigProcessor {
 
         final WorkspaceHandler workspace = new WorkspaceHandler(config, regexTargetResolver, templateTargetBuilder);
 
-        for (SenseFeedAdapter collectionAdapter : assembleServices(config.getFeed(), namespaceCollectionAdapters, regexTargetResolver)) {
+        for (SenseFeedAdapter collectionAdapter : assembleServices(config.getFeed(), namespaceCollectionAdapters, regexTargetResolver, templateTargetBuilder)) {
             workspace.addCollectionAdapter(collectionAdapter);
         }
 
         return workspace;
     }
 
-    private List<SenseFeedAdapter> assembleServices(List<FeedConfig> feedServices, List<SenseFeedAdapter> namespaceCollectionAdapters, RegexTargetResolver regexTargetResolver) {
+    private List<SenseFeedAdapter> assembleServices(List<FeedConfig> feedServices, List<SenseFeedAdapter> namespaceCollectionAdapters, RegexTargetResolver regexTargetResolver, TemplateTargetBuilder templateTargetBuilder) {
         final List<SenseFeedAdapter> collections = new LinkedList<SenseFeedAdapter>();
 
         final String namespace = StringUtilities.trim(config.getResourceBase(), "/");
@@ -64,11 +64,13 @@ public class WorkspaceConfigProcessor {
                 TargetResolverField.NAMESPACE.name(),
                 TargetResolverField.CATEGORY.name());
 
-//            final String baseTemplate = "{target_base}" + resourceBase;
-//            templateTargetBuilder.setTemplate(TargetType.TYPE_SERVICE, baseTemplate);
-//            templateTargetBuilder.setTemplate(TargetType.TYPE_COLLECTION, baseTemplate + "/{collection}{-opt|?|q,c,s,p,l,i,o}{-join|&|q,c,s,p,l,i,o}");
-//            templateTargetBuilder.setTemplate(TargetType.TYPE_CATEGORIES, baseTemplate + "/{collection};categories");
-//            templateTargetBuilder.setTemplate(TargetType.TYPE_ENTRY, baseTemplate + "/{collection}/{entry}");
+
+        final String baseTemplate = "{target_base}/" + namespace;
+
+        templateTargetBuilder.setTemplate(TargetType.TYPE_SERVICE, baseTemplate);
+        templateTargetBuilder.setTemplate(TargetType.TYPE_COLLECTION, baseTemplate + "/{collection}{-opt|?|q,c,s,p,l,i,o}{-join|&|q,c,s,p,l,i,o}");
+        templateTargetBuilder.setTemplate(TargetType.TYPE_CATEGORIES, baseTemplate + "/{collection};categories");
+        templateTargetBuilder.setTemplate(TargetType.TYPE_ENTRY, baseTemplate + "/{collection}/{entry}");
 
         for (SenseFeedAdapter adapter : assembleFeedAdapters(feedServices, namespace, regexTargetResolver)) {
             collections.add(adapter);
@@ -85,12 +87,16 @@ public class WorkspaceConfigProcessor {
             final FeedSourceAdapter feedSource = getFeedAdapterFromAppContext(feed);
             feedSource.setAdapterTools(adapterTools);
 
-            final SenseFeedAdapter adapter = new SenseFeedAdapter(abderaReference, feed, feedSource);
-            
+            final SenseFeedAdapter adapter = new SenseFeedAdapter(feed, feedSource);
+
             final String resource = StringUtilities.trim(feed.getResource(), "/");
 
-            final String feedRegex = join("/(", namespace, ")/(", resource, ")(\\?[^#]*)?");
-            final String entryRegex = join("/(", namespace, ")/(", resource, ")/([^/#?]+)*(\\?[^#]*)?");
+            if (resource.contains("/")) {
+                throw new SenseConfigurationException("Feed resource definitions may not contain more than one specified resource (too many / characters)");
+            }
+
+            final String feedRegex = join("/(", namespace, ")/(", resource, ")/{1,}(\\?[^#]*)?");
+            final String entryRegex = join("/(", namespace, ")/(", resource, ")/([^/#?]+)(\\?[^#]*)?");
 
             adapter.addTargetRegex(feedRegex);
             adapter.addTargetRegex(entryRegex);

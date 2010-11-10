@@ -61,7 +61,7 @@ public class HashMapFeedAdapter implements FeedSourceAdapter {
     }
 
     @Override
-    public AdapterResponse<Feed> getFeed(RequestContext request, String lastId) throws UnsupportedOperationException {
+    public AdapterResponse<Feed> getFeed(RequestContext request, int page, String markerId) throws UnsupportedOperationException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

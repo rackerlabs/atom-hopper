@@ -10,10 +10,11 @@ import com.rackspace.cloud.sense.util.RegexList;
 
 import com.rackspace.cloud.sense.domain.response.EmptyBody;
 import com.rackspace.cloud.sense.domain.response.AdapterResponse;
+import com.rackspace.cloud.sense.domain.response.ResponseParameter;
+import com.rackspace.cloud.util.StringUtilities;
 import org.apache.abdera.model.Entry;
 
 import java.util.Date;
-import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.ProviderHelper;
 import org.apache.abdera.protocol.server.RequestContext;
@@ -22,17 +23,12 @@ import org.apache.abdera.protocol.server.impl.AbstractCollectionAdapter;
 
 public class SenseFeedAdapter extends AbstractCollectionAdapter {
 
-    //TODO: Consider removing abdera reference
-    private final Abdera abdera;
-
     private final FeedConfig feedConfig;
     private final RegexList feedTargets;
     private final FeedSourceAdapter configuredDatasourceAdapter;
 
-    public SenseFeedAdapter(Abdera abdera, FeedConfig feedConfig, FeedSourceAdapter configuredDatasourceAdapter) {
-        this.abdera = abdera;
+    public SenseFeedAdapter(FeedConfig feedConfig, FeedSourceAdapter configuredDatasourceAdapter) {
         this.feedConfig = feedConfig;
-
         this.configuredDatasourceAdapter = configuredDatasourceAdapter;
 
         feedTargets = new RegexList();
@@ -77,8 +73,19 @@ public class SenseFeedAdapter extends AbstractCollectionAdapter {
 
     @Override
     public ResponseContext getFeed(RequestContext rc) {
+        final String pageRequested = rc.getParameter(ResponseParameter.PAGE.toString());
+        final String lastEntryId = rc.getParameter(ResponseParameter.MARKER.toString());
+
         try {
-            return handleFeedResponse(rc, configuredDatasourceAdapter.getFeed(rc));
+            if (!StringUtilities.isBlank(pageRequested)) {
+                return handleFeedResponse(rc, configuredDatasourceAdapter.getFeed(rc, Integer.parseInt(pageRequested), lastEntryId));
+            } else {
+                return handleFeedResponse(rc, configuredDatasourceAdapter.getFeed(rc));
+            }
+        } catch (UnsupportedOperationException uoe) {
+            return ProviderHelper.notallowed(rc, uoe.getMessage(), new String[0]); //TODO: Fix this var-args bullshit
+        } catch (NumberFormatException nfe) {
+            return ProviderHelper.badrequest(rc, "Page requested is not a number");
         } catch (Throwable t) {
             return ProviderHelper.servererror(rc, t.getMessage(), t);
         }
@@ -163,6 +170,8 @@ public class SenseFeedAdapter extends AbstractCollectionAdapter {
     private ResponseContext handleFeedResponse(RequestContext rc, AdapterResponse<Feed> response) {
         final Date lastUpdated = response.getBody() != null ? response.getBody().getUpdated() : null;
 
+        addPaginationInformationToFeed(rc, response);
+
         switch (response.getResponseStatus()) {
             case OK:
                 return ProviderHelper.returnBase(response.getBody(), response.getResponseStatus().intValue(), lastUpdated);
@@ -175,6 +184,28 @@ public class SenseFeedAdapter extends AbstractCollectionAdapter {
 
             default:
                 return ProviderHelper.notfound(rc);
+        }
+    }
+
+    private void addPaginationInformationToFeed(RequestContext rc, AdapterResponse<Feed> response) {
+        final String page = response.getParameter(ResponseParameter.PAGE);
+        final String marker = response.getParameter(ResponseParameter.MARKER);
+
+        final Feed f = response.getBody();
+
+        if (page != null) {
+            final String selfMinusPageNumber = StringUtilities.join(rc.getBaseUri().toString(), rc.getTargetPath(), "?", ResponseParameter.PAGE.toString(), "=");
+
+            f.addLink(marker != null ? StringUtilities.join(selfMinusPageNumber, page, "&", ResponseParameter.MARKER.toString(), "=", marker) : selfMinusPageNumber, "self");
+
+
+            final int pageNumber = Integer.parseInt(page);
+            f.addLink(selfMinusPageNumber + (pageNumber + 1), "next");
+
+            //Add previous
+            if (pageNumber - 1 > 0) {
+                f.addLink(selfMinusPageNumber + (pageNumber - 1), "previous");
+            }
         }
     }
 }
