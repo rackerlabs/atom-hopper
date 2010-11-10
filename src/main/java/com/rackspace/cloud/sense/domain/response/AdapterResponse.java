@@ -8,7 +8,15 @@ public interface AdapterResponse<T> {
 
     String getParameter(ResponseParameter name);
 
-    void setParameter(ResponseParameter name, String value);
+    /**
+     * Setting a parameter will take the value's toString() value and use it to
+     * represent the value.
+     * 
+     * @param name
+     * @param value
+     * @return
+     */
+    AdapterResponse<T> withParameter(ResponseParameter name, Object value);
 
     String getMessage();
 

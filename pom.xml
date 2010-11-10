@@ -16,7 +16,7 @@
     <version>1.0.1-SNAPSHOT</version>
     <name>Rackspace Cloud SENSe</name>
 
-    <url>http://wiki.research.rackspacecloud.com</url>
+    <url>http://wiki.research.rackspacecloud.com/some/place/for/this/project</url>
 
     <properties>
         <project.license>apache20</project.license>

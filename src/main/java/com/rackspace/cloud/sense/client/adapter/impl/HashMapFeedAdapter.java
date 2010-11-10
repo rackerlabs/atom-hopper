@@ -5,6 +5,7 @@ import com.rackspace.cloud.sense.client.adapter.FeedSourceAdapter;
 import com.rackspace.cloud.sense.client.adapter.ResponseBuilder;
 import com.rackspace.cloud.sense.domain.response.EmptyBody;
 import com.rackspace.cloud.sense.domain.response.AdapterResponse;
+import com.rackspace.cloud.sense.domain.response.ResponseParameter;
 import com.rackspace.cloud.util.logging.Logger;
 import com.rackspace.cloud.util.logging.RCLogger;
 
@@ -57,7 +58,7 @@ public class HashMapFeedAdapter implements FeedSourceAdapter {
             f.addEntry(storedEntry);
         }
 
-        return ResponseBuilder.found(f);
+        return ResponseBuilder.found(f).withParameter(ResponseParameter.PAGE, "1");
     }
 
     @Override

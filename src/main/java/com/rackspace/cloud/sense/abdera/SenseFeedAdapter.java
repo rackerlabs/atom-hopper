@@ -196,7 +196,7 @@ public class SenseFeedAdapter extends AbstractCollectionAdapter {
         if (page != null) {
             final String selfMinusPageNumber = StringUtilities.join(rc.getBaseUri().toString(), rc.getTargetPath(), "?", ResponseParameter.PAGE.toString(), "=");
 
-            f.addLink(marker != null ? StringUtilities.join(selfMinusPageNumber, page, "&", ResponseParameter.MARKER.toString(), "=", marker) : selfMinusPageNumber, "self");
+            f.addLink(marker != null ? StringUtilities.join(selfMinusPageNumber, page, "&", ResponseParameter.MARKER.toString(), "=", marker) : selfMinusPageNumber + page, "self");
 
 
             final int pageNumber = Integer.parseInt(page);

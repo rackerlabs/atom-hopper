@@ -44,8 +44,10 @@ public class FeedSourceAdapterResponse<T> implements AdapterResponse<T> {
     }
 
     @Override
-    public void setParameter(ResponseParameter key, String value) {
-        getParameters().put(key, value);
+    public AdapterResponse<T> withParameter(ResponseParameter key, Object value) {
+        getParameters().put(key, value.toString());
+
+        return this;
     }
 
     @Override
