@@ -9,7 +9,7 @@ import org.apache.abdera.protocol.server.TargetType;
 import com.rackspace.cloud.sense.util.RegexList;
 
 import com.rackspace.cloud.sense.domain.response.EmptyBody;
-import com.rackspace.cloud.sense.domain.response.GenericAdapterResponse;
+import com.rackspace.cloud.sense.domain.response.AdapterResponse;
 import org.apache.abdera.model.Entry;
 
 import java.util.Date;
@@ -128,7 +128,7 @@ public class SenseFeedAdapter extends AbstractCollectionAdapter {
         }
     }
 
-    private ResponseContext handleEmptyResponse(RequestContext rc, GenericAdapterResponse<EmptyBody> response) {
+    private ResponseContext handleEmptyResponse(RequestContext rc, AdapterResponse<EmptyBody> response) {
         switch (response.getResponseStatus()) {
             case NOT_FOUND:
                 return ProviderHelper.notfound(rc, response.getMessage());
@@ -141,7 +141,7 @@ public class SenseFeedAdapter extends AbstractCollectionAdapter {
         }
     }
 
-    private ResponseContext handleEntryResponse(RequestContext rc, GenericAdapterResponse<Entry> response) {
+    private ResponseContext handleEntryResponse(RequestContext rc, AdapterResponse<Entry> response) {
         final Date lastUpdated = response.getBody() != null ? response.getBody().getUpdated() : null;
 
         switch (response.getResponseStatus()) {
@@ -160,7 +160,7 @@ public class SenseFeedAdapter extends AbstractCollectionAdapter {
         }
     }
 
-    private ResponseContext handleFeedResponse(RequestContext rc, GenericAdapterResponse<Feed> response) {
+    private ResponseContext handleFeedResponse(RequestContext rc, AdapterResponse<Feed> response) {
         final Date lastUpdated = response.getBody() != null ? response.getBody().getUpdated() : null;
 
         switch (response.getResponseStatus()) {

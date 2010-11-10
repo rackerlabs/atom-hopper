@@ -2,7 +2,7 @@ package com.rackspace.cloud.sense.domain.response;
 
 import com.rackspace.cloud.util.http.HttpStatusCode;
 
-public class FeedSourceAdapterResponse<T> implements GenericAdapterResponse<T> {
+public class FeedSourceAdapterResponse<T> implements AdapterResponse<T> {
 
     public static final HttpStatusCode DEFAULT_HTTP_STATUS_CODE = HttpStatusCode.OK;
     

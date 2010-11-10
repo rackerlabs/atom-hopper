@@ -19,7 +19,7 @@ import org.apache.abdera.protocol.server.servlet.AbderaServlet;
 
 public final class SenseServlet extends AbderaServlet {
 
-    private static final Logger log = new RCLogger("SenseServlet", "com.rackspace.cloud.sense");
+    private static final Logger log = new RCLogger(SenseServlet.class);
 
     public static final String CONTEXT_ADAPTER_CLASS = "context-adapter-class";
     public static final String CONFIG_DIRECTORY = "sense-config-directory";

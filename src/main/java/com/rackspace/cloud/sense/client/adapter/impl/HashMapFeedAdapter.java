@@ -4,7 +4,7 @@ import com.rackspace.cloud.sense.client.adapter.AdapterTools;
 import com.rackspace.cloud.sense.client.adapter.FeedSourceAdapter;
 import com.rackspace.cloud.sense.client.adapter.ResponseBuilder;
 import com.rackspace.cloud.sense.domain.response.EmptyBody;
-import com.rackspace.cloud.sense.domain.response.GenericAdapterResponse;
+import com.rackspace.cloud.sense.domain.response.AdapterResponse;
 import com.rackspace.cloud.util.logging.Logger;
 import com.rackspace.cloud.util.logging.RCLogger;
 
@@ -19,7 +19,8 @@ import org.apache.abdera.protocol.server.RequestContext;
 
 public class HashMapFeedAdapter implements FeedSourceAdapter {
 
-    private static final Logger log = new RCLogger("HashMapFeedAdapter", "com.rackspace.cloud.sense.client.adapter.impl");
+    private static final Logger log = new RCLogger(HashMapFeedAdapter.class);
+    
     private final Map<String, Entry> entries;
     private AdapterTools tools;
     private int count;
@@ -35,21 +36,21 @@ public class HashMapFeedAdapter implements FeedSourceAdapter {
     }
 
     @Override
-    public GenericAdapterResponse<EmptyBody> deleteEntry(RequestContext request, String id) {
+    public AdapterResponse<EmptyBody> deleteEntry(RequestContext request, String id) {
         final Entry removedEntry = entries.remove(id);
 
         return removedEntry != null ? ResponseBuilder.ok() : ResponseBuilder.<EmptyBody>notFound();
     }
 
     @Override
-    public GenericAdapterResponse<Entry> getEntry(RequestContext request, String id) {
+    public AdapterResponse<Entry> getEntry(RequestContext request, String id) {
         final Entry e = entries.get(id);
 
         return e != null ? ResponseBuilder.found(e) : ResponseBuilder.<Entry>notFound();
     }
 
     @Override
-    public GenericAdapterResponse<Feed> getFeed(RequestContext request) {
+    public AdapterResponse<Feed> getFeed(RequestContext request) {
         final Feed f = tools.newFeed();
 
         for (Entry storedEntry : entries.values()) {
@@ -60,7 +61,12 @@ public class HashMapFeedAdapter implements FeedSourceAdapter {
     }
 
     @Override
-    public GenericAdapterResponse<Entry> postEntry(RequestContext request, Entry e) {
+    public AdapterResponse<Feed> getFeed(RequestContext request, String lastId) throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public AdapterResponse<Entry> postEntry(RequestContext request, Entry e) {
         final Entry entry = e;
 
         entry.setUpdated(Calendar.getInstance().getTime());
@@ -77,7 +83,7 @@ public class HashMapFeedAdapter implements FeedSourceAdapter {
     }
 
     @Override
-    public GenericAdapterResponse<Entry> putEntry(RequestContext request, String id, Entry e) {
+    public AdapterResponse<Entry> putEntry(RequestContext request, String id, Entry e) {
         final Entry oldEntry = entries.get(id);
 
         if (oldEntry != null) {
