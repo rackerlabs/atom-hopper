@@ -1,7 +1,7 @@
 package com.rackspace.cloud.sense.abdera;
 
-import com.rackspace.cloud.util.logging.ExtendedLogger;
-import com.rackspace.cloud.util.logging.LoggerWrapper;
+import com.rackspace.cloud.util.logging.Logger;
+import com.rackspace.cloud.util.logging.RCLogger;
 import java.util.ArrayList;
 
 import java.util.Arrays;
@@ -35,8 +35,8 @@ import org.apache.abdera.protocol.server.processors.ServiceRequestProcessor;
 
 public class SenseWorkspaceProvider implements Provider {
 
-    private final static ExtendedLogger log = new LoggerWrapper("SenseWorkspaceProvider", "com.rackspace.cloud.sense");
-
+    private static final Logger log = new RCLogger(SenseWorkspaceProvider.class);
+    
     private final Map<TargetType, RequestProcessor> requestProcessors;
     private final SenseWorkspaceManager workspaceManager;
     private final List<Filter> filters;
@@ -186,7 +186,7 @@ public class SenseWorkspaceProvider implements Provider {
         for (WorkspaceInfo wi : getWorkspaceManager().getWorkspaces(request)) {
             service.addWorkspace(wi.asWorkspaceElement(request));
         }
-        
+
         return service;
     }
 
