@@ -20,7 +20,6 @@ import org.apache.abdera.Abdera;
 import org.apache.abdera.protocol.server.TargetType;
 import org.apache.abdera.protocol.server.impl.RegexTargetResolver;
 
-
 import static com.rackspace.cloud.util.StringUtilities.*;
 
 public class WorkspaceConfigProcessor {
@@ -36,7 +35,6 @@ public class WorkspaceConfigProcessor {
         this.contextAdapter = contextAdapter;
 
         adapterTools = new AbderaAdapterTools(abderaReference);
-
     }
 
     public WorkspaceHandler toHandler() {
