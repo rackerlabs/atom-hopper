@@ -3,6 +3,7 @@
 <xs:schema elementFormDefault="qualified" attributeFormDefault="unqualified"
            targetNamespace="http://docs.rackspacecloud.com/cloud-sense/sense-config/v1.0"
            xmlns:sense="http://docs.rackspacecloud.com/cloud-sense/sense-config/v1.0"
+           xmlns:xhtml="http://www.w3.org/1999/xhtml"
            xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
     <xs:element name="sense-config" type="sense:sense-config" />
@@ -17,7 +18,7 @@
     <xs:complexType name="defaults">
         <xs:annotation>
             <xs:documentation>
-                Defines certain defaults which will be merged down into configuration elements that have comparable analogues
+                <xhtml:p>Defines certain defaults which will be merged down into configuration elements that have comparable analogues</xhtml:p>
             </xs:documentation>
         </xs:annotation>
 
@@ -29,40 +30,108 @@
     <xs:complexType name="workspace-config">
         <xs:annotation>
             <xs:documentation>
-                Describe an ATOMpub server
+                <xhtml:p>Describe an ATOMpub server</xhtml:p>
             </xs:documentation>
         </xs:annotation>
 
         <xs:sequence>
+            <xs:element name="archive" type="sense:archive-marker" minOccurs="0" maxOccurs="1" />
             <xs:element name="feed" type="sense:feed-config" minOccurs="1" maxOccurs="unbounded" />
-            <xs:element name="property" type="sense:property" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
 
-        <xs:attribute name="title" type="xs:string" use="required" />
-        <xs:attribute name="resource-base" type="xs:string" use="required" />
+        <xs:attribute name="title" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>
+                    <xhtml:p></xhtml:p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="resource-base" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>
+                    <xhtml:p></xhtml:p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
 
-        <xs:attribute name="default-adapter-ref" type="xs:string" use="optional" />
-        <xs:attribute name="default-adapter-class" type="xs:string" use="optional" />
-    </xs:complexType>
-
-    <xs:complexType name="property">
-        <xs:attribute name="name" type="xs:string" use="required" />
-        <xs:attribute name="value" type="xs:string" use="required" />
+        <xs:attribute name="default-adapter-ref" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation>
+                    <xhtml:p></xhtml:p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="default-adapter-class" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation>
+                    <xhtml:p></xhtml:p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
 
     <xs:complexType name="feed-config">
         <xs:sequence>
             <xs:element name="author" type="sense:author" minOccurs="0" maxOccurs="1" />
+            <xs:element name="archive" type="sense:archive-marker" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
 
-        <xs:attribute name="title" type="xs:string" use="required" />
-        <xs:attribute name="resource" type="xs:string" use="required" />
+        <xs:attribute name="title" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>
+                    <xhtml:p></xhtml:p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="resource" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>
+                    <xhtml:p></xhtml:p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
 
-        <xs:attribute name="adapter-ref" type="xs:string" use="optional" />
-        <xs:attribute name="adapter-class" type="xs:string" use="optional" />
+        <xs:attribute name="adapter-ref" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation>
+                    <xhtml:p></xhtml:p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="adapter-class" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation>
+                    <xhtml:p></xhtml:p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="archive-marker">
+        <xs:attribute name="archiver-ref" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation>
+                    <xhtml:p></xhtml:p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+        <xs:attribute name="archiver-class" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation>
+                    <xhtml:p></xhtml:p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
 
     <xs:complexType name="author">
-        <xs:attribute name="name" type="xs:string" use="required" />
+        <xs:attribute name="name" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>
+                    <xhtml:p></xhtml:p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
 </xs:schema>

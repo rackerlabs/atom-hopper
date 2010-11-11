@@ -10,8 +10,11 @@
 
     <!-- http://localhost:8080/namespace_a/ -->
     <workspace title="A Testing Namespace" resource-base="/namespace_a/" default-adapter-ref="zf-adapter">
-        
+        <archive />
+
         <!-- http://localhost:8080/namespace_a/feed_1 -->
-        <feed title="feed_1" resource="/feed_1" />
+        <feed title="feed_1" resource="/feed_1">
+            <archive archiver-ref="" archiver-class="" />
+        </feed>
     </workspace>
 </sense-config>
