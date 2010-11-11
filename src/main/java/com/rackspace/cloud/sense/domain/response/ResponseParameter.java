@@ -9,7 +9,7 @@ package com.rackspace.cloud.sense.domain.response;
  * @author zinic
  */
 public enum ResponseParameter {
-
+    ENTRY_ID,
     MARKER,
     PAGE;
 
