@@ -1,7 +1,7 @@
 package com.rackspace.cloud.sense.client.adapter.archive;
 
 import com.rackspace.cloud.sense.domain.response.AdapterResponse;
-import java.util.Date;
+import java.util.Calendar;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.RequestContext;
 
@@ -20,12 +20,11 @@ public interface FeedArchiver {
      * @param date
      * @return
      */
-    AdapterResponse<Feed> getArchivedFeed(RequestContext request, Date date);
+    AdapterResponse<Feed> getArchivedFeed(RequestContext request, Calendar date);
 
     /**
      * 
      * @param date
-     * @param copy
      */
-    void archiveFeed(Date date, Feed copy);
+    void archiveFeed(Calendar date);
 }

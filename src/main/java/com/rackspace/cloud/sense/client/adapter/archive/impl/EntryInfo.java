@@ -4,6 +4,7 @@
  */
 package com.rackspace.cloud.sense.client.adapter.archive.impl;
 
+import java.util.Date;
 import org.apache.abdera.model.Entry;
 
 /**

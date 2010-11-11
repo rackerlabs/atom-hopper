@@ -12,9 +12,14 @@ import com.rackspace.cloud.sense.domain.response.EmptyBody;
 import com.rackspace.cloud.sense.domain.response.ResponseParameter;
 import com.rackspace.cloud.util.StringUtilities;
 import com.rackspace.cloud.util.http.HttpStatusCode;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.RequestContext;
@@ -25,15 +30,17 @@ import org.apache.abdera.protocol.server.RequestContext;
  */
 public class FileSystemFeedArchiver extends FeedSourceAdapterWrapper implements FeedArchiver {
 
+    private final String archiveDirectoryRoot;
     private final List<EntryInfo> entryList;
 
-    public FileSystemFeedArchiver(FeedSourceAdapter wrappedAdapter) {
+    public FileSystemFeedArchiver(FeedSourceAdapter wrappedAdapter, String archiveDirectoryRoot) {
         super(wrappedAdapter);
 
+        this.archiveDirectoryRoot = archiveDirectoryRoot;
         entryList = new LinkedList<EntryInfo>();
     }
 
-    public synchronized void addEntry(String entryId, Entry e) {
+    public synchronized void addEntry(String entryId, String entryUri, Entry e) {
         entryList.add(new EntryInfo(entryId, e));
     }
 
@@ -49,14 +56,56 @@ public class FileSystemFeedArchiver extends FeedSourceAdapterWrapper implements 
     }
 
     @Override
-    public void archiveFeed(Date date, Feed copy) {
-        final List<EntryInfo> feedSnapshot = cloneEntryList();
+    public void archiveFeed(Calendar date) {
+        final String destinationDirectory = StringUtilities.join(
+                archiveDirectoryRoot,
+                archiveDirectoryRoot.endsWith("/") ? "" : "/",
+                date.get(Calendar.YEAR), "/",
+                date.get(Calendar.MONTH), "/",
+                date.get(Calendar.DAY_OF_MONTH));
 
-        //TODO: Implement flushing archive to disk
+        final String destinationFile = StringUtilities.join(
+                destinationDirectory, "/",
+                date.get(Calendar.HOUR_OF_DAY), ".archive");
+
+        final File dir = new File(destinationDirectory);
+        final File file = new File(destinationFile);
+
+        if (!dir.exists()) {
+            if (!dir.mkdirs()) {
+                //TODO: Log directory creation failure
+            }
+        } else if (file.exists()) {
+            //TODO: Log this error
+        }
+
+        try {
+            final FileWriter fout = new FileWriter(file);
+
+            for (EntryInfo ei : cloneEntryList()) {
+                fout.write(StringUtilities.join("<!-- BEGIN ENTRY: ", ei.getId(), " -->\n"));
+                ei.getEntry().writeTo(fout);
+                fout.write(StringUtilities.join("<!-- END ENTRY -->\n"));
+            }
+        } catch (IOException ioe) {
+            //TODO: Log this
+        }
     }
 
     @Override
-    public AdapterResponse<Feed> getArchivedFeed(RequestContext request, Date date) {
+    public AdapterResponse<Feed> getArchivedFeed(RequestContext request, Calendar date) {
+        final String destinationFile = StringUtilities.join(
+                archiveDirectoryRoot,
+                archiveDirectoryRoot.endsWith("/") ? "" : "/",
+                date.get(Calendar.YEAR), "/",
+                date.get(Calendar.MONTH), "/",
+                date.get(Calendar.DAY_OF_MONTH), "/",
+                date.get(Calendar.HOUR_OF_DAY), ".archive");
+
+        final File archive = new File(destinationFile);
+
+//        Abdera.getNewParser()
+
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -65,7 +114,7 @@ public class FileSystemFeedArchiver extends FeedSourceAdapterWrapper implements 
         final AdapterResponse<Entry> response = getFeedSourceAdapter().putEntry(request, entryId, entryToUpdate);
 
         if (response.getResponseStatus() == HttpStatusCode.OK) {
-            addEntry(entryId, response.getBody());
+            addEntry(entryId, request.getUri().toString(), response.getBody());
         }
 
         return response;
@@ -79,7 +128,8 @@ public class FileSystemFeedArchiver extends FeedSourceAdapterWrapper implements 
             final String entryId = response.getParameter(ResponseParameter.ENTRY_ID);
 
             if (!StringUtilities.isBlank(entryId)) {
-                addEntry(entryId, response.getBody());
+                final String entryUri = request.getUri().toString();
+                addEntry(entryId, entryUri + (entryUri.endsWith("/") ? "" : "/") + entryId, response.getBody());
             } else {
                 //TODO: Log that an entry id was not returned
             }
