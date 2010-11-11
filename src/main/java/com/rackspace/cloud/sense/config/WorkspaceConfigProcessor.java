@@ -21,7 +21,6 @@ import static com.rackspace.cloud.util.StringUtilities.*;
 
 public class WorkspaceConfigProcessor {
 
-    private final Abdera abderaReference;
     private final ApplicationContextAdapter contextAdapter;
     private final WorkspaceConfig config;
     private final AdapterTools adapterTools;
@@ -29,7 +28,6 @@ public class WorkspaceConfigProcessor {
     public WorkspaceConfigProcessor(WorkspaceConfig workspace, ApplicationContextAdapter contextAdapter, Abdera abderaReference) {
         this.config = workspace;
         this.contextAdapter = contextAdapter;
-        this.abderaReference = abderaReference;
 
         adapterTools = new AbderaAdapterTools(abderaReference);
     }
@@ -54,12 +52,12 @@ public class WorkspaceConfigProcessor {
         final String namespace = StringUtilities.trim(config.getResourceBase(), "/");
 
         // service
-        regexTargetResolver.setPattern(join("/(", namespace, ")(\\?[^#]*)?"),
+        regexTargetResolver.setPattern(join("/(", namespace, ")/{0,1}(\\?[^#]*)?"),
                 TargetType.TYPE_SERVICE,
                 TargetResolverField.NAMESPACE.name());
 
         // categories
-        regexTargetResolver.setPattern(join("/(", namespace, ")([^/#?]+);categories"),
+        regexTargetResolver.setPattern(join("/(", namespace, ")/{0,1}([^/#?]+);categories"),
                 TargetType.TYPE_CATEGORIES,
                 TargetResolverField.NAMESPACE.name(),
                 TargetResolverField.CATEGORY.name());
@@ -91,11 +89,7 @@ public class WorkspaceConfigProcessor {
 
             final String resource = StringUtilities.trim(feed.getResource(), "/");
 
-            if (resource.contains("/")) {
-                throw new SenseConfigurationException("Feed resource definitions may not contain more than one specified resource (too many / characters)");
-            }
-
-            final String feedRegex = join("/(", namespace, ")/(", resource, ")/{1,}(\\?[^#]*)?");
+            final String feedRegex = join("/(", namespace, ")/(", resource, ")/{0,1}(\\?[^#]*)?");
             final String entryRegex = join("/(", namespace, ")/(", resource, ")/([^/#?]+)(\\?[^#]*)?");
 
             adapter.addTargetRegex(feedRegex);

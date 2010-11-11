@@ -5,7 +5,7 @@
 	xsi:schemaLocation="http://docs.rackspacecloud.com/cloud-sense/sense-config/v1.0 ./../../xsd/config/config.v1.0.xsd">
 
     <defaults>
-        <author name="Default Author" />
+        <author name="Rackspace Cloud" />
     </defaults>
 
     <!-- http://localhost:8080/namespace_a/ -->

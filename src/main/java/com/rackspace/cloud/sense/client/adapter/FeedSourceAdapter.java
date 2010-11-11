@@ -38,7 +38,7 @@ public interface FeedSourceAdapter {
 
     /**
      * Requests a single feed from the adapter. This request is scoped by both
-     * the page the request is asking for as well as an unique string ID that
+     * the page the request is asking for as well as a unique string ID that
      * represents a domain specific marker in the feed.
      *
      * @param request
