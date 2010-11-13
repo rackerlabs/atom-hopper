@@ -5,15 +5,19 @@
 package com.rackspace.cloud.sense.client.adapter.archive.impl;
 
 import com.rackspace.cloud.sense.client.adapter.AdapterTools;
-import com.rackspace.cloud.sense.client.adapter.FeedSourceAdapter;
+import com.rackspace.cloud.sense.client.adapter.ResponseBuilder;
 import com.rackspace.cloud.sense.client.adapter.archive.FeedArchiver;
 import com.rackspace.cloud.sense.domain.response.AdapterResponse;
 import com.rackspace.cloud.util.StringUtilities;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Calendar;
+import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Feed;
+import org.apache.abdera.parser.ParseException;
 import org.apache.abdera.protocol.server.RequestContext;
 
 /**
@@ -23,7 +27,6 @@ import org.apache.abdera.protocol.server.RequestContext;
 public class FileSystemFeedArchiver implements FeedArchiver {
 
     public static final String ARCHIVE_FILE_EXTENSION = ".archive.xml";
-
     private final String archiveDirectoryRoot;
     private AdapterTools adapterTools;
 
@@ -32,7 +35,7 @@ public class FileSystemFeedArchiver implements FeedArchiver {
     }
 
     @Override
-    public void init(AdapterTools tools, FeedSourceAdapter feedSourceAdapter) {
+    public void init(AdapterTools tools) {
         this.adapterTools = tools;
     }
 
@@ -81,8 +84,15 @@ public class FileSystemFeedArchiver implements FeedArchiver {
 
         final File archive = new File(destinationFile);
 
-        adapterTools.getAtomParser();
-
-        throw new UnsupportedOperationException("Not supported yet.");
+        try {
+            final Document<Feed> feedDoc = adapterTools.getAtomParser().parse(new FileInputStream(archive));
+            return ResponseBuilder.found(feedDoc.getRoot());
+        } catch (ParseException pe) {
+            //TODO: Log error
+            throw new RuntimeException();
+        } catch (FileNotFoundException fnfe) {
+            //TODO: Log error
+            throw new RuntimeException();
+        }
     }
 }

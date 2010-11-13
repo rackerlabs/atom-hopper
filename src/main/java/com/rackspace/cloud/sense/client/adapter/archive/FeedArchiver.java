@@ -1,7 +1,6 @@
 package com.rackspace.cloud.sense.client.adapter.archive;
 
 import com.rackspace.cloud.sense.client.adapter.AdapterTools;
-import com.rackspace.cloud.sense.client.adapter.FeedSourceAdapter;
 import com.rackspace.cloud.sense.domain.response.AdapterResponse;
 import java.util.Calendar;
 import org.apache.abdera.model.Feed;
@@ -22,7 +21,7 @@ public interface FeedArchiver {
      * @param tools
      * @param feedSourceAdapter
      */
-    void init(AdapterTools tools, FeedSourceAdapter feedSourceAdapter);
+    void init(AdapterTools tools);
 
     /**
      *
