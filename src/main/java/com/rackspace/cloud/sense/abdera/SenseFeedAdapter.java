@@ -1,5 +1,6 @@
 package com.rackspace.cloud.sense.abdera;
 
+import com.rackspace.cloud.sense.client.adapter.AdapterTools;
 import com.rackspace.cloud.sense.config.v1_0.FeedConfig;
 import org.apache.abdera.model.Document;
 import com.rackspace.cloud.sense.client.adapter.FeedSourceAdapter;
@@ -12,6 +13,7 @@ import com.rackspace.cloud.sense.domain.response.EmptyBody;
 import com.rackspace.cloud.sense.domain.response.AdapterResponse;
 import com.rackspace.cloud.sense.domain.response.ResponseParameter;
 import com.rackspace.cloud.util.StringUtilities;
+import com.rackspace.cloud.util.http.HttpStatusCode;
 import org.apache.abdera.model.Entry;
 
 import java.util.Date;
@@ -26,11 +28,13 @@ public class SenseFeedAdapter extends AbstractCollectionAdapter {
     private final FeedConfig feedConfig;
     private final RegexList feedTargets;
     private final FeedSourceAdapter configuredDatasourceAdapter;
+    private final FeedChangeTracker changeTracker;
 
     public SenseFeedAdapter(FeedConfig feedConfig, FeedSourceAdapter configuredDatasourceAdapter) {
         this.feedConfig = feedConfig;
         this.configuredDatasourceAdapter = configuredDatasourceAdapter;
 
+        changeTracker = new FeedChangeTracker();
         feedTargets = new RegexList();
     }
 
@@ -95,30 +99,56 @@ public class SenseFeedAdapter extends AbstractCollectionAdapter {
     public ResponseContext postEntry(RequestContext rc) {
         try {
             final Document<Entry> entryToPost = rc.getDocument();
+            final AdapterResponse<Entry> response = configuredDatasourceAdapter.postEntry(rc, entryToPost.getRoot());
 
-            return handleEntryResponse(rc, configuredDatasourceAdapter.postEntry(rc, entryToPost.getRoot()));
+            if (response.getResponseStatus() == HttpStatusCode.CREATED) {
+                final String entryId = response.getParameter(ResponseParameter.ENTRY_ID);
+
+                if (!StringUtilities.isBlank(entryId)) {
+                    changeTracker.putEntry(entryId, response.getBody());
+                } else {
+                    //TODO: Log that an entry id was not returned
+                }
+            }
+
+            return handleEntryResponse(rc, response);
         } catch (Throwable t) {
             return ProviderHelper.servererror(rc, t.getMessage(), t);
         }
     }
 
     @Override
-    public ResponseContext putEntry(RequestContext rc) {
-        try {
-            final Document<Entry> entryToUpdate = rc.getDocument();
+    public ResponseContext putEntry(RequestContext request) {
+        //TODO: Verify that ID capture works on this
 
-            return handleEntryResponse(rc, configuredDatasourceAdapter.putEntry(rc, rc.getParameter(TargetResolverField.ENTRY.name()), entryToUpdate.getRoot()));
+        try {
+            final Document<Entry> entryToUpdate = request.getDocument();
+            final String entryId = request.getParameter(TargetResolverField.ENTRY.name());
+
+            final AdapterResponse<Entry> response = configuredDatasourceAdapter.putEntry(request, entryId, entryToUpdate.getRoot());
+
+            if (response.getResponseStatus() == HttpStatusCode.OK) {
+                changeTracker.putEntry(entryId, response.getBody());
+            }
+
+            return handleEntryResponse(request, response);
         } catch (Throwable t) {
-            return ProviderHelper.servererror(rc, t.getMessage(), t);
+            return ProviderHelper.servererror(request, t.getMessage(), t);
         }
     }
 
     @Override
     public ResponseContext deleteEntry(RequestContext rc) {
-        final String entityId = rc.getTarget().getParameter(TargetResolverField.ENTRY.name());
+        final String entryId = rc.getTarget().getParameter(TargetResolverField.ENTRY.name());
 
         try {
-            return handleEmptyResponse(rc, configuredDatasourceAdapter.deleteEntry(rc, entityId));
+            final AdapterResponse<EmptyBody> response = configuredDatasourceAdapter.deleteEntry(rc, entryId);
+
+            if (response.getResponseStatus() == HttpStatusCode.OK) {
+                changeTracker.removeEntry(entryId);
+            }
+
+            return handleEmptyResponse(rc, response);
         } catch (Throwable t) {
             return ProviderHelper.servererror(rc, t.getMessage(), t);
         }

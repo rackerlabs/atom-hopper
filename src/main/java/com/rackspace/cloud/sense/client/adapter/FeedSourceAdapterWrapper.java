@@ -7,48 +7,49 @@ import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.RequestContext;
 
 public class FeedSourceAdapterWrapper implements FeedSourceAdapter {
-    private final FeedSourceAdapter internalAdapter;
 
-    public FeedSourceAdapterWrapper(FeedSourceAdapter internalAdapter) {
-        this.internalAdapter = internalAdapter;
+    private FeedSourceAdapter feedSourceAdapter;
+
+    public final void setFeedSourceAdapter(FeedSourceAdapter feedSourceAdapter) {
+        this.feedSourceAdapter = feedSourceAdapter;
     }
 
     public final FeedSourceAdapter getFeedSourceAdapter() {
-        return internalAdapter;
+        return feedSourceAdapter;
     }
 
     @Override
     public void setAdapterTools(AdapterTools tools) {
-        internalAdapter.setAdapterTools(tools);
+        feedSourceAdapter.setAdapterTools(tools);
     }
 
     @Override
     public AdapterResponse<Entry> putEntry(RequestContext request, String entryId, Entry entryToUpdate) throws UnsupportedOperationException {
-        return internalAdapter.putEntry(request, entryId, entryToUpdate);
+        return feedSourceAdapter.putEntry(request, entryId, entryToUpdate);
     }
 
     @Override
     public AdapterResponse<Entry> postEntry(RequestContext request, Entry entryToAdd) throws UnsupportedOperationException {
-        return internalAdapter.postEntry(request, entryToAdd);
+        return feedSourceAdapter.postEntry(request, entryToAdd);
     }
 
     @Override
     public AdapterResponse<Feed> getFeed(RequestContext request, int page, String markerId) throws UnsupportedOperationException {
-        return internalAdapter.getFeed(request, page, markerId);
+        return feedSourceAdapter.getFeed(request, page, markerId);
     }
 
     @Override
     public AdapterResponse<Feed> getFeed(RequestContext request) throws UnsupportedOperationException {
-        return internalAdapter.getFeed(request);
+        return feedSourceAdapter.getFeed(request);
     }
 
     @Override
     public AdapterResponse<Entry> getEntry(RequestContext request, String entryId) throws UnsupportedOperationException {
-        return internalAdapter.getEntry(request, entryId);
+        return feedSourceAdapter.getEntry(request, entryId);
     }
 
     @Override
     public AdapterResponse<EmptyBody> deleteEntry(RequestContext request, String id) throws UnsupportedOperationException {
-        return internalAdapter.deleteEntry(request, id);
+        return feedSourceAdapter.deleteEntry(request, id);
     }
 }
