@@ -25,9 +25,11 @@ import static com.rackspace.cloud.util.StringUtilities.*;
 public class WorkspaceConfigProcessor {
 
     private static final Logger log = new RCLogger(WorkspaceConfigProcessor.class);
+
     private final ApplicationContextAdapter contextAdapter;
     private final WorkspaceConfig config;
     private final AdapterTools adapterTools;
+
     private FeedSourceAdapter defaultNamespaceAdapter;
 
     public WorkspaceConfigProcessor(WorkspaceConfig workspace, ApplicationContextAdapter contextAdapter, Abdera abderaReference) {

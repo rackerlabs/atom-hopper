@@ -1,6 +1,5 @@
 package com.rackspace.cloud.sense.abdera;
 
-import com.rackspace.cloud.sense.client.adapter.AdapterTools;
 import com.rackspace.cloud.sense.config.v1_0.FeedConfig;
 import org.apache.abdera.model.Document;
 import com.rackspace.cloud.sense.client.adapter.FeedSourceAdapter;
@@ -14,6 +13,8 @@ import com.rackspace.cloud.sense.domain.response.AdapterResponse;
 import com.rackspace.cloud.sense.domain.response.ResponseParameter;
 import com.rackspace.cloud.util.StringUtilities;
 import com.rackspace.cloud.util.http.HttpStatusCode;
+import com.rackspace.cloud.util.logging.Logger;
+import com.rackspace.cloud.util.logging.RCLogger;
 import org.apache.abdera.model.Entry;
 
 import java.util.Date;
@@ -24,6 +25,8 @@ import org.apache.abdera.protocol.server.ResponseContext;
 import org.apache.abdera.protocol.server.impl.AbstractCollectionAdapter;
 
 public class SenseFeedAdapter extends AbstractCollectionAdapter {
+
+    private static final Logger log = new RCLogger(SenseFeedAdapter.class);
 
     private final FeedConfig feedConfig;
     private final RegexList feedTargets;
@@ -119,8 +122,6 @@ public class SenseFeedAdapter extends AbstractCollectionAdapter {
 
     @Override
     public ResponseContext putEntry(RequestContext request) {
-        //TODO: Verify that ID capture works on this
-
         try {
             final Document<Entry> entryToUpdate = request.getDocument();
             final String entryId = request.getParameter(TargetResolverField.ENTRY.name());
