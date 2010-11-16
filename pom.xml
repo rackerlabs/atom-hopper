@@ -11,7 +11,7 @@
 
     <groupId>com.rackspace.cloud.commons</groupId>
     <artifactId>atom-sense</artifactId>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <version>1.0.1-SNAPSHOT</version>
     <name>Rackspace Cloud SENSe</name>
