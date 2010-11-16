@@ -154,6 +154,6 @@ public class WorkspaceConfigProcessor {
             }
         }
 
-        return null;
+        return adapter;
     }
 }

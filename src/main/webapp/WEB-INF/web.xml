@@ -20,7 +20,7 @@
 
         <init-param>
             <param-name>sense-config-directory</param-name>
-            <param-value>/etc/rackspace-cloud/sense.d</param-value>
+            <param-value>/etc/rackspace-cloud/sense</param-value>
         </init-param>
 
         <init-param>
