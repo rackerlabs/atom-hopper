@@ -1,9 +1,9 @@
 package com.rackspace.cloud.sense.client.adapter;
 
+import com.rackspace.cloud.commons.util.http.HttpStatusCode;
 import com.rackspace.cloud.sense.domain.response.EmptyBody;
 import com.rackspace.cloud.sense.domain.response.FeedSourceAdapterResponse;
 import com.rackspace.cloud.sense.domain.response.AdapterResponse;
-import com.rackspace.cloud.util.http.HttpStatusCode;
 
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;

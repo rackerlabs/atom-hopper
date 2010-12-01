@@ -1,5 +1,9 @@
 package com.rackspace.cloud.sense.abdera;
 
+import com.rackspace.cloud.commons.logging.Logger;
+import com.rackspace.cloud.commons.logging.RCLogger;
+import com.rackspace.cloud.commons.util.StringUtilities;
+import com.rackspace.cloud.commons.util.http.HttpStatusCode;
 import com.rackspace.cloud.sense.config.v1_0.FeedConfig;
 import org.apache.abdera.model.Document;
 import com.rackspace.cloud.sense.client.adapter.FeedSourceAdapter;
@@ -11,10 +15,6 @@ import com.rackspace.cloud.sense.util.RegexList;
 import com.rackspace.cloud.sense.domain.response.EmptyBody;
 import com.rackspace.cloud.sense.domain.response.AdapterResponse;
 import com.rackspace.cloud.sense.domain.response.ResponseParameter;
-import com.rackspace.cloud.util.StringUtilities;
-import com.rackspace.cloud.util.http.HttpStatusCode;
-import com.rackspace.cloud.util.logging.Logger;
-import com.rackspace.cloud.util.logging.RCLogger;
 import org.apache.abdera.model.Entry;
 
 import java.util.Date;

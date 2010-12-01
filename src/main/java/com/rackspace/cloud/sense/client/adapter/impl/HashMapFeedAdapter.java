@@ -1,13 +1,13 @@
 package com.rackspace.cloud.sense.client.adapter.impl;
 
+import com.rackspace.cloud.commons.logging.Logger;
+import com.rackspace.cloud.commons.logging.RCLogger;
 import com.rackspace.cloud.sense.client.adapter.AdapterTools;
 import com.rackspace.cloud.sense.client.adapter.FeedSourceAdapter;
 import com.rackspace.cloud.sense.client.adapter.ResponseBuilder;
 import com.rackspace.cloud.sense.domain.response.EmptyBody;
 import com.rackspace.cloud.sense.domain.response.AdapterResponse;
 import com.rackspace.cloud.sense.domain.response.ResponseParameter;
-import com.rackspace.cloud.util.logging.Logger;
-import com.rackspace.cloud.util.logging.RCLogger;
 
 import java.util.Calendar;
 import java.util.HashMap;

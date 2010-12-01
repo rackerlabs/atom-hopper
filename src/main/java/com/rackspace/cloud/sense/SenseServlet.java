@@ -1,16 +1,16 @@
 package com.rackspace.cloud.sense;
 
-import com.rackspace.cloud.util.servlet.context.ApplicationContextAdapter;
+import com.rackspace.cloud.commons.config.ConfigurationParserException;
+import com.rackspace.cloud.commons.config.jaxb.JAXBConfigurationParser;
+import com.rackspace.cloud.commons.logging.Logger;
+import com.rackspace.cloud.commons.logging.RCLogger;
+import com.rackspace.cloud.commons.util.servlet.context.ApplicationContextAdapter;
 import com.rackspace.cloud.sense.config.v1_0.SenseConfig;
-import com.rackspace.cloud.powerapi.config.ConfigurationParserException;
-import com.rackspace.cloud.powerapi.config.jaxb.JAXBConfigurationParser;
 import com.rackspace.cloud.sense.exceptions.ServletInitException;
 import com.rackspace.cloud.sense.abdera.SenseWorkspaceProvider;
 import com.rackspace.cloud.sense.config.WorkspaceConfigProcessor;
 import com.rackspace.cloud.sense.config.v1_0.WorkspaceConfig;
 import com.rackspace.cloud.sense.exceptions.ContextAdapterResolutionException;
-import com.rackspace.cloud.util.logging.Logger;
-import com.rackspace.cloud.util.logging.RCLogger;
 import java.util.HashMap;
 import javax.servlet.ServletException;
 import org.apache.abdera.Abdera;
@@ -77,16 +77,16 @@ public final class SenseServlet extends AbderaServlet {
 
     @Override
     protected Provider createProvider() {
-        final SenseWorkspaceProvider provider = new SenseWorkspaceProvider();
+        final SenseWorkspaceProvider senseProvider = new SenseWorkspaceProvider();
 
         //TODO: Provide property injection via config here
-        provider.init(abderaObject, new HashMap<String, String>());
+        senseProvider.init(abderaObject, new HashMap<String, String>());
 
         for (WorkspaceConfig workspaceCfg : configuration.getWorkspace()) {
-            provider.getWorkspaceManager().addWorkspace(
+            senseProvider.getWorkspaceManager().addWorkspace(
                     new WorkspaceConfigProcessor(workspaceCfg, applicationContextAdapter, abderaObject).toHandler());
         }
 
-        return provider;
+        return senseProvider;
     }
 }

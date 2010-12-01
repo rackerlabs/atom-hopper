@@ -1,6 +1,6 @@
 package com.rackspace.cloud.sense.domain.response;
 
-import com.rackspace.cloud.util.http.HttpStatusCode;
+import com.rackspace.cloud.commons.util.http.HttpStatusCode;
 
 public interface AdapterResponse<T> {
 

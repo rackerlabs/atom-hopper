@@ -1,7 +1,7 @@
 package com.rackspace.cloud.sense.abdera;
 
-import com.rackspace.cloud.util.logging.Logger;
-import com.rackspace.cloud.util.logging.RCLogger;
+import com.rackspace.cloud.commons.logging.Logger;
+import com.rackspace.cloud.commons.logging.RCLogger;
 import java.util.ArrayList;
 
 import java.util.Arrays;

@@ -30,7 +30,6 @@
         </license>
     </licenses>
 
-
     <dependencies>
         <dependency>
             <groupId>com.rackspace.cloud.commons</groupId>

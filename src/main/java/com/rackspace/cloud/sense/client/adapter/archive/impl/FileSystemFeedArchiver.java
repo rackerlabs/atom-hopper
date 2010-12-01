@@ -4,11 +4,11 @@
  */
 package com.rackspace.cloud.sense.client.adapter.archive.impl;
 
+import com.rackspace.cloud.commons.util.StringUtilities;
 import com.rackspace.cloud.sense.client.adapter.AdapterTools;
 import com.rackspace.cloud.sense.client.adapter.ResponseBuilder;
 import com.rackspace.cloud.sense.client.adapter.archive.FeedArchiver;
 import com.rackspace.cloud.sense.domain.response.AdapterResponse;
-import com.rackspace.cloud.util.StringUtilities;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

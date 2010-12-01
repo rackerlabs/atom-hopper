@@ -1,8 +1,11 @@
 package com.rackspace.cloud.sense.config;
 
+import com.rackspace.cloud.commons.logging.Logger;
+import com.rackspace.cloud.commons.logging.RCLogger;
+import com.rackspace.cloud.commons.util.StringUtilities;
+import com.rackspace.cloud.commons.util.reflection.ReflectionTools;
+import com.rackspace.cloud.commons.util.servlet.context.ApplicationContextAdapter;
 import com.rackspace.cloud.sense.abdera.AbderaAdapterTools;
-import com.rackspace.cloud.util.StringUtilities;
-import com.rackspace.cloud.util.servlet.context.ApplicationContextAdapter;
 import org.apache.abdera.protocol.server.impl.TemplateTargetBuilder;
 import com.rackspace.cloud.sense.abdera.SenseFeedAdapter;
 import com.rackspace.cloud.sense.abdera.TargetResolverField;
@@ -10,17 +13,12 @@ import com.rackspace.cloud.sense.client.adapter.AdapterTools;
 import com.rackspace.cloud.sense.client.adapter.FeedSourceAdapter;
 import com.rackspace.cloud.sense.config.v1_0.FeedConfig;
 import com.rackspace.cloud.sense.config.v1_0.WorkspaceConfig;
-import com.rackspace.cloud.util.logging.Logger;
-import com.rackspace.cloud.util.logging.RCLogger;
-import com.rackspace.cloud.util.reflection.ReflectionTools;
 
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.abdera.Abdera;
 import org.apache.abdera.protocol.server.TargetType;
 import org.apache.abdera.protocol.server.impl.RegexTargetResolver;
-
-import static com.rackspace.cloud.util.StringUtilities.*;
 
 public class WorkspaceConfigProcessor {
 
@@ -61,12 +59,12 @@ public class WorkspaceConfigProcessor {
         final String namespace = StringUtilities.trim(config.getResourceBase(), "/");
 
         // service
-        regexTargetResolver.setPattern(join("/(", namespace, ")/{0,1}(\\?[^#]*)?"),
+        regexTargetResolver.setPattern(StringUtilities.join("/(", namespace, ")/{0,1}(\\?[^#]*)?"),
                 TargetType.TYPE_SERVICE,
                 TargetResolverField.NAMESPACE.name());
 
         // categories
-        regexTargetResolver.setPattern(join("/(", namespace, ")/{0,1}([^/#?]+);categories"),
+        regexTargetResolver.setPattern(StringUtilities.join("/(", namespace, ")/{0,1}([^/#?]+);categories"),
                 TargetType.TYPE_CATEGORIES,
                 TargetResolverField.NAMESPACE.name(),
                 TargetResolverField.CATEGORY.name());
@@ -99,8 +97,8 @@ public class WorkspaceConfigProcessor {
 
             final String resource = StringUtilities.trim(feed.getResource(), "/");
 
-            final String feedRegex = join("/(", namespace, ")/(", resource, ")/{0,1}(\\?[^#]*)?");
-            final String entryRegex = join("/(", namespace, ")/(", resource, ")/([^/#?]+)(\\?[^#]*)?");
+            final String feedRegex = StringUtilities.join("/(", namespace, ")/(", resource, ")/{0,1}(\\?[^#]*)?");
+            final String entryRegex = StringUtilities.join("/(", namespace, ")/(", resource, ")/([^/#?]+)(\\?[^#]*)?");
 
             adapter.addTargetRegex(feedRegex);
             adapter.addTargetRegex(entryRegex);
@@ -134,9 +132,9 @@ public class WorkspaceConfigProcessor {
     }
 
     private FeedSourceAdapter getFeedAdapterFromAppContext(String adapterReference, String className) {
-        FeedSourceAdapter adapter = !isBlank(adapterReference) ? contextAdapter.fromContext(adapterReference, FeedSourceAdapter.class) : null;
+        FeedSourceAdapter adapter = !StringUtilities.isBlank(adapterReference) ? contextAdapter.fromContext(adapterReference, FeedSourceAdapter.class) : null;
 
-        if (adapter != null && !isBlank(className)) {
+        if (adapter != null && !StringUtilities.isBlank(className)) {
             try {
                 final Class datasourceAdapterClass = Class.forName(className);
 
