@@ -38,7 +38,7 @@ public final class SenseServlet extends AbderaServlet {
         try {
             log.info("Reading configuration file: " + configLocation);
 
-            configuration = JAXBConfigurationParser.fromFile(configLocation, SenseConfig.class, "com.rackspace.cloud.sense.config.v1_0").read();
+            configuration = JAXBConfigurationParser.fromFile(configLocation, SenseConfig.class, com.rackspace.cloud.sense.config.v1_0.ObjectFactory.class).read();
         } catch (ConfigurationParserException cpe) {
             throw log.newException("Failed to read configuration file: " + configLocation, cpe, ServletInitException.class);
         }
