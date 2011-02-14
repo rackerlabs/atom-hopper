@@ -69,6 +69,7 @@ public class SenseFeedAdapter extends AbstractCollectionAdapter {
     @Override
     //TODO: Reimplement this
     public String getId(RequestContext rc) {
+        
 //        return new StringBuilder("tag:").append(feedConfig.getFullUri()).append(",").append(CALENDAR_INSTANCE.get(Calendar.YEAR)).append(":").append(config.getBaseUrn()).toString();
         return "TODO: ID";
     }
@@ -110,7 +111,7 @@ public class SenseFeedAdapter extends AbstractCollectionAdapter {
                 if (!StringUtilities.isBlank(entryId)) {
                     changeTracker.putEntry(entryId, response.getBody());
                 } else {
-                    //TODO: Log that an entry id was not returned
+                    log.warn("New ID for Entry Update was not returned. Please verify that your adapter returns an ENTRY_ID in its parameter map");
                 }
             }
 

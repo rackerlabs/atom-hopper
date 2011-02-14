@@ -9,8 +9,12 @@ import com.rackspace.cloud.sense.abdera.AbderaAdapterTools;
 import org.apache.abdera.protocol.server.impl.TemplateTargetBuilder;
 import com.rackspace.cloud.sense.abdera.SenseFeedAdapter;
 import com.rackspace.cloud.sense.abdera.TargetResolverField;
+import com.rackspace.cloud.sense.archive.FeedArchivalService;
 import com.rackspace.cloud.sense.client.adapter.AdapterTools;
 import com.rackspace.cloud.sense.client.adapter.FeedSourceAdapter;
+import com.rackspace.cloud.sense.client.adapter.archive.FeedArchiver;
+import com.rackspace.cloud.sense.client.adapter.archive.impl.FileSystemFeedArchiver;
+import com.rackspace.cloud.sense.config.v1_0.ArchiveMarker;
 import com.rackspace.cloud.sense.config.v1_0.FeedConfig;
 import com.rackspace.cloud.sense.config.v1_0.WorkspaceConfig;
 
@@ -23,16 +27,20 @@ import org.apache.abdera.protocol.server.impl.RegexTargetResolver;
 public class WorkspaceConfigProcessor {
 
     private static final Logger log = new RCLogger(WorkspaceConfigProcessor.class);
-
+    
+    private final FeedArchivalService feedArchivalService;
     private final ApplicationContextAdapter contextAdapter;
     private final WorkspaceConfig config;
     private final AdapterTools adapterTools;
-
+    
+    private FeedArchiver defaultArchiver;
     private FeedSourceAdapter defaultNamespaceAdapter;
 
     public WorkspaceConfigProcessor(WorkspaceConfig workspace, ApplicationContextAdapter contextAdapter, Abdera abderaReference) {
         this.config = workspace;
         this.contextAdapter = contextAdapter;
+
+        feedArchivalService = new FeedArchivalService();
 
         adapterTools = new AbderaAdapterTools(abderaReference);
     }
@@ -44,7 +52,8 @@ public class WorkspaceConfigProcessor {
 
         final WorkspaceHandler workspace = new WorkspaceHandler(config, regexTargetResolver, templateTargetBuilder);
 
-        defaultNamespaceAdapter = getFeedAdapterFromAppContext(config.getDefaultAdapterRef(), config.getDefaultAdapterClass());
+        defaultNamespaceAdapter = getFromAppContext(config.getDefaultAdapterRef(), config.getDefaultAdapterClass(), FeedSourceAdapter.class);
+        defaultArchiver = getWorkspaceFeedArchiver(config);
 
         for (SenseFeedAdapter collectionAdapter : assembleServices(config.getFeed(), namespaceCollectionAdapters, regexTargetResolver, templateTargetBuilder)) {
             workspace.addCollectionAdapter(collectionAdapter);
@@ -94,7 +103,8 @@ public class WorkspaceConfigProcessor {
             feedSource.setAdapterTools(adapterTools);
 
             final SenseFeedAdapter adapter = new SenseFeedAdapter(feed, feedSource);
-
+            final FeedArchiver archiver = getFeedArchiver(feed);
+            
             final String resource = StringUtilities.trim(feed.getResource(), "/");
 
             final String feedRegex = StringUtilities.join("/(", namespace, ")/(", resource, ")/{0,1}(\\?[^#]*)?");
@@ -121,8 +131,32 @@ public class WorkspaceConfigProcessor {
         return collections;
     }
 
+    private FeedArchiver getFeedArchiver(FeedConfig feed) {
+        if (feed.getArchive() != null) {
+            final ArchiveMarker feedArchive = feed.getArchive();
+
+            return getFromAppContext(feedArchive.getArchiverRef(), feedArchive.getArchiverClass(), FeedArchiver.class);
+        }
+
+        return defaultArchiver;
+    }
+
+    private FeedArchiver getWorkspaceFeedArchiver(WorkspaceConfig workspace) {
+        final ArchiveMarker archiveConfig = workspace.getArchive();
+
+        if (archiveConfig != null) {
+            if (!StringUtilities.isBlank(archiveConfig.getArchiverClass())) {
+                return getFromAppContext(archiveConfig.getArchiverRef(), archiveConfig.getArchiverClass(), FeedArchiver.class);
+            } else if (StringUtilities.isBlank(archiveConfig.getArchiverRef())) {
+                return new FileSystemFeedArchiver(null); //TODO: Add dir configuration for this
+            }
+        }
+
+        return null;
+    }
+
     private FeedSourceAdapter getFeedSourceAdapter(FeedConfig feed) {
-        final FeedSourceAdapter feedSpecificAdapter = getFeedAdapterFromAppContext(feed.getAdapterRef(), feed.getAdapterClass());
+        final FeedSourceAdapter feedSpecificAdapter = getFromAppContext(feed.getAdapterRef(), feed.getAdapterClass(), FeedSourceAdapter.class);
 
         if (feedSpecificAdapter == null && defaultNamespaceAdapter == null) {
             throw new SenseConfigurationException("Failed to find or build an appropriate FeedSourceAdapter for feed: " + feed.getTitle());
@@ -131,27 +165,28 @@ public class WorkspaceConfigProcessor {
         return feedSpecificAdapter != null ? feedSpecificAdapter : defaultNamespaceAdapter;
     }
 
-    private FeedSourceAdapter getFeedAdapterFromAppContext(String adapterReference, String className) {
-        FeedSourceAdapter adapter = !StringUtilities.isBlank(adapterReference) ? contextAdapter.fromContext(adapterReference, FeedSourceAdapter.class) : null;
+    private <T> T getFromAppContext(String referenceName, String absoluteClassName, Class<T> parentClassDefinition) {
+        T objectFromContext = !StringUtilities.isBlank(referenceName) ? contextAdapter.fromContext(referenceName, parentClassDefinition) : null;
 
-        if (adapter != null && !StringUtilities.isBlank(className)) {
+        if (objectFromContext == null && !StringUtilities.isBlank(absoluteClassName)) {
             try {
-                final Class datasourceAdapterClass = Class.forName(className);
+                final Class<?> configuredClass = Class.forName(absoluteClassName);
 
-                if (!FeedSourceAdapter.class.isAssignableFrom(datasourceAdapterClass)) {
-                    throw new IllegalArgumentException("Class: " + datasourceAdapterClass.getCanonicalName() + " does not implement " + FeedSourceAdapter.class.getCanonicalName());
+                if (!configuredClass.isAssignableFrom(parentClassDefinition)) {
+                    throw new IllegalArgumentException("Class: " + configuredClass.getCanonicalName() + " does not implement or extend " + parentClassDefinition.getCanonicalName());
                 }
 
-                final FeedSourceAdapter contextSourcedAdapter = contextAdapter.fromContext((Class<FeedSourceAdapter>) datasourceAdapterClass);
+                final T instance = contextAdapter.fromContext((Class<? extends T>) configuredClass);
 
-                adapter = contextSourcedAdapter != null ? contextSourcedAdapter : (FeedSourceAdapter) ReflectionTools.construct(datasourceAdapterClass, new Object[0]);
-            } catch (ClassNotFoundException classNotFoundException) {
-                throw log.newException("Class: " + className + " can not be found. Please check your configuration.", classNotFoundException, SenseConfigurationException.class);
+                objectFromContext = instance != null ? instance : (T) ReflectionTools.construct(configuredClass, new Object[0]);
+            } catch (ClassNotFoundException cnfe) {
+                throw log.newException("Class: " + absoluteClassName + " can not be found. Please check your configuration.", cnfe, SenseConfigurationException.class);
             } catch (Throwable t) {
-                throw log.newException("Error occured while trying to build FeedSourceAdapters. Please check your configuration. Reason: " + t.getMessage(), SenseConfigurationException.class);
+                throw log.newException("Error occured while trying to source class information. Please check your configuration. Reason: " + t.getMessage(), SenseConfigurationException.class);
             }
         }
 
-        return adapter;
+
+        return objectFromContext;
     }
 }

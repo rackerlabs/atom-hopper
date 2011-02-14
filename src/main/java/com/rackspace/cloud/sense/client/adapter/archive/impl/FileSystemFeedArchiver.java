@@ -4,9 +4,12 @@
  */
 package com.rackspace.cloud.sense.client.adapter.archive.impl;
 
+import com.rackspace.cloud.commons.logging.Logger;
+import com.rackspace.cloud.commons.logging.RCLogger;
 import com.rackspace.cloud.commons.util.StringUtilities;
 import com.rackspace.cloud.sense.client.adapter.AdapterTools;
 import com.rackspace.cloud.sense.client.adapter.ResponseBuilder;
+import com.rackspace.cloud.sense.client.adapter.archive.ArchiveProcessingException;
 import com.rackspace.cloud.sense.client.adapter.archive.FeedArchiver;
 import com.rackspace.cloud.sense.domain.response.AdapterResponse;
 import java.io.File;
@@ -25,6 +28,8 @@ import org.apache.abdera.protocol.server.RequestContext;
  * @author zinic
  */
 public class FileSystemFeedArchiver implements FeedArchiver {
+    
+    private static final Logger log = new RCLogger(FileSystemFeedArchiver.class);
 
     public static final String ARCHIVE_FILE_EXTENSION = ".archive.xml";
     private final String archiveDirectoryRoot;
@@ -57,10 +62,10 @@ public class FileSystemFeedArchiver implements FeedArchiver {
 
         if (!dir.exists()) {
             if (!dir.mkdirs()) {
-                //TODO: Log directory creation failure
+                log.error("Unable to create archive directory, \"" + dir.getAbsolutePath() + "\"  --  Please check directory permissions");
             }
         } else if (file.exists()) {
-            //TODO: Log this error
+            //TODO: Log this error?
         }
 
         try {
@@ -88,11 +93,9 @@ public class FileSystemFeedArchiver implements FeedArchiver {
             final Document<Feed> feedDoc = adapterTools.getAtomParser().parse(new FileInputStream(archive));
             return ResponseBuilder.found(feedDoc.getRoot());
         } catch (ParseException pe) {
-            //TODO: Log error
-            throw new RuntimeException();
+            throw log.newException("Parsing archive failed. Reason: " + pe.getMessage(), pe, ArchiveProcessingException.class);
         } catch (FileNotFoundException fnfe) {
-            //TODO: Log error
-            throw new RuntimeException();
+            throw log.newException("Archive not found.", fnfe, ArchiveProcessingException.class);
         }
     }
 }

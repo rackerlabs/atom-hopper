@@ -4,7 +4,6 @@
  */
 package com.rackspace.cloud.sense.abdera;
 
-import com.rackspace.cloud.sense.client.adapter.AdapterTools;
 import com.rackspace.cloud.sense.client.adapter.archive.impl.EntryInfo;
 import java.util.LinkedList;
 import java.util.List;
