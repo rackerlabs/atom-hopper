@@ -94,8 +94,8 @@ public class SenseFeedAdapter extends AbstractCollectionAdapter {
             return ProviderHelper.notallowed(rc, uoe.getMessage(), new String[0]); //TODO: Fix this var-args bullshit
         } catch (NumberFormatException nfe) {
             return ProviderHelper.badrequest(rc, "Page requested is not a number");
-        } catch (Throwable t) {
-            return ProviderHelper.servererror(rc, t.getMessage(), t);
+        } catch (Exception ex) {
+            return ProviderHelper.servererror(rc, ex.getMessage(), ex);
         }
     }
 
@@ -116,8 +116,8 @@ public class SenseFeedAdapter extends AbstractCollectionAdapter {
             }
 
             return handleEntryResponse(rc, response);
-        } catch (Throwable t) {
-            return ProviderHelper.servererror(rc, t.getMessage(), t);
+        } catch (Exception ex) {
+            return ProviderHelper.servererror(rc, ex.getMessage(), ex);
         }
     }
 
@@ -134,8 +134,8 @@ public class SenseFeedAdapter extends AbstractCollectionAdapter {
             }
 
             return handleEntryResponse(request, response);
-        } catch (Throwable t) {
-            return ProviderHelper.servererror(request, t.getMessage(), t);
+        } catch (Exception ex) {
+            return ProviderHelper.servererror(request, ex.getMessage(), ex);
         }
     }
 
@@ -151,8 +151,8 @@ public class SenseFeedAdapter extends AbstractCollectionAdapter {
             }
 
             return handleEmptyResponse(rc, response);
-        } catch (Throwable t) {
-            return ProviderHelper.servererror(rc, t.getMessage(), t);
+        } catch (Exception ex) {
+            return ProviderHelper.servererror(rc, ex.getMessage(), ex);
         }
     }
 
@@ -162,8 +162,8 @@ public class SenseFeedAdapter extends AbstractCollectionAdapter {
 
         try {
             return handleEntryResponse(rc, configuredDatasourceAdapter.getEntry(rc, entityId));
-        } catch (Throwable t) {
-            return ProviderHelper.servererror(rc, t.getMessage(), t);
+        } catch (Exception ex) {
+            return ProviderHelper.servererror(rc, ex.getMessage(), ex);
         }
     }
 

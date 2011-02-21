@@ -181,8 +181,8 @@ public class WorkspaceConfigProcessor {
                 objectFromContext = instance != null ? instance : (T) ReflectionTools.construct(configuredClass, new Object[0]);
             } catch (ClassNotFoundException cnfe) {
                 throw log.newException("Class: " + absoluteClassName + " can not be found. Please check your configuration.", cnfe, SenseConfigurationException.class);
-            } catch (Throwable t) {
-                throw log.newException("Error occured while trying to source class information. Please check your configuration. Reason: " + t.getMessage(), SenseConfigurationException.class);
+            } catch (Exception ex) {
+                throw log.newException("Error occured while trying to source class information. Please check your configuration. Reason: " + ex.getMessage(), SenseConfigurationException.class);
             }
         }
 

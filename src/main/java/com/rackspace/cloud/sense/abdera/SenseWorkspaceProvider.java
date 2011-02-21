@@ -121,22 +121,22 @@ public class SenseWorkspaceProvider implements Provider {
             transactionStart(transaction, request);
             response = processor.process(request, wm, adapter);
             response = response != null ? response : processExtensionRequest(request, adapter);
-        } catch (Throwable e) {
-            if (e instanceof ResponseContextException) {
-                final ResponseContextException rce = (ResponseContextException) e;
+        } catch (Exception ex) {
+            if (ex instanceof ResponseContextException) {
+                final ResponseContextException rce = (ResponseContextException) ex;
 
                 if (rce.getStatusCode() >= 400 && rce.getStatusCode() < 500) {
                     // don't report routine 4xx HTTP errors
-                    log.info(e);
+                    log.info(ex);
                 } else {
-                    log.error(e);
+                    log.error(ex);
                 }
             } else {
-                log.error(e);
+                log.error(ex);
             }
 
-            transactionCompensate(transaction, request, e);
-            response = createErrorResponse(request, e);
+            transactionCompensate(transaction, request, ex);
+            response = createErrorResponse(request, ex);
             return response;
         } finally {
             transactionEnd(transaction, request, response);

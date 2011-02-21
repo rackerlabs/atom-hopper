@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
@@ -155,6 +156,13 @@
         </repository>
     </repositories>
 
+    <pluginRepositories>
+        <pluginRepository>
+            <id>repos.rackspace.cloud.public</id>
+            <url>http://184.106.178.199/m2/content/groups/public/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
     <build>
         <pluginManagement>
             <plugins>
@@ -199,30 +207,27 @@
             </plugin>
 
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>jaxb2-maven-plugin</artifactId>
+                <groupId>com.sun.tools.xjc.maven2</groupId>
+                <artifactId>maven-jaxb-plugin</artifactId>
+                <version>1.1.1</version>
+
+                <configuration>
+                    <includeSchemas>
+                        <includeSchema>**/*.xsd</includeSchema>
+                    </includeSchemas>
+
+                    <includeBindings>
+                        <includeBinding>**/*.xjb</includeBinding>
+                    </includeBindings>
+
+                    <strict>true</strict>
+                    <verbose>true</verbose>
+                </configuration>
 
                 <executions>
                     <execution>
-                        <id>sense-config</id>
-
-                        <configuration>
-                            <extension>true</extension>
-
-                            <staleFile>target/sense-config.staleFile</staleFile>
-                            
-                            <schemaDirectory>
-                                ${basedir}/src/main/resources/META-INF/schema/config
-                            </schemaDirectory>
-
-                            <clearOutputDir>false</clearOutputDir>
-                            <schemaFiles>config.v1.0.xsd</schemaFiles>
-                            
-                            <packageName>com.rackspace.cloud.sense.config.v1_0</packageName>
-                        </configuration>
-
                         <goals>
-                            <goal>xjc</goal>
+                            <goal>generate</goal>
                         </goals>
                     </execution>
                 </executions>
