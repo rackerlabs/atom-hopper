@@ -9,7 +9,7 @@ import com.rackspace.cloud.sense.abdera.AbderaAdapterTools;
 import org.apache.abdera.protocol.server.impl.TemplateTargetBuilder;
 import com.rackspace.cloud.sense.abdera.SenseFeedAdapter;
 import com.rackspace.cloud.sense.abdera.TargetResolverField;
-import com.rackspace.cloud.sense.archive.FeedArchivalService;
+import com.rackspace.cloud.sense.archive.QueuingFeedArchivalService;
 import com.rackspace.cloud.sense.client.adapter.AdapterTools;
 import com.rackspace.cloud.sense.client.adapter.FeedSourceAdapter;
 import com.rackspace.cloud.sense.client.adapter.archive.FeedArchiver;
@@ -28,7 +28,7 @@ public class WorkspaceConfigProcessor {
 
     private static final Logger log = new RCLogger(WorkspaceConfigProcessor.class);
     
-    private final FeedArchivalService feedArchivalService;
+    private final QueuingFeedArchivalService feedArchivalService;
     private final ApplicationContextAdapter contextAdapter;
     private final WorkspaceConfig config;
     private final AdapterTools adapterTools;
@@ -40,7 +40,7 @@ public class WorkspaceConfigProcessor {
         this.config = workspace;
         this.contextAdapter = contextAdapter;
 
-        feedArchivalService = new FeedArchivalService();
+        feedArchivalService = new QueuingFeedArchivalService(workspace);
 
         adapterTools = new AbderaAdapterTools(abderaReference);
     }

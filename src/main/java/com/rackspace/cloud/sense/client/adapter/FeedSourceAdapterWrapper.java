@@ -2,6 +2,7 @@ package com.rackspace.cloud.sense.client.adapter;
 
 import com.rackspace.cloud.sense.domain.response.AdapterResponse;
 import com.rackspace.cloud.sense.domain.response.EmptyBody;
+import java.util.Calendar;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.RequestContext;
@@ -34,8 +35,13 @@ public class FeedSourceAdapterWrapper implements FeedSourceAdapter {
     }
 
     @Override
-    public AdapterResponse<Feed> getFeed(RequestContext request, int page, String markerId) throws UnsupportedOperationException {
-        return feedSourceAdapter.getFeed(request, page, markerId);
+    public AdapterResponse<Feed> getFeedPage(RequestContext request, int page, String markerId) throws UnsupportedOperationException {
+        return feedSourceAdapter.getFeedPage(request, page, markerId);
+    }
+
+    @Override
+    public AdapterResponse<Feed> getFeed(Calendar lastEntry) throws UnsupportedOperationException {
+        return feedSourceAdapter.getFeed(lastEntry);
     }
 
     @Override

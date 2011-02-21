@@ -2,6 +2,7 @@ package com.rackspace.cloud.sense.client.adapter;
 
 import com.rackspace.cloud.sense.domain.response.EmptyBody;
 import com.rackspace.cloud.sense.domain.response.AdapterResponse;
+import java.util.Calendar;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.RequestContext;
@@ -21,6 +22,8 @@ public interface FeedSourceAdapter {
      * @param tools
      */
     void setAdapterTools(AdapterTools tools);
+
+    AdapterResponse<Feed> getFeed(Calendar lastEntry) throws UnsupportedOperationException;
 
     /**
      * Requests a single feed from the adapter. The request does not contain
@@ -42,12 +45,12 @@ public interface FeedSourceAdapter {
      * represents a domain specific marker in the feed.
      *
      * @param request
-     * 
+     *
      * @param page
      * Number of the page being requested.
-     * 
+     *
      * @param markerId
-     * Unique ID of the marker which may be interpreted by the adapter in a 
+     * Unique ID of the marker which may be interpreted by the adapter in a
      * domain specific way. The marker may be null if it is not set.
      *
      * @return
@@ -55,7 +58,8 @@ public interface FeedSourceAdapter {
      * @throws UnsupportedOperationException
      * Adapters may throw UnsupportOperationExceptions if they do not support the operation
      */
-    AdapterResponse<Feed> getFeed(RequestContext request, int page, String markerId) throws UnsupportedOperationException;
+    AdapterResponse<Feed> getFeedPage(RequestContext request, int page, String markerId) throws UnsupportedOperationException;
+
 
     /**
      * Requests a single entry from the adapter. This request is scoped by the

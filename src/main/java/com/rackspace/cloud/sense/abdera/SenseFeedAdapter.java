@@ -86,7 +86,7 @@ public class SenseFeedAdapter extends AbstractCollectionAdapter {
 
         try {
             if (!StringUtilities.isBlank(pageRequested)) {
-                return handleFeedResponse(rc, configuredDatasourceAdapter.getFeed(rc, Integer.parseInt(pageRequested), lastEntryId));
+                return handleFeedResponse(rc, configuredDatasourceAdapter.getFeedPage(rc, Integer.parseInt(pageRequested), lastEntryId));
             } else {
                 return handleFeedResponse(rc, configuredDatasourceAdapter.getFeed(rc));
             }

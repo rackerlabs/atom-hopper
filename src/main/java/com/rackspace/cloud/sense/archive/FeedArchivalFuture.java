@@ -4,17 +4,15 @@
  */
 package com.rackspace.cloud.sense.archive;
 
-import net.jps.fava.function;
-
 /**
  *
  * @author zinic
  */
 public interface FeedArchivalFuture {
 
-    void onCompletion(function f);
+    void onCompletion(FeedArchivalFutureListener f);
 
     boolean hasCompletionCallback();
     
-    function getCompletionCallback();
+    FeedArchivalFutureListener completionCallback();
 }

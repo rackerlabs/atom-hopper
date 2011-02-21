@@ -17,14 +17,12 @@ public class FeedArchivalRequest {
     private final Feed feedBeingArchived;
     private final Calendar archivalTime;
     private final FeedArchiver archiver;
-    private final FeedArchivalFuture archivalFuture;
+
 
     public FeedArchivalRequest(FeedArchiver archiver, Feed feedBeingArchived, Calendar archivalTime) {
         this.feedBeingArchived = feedBeingArchived;
         this.archivalTime = archivalTime;
         this.archiver = archiver;
-        
-        archivalFuture = new FeedArchivalFutureImpl();
     }
 
     public FeedArchiver getArchiver() {
@@ -37,9 +35,5 @@ public class FeedArchivalRequest {
 
     public Feed getFeedBeingArchived() {
         return feedBeingArchived;
-    }
-
-    public FeedArchivalFuture getArchivalFuture() {
-        return archivalFuture;
     }
 }
