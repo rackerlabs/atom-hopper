@@ -8,7 +8,6 @@ import com.rackspace.cloud.commons.logging.Logger;
 import com.rackspace.cloud.commons.logging.RCLogger;
 import com.rackspace.cloud.sense.archive.FeedArchivalService;
 import com.rackspace.cloud.sense.client.adapter.archive.FeedArchiver;
-import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
