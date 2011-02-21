@@ -40,11 +40,6 @@ public class FeedSourceAdapterWrapper implements FeedSourceAdapter {
     }
 
     @Override
-    public AdapterResponse<Feed> getFeed(Calendar lastEntry) throws UnsupportedOperationException {
-        return feedSourceAdapter.getFeed(lastEntry);
-    }
-
-    @Override
     public AdapterResponse<Feed> getFeed(RequestContext request) throws UnsupportedOperationException {
         return feedSourceAdapter.getFeed(request);
     }

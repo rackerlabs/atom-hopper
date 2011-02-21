@@ -23,8 +23,6 @@ public interface FeedSourceAdapter {
      */
     void setAdapterTools(AdapterTools tools);
 
-    AdapterResponse<Feed> getFeed(Calendar lastEntry) throws UnsupportedOperationException;
-
     /**
      * Requests a single feed from the adapter. The request does not contain
      * paging information and the adapter may assume that the requester is

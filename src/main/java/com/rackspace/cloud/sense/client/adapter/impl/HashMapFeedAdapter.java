@@ -37,11 +37,6 @@ public class HashMapFeedAdapter implements FeedSourceAdapter {
     }
 
     @Override
-    public AdapterResponse<Feed> getFeed(Calendar cal) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
     public AdapterResponse<EmptyBody> deleteEntry(RequestContext request, String id) {
         final Entry removedEntry = entries.remove(id);
 

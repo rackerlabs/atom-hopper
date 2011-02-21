@@ -9,7 +9,7 @@ import com.rackspace.cloud.sense.abdera.AbderaAdapterTools;
 import org.apache.abdera.protocol.server.impl.TemplateTargetBuilder;
 import com.rackspace.cloud.sense.abdera.SenseFeedAdapter;
 import com.rackspace.cloud.sense.abdera.TargetResolverField;
-import com.rackspace.cloud.sense.archive.QueuingFeedArchivalService;
+import com.rackspace.cloud.sense.archive.FeedArchivalService;
 import com.rackspace.cloud.sense.client.adapter.AdapterTools;
 import com.rackspace.cloud.sense.client.adapter.FeedSourceAdapter;
 import com.rackspace.cloud.sense.client.adapter.archive.FeedArchiver;
@@ -26,21 +26,19 @@ import org.apache.abdera.protocol.server.impl.RegexTargetResolver;
 
 public class WorkspaceConfigProcessor {
 
-    private static final Logger log = new RCLogger(WorkspaceConfigProcessor.class);
-    
-    private final QueuingFeedArchivalService feedArchivalService;
+    private static final Logger LOG = new RCLogger(WorkspaceConfigProcessor.class);
+    public static final long DEFAULT_ARCHIVAL_INTERVAL = 3600000;
+    private final FeedArchivalService feedArchivalService;
     private final ApplicationContextAdapter contextAdapter;
     private final WorkspaceConfig config;
     private final AdapterTools adapterTools;
-    
     private FeedArchiver defaultArchiver;
     private FeedSourceAdapter defaultNamespaceAdapter;
 
-    public WorkspaceConfigProcessor(WorkspaceConfig workspace, ApplicationContextAdapter contextAdapter, Abdera abderaReference) {
+    public WorkspaceConfigProcessor(WorkspaceConfig workspace, ApplicationContextAdapter contextAdapter, Abdera abderaReference, FeedArchivalService feedArchivalService) {
         this.config = workspace;
         this.contextAdapter = contextAdapter;
-
-        feedArchivalService = new QueuingFeedArchivalService(workspace);
+        this.feedArchivalService = feedArchivalService;
 
         adapterTools = new AbderaAdapterTools(abderaReference);
     }
@@ -103,8 +101,6 @@ public class WorkspaceConfigProcessor {
             feedSource.setAdapterTools(adapterTools);
 
             final SenseFeedAdapter adapter = new SenseFeedAdapter(feed, feedSource);
-            final FeedArchiver archiver = getFeedArchiver(feed);
-            
             final String resource = StringUtilities.trim(feed.getResource(), "/");
 
             final String feedRegex = StringUtilities.join("/(", namespace, ")/(", resource, ")/{0,1}(\\?[^#]*)?");
@@ -125,17 +121,33 @@ public class WorkspaceConfigProcessor {
                     TargetResolverField.FEED.name(),
                     TargetResolverField.ENTRY.name());
 
+
             collections.add(adapter);
+
+            final ArchiveMarker marker = feed.getArchive();
+
+            if (marker != null) {
+                final FeedArchiver archiver = getFeedArchiver(marker);
+
+                try {
+                    archiver.setArchivalInterval(marker.getArchivalInterval());
+                } catch (UnsupportedOperationException uoe) {
+                    LOG.warn("Archiver class: "
+                            + archiver.getClass().getName()
+                            + " does not support time interval setting.", uoe);
+                }
+
+
+                feedArchivalService.registerArchiver(archiver);
+            }
         }
 
         return collections;
     }
 
-    private FeedArchiver getFeedArchiver(FeedConfig feed) {
-        if (feed.getArchive() != null) {
-            final ArchiveMarker feedArchive = feed.getArchive();
-
-            return getFromAppContext(feedArchive.getArchiverRef(), feedArchive.getArchiverClass(), FeedArchiver.class);
+    private FeedArchiver getFeedArchiver(ArchiveMarker archiveMarker) {
+        if (!StringUtilities.isBlank(archiveMarker.getArchiverClass()) || !StringUtilities.isBlank(archiveMarker.getArchiverRef())) {
+            return getFromAppContext(archiveMarker.getArchiverRef(), archiveMarker.getArchiverClass(), FeedArchiver.class);
         }
 
         return defaultArchiver;
@@ -180,9 +192,9 @@ public class WorkspaceConfigProcessor {
 
                 objectFromContext = instance != null ? instance : (T) ReflectionTools.construct(configuredClass, new Object[0]);
             } catch (ClassNotFoundException cnfe) {
-                throw log.newException("Class: " + absoluteClassName + " can not be found. Please check your configuration.", cnfe, SenseConfigurationException.class);
+                throw LOG.newException("Class: " + absoluteClassName + " can not be found. Please check your configuration.", cnfe, SenseConfigurationException.class);
             } catch (Exception ex) {
-                throw log.newException("Error occured while trying to source class information. Please check your configuration. Reason: " + ex.getMessage(), SenseConfigurationException.class);
+                throw LOG.newException("Error occured while trying to source class information. Please check your configuration. Reason: " + ex.getMessage(), SenseConfigurationException.class);
             }
         }
 

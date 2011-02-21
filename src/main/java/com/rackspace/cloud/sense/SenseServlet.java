@@ -8,6 +8,8 @@ import com.rackspace.cloud.commons.util.servlet.context.ApplicationContextAdapte
 import com.rackspace.cloud.sense.config.v1_0.SenseConfig;
 import com.rackspace.cloud.sense.exceptions.ServletInitException;
 import com.rackspace.cloud.sense.abdera.SenseWorkspaceProvider;
+import com.rackspace.cloud.sense.archive.FeedArchivalService;
+import com.rackspace.cloud.sense.archive.impl.QueuedFeedArchivalService;
 import com.rackspace.cloud.sense.config.WorkspaceConfigProcessor;
 import com.rackspace.cloud.sense.config.v1_0.WorkspaceConfig;
 import com.rackspace.cloud.sense.exceptions.ContextAdapterResolutionException;
@@ -25,13 +27,22 @@ public final class SenseServlet extends AbderaServlet {
     public static final String CONFIG_DIRECTORY = "sense-config-directory";
     public static final String DEFAULT_CONFIG_DIRECTORY = "/etc/rackspace-cloud/sense";
 
+    private FeedArchivalService archivalService;
     private ApplicationContextAdapter applicationContextAdapter;
     private Abdera abderaObject;
     private SenseConfig configuration;
 
     @Override
+    public void destroy() {
+        archivalService.stopService();
+        super.destroy();
+    }
+
+    @Override
     public void init() throws ServletException {
         abderaObject = getAbdera();
+
+        archivalService = new QueuedFeedArchivalService();
 
         final String configLocation = getConfigDirectory() + "/sense.cfg.xml";
 
@@ -45,6 +56,8 @@ public final class SenseServlet extends AbderaServlet {
 
         applicationContextAdapter = getContextAdapter();
         applicationContextAdapter.usingServletContext(getServletContext());
+
+        archivalService.startService();
 
         super.init();
     }
@@ -84,7 +97,7 @@ public final class SenseServlet extends AbderaServlet {
 
         for (WorkspaceConfig workspaceCfg : configuration.getWorkspace()) {
             senseProvider.getWorkspaceManager().addWorkspace(
-                    new WorkspaceConfigProcessor(workspaceCfg, applicationContextAdapter, abderaObject).toHandler());
+                    new WorkspaceConfigProcessor(workspaceCfg, applicationContextAdapter, abderaObject, archivalService).toHandler());
         }
 
         return senseProvider;

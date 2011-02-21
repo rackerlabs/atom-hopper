@@ -6,7 +6,6 @@ package com.rackspace.cloud.sense.archive;
 
 import com.rackspace.cloud.sense.client.adapter.archive.FeedArchiver;
 import java.util.Calendar;
-import org.apache.abdera.model.Feed;
 
 /**
  *
@@ -14,7 +13,9 @@ import org.apache.abdera.model.Feed;
  */
 public interface FeedArchivalService {
 
+    void startService();
+
     void stopService();
 
-    void queueFeedArchival(FeedArchiver archiver, Feed f, Calendar cal);
+    void registerArchiver(FeedArchiver archiver);
 }

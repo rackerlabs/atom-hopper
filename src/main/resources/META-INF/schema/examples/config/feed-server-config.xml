@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<sense-config xmlns="http://docs.rackspacecloud.com/cloud-sense/sense-config/v1.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://docs.rackspacecloud.com/cloud-sense/sense-config/v1.0 ./../../xsd/config/config.v1.0.xsd">
-
+<sense-config xmlns="http://docs.rackspacecloud.com/cloud-sense/sense-config/v1.0">
     <defaults>
         <author name="Rackspace Cloud" />
     </defaults>

@@ -6,7 +6,6 @@ import java.util.Calendar;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.RequestContext;
 
-
 /**
  * This interface describes an adapter that is able to archive and store feeds as
  * well as retrieve them. This interface may be tagged onto a FeedSourceAdapter
@@ -24,6 +23,19 @@ public interface FeedArchiver {
     void init(AdapterTools tools);
 
     /**
+     * 
+     * @param archivalIntervalInMiliseconds
+     * @throws UnsupportedOperationException
+     */
+    void setArchivalInterval(long archivalIntervalInMiliseconds) throws UnsupportedOperationException;
+
+    /**
+     * 
+     * @return
+     */
+    long getArchivalInterval();
+
+    /**
      *
      * @param request
      * @param date
@@ -35,5 +47,5 @@ public interface FeedArchiver {
      * 
      * @param date
      */
-    void archiveFeed(Feed feed, Calendar date);
+    void archiveFeed(Calendar date);
 }

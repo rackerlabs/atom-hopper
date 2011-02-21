@@ -123,6 +123,14 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
+
+        <xs:attribute name="archival-interval" type="xs:long" use="optional">
+            <xs:annotation>
+                <xs:documentation>
+                    <xhtml:p></xhtml:p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
 
     <xs:complexType name="author">

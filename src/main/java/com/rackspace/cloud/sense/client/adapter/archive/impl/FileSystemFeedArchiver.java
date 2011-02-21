@@ -45,7 +45,7 @@ public class FileSystemFeedArchiver implements FeedArchiver {
     }
 
     @Override
-    public void archiveFeed(Feed feed, Calendar date) {
+    public void archiveFeed(Calendar date) {
         final String destinationDirectory = StringUtilities.join(
                 archiveDirectoryRoot,
                 archiveDirectoryRoot.endsWith("/") ? "" : "/",
@@ -70,11 +70,21 @@ public class FileSystemFeedArchiver implements FeedArchiver {
 
         try {
             final FileWriter fout = new FileWriter(file);
-            feed.writeTo(fout);
+//            feed.writeTo(fout);
             fout.close();
         } catch (IOException ioe) {
             //TODO: Log this
         }
+    }
+
+    @Override
+    public long getArchivalInterval() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setArchivalInterval(long archivalIntervalInMiliseconds) throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
