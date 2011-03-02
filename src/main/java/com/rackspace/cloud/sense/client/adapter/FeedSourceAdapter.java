@@ -22,6 +22,24 @@ public interface FeedSourceAdapter {
      * @param tools
      */
     void setAdapterTools(AdapterTools tools);
+    
+    /**
+     * Provides internal SENSe systems with a get method for feeds that can be
+     * scoped by a starting time and an ending time.
+     * 
+     * This method does not carry the guarantee that the feed returned will
+     * represent the entire feed over the requested date range. Instead, the
+     * internal system consumers of this method (archivers in the usual case)
+     * will continue to request the feed while narrowing the date range with the
+     * creation date of the last feed entry until a feed of zero length is
+     * returned.
+     * 
+     * @param page
+     * @param startingEntryDate
+     * @param lastEntryDate
+     * @return 
+     */
+    Feed getFeedByDateRange(Calendar startingEntryDate, Calendar lastEntryDate);
 
     /**
      * Requests a single feed from the adapter. The request does not contain
@@ -35,7 +53,7 @@ public interface FeedSourceAdapter {
      * @throws UnsupportedOperationException
      * Adapters may throw UnsupportOperationExceptions if they do not support the operation.
      */
-    AdapterResponse<Feed> getFeed(RequestContext request) throws UnsupportedOperationException;
+    AdapterResponse<Feed> getFeed(RequestContext request);
 
     /**
      * Requests a single feed from the adapter. This request is scoped by both
@@ -116,12 +134,12 @@ public interface FeedSourceAdapter {
      *
      * @param request
      *
-     * @param id
+     * @param entryId
      *
      * @return
      *
      * @throws UnsupportedOperationException
      * Adapters may throw UnsupportOperationExceptions if they do not support the operation.
      */
-    AdapterResponse<EmptyBody> deleteEntry(RequestContext request, String id) throws UnsupportedOperationException;
+    AdapterResponse<EmptyBody> deleteEntry(RequestContext request, String entryId) throws UnsupportedOperationException;
 }

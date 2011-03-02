@@ -1,6 +1,7 @@
 package com.rackspace.cloud.sense.client.adapter.archive;
 
 import com.rackspace.cloud.sense.client.adapter.AdapterTools;
+import com.rackspace.cloud.sense.client.adapter.FeedSourceAdapter;
 import com.rackspace.cloud.sense.domain.response.AdapterResponse;
 import java.util.Calendar;
 import org.apache.abdera.model.Feed;
@@ -16,11 +17,13 @@ import org.apache.abdera.protocol.server.RequestContext;
 public interface FeedArchiver {
 
     /**
-     * 
+     * SENSe will inject archive adapters with a tools object using this method 
+     * during initialization of the application. The init method also includes a
+     * reference to the FeedSourceAdapter the archiver is associated with.
+     *
      * @param tools
-     * @param feedSourceAdapter
      */
-    void init(AdapterTools tools);
+    void init(AdapterTools tools, FeedSourceAdapter fsa);
 
     /**
      * 
@@ -41,11 +44,11 @@ public interface FeedArchiver {
      * @param date
      * @return
      */
-    AdapterResponse<Feed> getArchivedFeed(RequestContext request, Calendar date);
+    AdapterResponse<Feed> getArchivedFeed(RequestContext request, Calendar requested);
 
     /**
      * 
      * @param date
      */
-    void archiveFeed(Calendar date);
+    void archiveFeed(Calendar archiveTime);
 }

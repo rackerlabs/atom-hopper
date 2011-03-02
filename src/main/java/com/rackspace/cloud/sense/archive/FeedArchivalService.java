@@ -5,7 +5,6 @@
 package com.rackspace.cloud.sense.archive;
 
 import com.rackspace.cloud.sense.client.adapter.archive.FeedArchiver;
-import java.util.Calendar;
 
 /**
  *

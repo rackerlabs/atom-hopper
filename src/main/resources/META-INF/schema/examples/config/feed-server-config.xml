@@ -11,7 +11,7 @@
 
         <!-- http://localhost:8080/namespace_a/feed_1 -->
         <feed title="feed_1" resource="/feed_1">
-            <archive archiver-ref="" archiver-class="" />
+            <archive archiver-ref="" archiver-class="" archival-interval="" />
         </feed>
     </workspace>
 </sense-config>

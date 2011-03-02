@@ -8,6 +8,7 @@ import com.rackspace.cloud.commons.logging.Logger;
 import com.rackspace.cloud.commons.logging.RCLogger;
 import com.rackspace.cloud.commons.util.StringUtilities;
 import com.rackspace.cloud.sense.client.adapter.AdapterTools;
+import com.rackspace.cloud.sense.client.adapter.FeedSourceAdapter;
 import com.rackspace.cloud.sense.client.adapter.ResponseBuilder;
 import com.rackspace.cloud.sense.client.adapter.archive.ArchiveProcessingException;
 import com.rackspace.cloud.sense.client.adapter.archive.FeedArchiver;
@@ -28,11 +29,12 @@ import org.apache.abdera.protocol.server.RequestContext;
  * @author zinic
  */
 public class FileSystemFeedArchiver implements FeedArchiver {
-    
-    private static final Logger log = new RCLogger(FileSystemFeedArchiver.class);
 
+    private static final Logger log = new RCLogger(FileSystemFeedArchiver.class);
     public static final String ARCHIVE_FILE_EXTENSION = ".archive.xml";
     private final String archiveDirectoryRoot;
+    private long archivalInterval;
+    private FeedSourceAdapter feedAdapter;
     private AdapterTools adapterTools;
 
     public FileSystemFeedArchiver(String archiveDirectoryRoot) {
@@ -40,22 +42,22 @@ public class FileSystemFeedArchiver implements FeedArchiver {
     }
 
     @Override
-    public void init(AdapterTools tools) {
-        this.adapterTools = tools;
+    public void init(AdapterTools tools, FeedSourceAdapter fsa) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void archiveFeed(Calendar date) {
+    public void archiveFeed(Calendar archivalTime) {
         final String destinationDirectory = StringUtilities.join(
                 archiveDirectoryRoot,
                 archiveDirectoryRoot.endsWith("/") ? "" : "/",
-                date.get(Calendar.YEAR), "/",
-                date.get(Calendar.MONTH), "/",
-                date.get(Calendar.DAY_OF_MONTH));
+                archivalTime.get(Calendar.YEAR), "/",
+                archivalTime.get(Calendar.MONTH), "/",
+                archivalTime.get(Calendar.DAY_OF_MONTH));
 
         final String destinationFile = StringUtilities.join(
                 destinationDirectory, "/",
-                date.get(Calendar.HOUR_OF_DAY), ARCHIVE_FILE_EXTENSION);
+                archivalTime.get(Calendar.HOUR_OF_DAY), ARCHIVE_FILE_EXTENSION);
 
         final File dir = new File(destinationDirectory);
         final File file = new File(destinationFile);
@@ -68,23 +70,27 @@ public class FileSystemFeedArchiver implements FeedArchiver {
             //TODO: Log this error?
         }
 
-        try {
-            final FileWriter fout = new FileWriter(file);
-//            feed.writeTo(fout);
-            fout.close();
-        } catch (IOException ioe) {
-            //TODO: Log this
-        }
+        archivalTime.roll(Calendar.MILLISECOND, (int) getArchivalInterval());
+
+//        try {
+//            final Feed feedToArchive = feedAdapter.getFeedByDateRange(archivalTime);
+//
+//            final FileWriter fout = new FileWriter(file);
+//            feedToArchive.writeTo(fout);
+//            fout.close();
+//        } catch (IOException ioe) {
+//            //TODO: Log this
+//        }
     }
 
     @Override
     public long getArchivalInterval() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return archivalInterval;
     }
 
     @Override
     public void setArchivalInterval(long archivalIntervalInMiliseconds) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        archivalInterval = archivalIntervalInMiliseconds;
     }
 
     @Override

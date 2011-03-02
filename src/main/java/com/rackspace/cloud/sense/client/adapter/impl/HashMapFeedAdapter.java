@@ -23,6 +23,7 @@ public class HashMapFeedAdapter implements FeedSourceAdapter {
     private static final Logger log = new RCLogger(HashMapFeedAdapter.class);
     
     private final Map<String, Entry> entries;
+    
     private AdapterTools tools;
     private int count;
 
@@ -59,6 +60,11 @@ public class HashMapFeedAdapter implements FeedSourceAdapter {
         }
 
         return ResponseBuilder.found(f).withParameter(ResponseParameter.PAGE, "1");
+    }
+
+    @Override
+    public Feed getFeedByDateRange(Calendar startingEntryDate, Calendar lastEntryDate) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

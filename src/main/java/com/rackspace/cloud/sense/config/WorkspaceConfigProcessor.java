@@ -27,11 +27,14 @@ import org.apache.abdera.protocol.server.impl.RegexTargetResolver;
 public class WorkspaceConfigProcessor {
 
     private static final Logger LOG = new RCLogger(WorkspaceConfigProcessor.class);
+    
     public static final long DEFAULT_ARCHIVAL_INTERVAL = 3600000;
+
     private final FeedArchivalService feedArchivalService;
     private final ApplicationContextAdapter contextAdapter;
     private final WorkspaceConfig config;
     private final AdapterTools adapterTools;
+
     private FeedArchiver defaultArchiver;
     private FeedSourceAdapter defaultNamespaceAdapter;
 
@@ -160,7 +163,7 @@ public class WorkspaceConfigProcessor {
             if (!StringUtilities.isBlank(archiveConfig.getArchiverClass())) {
                 return getFromAppContext(archiveConfig.getArchiverRef(), archiveConfig.getArchiverClass(), FeedArchiver.class);
             } else if (StringUtilities.isBlank(archiveConfig.getArchiverRef())) {
-                return new FileSystemFeedArchiver(null); //TODO: Add dir configuration for this
+//                return new FileSystemFeedArchiver(); //TODO: Add dir configuration for this
             }
         }
 
