@@ -26,29 +26,38 @@ public interface FeedArchiver {
     void init(AdapterTools tools, FeedSourceAdapter fsa);
 
     /**
+     * Sets the archive job interval.
      * 
      * @param archivalIntervalInMiliseconds
      * @throws UnsupportedOperationException
+     * Adapters may throw UnsupportOperationExceptions if they do not support the operation.
      */
     void setArchivalInterval(long archivalIntervalInMiliseconds) throws UnsupportedOperationException;
 
     /**
+     * Gets the archive job interval
      * 
      * @return
      */
     long getArchivalInterval();
 
     /**
-     *
+     * Requests an archived version of the feed.
+     * 
      * @param request
      * @param date
+     * The date may be null if not explicitly specified by the request
+     * 
      * @return
      */
-    AdapterResponse<Feed> getArchivedFeed(RequestContext request, Calendar requested);
+    AdapterResponse<Feed> getArchivedFeed(RequestContext request, Calendar requestedDate);
 
     /**
+     * Requests that an archival job using this archive adapter begin for the
+     * given start time.
      * 
-     * @param date
+     * @param archiveTime
+     * @throws ArchiveProcessingException 
      */
-    void archiveFeed(Calendar archiveTime);
+    void archiveFeed(Calendar archiveTime) throws ArchiveProcessingException;
 }
