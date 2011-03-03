@@ -2,7 +2,7 @@ package com.rackspace.cloud.sense.client.adapter.archive;
 
 import com.rackspace.cloud.sense.client.adapter.AdapterTools;
 import com.rackspace.cloud.sense.client.adapter.FeedSourceAdapter;
-import com.rackspace.cloud.sense.domain.response.AdapterResponse;
+import com.rackspace.cloud.sense.response.AdapterResponse;
 import java.util.Calendar;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.RequestContext;
@@ -29,17 +29,15 @@ public interface FeedArchiver {
      * Sets the archive job interval.
      * 
      * @param archivalIntervalInMiliseconds
-     * @throws UnsupportedOperationException
-     * Adapters may throw UnsupportOperationExceptions if they do not support the operation.
      */
-    void setArchivalInterval(long archivalIntervalInMiliseconds) throws UnsupportedOperationException;
+    void setArchivalInterval(int archivalIntervalInMiliseconds);
 
     /**
      * Gets the archive job interval
      * 
      * @return
      */
-    long getArchivalInterval();
+    int getArchivalInterval();
 
     /**
      * Requests an archived version of the feed.

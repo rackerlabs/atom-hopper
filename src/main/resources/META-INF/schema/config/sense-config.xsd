@@ -124,7 +124,7 @@
             </xs:annotation>
         </xs:attribute>
 
-        <xs:attribute name="archival-interval" type="xs:long" use="optional">
+        <xs:attribute name="archival-interval" type="xs:int" use="optional">
             <xs:annotation>
                 <xs:documentation>
                     <xhtml:p></xhtml:p>

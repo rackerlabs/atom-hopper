@@ -5,15 +5,13 @@ import com.rackspace.cloud.commons.logging.RCLogger;
 import com.rackspace.cloud.commons.util.StringUtilities;
 import com.rackspace.cloud.commons.util.reflection.ReflectionTools;
 import com.rackspace.cloud.commons.util.servlet.context.ApplicationContextAdapter;
-import com.rackspace.cloud.sense.abdera.AbderaAdapterTools;
+import com.rackspace.cloud.sense.client.adapter.SenseAdapterTools;
 import org.apache.abdera.protocol.server.impl.TemplateTargetBuilder;
 import com.rackspace.cloud.sense.abdera.SenseFeedAdapter;
 import com.rackspace.cloud.sense.abdera.TargetResolverField;
 import com.rackspace.cloud.sense.archive.FeedArchivalService;
-import com.rackspace.cloud.sense.client.adapter.AdapterTools;
 import com.rackspace.cloud.sense.client.adapter.FeedSourceAdapter;
 import com.rackspace.cloud.sense.client.adapter.archive.FeedArchiver;
-import com.rackspace.cloud.sense.client.adapter.archive.impl.FileSystemFeedArchiver;
 import com.rackspace.cloud.sense.config.v1_0.ArchiveMarker;
 import com.rackspace.cloud.sense.config.v1_0.FeedConfig;
 import com.rackspace.cloud.sense.config.v1_0.WorkspaceConfig;
@@ -33,7 +31,7 @@ public class WorkspaceConfigProcessor {
     private final FeedArchivalService feedArchivalService;
     private final ApplicationContextAdapter contextAdapter;
     private final WorkspaceConfig config;
-    private final AdapterTools adapterTools;
+    private final Abdera abderaReference;
 
     private FeedArchiver defaultArchiver;
     private FeedSourceAdapter defaultNamespaceAdapter;
@@ -42,8 +40,7 @@ public class WorkspaceConfigProcessor {
         this.config = workspace;
         this.contextAdapter = contextAdapter;
         this.feedArchivalService = feedArchivalService;
-
-        adapterTools = new AbderaAdapterTools(abderaReference);
+        this.abderaReference = abderaReference;
     }
 
     public WorkspaceHandler toHandler() {
@@ -101,7 +98,7 @@ public class WorkspaceConfigProcessor {
         for (FeedConfig feed : feeds) {
             final FeedSourceAdapter feedSource = getFeedSourceAdapter(feed);
 
-            feedSource.setAdapterTools(adapterTools);
+            feedSource.setAdapterTools(new SenseAdapterTools(abderaReference));
 
             final SenseFeedAdapter adapter = new SenseFeedAdapter(feed, feedSource);
             final String resource = StringUtilities.trim(feed.getResource(), "/");
@@ -127,13 +124,13 @@ public class WorkspaceConfigProcessor {
 
             collections.add(adapter);
 
-            final ArchiveMarker marker = feed.getArchive();
+            final ArchiveMarker archivalElement = feed.getArchive();
 
-            if (marker != null) {
-                final FeedArchiver archiver = getFeedArchiver(marker);
+            if (archivalElement != null) {
+                final FeedArchiver archiver = getFeedArchiver(archivalElement);
 
                 try {
-                    archiver.setArchivalInterval(marker.getArchivalInterval());
+                    archiver.setArchivalInterval(archivalElement.getArchivalInterval());
                 } catch (UnsupportedOperationException uoe) {
                     LOG.warn("Archiver class: "
                             + archiver.getClass().getName()

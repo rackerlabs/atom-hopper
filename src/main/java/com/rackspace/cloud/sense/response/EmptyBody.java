@@ -1,4 +1,4 @@
-package com.rackspace.cloud.sense.domain.response;
+package com.rackspace.cloud.sense.response;
 
 public final class EmptyBody {
 

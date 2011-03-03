@@ -1,4 +1,4 @@
-package com.rackspace.cloud.sense.domain.response;
+package com.rackspace.cloud.sense.response;
 
 import com.rackspace.cloud.commons.util.http.HttpStatusCode;
 import java.util.EnumMap;

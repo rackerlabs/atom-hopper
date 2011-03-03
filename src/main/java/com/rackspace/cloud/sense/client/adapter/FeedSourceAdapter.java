@@ -1,7 +1,7 @@
 package com.rackspace.cloud.sense.client.adapter;
 
-import com.rackspace.cloud.sense.domain.response.EmptyBody;
-import com.rackspace.cloud.sense.domain.response.AdapterResponse;
+import com.rackspace.cloud.sense.response.EmptyBody;
+import com.rackspace.cloud.sense.response.AdapterResponse;
 import java.util.Calendar;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
@@ -47,6 +47,7 @@ public interface FeedSourceAdapter {
      * requesting the head of the feed.
      *
      * @param request
+     * Raw request information.
      *
      * @return
      *
@@ -63,7 +64,8 @@ public interface FeedSourceAdapter {
      * @param request
      *
      * @param page
-     * Number of the page being requested.
+     * Number of the page being requested. This may be -1 if a page was not specified
+     * by the user.
      *
      * @param markerId
      * Unique ID of the marker which may be interpreted by the adapter in a
@@ -74,7 +76,7 @@ public interface FeedSourceAdapter {
      * @throws UnsupportedOperationException
      * Adapters may throw UnsupportOperationExceptions if they do not support the operation
      */
-    AdapterResponse<Feed> getFeedPage(RequestContext request, int page, String markerId) throws UnsupportedOperationException;
+    AdapterResponse<Feed> getFeedPage(RequestContext request, int page, String markerId);
 
 
     /**
@@ -91,7 +93,7 @@ public interface FeedSourceAdapter {
      * @throws UnsupportedOperationException
      * Adapters may throw UnsupportOperationExceptions if they do not support the operation.
      */
-    AdapterResponse<Entry> getEntry(RequestContext request, String entryId) throws UnsupportedOperationException;
+    AdapterResponse<Entry> getEntry(RequestContext request, String entryId);
 
     /**
      * Requests a single entry be added to the feed.
@@ -107,7 +109,7 @@ public interface FeedSourceAdapter {
      * @throws UnsupportedOperationException
      * Adapters may throw UnsupportOperationExceptions if they do not support the operation.
      */
-    AdapterResponse<Entry> postEntry(RequestContext request, Entry entryToAdd) throws UnsupportedOperationException;
+    AdapterResponse<Entry> postEntry(RequestContext request, Entry entryToAdd);
 
     /**
      * Requests that an entry be updated. This request is scoped by the unique
@@ -126,7 +128,7 @@ public interface FeedSourceAdapter {
      * @throws UnsupportedOperationException
      * Adapters may throw UnsupportOperationExceptions if they do not support the operation.
      */
-    AdapterResponse<Entry> putEntry(RequestContext request, String entryId, Entry entryToUpdate) throws UnsupportedOperationException;
+    AdapterResponse<Entry> putEntry(RequestContext request, String entryId, Entry entryToUpdate);
 
     /**
      * Requests that an entry be deleted. This request is scoped by the unique
@@ -141,5 +143,5 @@ public interface FeedSourceAdapter {
      * @throws UnsupportedOperationException
      * Adapters may throw UnsupportOperationExceptions if they do not support the operation.
      */
-    AdapterResponse<EmptyBody> deleteEntry(RequestContext request, String entryId) throws UnsupportedOperationException;
+    AdapterResponse<EmptyBody> deleteEntry(RequestContext request, String entryId);
 }

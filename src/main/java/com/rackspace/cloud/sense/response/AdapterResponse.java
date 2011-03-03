@@ -1,11 +1,20 @@
-package com.rackspace.cloud.sense.domain.response;
+package com.rackspace.cloud.sense.response;
 
 import com.rackspace.cloud.commons.util.http.HttpStatusCode;
 
 public interface AdapterResponse<T> {
 
+    /**
+     * 
+     * @return 
+     */
     T getBody();
 
+    /**
+     * 
+     * @param name
+     * @return 
+     */
     String getParameter(ResponseParameter name);
 
     /**
@@ -18,7 +27,15 @@ public interface AdapterResponse<T> {
      */
     AdapterResponse<T> withParameter(ResponseParameter name, Object value);
 
+    /**
+     * 
+     * @return 
+     */
     String getMessage();
 
+    /**
+     * 
+     * @return 
+     */
     HttpStatusCode getResponseStatus();
 }

@@ -1,9 +1,9 @@
 package com.rackspace.cloud.sense.client.adapter;
 
 import com.rackspace.cloud.commons.util.http.HttpStatusCode;
-import com.rackspace.cloud.sense.domain.response.EmptyBody;
-import com.rackspace.cloud.sense.domain.response.FeedSourceAdapterResponse;
-import com.rackspace.cloud.sense.domain.response.AdapterResponse;
+import com.rackspace.cloud.sense.response.EmptyBody;
+import com.rackspace.cloud.sense.response.FeedSourceAdapterResponse;
+import com.rackspace.cloud.sense.response.AdapterResponse;
 
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
@@ -11,11 +11,11 @@ import org.apache.abdera.model.Feed;
 public class ResponseBuilder {
 
     public static <T> AdapterResponse<T> notFound() {
-        return new FeedSourceAdapterResponse<T>(null, HttpStatusCode.NOT_FOUND, "");
+        return notFound("");
     }
 
     public static <T> AdapterResponse<T> notFound(String message) {
-        return new FeedSourceAdapterResponse<T>(null, HttpStatusCode.NOT_FOUND, "");
+        return new FeedSourceAdapterResponse<T>(null, HttpStatusCode.NOT_FOUND, message);
     }
 
     public static AdapterResponse<EmptyBody> ok() {
@@ -28,6 +28,14 @@ public class ResponseBuilder {
 
     public static AdapterResponse<Entry> found(Entry e) {
         return new FeedSourceAdapterResponse<Entry>(e, HttpStatusCode.OK, "");
+    }
+
+    public static <T> AdapterResponse<T> error() {
+        return error("");
+    }
+
+    public static <T> AdapterResponse<T> error(String message) {
+        return new FeedSourceAdapterResponse<T>(null, HttpStatusCode.INTERNAL_SERVER_ERROR, message);
     }
 
     public static AdapterResponse<Entry> updated(Entry e) {

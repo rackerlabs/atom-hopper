@@ -1,16 +1,15 @@
-package com.rackspace.cloud.sense.abdera;
+package com.rackspace.cloud.sense.client.adapter;
 
-import com.rackspace.cloud.sense.client.adapter.AdapterTools;
 import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.parser.Parser;
 
-public class AbderaAdapterTools implements AdapterTools {
+public class SenseAdapterTools implements AdapterTools {
 
     private final Abdera abderaReference;
 
-    public AbderaAdapterTools(Abdera abderaReference) {
+    public SenseAdapterTools(Abdera abderaReference) {
         this.abderaReference = abderaReference;
     }
 

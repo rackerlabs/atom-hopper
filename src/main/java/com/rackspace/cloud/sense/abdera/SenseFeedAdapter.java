@@ -2,6 +2,7 @@ package com.rackspace.cloud.sense.abdera;
 
 import com.rackspace.cloud.commons.logging.Logger;
 import com.rackspace.cloud.commons.logging.RCLogger;
+import com.rackspace.cloud.commons.util.RegexList;
 import com.rackspace.cloud.commons.util.StringUtilities;
 import com.rackspace.cloud.commons.util.http.HttpStatusCode;
 import com.rackspace.cloud.sense.config.v1_0.FeedConfig;
@@ -10,11 +11,10 @@ import com.rackspace.cloud.sense.client.adapter.FeedSourceAdapter;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.abdera.protocol.server.TargetType;
-import com.rackspace.cloud.sense.util.RegexList;
 
-import com.rackspace.cloud.sense.domain.response.EmptyBody;
-import com.rackspace.cloud.sense.domain.response.AdapterResponse;
-import com.rackspace.cloud.sense.domain.response.ResponseParameter;
+import com.rackspace.cloud.sense.response.EmptyBody;
+import com.rackspace.cloud.sense.response.AdapterResponse;
+import com.rackspace.cloud.sense.response.ResponseParameter;
 import org.apache.abdera.model.Entry;
 
 import java.util.Date;
@@ -27,17 +27,14 @@ import org.apache.abdera.protocol.server.impl.AbstractCollectionAdapter;
 public class SenseFeedAdapter extends AbstractCollectionAdapter {
 
     private static final Logger log = new RCLogger(SenseFeedAdapter.class);
-
     private final FeedConfig feedConfig;
     private final RegexList feedTargets;
     private final FeedSourceAdapter configuredDatasourceAdapter;
-    private final FeedChangeTracker changeTracker;
 
     public SenseFeedAdapter(FeedConfig feedConfig, FeedSourceAdapter configuredDatasourceAdapter) {
         this.feedConfig = feedConfig;
         this.configuredDatasourceAdapter = configuredDatasourceAdapter;
 
-        changeTracker = new FeedChangeTracker();
         feedTargets = new RegexList();
     }
 
@@ -50,7 +47,7 @@ public class SenseFeedAdapter extends AbstractCollectionAdapter {
     }
 
     public boolean handles(String target) {
-        return feedTargets.targets(target);
+        return feedTargets.matches(target) != null;
     }
 
     @Override
@@ -69,7 +66,7 @@ public class SenseFeedAdapter extends AbstractCollectionAdapter {
     @Override
     //TODO: Reimplement this
     public String getId(RequestContext rc) {
-        
+
 //        return new StringBuilder("tag:").append(feedConfig.getFullUri()).append(",").append(CALENDAR_INSTANCE.get(Calendar.YEAR)).append(":").append(config.getBaseUrn()).toString();
         return "TODO: ID";
     }
@@ -108,9 +105,7 @@ public class SenseFeedAdapter extends AbstractCollectionAdapter {
             if (response.getResponseStatus() == HttpStatusCode.CREATED) {
                 final String entryId = response.getParameter(ResponseParameter.ENTRY_ID);
 
-                if (!StringUtilities.isBlank(entryId)) {
-                    changeTracker.putEntry(entryId, response.getBody());
-                } else {
+                if (StringUtilities.isBlank(entryId)) {
                     log.warn("New ID for Entry Update was not returned. Please verify that your adapter returns an ENTRY_ID in its parameter map");
                 }
             }
@@ -129,10 +124,6 @@ public class SenseFeedAdapter extends AbstractCollectionAdapter {
 
             final AdapterResponse<Entry> response = configuredDatasourceAdapter.putEntry(request, entryId, entryToUpdate.getRoot());
 
-            if (response.getResponseStatus() == HttpStatusCode.OK) {
-                changeTracker.putEntry(entryId, response.getBody());
-            }
-
             return handleEntryResponse(request, response);
         } catch (Exception ex) {
             return ProviderHelper.servererror(request, ex.getMessage(), ex);
@@ -145,10 +136,6 @@ public class SenseFeedAdapter extends AbstractCollectionAdapter {
 
         try {
             final AdapterResponse<EmptyBody> response = configuredDatasourceAdapter.deleteEntry(rc, entryId);
-
-            if (response.getResponseStatus() == HttpStatusCode.OK) {
-                changeTracker.removeEntry(entryId);
-            }
 
             return handleEmptyResponse(rc, response);
         } catch (Exception ex) {
@@ -202,7 +189,7 @@ public class SenseFeedAdapter extends AbstractCollectionAdapter {
     private ResponseContext handleFeedResponse(RequestContext rc, AdapterResponse<Feed> response) {
         final Date lastUpdated = response.getBody() != null ? response.getBody().getUpdated() : null;
 
-        addPaginationInformationToFeed(rc, response);
+        addPagingLinksToFeed(rc, response);
 
         switch (response.getResponseStatus()) {
             case OK:
@@ -219,25 +206,31 @@ public class SenseFeedAdapter extends AbstractCollectionAdapter {
         }
     }
 
-    private void addPaginationInformationToFeed(RequestContext rc, AdapterResponse<Feed> response) {
+    private void addPagingLinksToFeed(RequestContext rc, AdapterResponse<Feed> response) {
         final String page = response.getParameter(ResponseParameter.PAGE);
         final String marker = response.getParameter(ResponseParameter.MARKER);
 
         final Feed f = response.getBody();
 
+        final String self = StringUtilities.join(rc.getBaseUri().toString(), rc.getTargetPath());
+
         if (page != null) {
-            final String selfMinusPageNumber = StringUtilities.join(rc.getBaseUri().toString(), rc.getTargetPath(), "?", ResponseParameter.PAGE.toString(), "=");
+            //Add self
+            f.addLink(StringUtilities.join(self, "?page=", page), "self");
 
-            f.addLink(marker != null ? StringUtilities.join(selfMinusPageNumber, page, "&", ResponseParameter.MARKER.toString(), "=", marker) : selfMinusPageNumber + page, "self");
-
-
+            //Add next page
             final int pageNumber = Integer.parseInt(page);
-            f.addLink(selfMinusPageNumber + (pageNumber + 1), "next");
+            f.addLink(self + (pageNumber + 1), "next");
 
             //Add previous
             if (pageNumber - 1 > 0) {
-                f.addLink(selfMinusPageNumber + (pageNumber - 1), "previous");
+                f.addLink(self + (pageNumber - 1), "previous");
             }
+        }
+
+        if (marker != null) {
+            //Add marker
+            f.addLink(StringUtilities.join(self, "?marker=", marker), "alternate");
         }
     }
 }

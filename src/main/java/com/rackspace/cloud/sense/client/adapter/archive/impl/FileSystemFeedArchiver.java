@@ -12,7 +12,7 @@ import com.rackspace.cloud.sense.client.adapter.FeedSourceAdapter;
 import com.rackspace.cloud.sense.client.adapter.ResponseBuilder;
 import com.rackspace.cloud.sense.client.adapter.archive.ArchiveProcessingException;
 import com.rackspace.cloud.sense.client.adapter.archive.FeedArchiver;
-import com.rackspace.cloud.sense.domain.response.AdapterResponse;
+import com.rackspace.cloud.sense.response.AdapterResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -20,6 +20,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Calendar;
 import org.apache.abdera.model.Document;
+import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.parser.ParseException;
 import org.apache.abdera.protocol.server.RequestContext;
@@ -31,19 +32,25 @@ import org.apache.abdera.protocol.server.RequestContext;
 public class FileSystemFeedArchiver implements FeedArchiver {
 
     private static final Logger log = new RCLogger(FileSystemFeedArchiver.class);
+
+    public static final int HOUR_IN_MILLISECONDS = 3600000;
     public static final String ARCHIVE_FILE_EXTENSION = ".archive.xml";
+    
     private final String archiveDirectoryRoot;
-    private long archivalInterval;
+    
+    private int archivalInterval;
     private FeedSourceAdapter feedAdapter;
     private AdapterTools adapterTools;
 
     public FileSystemFeedArchiver(String archiveDirectoryRoot) {
         this.archiveDirectoryRoot = archiveDirectoryRoot;
+        archivalInterval = HOUR_IN_MILLISECONDS;
     }
 
     @Override
     public void init(AdapterTools tools, FeedSourceAdapter fsa) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        adapterTools = tools;
+        feedAdapter = fsa;
     }
 
     @Override
@@ -70,26 +77,37 @@ public class FileSystemFeedArchiver implements FeedArchiver {
             //TODO: Log this error?
         }
 
-        archivalTime.roll(Calendar.MILLISECOND, (int) getArchivalInterval());
-
-//        try {
-//            final Feed feedToArchive = feedAdapter.getFeedByDateRange(archivalTime);
-//
-//            final FileWriter fout = new FileWriter(file);
-//            feedToArchive.writeTo(fout);
-//            fout.close();
-//        } catch (IOException ioe) {
-//            //TODO: Log this
-//        }
+        final Calendar endingTime = Calendar.getInstance();
+        endingTime.setTime(archivalTime.getTime());
+        
+        try {
+            final FileWriter fout = new FileWriter(file);
+            boolean done = false;
+            
+            while (!done) {
+                final Feed feedToArchive = feedAdapter.getFeedByDateRange(archivalTime, endingTime);
+                
+                for (Entry e : feedToArchive.getEntries()) {
+                    e.writeTo(fout);
+                }
+                
+                done = feedToArchive.getEntries().isEmpty();
+                archivalTime.roll(Calendar.MILLISECOND, getArchivalInterval());
+            }
+            
+            fout.close();
+        } catch (IOException ioe) {
+            //TODO: Log this
+        }
     }
 
     @Override
-    public long getArchivalInterval() {
+    public int getArchivalInterval() {
         return archivalInterval;
     }
 
     @Override
-    public void setArchivalInterval(long archivalIntervalInMiliseconds) throws UnsupportedOperationException {
+    public void setArchivalInterval(int archivalIntervalInMiliseconds) {
         archivalInterval = archivalIntervalInMiliseconds;
     }
 
