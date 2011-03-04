@@ -16,7 +16,7 @@
 
     <servlet id="sense-servlet">
         <servlet-name>Sense</servlet-name>
-        <servlet-class>com.rackspace.cloud.sense.SenseServlet</servlet-class>
+        <servlet-class>net.jps.atom.hopper.SenseServlet</servlet-class>
 
         <init-param>
             <param-name>sense-config-directory</param-name>

@@ -18,7 +18,10 @@
     <xs:complexType name="defaults">
         <xs:annotation>
             <xs:documentation>
-                <xhtml:p>Defines certain defaults which will be merged down into configuration elements that have comparable analogues</xhtml:p>
+                <xhtml:p>
+                    Defines certain defaults which will be merged down into
+                    configuration elements that have comparable analogues.
+                </xhtml:p>
             </xs:documentation>
         </xs:annotation>
 
@@ -30,7 +33,10 @@
     <xs:complexType name="workspace-config">
         <xs:annotation>
             <xs:documentation>
-                <xhtml:p>Describe an ATOMpub server</xhtml:p>
+                <xhtml:p>
+                    Describe an ATOMpub Workspace. A workspace is a logical
+                    collection of related feeds.
+                </xhtml:p>
             </xs:documentation>
         </xs:annotation>
 
@@ -42,14 +48,20 @@
         <xs:attribute name="title" type="xs:string" use="required">
             <xs:annotation>
                 <xs:documentation>
-                    <xhtml:p></xhtml:p>
+                    <xhtml:p>
+                        This sets the title of the workspace when a response is
+                        generated for a client request
+                    </xhtml:p>
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
+        
         <xs:attribute name="resource-base" type="xs:string" use="required">
             <xs:annotation>
                 <xs:documentation>
-                    <xhtml:p></xhtml:p>
+                    <xhtml:p>
+                        
+                    </xhtml:p>
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
@@ -57,14 +69,18 @@
         <xs:attribute name="default-adapter-ref" type="xs:string" use="optional">
             <xs:annotation>
                 <xs:documentation>
-                    <xhtml:p></xhtml:p>
+                    <xhtml:p>
+                        
+                    </xhtml:p>
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="default-adapter-class" type="xs:string" use="optional">
             <xs:annotation>
                 <xs:documentation>
-                    <xhtml:p></xhtml:p>
+                    <xhtml:p>
+                        
+                    </xhtml:p>
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>

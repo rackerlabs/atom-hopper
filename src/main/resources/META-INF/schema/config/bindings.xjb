@@ -6,6 +6,6 @@
         schemaLocation="sense-config.xsd">
 
     <schemaBindings>
-        <package name="com.rackspace.cloud.sense.config.v1_0" />
+        <package name="net.jps.atom.hopper.config.v1_0" />
     </schemaBindings>
 </bindings>

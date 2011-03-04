@@ -5,15 +5,15 @@
     <parent>
         <groupId>com.rackspace.cloud</groupId>
         <artifactId>support-pom-profiles</artifactId>
-        <version>1.0.7-SNAPSHOT</version>
+        <version>1.0.8</version>
     </parent>
 
     <groupId>com.rackspace.cloud.commons</groupId>
-    <artifactId>atom-sense</artifactId>
+    <artifactId>atom-hopper</artifactId>
     <packaging>jar</packaging>
 
-    <version>1.0.1-SNAPSHOT</version>
-    <name>Rackspace Cloud SENSe</name>
+    <version>1.1.0-SNAPSHOT</version>
+    <name>Rackspace Cloud - ATOM Hopper</name>
 
     <url>http://wiki.research.rackspacecloud.com/some/place/for/this/project</url>
 
