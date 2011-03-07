@@ -22,16 +22,22 @@ public class AdapterGetter {
         this.contextAdapter = contextAdapter;
     }
 
-    public FeedArchiveAdapter getFeedArchive(Class<? extends FeedArchiveAdapter> feedArchiveAdapterClass) {
-        return getByClassDefinition(feedArchiveAdapterClass, FeedArchiveAdapter.class);
+    public FeedArchiveAdapter getFeedArchive(Class<?> feedArchiveAdapterClass) {
+        if (!feedArchiveAdapterClass.isAssignableFrom(FeedArchiveAdapter.class)) {
+        }
+
+        return getByClassDefinition((Class<? extends FeedArchiveAdapter>) feedArchiveAdapterClass, FeedArchiveAdapter.class);
     }
 
     public FeedArchiveAdapter getFeedArchive(String beanReferenceName) {
         return getByName(beanReferenceName, FeedArchiveAdapter.class);
     }
 
-    public FeedSourceAdapter getFeedSource(Class<? extends FeedSourceAdapter> feedSourceAdapterClass) {
-        return getByClassDefinition(feedSourceAdapterClass, FeedSourceAdapter.class);
+    public FeedSourceAdapter getFeedSource(Class<?> feedSourceAdapterClass) {
+        if (!feedSourceAdapterClass.isAssignableFrom(FeedSourceAdapter.class)) {
+        }
+
+        return getByClassDefinition((Class<? extends FeedSourceAdapter>) feedSourceAdapterClass, FeedSourceAdapter.class);
     }
 
     public FeedSourceAdapter getFeedSource(String beanReferenceName) {
@@ -52,16 +58,9 @@ public class AdapterGetter {
         return reference;
     }
 
-    private <T> T getByClassDefinition(Class<?> configuredAdapterClass, Class<T> classToCastTo) {
-        if (!classToCastTo.isAssignableFrom(configuredAdapterClass)) {
-            throw new IllegalArgumentException("Class: "
-                    + configuredAdapterClass.getCanonicalName()
-                    + " does not implement or extend "
-                    + classToCastTo.getCanonicalName());
-        }
-
+    private <T> T getByClassDefinition(Class<? extends T> configuredAdapterClass, Class<T> classToCastTo) {
         try {
-            final T instance = contextAdapter.fromContext((Class<? extends T>) configuredAdapterClass);
+            final T instance = contextAdapter.fromContext(configuredAdapterClass);
 
             return instance != null
                     ? instance

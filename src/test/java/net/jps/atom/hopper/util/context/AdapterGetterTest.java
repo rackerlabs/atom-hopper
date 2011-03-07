@@ -33,11 +33,16 @@ import static org.mockito.Mockito.*;
 public class AdapterGetterTest {
 
     public static final String BAD_REFERENCE = "bean-reference-bad",
+            NULL_REFERENCE = "null-reference",
             FEED_SOURCE_REFERENCE = "feed-source",
             FEED_ARCHIVE_REFERENCE = "feed-archive";
 
     @Ignore
-    public static class SomeClass {
+    public static class InstanceableClass {
+    }
+
+    @Ignore
+    public static abstract class NonInstanceableClass implements FeedSourceAdapter {
     }
 
     public static class WhenGettingFromApplicationContexts {
@@ -49,14 +54,15 @@ public class AdapterGetterTest {
         public void standUp() {
             contextAdapterMock = mock(ApplicationContextAdapter.class);
 
-            when(contextAdapterMock.fromContext(eq(BAD_REFERENCE), any(Class.class))).thenReturn(new SomeClass());
-            
+            when(contextAdapterMock.fromContext(eq(BAD_REFERENCE), any(Class.class))).thenReturn(new InstanceableClass());
+            when(contextAdapterMock.fromContext(eq(NULL_REFERENCE), any(Class.class))).thenReturn(null);
+
             when(contextAdapterMock.fromContext(eq(UnimplementedFeedSource.class))).thenReturn(new UnimplementedFeedSource());
             when(contextAdapterMock.fromContext(eq(UnimplementedFeedArchive.class))).thenReturn(new UnimplementedFeedArchive());
-            
+
             when(contextAdapterMock.fromContext(eq(FEED_SOURCE_REFERENCE), any(Class.class))).thenReturn(new UnimplementedFeedSource());
             when(contextAdapterMock.fromContext(eq(FEED_ARCHIVE_REFERENCE), any(Class.class))).thenReturn(new UnimplementedFeedArchive());
-            
+
             adapterGetter = new AdapterGetter(contextAdapterMock);
         }
 
@@ -66,6 +72,28 @@ public class AdapterGetterTest {
             assertNotNull(adapterGetter.getFeedArchive(UnimplementedFeedArchive.class));
             assertNotNull(adapterGetter.getFeedSource(FEED_SOURCE_REFERENCE));
             assertNotNull(adapterGetter.getFeedArchive(FEED_ARCHIVE_REFERENCE));
+        }
+
+        @Test(expected = AdapterNotFoundException.class)
+        public void shouldThrowExceptionWhenReferenceReturnsNull() {
+            adapterGetter.getFeedSource(NULL_REFERENCE);
+        }
+
+        @Test(expected = IllegalArgumentException.class)
+        public void shouldRejectBlankAdapterBeanReferenceNames() {
+            adapterGetter.getFeedSource("");
+        }
+
+        @Test(expected = IllegalArgumentException.class)
+        public void shouldRejectNullAdapterBeanReferenceNames() {
+            final String ref = null;
+
+            adapterGetter.getFeedSource(ref);
+        }
+
+        @Test(expected = AdapterConstructionException.class)
+        public void shouldFailWhenGivenNonInstanceableClasses() {
+            assertNull(adapterGetter.getFeedSource(NonInstanceableClass.class));
         }
 
         @Test(expected = ClassCastException.class)

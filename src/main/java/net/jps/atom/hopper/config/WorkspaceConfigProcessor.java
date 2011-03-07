@@ -3,7 +3,6 @@ package net.jps.atom.hopper.config;
 import com.rackspace.cloud.commons.logging.RCLogger;
 import com.rackspace.cloud.commons.logging.Logger;
 import com.rackspace.cloud.commons.util.StringUtilities;
-import com.rackspace.cloud.commons.util.reflection.ReflectionTools;
 import com.rackspace.cloud.commons.util.servlet.context.ApplicationContextAdapter;
 import net.jps.atom.hopper.abdera.FeedAdapter;
 import net.jps.atom.hopper.abdera.TargetResolverField;
@@ -18,6 +17,7 @@ import net.jps.atom.hopper.config.v1_0.ArchiveConfiguration;
 import net.jps.atom.hopper.config.v1_0.FeedConfiguration;
 import net.jps.atom.hopper.config.v1_0.WorkspaceConfiguration;
 import net.jps.atom.hopper.util.TargetRegexBuilder;
+import net.jps.atom.hopper.util.context.AdapterGetter;
 
 import org.apache.abdera.Abdera;
 import org.apache.abdera.protocol.server.TargetType;
@@ -33,9 +33,8 @@ public class WorkspaceConfigProcessor {
 
     private static final Logger LOG = new RCLogger(WorkspaceConfigProcessor.class);
     public static final long HOUR_IN_MILLISECONDS = 3600000;
-    
     private final FeedArchivalService feedArchivalService;
-    private final ApplicationContextAdapter contextAdapter;
+    private final AdapterGetter adapterGetter;
     private final WorkspaceConfiguration config;
     private final Abdera abderaReference;
     
@@ -44,7 +43,7 @@ public class WorkspaceConfigProcessor {
 
     public WorkspaceConfigProcessor(WorkspaceConfiguration workspace, ApplicationContextAdapter contextAdapter, Abdera abderaReference, FeedArchivalService feedArchivalService) {
         this.config = workspace;
-        this.contextAdapter = contextAdapter;
+        this.adapterGetter = new AdapterGetter(contextAdapter);
         this.feedArchivalService = feedArchivalService;
         this.abderaReference = abderaReference;
     }
@@ -54,10 +53,15 @@ public class WorkspaceConfigProcessor {
         final RegexTargetResolver regexTargetResolver = new RegexTargetResolver();
 
         final WorkspaceHandler workspace = new WorkspaceHandler(config, regexTargetResolver);
+        
+        defaultNamespaceAdapter = getFeedSource(config.getDefaultAdapterRef(), config.getDefaultAdapterClass());
 
-        defaultNamespaceAdapter = getFromAppContext(config.getDefaultAdapterRef(), config.getDefaultAdapterClass(), FeedSourceAdapter.class);
-        defaultArchiver = getWorkspaceFeedArchiver(config);
-
+        if (config.getArchive() != null) {
+            final ArchiveConfiguration archiveDefault = config.getArchive();
+            
+            defaultArchiver = getArchiveAdapter(archiveDefault.getArchiverRef(), archiveDefault.getArchiverClass());
+        }
+        
         for (FeedAdapter collectionAdapter : assembleServices(config.getFeed(), namespaceCollectionAdapters, regexTargetResolver)) {
             workspace.addCollectionAdapter(collectionAdapter);
         }
@@ -65,14 +69,47 @@ public class WorkspaceConfigProcessor {
         return workspace;
     }
 
+    //TODO: compose the two methods below to avoid copy-pasta
+    private FeedSourceAdapter getFeedSource(String adapterRef, String adapterClass) throws ConfigurationException {
+        if (!StringUtilities.isBlank(adapterRef)) {
+            return adapterGetter.getFeedSource(adapterRef);
+        } else if (!StringUtilities.isBlank(adapterClass)) {
+            try {
+                adapterGetter.getFeedSource(Class.forName(adapterClass));
+            } catch (ClassNotFoundException cnfe) {
+                throw LOG.newException("Unable to find specified default adapter class: " + adapterClass, cnfe, ConfigurationException.class);
+            }
+
+            return adapterGetter.getFeedSource(config.getDefaultAdapterRef());
+        }
+        
+        return null;
+    }
+
+    private FeedArchiveAdapter getArchiveAdapter(String adapterRef, String adapterClass) throws ConfigurationException {
+        if (!StringUtilities.isBlank(adapterRef)) {
+            return adapterGetter.getFeedArchive(adapterRef);
+        } else if (!StringUtilities.isBlank(adapterClass)) {
+            try {
+                adapterGetter.getFeedSource(Class.forName(adapterClass));
+            } catch (ClassNotFoundException cnfe) {
+                throw LOG.newException("Unable to find specified default adapter class: " + adapterClass, cnfe, ConfigurationException.class);
+            }
+
+            return adapterGetter.getFeedArchive(config.getDefaultAdapterRef());
+        }
+        
+        return null;
+    }
+
     private List<FeedAdapter> assembleServices(List<FeedConfiguration> feedServices, List<FeedAdapter> namespaceCollectionAdapters, RegexTargetResolver regexTargetResolver) {
         final List<FeedAdapter> collections = new LinkedList<FeedAdapter>();
 
         final String workspaceName = StringUtilities.trim(config.getResourceBase(), "/");
         final TargetRegexBuilder workspaceTarget = new TargetRegexBuilder();
-        
+
         workspaceTarget.setWorkspace(workspaceName);
-        
+
         // service
         regexTargetResolver.setPattern(workspaceTarget.toWorkspacePattern(),
                 TargetType.TYPE_SERVICE,
@@ -95,7 +132,7 @@ public class WorkspaceConfigProcessor {
         final List<FeedAdapter> collections = new LinkedList<FeedAdapter>();
 
         for (FeedConfiguration feed : feeds) {
-            final FeedSourceAdapter feedSource = getFeedSourceAdapter(feed);
+            final FeedSourceAdapter feedSource = getFeedSource(feed.getAdapterRef(), feed.getAdapterClass());
 
             feedSource.setAdapterTools(new FeedAdapterTools(abderaReference));
 
@@ -104,10 +141,10 @@ public class WorkspaceConfigProcessor {
 
             final TargetRegexBuilder feedTargetRegexBuilder = new TargetRegexBuilder(workspaceTarget);
             feedTargetRegexBuilder.setFeed(feedResource);
-            
+
             final String feedRegex = feedTargetRegexBuilder.toFeedPattern();
             final String entryRegex = feedTargetRegexBuilder.toEntryPattern();
-            
+
             adapter.addTargetRegex(feedRegex);
             adapter.addTargetRegex(entryRegex);
 
@@ -132,11 +169,12 @@ public class WorkspaceConfigProcessor {
         return collections;
     }
 
+    //TODO: Implement the default archiver if archival isn't explicitly set
     private void addArchiver(FeedConfiguration feed, FeedSourceAdapter feedSource) {
         final ArchiveConfiguration archivalElement = feed.getArchive();
 
         if (archivalElement != null) {
-            final FeedArchiveAdapter archiver = getFeedArchiver(archivalElement);
+            final FeedArchiveAdapter archiver = getArchiveAdapter(archivalElement.getArchiverRef(), archivalElement.getArchiverClass()); 
 
             //TODO: Protect this with a try statement that captures internal exceptions
             archiver.init(new FeedAdapterTools(abderaReference), feedSource);
@@ -152,70 +190,5 @@ public class WorkspaceConfigProcessor {
 
             feedArchivalService.registerArchiver(archiver);
         }
-    }
-
-    private FeedArchiveAdapter getFeedArchiver(ArchiveConfiguration archiveMarker) {
-        if (!StringUtilities.isBlank(archiveMarker.getArchiverClass()) || !StringUtilities.isBlank(archiveMarker.getArchiverRef())) {
-            return getFromAppContext(archiveMarker.getArchiverRef(), archiveMarker.getArchiverClass(), FeedArchiveAdapter.class);
-        }
-
-        return defaultArchiver;
-    }
-
-    private FeedArchiveAdapter getWorkspaceFeedArchiver(WorkspaceConfiguration workspace) {
-        final ArchiveConfiguration archiveConfig = workspace.getArchive();
-
-        if (archiveConfig != null) {
-            if (!StringUtilities.isBlank(archiveConfig.getArchiverClass())) {
-                return getFromAppContext(archiveConfig.getArchiverRef(), archiveConfig.getArchiverClass(), FeedArchiveAdapter.class);
-            } else if (StringUtilities.isBlank(archiveConfig.getArchiverRef())) {
-//                return new FileSystemFeedArchiver(); //TODO: Add dir configuration for this
-            }
-        }
-
-        return null;
-    }
-
-    private FeedSourceAdapter getFeedSourceAdapter(FeedConfiguration feed) {
-        final FeedSourceAdapter feedSpecificAdapter = getFromAppContext(feed.getAdapterRef(), feed.getAdapterClass(), FeedSourceAdapter.class);
-
-        if (feedSpecificAdapter == null && defaultNamespaceAdapter == null) {
-            throw new ConfigurationException("Failed to find or build an appropriate FeedSourceAdapter for feed: " + feed.getTitle());
-        }
-
-        return feedSpecificAdapter != null ? feedSpecificAdapter : defaultNamespaceAdapter;
-    }
-
-    /**
-     * 
-     * @param <T>
-     * @param referenceName
-     * @param absoluteClassName
-     * @param parentClassDefinition
-     * @return 
-     */
-    private <T> T getFromAppContext(String referenceName, String absoluteClassName, Class<T> parentClassDefinition) {
-        T objectFromContext = !StringUtilities.isBlank(referenceName) ? contextAdapter.fromContext(referenceName, parentClassDefinition) : null;
-
-        if (objectFromContext == null && !StringUtilities.isBlank(absoluteClassName)) {
-            try {
-                final Class<?> configuredClass = Class.forName(absoluteClassName);
-
-                if (!configuredClass.isAssignableFrom(parentClassDefinition)) {
-                    throw new IllegalArgumentException("Class: " + configuredClass.getCanonicalName() + " does not implement or extend " + parentClassDefinition.getCanonicalName());
-                }
-
-                final T instance = contextAdapter.fromContext((Class<? extends T>) configuredClass);
-
-                objectFromContext = instance != null ? instance : (T) ReflectionTools.construct(configuredClass, new Object[0]);
-            } catch (ClassNotFoundException cnfe) {
-                throw LOG.newException("Class: " + absoluteClassName + " can not be found. Please check your configuration.", cnfe, ConfigurationException.class);
-            } catch (Exception ex) {
-                throw LOG.newException("Error occured while trying to source class information. Please check your configuration. Reason: " + ex.getMessage(), ConfigurationException.class);
-            }
-        }
-
-
-        return objectFromContext;
     }
 }
