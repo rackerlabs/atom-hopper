@@ -23,7 +23,10 @@ public class AdapterGetter {
     }
 
     public FeedArchiveAdapter getFeedArchive(Class<?> feedArchiveAdapterClass) {
-        if (!feedArchiveAdapterClass.isAssignableFrom(FeedArchiveAdapter.class)) {
+        if (!FeedArchiveAdapter.class.isAssignableFrom(feedArchiveAdapterClass)) {
+            throw new IllegalArgumentException("Class: "
+                    + feedArchiveAdapterClass.getCanonicalName()
+                    + " does not implement the FeedArchiveAdapter interface");
         }
 
         return getByClassDefinition((Class<? extends FeedArchiveAdapter>) feedArchiveAdapterClass, FeedArchiveAdapter.class);
@@ -34,7 +37,10 @@ public class AdapterGetter {
     }
 
     public FeedSourceAdapter getFeedSource(Class<?> feedSourceAdapterClass) {
-        if (!feedSourceAdapterClass.isAssignableFrom(FeedSourceAdapter.class)) {
+        if (!FeedSourceAdapter.class.isAssignableFrom(feedSourceAdapterClass)) {
+            throw new IllegalArgumentException("Class: "
+                    + feedSourceAdapterClass.getCanonicalName()
+                    + " does not implement the FeedArchiveAdapter interface");
         }
 
         return getByClassDefinition((Class<? extends FeedSourceAdapter>) feedSourceAdapterClass, FeedSourceAdapter.class);

@@ -45,10 +45,11 @@ public class AdapterGetterTest {
     public static abstract class NonInstanceableClass implements FeedSourceAdapter {
     }
 
-    public static class WhenGettingFromApplicationContexts {
+    @Ignore
+    public static class TestParent {
 
-        private AdapterGetter adapterGetter;
-        private ApplicationContextAdapter contextAdapterMock;
+        protected AdapterGetter adapterGetter;
+        protected ApplicationContextAdapter contextAdapterMock;
 
         @Before
         public void standUp() {
@@ -65,6 +66,9 @@ public class AdapterGetterTest {
 
             adapterGetter = new AdapterGetter(contextAdapterMock);
         }
+    }
+
+    public static class WhenGettingFromContext extends TestParent {
 
         @Test
         public void shouldGetFromContext() {
@@ -95,10 +99,23 @@ public class AdapterGetterTest {
         public void shouldFailWhenGivenNonInstanceableClasses() {
             assertNull(adapterGetter.getFeedSource(NonInstanceableClass.class));
         }
+    }
+
+    public static class WhenCheckingForTypeSafety extends TestParent {
 
         @Test(expected = ClassCastException.class)
         public void shouldDetectClassCastingErrors() {
             assertNull(adapterGetter.getFeedArchive(BAD_REFERENCE));
+        }
+
+        @Test(expected = IllegalArgumentException.class)
+        public void shouldCheckForArchiveInterface() {
+            adapterGetter.getFeedArchive(InstanceableClass.class);
+        }
+        
+        @Test(expected = IllegalArgumentException.class)
+        public void shouldCheckForFeedSourceInterface() {
+            adapterGetter.getFeedSource(InstanceableClass.class);
         }
     }
 }
