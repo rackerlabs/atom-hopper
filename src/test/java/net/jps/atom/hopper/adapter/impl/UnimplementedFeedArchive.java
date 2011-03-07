@@ -21,7 +21,12 @@ import org.apache.abdera.protocol.server.RequestContext;
 public class UnimplementedFeedArchive implements FeedArchiveAdapter {
 
     @Override
-    public void archiveFeed(Calendar archiveTime) throws ArchiveProcessingException {
+    public void setAdapterTools(AdapterTools tools) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void archiveFeed(FeedSourceAdapter adapter, Calendar archiveTime) throws ArchiveProcessingException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -32,11 +37,6 @@ public class UnimplementedFeedArchive implements FeedArchiveAdapter {
 
     @Override
     public AdapterResponse<Feed> getArchivedFeed(RequestContext request, Calendar requestedDate) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void init(AdapterTools tools, FeedSourceAdapter fsa) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
