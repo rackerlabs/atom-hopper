@@ -1,6 +1,5 @@
 package net.jps.atom.hopper.abdera;
 
-import net.jps.atom.hopper.config.WorkspaceHandler;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;

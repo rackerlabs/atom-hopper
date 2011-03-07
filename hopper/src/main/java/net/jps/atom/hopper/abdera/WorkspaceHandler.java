@@ -1,4 +1,4 @@
-package net.jps.atom.hopper.config;
+package net.jps.atom.hopper.abdera;
 
 import net.jps.atom.hopper.abdera.FeedAdapter;
 import java.util.Collection;

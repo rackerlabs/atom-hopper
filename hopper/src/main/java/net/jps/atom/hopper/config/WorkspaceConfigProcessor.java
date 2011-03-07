@@ -1,5 +1,6 @@
 package net.jps.atom.hopper.config;
 
+import net.jps.atom.hopper.abdera.WorkspaceHandler;
 import com.rackspace.cloud.commons.logging.RCLogger;
 import com.rackspace.cloud.commons.logging.Logger;
 import com.rackspace.cloud.commons.util.StringUtilities;
