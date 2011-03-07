@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>net.jps.atom</groupId>
+        <artifactId>parent</artifactId>
+        <version>1.1.0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>net.jps.atom</groupId>
+    <artifactId>atom-hopper</artifactId>
+    <packaging>jar</packaging>
+
+    <name>ATOM Hopper - ATOMpub Server Framework</name>
+    <url>http://jpserver.net/atom/hopper</url>
+
+    <properties>
+        <project.license>apache20</project.license>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <org.springframework.version>3.0.3.RELEASE</org.springframework.version>
+    </properties>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:ssh://git@git-n01.rcloudtech.rackspacecloud.com/atom-hopper</connection>
+    </scm>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.rackspace.cloud.commons</groupId>
+            <artifactId>utilities</artifactId>
+            <version>1.0.6-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.rackspace.cloud.commons</groupId>
+            <artifactId>logging</artifactId>
+            <version>1.0.6-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.rackspace.cloud.commons</groupId>
+            <artifactId>configuration</artifactId>
+            <version>1.0.6-SNAPSHOT</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>net.jps.fava</groupId>
+            <artifactId>fava-lib</artifactId>
+            <version>1.0.7-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-web-api</artifactId>
+            <version>6.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.abdera</groupId>
+            <artifactId>abdera-core</artifactId>
+            <version>1.1.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.abdera</groupId>
+            <artifactId>abdera-server</artifactId>
+            <version>1.1.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>org.springframework.core</artifactId>
+            <version>${org.springframework.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>org.springframework.beans</artifactId>
+            <version>${org.springframework.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>org.springframework.context</artifactId>
+            <version>${org.springframework.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>org.springframework.web.servlet</artifactId>
+            <version>${org.springframework.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.8.5</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.2</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <repositories>
+        <repository>
+            <id>repos.rackspace.cloud.public</id>
+            <url>http://184.106.178.199/m2/content/groups/public/</url>
+        </repository>
+
+        <repository>
+            <id>repos.rackspace.cloud.snapshots</id>
+            <url>http://184.106.178.199/m2/content/repositories/snapshots</url>
+
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+
+        <repository>
+            <id>repos.rackspace.cloud.releases</id>
+            <url>http://184.106.178.199/m2/content/repositories/releases</url>
+
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>repos.rackspace.cloud.public</id>
+            <url>http://184.106.178.199/m2/content/groups/public/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <distributionManagement>
+        <repository>
+            <id>releases.internal.maven.research.rackspacecloud.com</id>
+ 
+            <name>Internal Rackspace Cloud Research Releases</name>
+            <url>http://maven-n01.rcloudtech.rackspacecloud.com/m2/content/repositories/releases</url>
+        </repository>
+
+        <snapshotRepository>
+            <uniqueVersion>false</uniqueVersion>
+            
+            <id>snapshots.internal.maven.research.rackspacecloud.com</id>
+
+            <name>Internal Rackspace Cloud Research Snapshots</name>
+            <url>http://maven-n01.rcloudtech.rackspacecloud.com/m2/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>2.3.2</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>2.1.1</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>com.sun.tools.xjc.maven2</groupId>
+                    <artifactId>maven-jaxb-plugin</artifactId>
+                    <version>1.1.1</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+
+                <configuration>
+                    <failOnMissingWebXml>true</failOnMissingWebXml>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>com.sun.tools.xjc.maven2</groupId>
+                <artifactId>maven-jaxb-plugin</artifactId>
+
+                <configuration>
+                    <includeSchemas>
+                        <includeSchema>**/*.xsd</includeSchema>
+                    </includeSchemas>
+
+                    <includeBindings>
+                        <includeBinding>**/*.xjb</includeBinding>
+                    </includeBindings>
+
+                    <strict>true</strict>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+

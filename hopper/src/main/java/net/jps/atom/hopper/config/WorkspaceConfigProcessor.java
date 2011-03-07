@@ -52,6 +52,8 @@ public class WorkspaceConfigProcessor {
 
         final WorkspaceHandler workspace = new WorkspaceHandler(config, regexTargetResolver);
 
+        setDefaults(config);
+        
         for (FeedAdapter collectionAdapter : assembleServices(config.getFeed(), namespaceCollectionAdapters, regexTargetResolver)) {
             workspace.addCollectionAdapter(collectionAdapter);
         }

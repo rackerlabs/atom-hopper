@@ -3,11 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>net.jps.atom</groupId>
-    <artifactId>atom-hopper</artifactId>
-    <packaging>jar</packaging>
+    <artifactId>parent</artifactId>
+    <packaging>pom</packaging>
 
     <version>1.1.0-SNAPSHOT</version>
-    <name>ATOM Hopper - ATOMpub Server Framework</name>
+    <name>ATOM Hopper - ATOMpub Server Collection</name>
 
     <url>http://jpserver.net/atom/hopper</url>
 
@@ -24,92 +24,100 @@
         </license>
     </licenses>
 
+    <modules>
+        <module>hopper</module>
+        <module>test-suite</module>
+        <module>sample-adapter</module>
+    </modules>
+
     <scm>
         <connection>scm:git:ssh://git@git-n01.rcloudtech.rackspacecloud.com/atom-hopper</connection>
     </scm>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.rackspace.cloud.commons</groupId>
-            <artifactId>utilities</artifactId>
-            <version>1.0.6-SNAPSHOT</version>
-        </dependency>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.rackspace.cloud.commons</groupId>
+                <artifactId>utilities</artifactId>
+                <version>1.0.6-SNAPSHOT</version>
+            </dependency>
 
-        <dependency>
-            <groupId>com.rackspace.cloud.commons</groupId>
-            <artifactId>logging</artifactId>
-            <version>1.0.6-SNAPSHOT</version>
-        </dependency>
+            <dependency>
+                <groupId>com.rackspace.cloud.commons</groupId>
+                <artifactId>logging</artifactId>
+                <version>1.0.6-SNAPSHOT</version>
+            </dependency>
 
-        <dependency>
-            <groupId>com.rackspace.cloud.commons</groupId>
-            <artifactId>configuration</artifactId>
-            <version>1.0.6-SNAPSHOT</version>
-        </dependency>
+            <dependency>
+                <groupId>com.rackspace.cloud.commons</groupId>
+                <artifactId>configuration</artifactId>
+                <version>1.0.6-SNAPSHOT</version>
+            </dependency>
         
-        <dependency>
-            <groupId>net.jps.fava</groupId>
-            <artifactId>fava-lib</artifactId>
-            <version>1.0.7-SNAPSHOT</version>
-        </dependency>
+            <dependency>
+                <groupId>net.jps.fava</groupId>
+                <artifactId>fava-lib</artifactId>
+                <version>1.0.7-SNAPSHOT</version>
+            </dependency>
 
-        <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-web-api</artifactId>
-            <version>6.0</version>
-            <scope>provided</scope>
-        </dependency>
+            <dependency>
+                <groupId>javax</groupId>
+                <artifactId>javaee-web-api</artifactId>
+                <version>6.0</version>
+                <scope>provided</scope>
+            </dependency>
 
-        <dependency>
-            <groupId>org.apache.abdera</groupId>
-            <artifactId>abdera-core</artifactId>
-            <version>1.1.2</version>
-        </dependency>
+            <dependency>
+                <groupId>org.apache.abdera</groupId>
+                <artifactId>abdera-core</artifactId>
+                <version>1.1.2</version>
+            </dependency>
 
-        <dependency>
-            <groupId>org.apache.abdera</groupId>
-            <artifactId>abdera-server</artifactId>
-            <version>1.1.2</version>
-        </dependency>
+            <dependency>
+                <groupId>org.apache.abdera</groupId>
+                <artifactId>abdera-server</artifactId>
+                <version>1.1.2</version>
+            </dependency>
 
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>org.springframework.core</artifactId>
-            <version>${org.springframework.version}</version>
-        </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>org.springframework.core</artifactId>
+                <version>${org.springframework.version}</version>
+            </dependency>
 
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>org.springframework.beans</artifactId>
-            <version>${org.springframework.version}</version>
-        </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>org.springframework.beans</artifactId>
+                <version>${org.springframework.version}</version>
+            </dependency>
         
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>org.springframework.context</artifactId>
-            <version>${org.springframework.version}</version>
-        </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>org.springframework.context</artifactId>
+                <version>${org.springframework.version}</version>
+            </dependency>
         
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>org.springframework.web.servlet</artifactId>
-            <version>${org.springframework.version}</version>
-        </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>org.springframework.web.servlet</artifactId>
+                <version>${org.springframework.version}</version>
+            </dependency>
 
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
-            <version>1.8.5</version>
-            <scope>test</scope>
-        </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-all</artifactId>
+                <version>1.8.5</version>
+                <scope>test</scope>
+            </dependency>
 
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.8.2</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.8.2</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <repositories>
         <repository>
@@ -168,6 +176,11 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>2.3.2</version>
+                    
+                    <configuration>
+                        <source>1.6</source>
+                        <target>1.6</target>
+                    </configuration>
                 </plugin>
 
                 <plugin>
@@ -183,52 +196,6 @@
                 </plugin>
             </plugins>
         </pluginManagement>
-
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-
-                <configuration>
-                    <failOnMissingWebXml>true</failOnMissingWebXml>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>com.sun.tools.xjc.maven2</groupId>
-                <artifactId>maven-jaxb-plugin</artifactId>
-
-                <configuration>
-                    <includeSchemas>
-                        <includeSchema>**/*.xsd</includeSchema>
-                    </includeSchemas>
-
-                    <includeBindings>
-                        <includeBinding>**/*.xjb</includeBinding>
-                    </includeBindings>
-
-                    <strict>true</strict>
-                </configuration>
-
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
     </build>
 </project>
 
