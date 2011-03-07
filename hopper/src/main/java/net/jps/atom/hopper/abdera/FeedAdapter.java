@@ -5,13 +5,13 @@ import com.rackspace.cloud.commons.logging.RCLogger;
 import com.rackspace.cloud.commons.util.RegexList;
 import com.rackspace.cloud.commons.util.StringUtilities;
 import com.rackspace.cloud.commons.util.http.HttpStatusCode;
-import java.util.Date;
 import org.apache.abdera.model.Document;
 import net.jps.atom.hopper.adapter.FeedSourceAdapter;
 import java.util.HashMap;
 import java.util.Map;
-import net.jps.atom.hopper.abdera.response.FeedResponseHandler;
+import net.jps.atom.hopper.abdera.response.StaticFeedResponseHandler;
 import net.jps.atom.hopper.abdera.response.ResponseHandler;
+import net.jps.atom.hopper.abdera.response.StaticEntryResponseHandler;
 import org.apache.abdera.protocol.server.TargetType;
 
 import net.jps.atom.hopper.response.EmptyBody;
@@ -33,12 +33,15 @@ public class FeedAdapter extends AbstractCollectionAdapter {
     private final RegexList feedTargets;
     private final FeedSourceAdapter configuredDatasourceAdapter;
     private final ResponseHandler<Feed> feedResponseHandler;
+    private final ResponseHandler<Entry> entryResponseHandler;
 
     public FeedAdapter(FeedConfiguration feedConfig, FeedSourceAdapter configuredDatasourceAdapter) {
         this.feedConfig = feedConfig;
         this.configuredDatasourceAdapter = configuredDatasourceAdapter;
 
-        feedResponseHandler = new FeedResponseHandler();
+        feedResponseHandler = new StaticFeedResponseHandler();
+        entryResponseHandler = new StaticEntryResponseHandler();
+
         feedTargets = new RegexList();
     }
 
@@ -68,7 +71,7 @@ public class FeedAdapter extends AbstractCollectionAdapter {
     }
 
     @Override
-    //TODO: Reimplement this
+    //TODO: Reimplement this - getting there
     public String getId(RequestContext rc) {
 
 //        return new StringBuilder("tag:").append(feedConfig.getFullUri()).append(",").append(CALENDAR_INSTANCE.get(Calendar.YEAR)).append(":").append(config.getBaseUrn()).toString();
@@ -106,16 +109,13 @@ public class FeedAdapter extends AbstractCollectionAdapter {
             if (response.getResponseStatus() == HttpStatusCode.CREATED) {
                 final Entry returnedEntryCopy = response.getBody();
 
-                if (!StringUtilities.isBlank(returnedEntryCopy.getId().toString())) {
-                    if (returnedEntryCopy.getLinks("self").isEmpty()) {
-//                        returnedEntryCopy.addLink(, null)
-                    }
-                } else {
+                //TODO: Push into filter
+                if (StringUtilities.isBlank(returnedEntryCopy.getId().toString())) {
                     log.warn("New ID for Entry Update was not returned. Please verify that your adapter sets the entry's ID field");
                 }
             }
 
-            return handleEntryResponse(rc, response);
+            return entryResponseHandler.handleAdapterResponse(rc, response);
         } catch (Exception ex) {
             return ProviderHelper.servererror(rc, ex.getMessage(), ex);
         }
@@ -129,7 +129,7 @@ public class FeedAdapter extends AbstractCollectionAdapter {
 
             final AdapterResponse<Entry> response = configuredDatasourceAdapter.putEntry(request, entryId, entryToUpdate.getRoot());
 
-            return handleEntryResponse(request, response);
+            return entryResponseHandler.handleAdapterResponse(request, response);
         } catch (Exception ex) {
             return ProviderHelper.servererror(request, ex.getMessage(), ex);
         }
@@ -153,7 +153,7 @@ public class FeedAdapter extends AbstractCollectionAdapter {
         final String entityId = rc.getTarget().getParameter(TargetResolverField.ENTRY.name());
 
         try {
-            return handleEntryResponse(rc, configuredDatasourceAdapter.getEntry(rc, entityId));
+            return entryResponseHandler.handleAdapterResponse(rc, configuredDatasourceAdapter.getEntry(rc, entityId));
         } catch (Exception ex) {
             return ProviderHelper.servererror(rc, ex.getMessage(), ex);
         }
@@ -169,25 +169,6 @@ public class FeedAdapter extends AbstractCollectionAdapter {
 
             default:
                 return ProviderHelper.nocontent();
-        }
-    }
-
-    public static ResponseContext handleEntryResponse(RequestContext rc, AdapterResponse<Entry> response) {
-        final Date lastUpdated = response.getBody() != null ? response.getBody().getUpdated() : null;
-
-        switch (response.getResponseStatus()) {
-            case OK:
-            case CREATED:
-                return ProviderHelper.returnBase(response.getBody(), response.getResponseStatus().intValue(), lastUpdated);
-
-            case NOT_FOUND:
-                return ProviderHelper.notfound(rc, response.getMessage());
-
-            case INTERNAL_SERVER_ERROR:
-                return ProviderHelper.servererror(rc, response.getMessage(), new Exception());
-
-            default:
-                return ProviderHelper.notfound(rc);
         }
     }
 }
