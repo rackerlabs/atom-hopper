@@ -1,15 +1,15 @@
-package net.jps.atom.hopper.client.adapter;
+package net.jps.atom.hopper.adapter;
 
 import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.parser.Parser;
 
-public class SenseAdapterTools implements AdapterTools {
+public class FeedAdapterTools implements AdapterTools {
 
     private final Abdera abderaReference;
 
-    public SenseAdapterTools(Abdera abderaReference) {
+    public FeedAdapterTools(Abdera abderaReference) {
         this.abderaReference = abderaReference;
     }
 

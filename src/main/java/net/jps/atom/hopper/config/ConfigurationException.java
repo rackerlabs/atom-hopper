@@ -8,13 +8,13 @@ package net.jps.atom.hopper.config;
  *
  * @author zinic
  */
-public class SenseConfigurationException extends RuntimeException {
+public class ConfigurationException extends RuntimeException {
 
-    public SenseConfigurationException(String message, Throwable cause) {
+    public ConfigurationException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public SenseConfigurationException(String message) {
+    public ConfigurationException(String message) {
         super(message);
     }
 }

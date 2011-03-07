@@ -8,13 +8,12 @@ import org.apache.abdera.protocol.server.CollectionAdapter;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.Target;
 import org.apache.abdera.protocol.server.WorkspaceInfo;
-import org.apache.abdera.protocol.server.WorkspaceManager;
 
-public class SenseWorkspaceManager implements WorkspaceManager {
+public class WorkspaceManager implements org.apache.abdera.protocol.server.WorkspaceManager {
 
     private final List<WorkspaceHandler> handlers;
 
-    public SenseWorkspaceManager() {
+    public WorkspaceManager() {
         handlers = new LinkedList<WorkspaceHandler>();
     }
 
@@ -28,14 +27,15 @@ public class SenseWorkspaceManager implements WorkspaceManager {
         return (Collection) handlers;
     }
 
+    //TODO: Reimplement and integrate with the regex target builder
     public String urlFor(RequestContext request, Object key, Object param) {
-        for (WorkspaceHandler handler : handlers) {
-            final String url = handler.getTemplateTargetBuilder().urlFor(request, key, param);
-
-            if (url != null) {
-                return url;
-            }
-        }
+//        for (WorkspaceHandler handler : handlers) {
+//            final String url = handler.getTemplateTargetBuilder().urlFor(request, key, param);
+//
+//            if (url != null) {
+//                return url;
+//            }
+//        }
 
         return null;
     }

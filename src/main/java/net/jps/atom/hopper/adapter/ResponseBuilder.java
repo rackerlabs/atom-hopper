@@ -1,4 +1,4 @@
-package net.jps.atom.hopper.client.adapter;
+package net.jps.atom.hopper.adapter;
 
 import com.rackspace.cloud.commons.util.http.HttpStatusCode;
 import net.jps.atom.hopper.response.EmptyBody;

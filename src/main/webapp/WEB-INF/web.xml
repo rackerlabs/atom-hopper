@@ -2,7 +2,7 @@
 
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
     <display-name>ATOMpub Prototype Server</display-name>
-    <description>ATOM - Duh...</description>
+    <description>ATOM</description>
 
     <context-param>
         <param-name>contextConfigLocation</param-name>
@@ -14,25 +14,23 @@
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
 
-    <servlet id="sense-servlet">
-        <servlet-name>Sense</servlet-name>
-        <servlet-class>net.jps.atom.hopper.SenseServlet</servlet-class>
+    <servlet id="atom-hopper">
+        <servlet-name>Atom-Hopper</servlet-name>
+        <servlet-class>net.jps.atom.hopper.AtomHopperServlet</servlet-class>
 
         <init-param>
             <param-name>sense-config-directory</param-name>
-            <param-value>/etc/rackspace-cloud/sense</param-value>
+            <param-value>/tmp/atom</param-value>
         </init-param>
 
         <init-param>
             <param-name>context-adapter-class</param-name>
-            <param-value>com.rackspace.cloud.util.servlet.context.impl.ServletSpringContext</param-value>
+            <param-value>com.rackspace.cloud.commons.util.servlet.context.impl.ServletSpringContext</param-value>
         </init-param>
-        
-        <load-on-startup>1</load-on-startup>
     </servlet>
 
-    <servlet-mapping id="sense-mapping">
-        <servlet-name>Sense</servlet-name>
+    <servlet-mapping id="atom-hopper-mapping">
+        <servlet-name>Atom-Hopper</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
 </web-app>

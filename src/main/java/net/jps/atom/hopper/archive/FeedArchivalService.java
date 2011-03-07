@@ -4,7 +4,7 @@
  */
 package net.jps.atom.hopper.archive;
 
-import net.jps.atom.hopper.client.adapter.archive.FeedArchiver;
+import net.jps.atom.hopper.adapter.archive.FeedArchiveAdapter;
 
 /**
  *
@@ -16,5 +16,5 @@ public interface FeedArchivalService {
 
     void stopService();
 
-    void registerArchiver(FeedArchiver archiver);
+    void registerArchiver(FeedArchiveAdapter archiver);
 }

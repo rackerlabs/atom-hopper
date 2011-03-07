@@ -10,9 +10,14 @@ public final class EmptyBody {
 
     private EmptyBody() {
     }
+    
+    @Override
+    public int hashCode() {
+        return INSTANCE.hashCode();
+    }
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof EmptyBody;
+        return obj.hashCode() == hashCode();
     }
 }

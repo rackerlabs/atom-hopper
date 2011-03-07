@@ -7,7 +7,7 @@ package net.jps.atom.hopper.archive.impl;
 import com.rackspace.cloud.commons.logging.Logger;
 import com.rackspace.cloud.commons.logging.RCLogger;
 import net.jps.atom.hopper.archive.FeedArchivalService;
-import net.jps.atom.hopper.client.adapter.archive.FeedArchiver;
+import net.jps.atom.hopper.adapter.archive.FeedArchiveAdapter;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
@@ -49,7 +49,7 @@ public class QueuedFeedArchivalService extends TimerTask implements FeedArchival
     }
 
     @Override
-    public synchronized void registerArchiver(FeedArchiver archiver) {
+    public synchronized void registerArchiver(FeedArchiveAdapter archiver) {
         feedArchivalTasks.add(new FeedArchivalTask(archiver));
     }
 

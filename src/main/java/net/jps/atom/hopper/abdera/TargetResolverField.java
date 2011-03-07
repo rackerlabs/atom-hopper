@@ -6,7 +6,7 @@ public enum TargetResolverField {
     PARAMETERS,
     FEED,
     USER,
-    NAMESPACE,
+    WORKSPACE,
     FEED_TYPE,
     CATEGORY;
 }

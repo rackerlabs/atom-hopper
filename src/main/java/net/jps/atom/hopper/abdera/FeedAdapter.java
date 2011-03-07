@@ -5,9 +5,8 @@ import com.rackspace.cloud.commons.logging.RCLogger;
 import com.rackspace.cloud.commons.util.RegexList;
 import com.rackspace.cloud.commons.util.StringUtilities;
 import com.rackspace.cloud.commons.util.http.HttpStatusCode;
-import net.jps.atom.hopper.config.v1_0.FeedConfig;
 import org.apache.abdera.model.Document;
-import net.jps.atom.hopper.client.adapter.FeedSourceAdapter;
+import net.jps.atom.hopper.adapter.FeedSourceAdapter;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.abdera.protocol.server.TargetType;
@@ -18,27 +17,28 @@ import net.jps.atom.hopper.response.ResponseParameter;
 import org.apache.abdera.model.Entry;
 
 import java.util.Date;
+import net.jps.atom.hopper.config.v1_0.FeedConfiguration;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.ProviderHelper;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.ResponseContext;
 import org.apache.abdera.protocol.server.impl.AbstractCollectionAdapter;
 
-public class SenseFeedAdapter extends AbstractCollectionAdapter {
+public class FeedAdapter extends AbstractCollectionAdapter {
 
-    private static final Logger log = new RCLogger(SenseFeedAdapter.class);
-    private final FeedConfig feedConfig;
+    private static final Logger log = new RCLogger(FeedAdapter.class);
+    private final FeedConfiguration feedConfig;
     private final RegexList feedTargets;
     private final FeedSourceAdapter configuredDatasourceAdapter;
 
-    public SenseFeedAdapter(FeedConfig feedConfig, FeedSourceAdapter configuredDatasourceAdapter) {
+    public FeedAdapter(FeedConfiguration feedConfig, FeedSourceAdapter configuredDatasourceAdapter) {
         this.feedConfig = feedConfig;
         this.configuredDatasourceAdapter = configuredDatasourceAdapter;
 
         feedTargets = new RegexList();
     }
 
-    public FeedConfig getFeedConfiguration() {
+    public FeedConfiguration getFeedConfiguration() {
         return feedConfig;
     }
 

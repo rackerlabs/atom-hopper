@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<sense-config xmlns="http://docs.rackspacecloud.com/cloud-sense/sense-config/v1.0">
+<atom-hopper-config xmlns="http://jpserver.net/atom/hopper-config/v1.0">
     <defaults>
         <author name="Rackspace Cloud" />
     </defaults>
@@ -11,7 +11,7 @@
 
         <!-- http://localhost:8080/namespace_a/feed_1 -->
         <feed title="feed_1" resource="/feed_1">
-            <archive archiver-ref="" archiver-class="" archival-interval="" />
+            <archive archiver-ref="ref" archival-interval="3600000" />
         </feed>
     </workspace>
-</sense-config>
+</atom-hopper-config>

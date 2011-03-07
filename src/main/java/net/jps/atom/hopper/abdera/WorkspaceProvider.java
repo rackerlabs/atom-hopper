@@ -24,7 +24,6 @@ import org.apache.abdera.protocol.server.Target;
 import org.apache.abdera.protocol.server.TargetType;
 import org.apache.abdera.protocol.server.Transactional;
 import org.apache.abdera.protocol.server.WorkspaceInfo;
-import org.apache.abdera.protocol.server.WorkspaceManager;
 import org.apache.abdera.protocol.server.context.ResponseContextException;
 import org.apache.abdera.protocol.server.impl.SimpleSubjectResolver;
 import org.apache.abdera.protocol.server.processors.CategoriesRequestProcessor;
@@ -33,17 +32,16 @@ import org.apache.abdera.protocol.server.processors.EntryRequestProcessor;
 import org.apache.abdera.protocol.server.processors.MediaRequestProcessor;
 import org.apache.abdera.protocol.server.processors.ServiceRequestProcessor;
 
-public class SenseWorkspaceProvider implements Provider {
+public class WorkspaceProvider implements Provider {
 
-    private static final Logger log = new RCLogger(SenseWorkspaceProvider.class);
-    
+    private static final Logger log = new RCLogger(WorkspaceProvider.class);
     private final Map<TargetType, RequestProcessor> requestProcessors;
-    private final SenseWorkspaceManager workspaceManager;
+    private final WorkspaceManager workspaceManager;
     private final List<Filter> filters;
     private Map<String, String> properties;
     private Abdera abdera;
 
-    public SenseWorkspaceProvider() {
+    public WorkspaceProvider() {
         requestProcessors = new HashMap<TargetType, RequestProcessor>();
         filters = new ArrayList<Filter>();
 
@@ -54,10 +52,10 @@ public class SenseWorkspaceProvider implements Provider {
         this.requestProcessors.put(TargetType.TYPE_ENTRY, new EntryRequestProcessor());
         this.requestProcessors.put(TargetType.TYPE_MEDIA, new MediaRequestProcessor());
 
-        workspaceManager = new SenseWorkspaceManager();
+        workspaceManager = new WorkspaceManager();
     }
 
-    public SenseWorkspaceManager getWorkspaceManager() {
+    public WorkspaceManager getWorkspaceManager() {
         return workspaceManager;
     }
 

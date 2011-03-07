@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.jps.atom.hopper.client.adapter;
+package net.jps.atom.hopper.adapter;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <xs:schema elementFormDefault="qualified" attributeFormDefault="unqualified"
-           targetNamespace="http://docs.rackspacecloud.com/cloud-sense/sense-config/v1.0"
-           xmlns:sense="http://docs.rackspacecloud.com/cloud-sense/sense-config/v1.0"
+           targetNamespace="http://jpserver.net/atom/hopper-config/v1.0"
+           xmlns:hopcfg="http://jpserver.net/atom/hopper-config/v1.0"
            xmlns:xhtml="http://www.w3.org/1999/xhtml"
            xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-    <xs:element name="sense-config" type="sense:sense-config" />
+    <xs:element name="atom-hopper-config" type="hopcfg:Configuration" />
     
-    <xs:complexType name="sense-config">
+    <xs:complexType name="Configuration">
         <xs:sequence>
-            <xs:element name="defaults" type="sense:defaults" minOccurs="0" maxOccurs="1" />
-            <xs:element name="workspace" type="sense:workspace-config" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="defaults" type="hopcfg:ConfigurationDefaults" minOccurs="0" maxOccurs="1" />
+            <xs:element name="workspace" type="hopcfg:WorkspaceConfiguration" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="defaults">
+    <xs:complexType name="ConfigurationDefaults">
         <xs:annotation>
             <xs:documentation>
                 <xhtml:p>
@@ -26,11 +26,11 @@
         </xs:annotation>
 
         <xs:sequence>
-            <xs:element name="author" type="sense:author" minOccurs="0" maxOccurs="1" />
+            <xs:element name="author" type="hopcfg:Author" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="workspace-config">
+    <xs:complexType name="WorkspaceConfiguration">
         <xs:annotation>
             <xs:documentation>
                 <xhtml:p>
@@ -41,8 +41,8 @@
         </xs:annotation>
 
         <xs:sequence>
-            <xs:element name="archive" type="sense:archive-marker" minOccurs="0" maxOccurs="1" />
-            <xs:element name="feed" type="sense:feed-config" minOccurs="1" maxOccurs="unbounded" />
+            <xs:element name="archive" type="hopcfg:ArchiveConfiguration" minOccurs="0" maxOccurs="1" />
+            <xs:element name="feed" type="hopcfg:FeedConfiguration" minOccurs="1" maxOccurs="unbounded" />
         </xs:sequence>
 
         <xs:attribute name="title" type="xs:string" use="required">
@@ -86,10 +86,10 @@
         </xs:attribute>
     </xs:complexType>
 
-    <xs:complexType name="feed-config">
+    <xs:complexType name="FeedConfiguration">
         <xs:sequence>
-            <xs:element name="author" type="sense:author" minOccurs="0" maxOccurs="1" />
-            <xs:element name="archive" type="sense:archive-marker" minOccurs="0" maxOccurs="1" />
+            <xs:element name="author" type="hopcfg:Author" minOccurs="0" maxOccurs="1" />
+            <xs:element name="archive" type="hopcfg:ArchiveConfiguration" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
 
         <xs:attribute name="title" type="xs:string" use="required">
@@ -123,7 +123,7 @@
         </xs:attribute>
     </xs:complexType>
 
-    <xs:complexType name="archive-marker">
+    <xs:complexType name="ArchiveConfiguration">
         <xs:attribute name="archiver-ref" type="xs:string" use="optional">
             <xs:annotation>
                 <xs:documentation>
@@ -149,7 +149,7 @@
         </xs:attribute>
     </xs:complexType>
 
-    <xs:complexType name="author">
+    <xs:complexType name="Author">
         <xs:attribute name="name" type="xs:string" use="required">
             <xs:annotation>
                 <xs:documentation>

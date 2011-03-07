@@ -1,4 +1,4 @@
-package net.jps.atom.hopper.client.adapter;
+package net.jps.atom.hopper.adapter;
 
 import java.io.IOException;
 import java.util.Date;

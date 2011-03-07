@@ -1,4 +1,4 @@
-package net.jps.atom.hopper.client.adapter;
+package net.jps.atom.hopper.adapter;
 
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;

@@ -24,12 +24,33 @@ public class TargeRegexBuilderTest {
             final TargetRegexBuilder target = new TargetRegexBuilder();
             target.setWorkspace("workspace");
 
-            final Pattern targetRegex = target.toWorkspacePattern();
-            
+            final Pattern targetRegex = Pattern.compile(target.toWorkspacePattern());
+
             assertTrue("Should match plain workspace URI - regex is: " + targetRegex.pattern(),
                     targetRegex.matcher(WORKSPACE).matches());
             assertTrue("Should match plain workspace URI with a slash - regex is: " + targetRegex.pattern(),
                     targetRegex.matcher(addTrailingSlash(WORKSPACE)).matches());
+        }
+
+        @Test(expected = IllegalStateException.class)
+        public void shouldFailToBuildRegexWhenWorkspaceIsNotSet() {
+            new TargetRegexBuilder().toWorkspacePattern();
+        }
+    }
+    
+    public static class WhenBuildingCategoryRegexes {
+
+        @Test
+        public void shouldMatchAllCategoryVariations() {
+            final TargetRegexBuilder target = new TargetRegexBuilder();
+            target.setWorkspace("workspace");
+ 
+            final Pattern targetRegex = Pattern.compile(target.toCategoryPattern());
+
+            assertTrue("Should match plain categories URI - regex is: " + targetRegex.pattern(),
+                    targetRegex.matcher(CATEGORIES).matches());
+            assertTrue("Should match plain categories URI with a slash - regex is: " + targetRegex.pattern(),
+                    targetRegex.matcher(addTrailingSlash(CATEGORIES)).matches());
         }
     }
 
@@ -41,7 +62,7 @@ public class TargeRegexBuilderTest {
             target.setWorkspace("workspace");
             target.setFeed("feed");
 
-            final Pattern targetRegex = target.toFeedPattern();
+            final Pattern targetRegex = Pattern.compile(target.toFeedPattern());
 
             assertTrue("Should match plain feed URI - regex is: " + targetRegex.pattern(),
                     targetRegex.matcher(FEED).matches());
@@ -56,6 +77,11 @@ public class TargeRegexBuilderTest {
             assertTrue("Should match feed URI with a long category list and a slash - regex is: " + targetRegex.pattern(),
                     targetRegex.matcher(addTrailingSlash(withCategories(FEED, DEFAULT_CATEGORIES_LONG))).matches());
         }
+
+        @Test(expected = IllegalStateException.class)
+        public void shouldFailToBuildRegexWhenFeedIsNotSet() {
+            new TargetRegexBuilder().toFeedPattern();
+        }
     }
 
     public static class WhenBuildingEntryRegexes {
@@ -66,7 +92,7 @@ public class TargeRegexBuilderTest {
             target.setWorkspace("workspace");
             target.setFeed("feed");
 
-            final Pattern targetRegex = target.toEntryPattern();
+            final Pattern targetRegex = Pattern.compile(target.toEntryPattern());
 
             assertTrue("Should match plain entry URI - regex is: " + targetRegex.pattern(),
                     targetRegex.matcher(ENTRY).matches());
@@ -91,7 +117,7 @@ public class TargeRegexBuilderTest {
             target.setWorkspace("workspace");
             target.setFeed("feed");
 
-            final Pattern targetRegex = target.toArchivePattern();
+            final Pattern targetRegex = Pattern.compile(target.toArchivePattern());
 
             assertTrue("Should match plain year scoped archive URI - regex is: " + targetRegex.pattern(),
                     targetRegex.matcher(ARCHIVE_YEAR).matches());
@@ -161,7 +187,6 @@ public class TargeRegexBuilderTest {
     }
     public static final String[] DEFAULT_CATEGORIES_SHORT = new String[]{"category_1", "category_2"},
             DEFAULT_CATEGORIES_LONG = new String[]{"category_a", "category_b", "category_c", "category_d", "category_e"};
-    
     public static final String WORKSPACE = "/workspace",
             CATEGORIES = "/workspace/categories",
             FEED = "/workspace/feed",

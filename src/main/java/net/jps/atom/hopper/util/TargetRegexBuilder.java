@@ -5,24 +5,16 @@
 package net.jps.atom.hopper.util;
 
 import com.rackspace.cloud.commons.util.StringUtilities;
-import java.util.regex.Pattern;
 
 /**
  *
- * Regex builder standards
- * 
- * Workspace: /(workspace)/?
- * Categories: /(workspace)/categories/?
- * Feeds: /(workspace)/(feed)/?(\?[^#]+)?
- * Entries: /(workspace)/(feed)/entries/([^/#?]+)
- * Archives: /(workspace)/(feed)/archives/([^?#]+)(\?[^#]+)?
- * 
  * @author zinic
  */
 public class TargetRegexBuilder {
 
     private static final String REPLACEMENT_ELEMENT = "@_",
-            WORKSPACE_TEMPLATE = "/(" + REPLACEMENT_ELEMENT + ")/?",
+            WORKSPACE_TEMPLATE = "/(" + REPLACEMENT_ELEMENT + ")/?(\\?[^#]+)?",
+            CATAGORY_TEMPLATE = "/(" + REPLACEMENT_ELEMENT + ")/categories/?(\\?[^#]+)?",
             FEED_TEMPLATE = "/(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + ")/?(\\?[^#]+)?",
             ENTRY_TEMPLATE = "/(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + ")/entries/([^/#?]+)/?(\\?[^#]+)?",
             ARCHIVE_TEMPLATE = "/(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + ")/archives(/\\d\\d\\d\\d)(/\\d\\d)?(/\\d\\d)?(/\\d\\d)?(/\\d\\d:\\d\\d)?/?(\\?[^#]+)?";
@@ -31,6 +23,11 @@ public class TargetRegexBuilder {
 
     public TargetRegexBuilder() {
         workspace = feed = null;
+    }
+    
+    public TargetRegexBuilder(TargetRegexBuilder copyMe) {
+        workspace = copyMe.workspace;
+        feed = copyMe.feed;
     }
 
     public void setFeed(String feed) {
@@ -55,27 +52,33 @@ public class TargetRegexBuilder {
         }
     }
 
-    public Pattern toWorkspacePattern() {
+    public String toWorkspacePattern() {
         checkWorkspaceString();
 
-        return Pattern.compile(WORKSPACE_TEMPLATE.replaceAll(REPLACEMENT_ELEMENT, workspace));
+        return WORKSPACE_TEMPLATE.replaceAll(REPLACEMENT_ELEMENT, workspace);
     }
 
-    public Pattern toFeedPattern() {
-        checkFeedString();
-        
-        return Pattern.compile(FEED_TEMPLATE.replaceFirst(REPLACEMENT_ELEMENT, workspace).replaceFirst(REPLACEMENT_ELEMENT, feed));
+    public String toCategoryPattern() {
+        checkWorkspaceString();
+
+        return CATAGORY_TEMPLATE.replaceAll(REPLACEMENT_ELEMENT, workspace);
     }
 
-    public Pattern toEntryPattern() {
+    public String toFeedPattern() {
         checkFeedString();
         
-        return Pattern.compile(ENTRY_TEMPLATE.replaceFirst(REPLACEMENT_ELEMENT, workspace).replaceFirst(REPLACEMENT_ELEMENT, feed));
+        return FEED_TEMPLATE.replaceFirst(REPLACEMENT_ELEMENT, workspace).replaceFirst(REPLACEMENT_ELEMENT, feed);
     }
 
-    public Pattern toArchivePattern() {
+    public String toEntryPattern() {
         checkFeedString();
         
-        return Pattern.compile(ARCHIVE_TEMPLATE.replaceFirst(REPLACEMENT_ELEMENT, workspace).replaceFirst(REPLACEMENT_ELEMENT, feed));
+        return ENTRY_TEMPLATE.replaceFirst(REPLACEMENT_ELEMENT, workspace).replaceFirst(REPLACEMENT_ELEMENT, feed);
+    }
+
+    public String toArchivePattern() {
+        checkFeedString();
+        
+        return ARCHIVE_TEMPLATE.replaceFirst(REPLACEMENT_ELEMENT, workspace).replaceFirst(REPLACEMENT_ELEMENT, feed);
     }
 }

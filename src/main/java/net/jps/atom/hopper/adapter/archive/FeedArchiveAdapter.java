@@ -1,7 +1,7 @@
-package net.jps.atom.hopper.client.adapter.archive;
+package net.jps.atom.hopper.adapter.archive;
 
-import net.jps.atom.hopper.client.adapter.AdapterTools;
-import net.jps.atom.hopper.client.adapter.FeedSourceAdapter;
+import net.jps.atom.hopper.adapter.AdapterTools;
+import net.jps.atom.hopper.adapter.FeedSourceAdapter;
 import net.jps.atom.hopper.response.AdapterResponse;
 import java.util.Calendar;
 import org.apache.abdera.model.Feed;
@@ -14,7 +14,7 @@ import org.apache.abdera.protocol.server.RequestContext;
  *
  * @author John Hopper
  */
-public interface FeedArchiver {
+public interface FeedArchiveAdapter {
 
     /**
      * SENSe will inject archive adapters with a tools object using this method 

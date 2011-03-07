@@ -1,4 +1,4 @@
-package net.jps.atom.hopper.client.adapter;
+package net.jps.atom.hopper.adapter;
 
 import net.jps.atom.hopper.response.EmptyBody;
 import net.jps.atom.hopper.response.AdapterResponse;
@@ -42,7 +42,7 @@ public interface FeedSourceAdapter {
     Feed getFeedByDateRange(Calendar startingEntryDate, Calendar lastEntryDate);
 
     /**
-     * Requests a single feed from the adapter. The request does not contain
+     * Requests a single feed from the adapter. This request did not contain
      * paging information and the adapter may assume that the requester is
      * requesting the head of the feed.
      *

@@ -5,23 +5,23 @@ import com.rackspace.cloud.commons.config.jaxb.JAXBConfigurationParser;
 import com.rackspace.cloud.commons.logging.Logger;
 import com.rackspace.cloud.commons.logging.RCLogger;
 import com.rackspace.cloud.commons.util.servlet.context.ApplicationContextAdapter;
-import net.jps.atom.hopper.config.v1_0.SenseConfig;
 import net.jps.atom.hopper.exceptions.ServletInitException;
-import net.jps.atom.hopper.abdera.SenseWorkspaceProvider;
+import net.jps.atom.hopper.abdera.WorkspaceProvider;
 import net.jps.atom.hopper.archive.FeedArchivalService;
 import net.jps.atom.hopper.archive.impl.QueuedFeedArchivalService;
 import net.jps.atom.hopper.config.WorkspaceConfigProcessor;
-import net.jps.atom.hopper.config.v1_0.WorkspaceConfig;
 import net.jps.atom.hopper.exceptions.ContextAdapterResolutionException;
 import java.util.HashMap;
 import javax.servlet.ServletException;
+import net.jps.atom.hopper.config.v1_0.Configuration;
+import net.jps.atom.hopper.config.v1_0.WorkspaceConfiguration;
 import org.apache.abdera.Abdera;
 import org.apache.abdera.protocol.server.Provider;
 import org.apache.abdera.protocol.server.servlet.AbderaServlet;
 
-public final class SenseServlet extends AbderaServlet {
+public final class AtomHopperServlet extends AbderaServlet {
 
-    private static final Logger log = new RCLogger(SenseServlet.class);
+    private static final Logger log = new RCLogger(AtomHopperServlet.class);
 
     public static final String CONTEXT_ADAPTER_CLASS = "context-adapter-class";
     public static final String CONFIG_DIRECTORY = "sense-config-directory";
@@ -30,7 +30,7 @@ public final class SenseServlet extends AbderaServlet {
     private FeedArchivalService archivalService;
     private ApplicationContextAdapter applicationContextAdapter;
     private Abdera abderaObject;
-    private SenseConfig configuration;
+    private Configuration configuration;
 
     @Override
     public void destroy() {
@@ -49,7 +49,7 @@ public final class SenseServlet extends AbderaServlet {
         try {
             log.info("Reading configuration file: " + configLocation);
 
-            configuration = JAXBConfigurationParser.fromFile(configLocation, SenseConfig.class, net.jps.atom.hopper.config.v1_0.ObjectFactory.class).read();
+            configuration = JAXBConfigurationParser.fromFile(configLocation, Configuration.class, net.jps.atom.hopper.config.v1_0.ObjectFactory.class).read();
         } catch (ConfigurationParserException cpe) {
             throw log.newException("Failed to read configuration file: " + configLocation, cpe, ServletInitException.class);
         }
@@ -90,12 +90,12 @@ public final class SenseServlet extends AbderaServlet {
 
     @Override
     protected Provider createProvider() {
-        final SenseWorkspaceProvider senseProvider = new SenseWorkspaceProvider();
+        final WorkspaceProvider senseProvider = new WorkspaceProvider();
 
         //TODO: Provide property injection via config here
         senseProvider.init(abderaObject, new HashMap<String, String>());
 
-        for (WorkspaceConfig workspaceCfg : configuration.getWorkspace()) {
+        for (WorkspaceConfiguration workspaceCfg : configuration.getWorkspace()) {
             senseProvider.getWorkspaceManager().addWorkspace(
                     new WorkspaceConfigProcessor(workspaceCfg, applicationContextAdapter, abderaObject, archivalService).toHandler());
         }

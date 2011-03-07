@@ -1,46 +1,45 @@
 package net.jps.atom.hopper.config;
 
-import net.jps.atom.hopper.abdera.SenseFeedAdapter;
-import net.jps.atom.hopper.config.v1_0.WorkspaceConfig;
+import net.jps.atom.hopper.abdera.FeedAdapter;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import net.jps.atom.hopper.config.v1_0.WorkspaceConfiguration;
 import org.apache.abdera.model.Workspace;
 import org.apache.abdera.protocol.server.CollectionInfo;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.WorkspaceInfo;
 import org.apache.abdera.protocol.server.impl.RegexTargetResolver;
-import org.apache.abdera.protocol.server.impl.TemplateTargetBuilder;
+
+/**
+ * TODO: Re-add support for TargetBuilder for URL construction
+ * 
+ * @author zinic
+ */
 
 public class WorkspaceHandler implements WorkspaceInfo {
 
-    private final List<SenseFeedAdapter> namespaceCollectionAdapters;
+    private final List<FeedAdapter> namespaceCollectionAdapters;
     private final RegexTargetResolver regexTargetResolver;
-    private final TemplateTargetBuilder templateTargetBuilder;
-    private final WorkspaceConfig myConfig;
+    private final WorkspaceConfiguration myConfig;
 
-    public WorkspaceHandler(WorkspaceConfig myConfig, RegexTargetResolver regexTargetResolver, TemplateTargetBuilder templateTargetBuilder) {
+    public WorkspaceHandler(WorkspaceConfiguration myConfig, RegexTargetResolver regexTargetResolver) {
         this.myConfig = myConfig;
         this.regexTargetResolver = regexTargetResolver;
-        this.templateTargetBuilder = templateTargetBuilder;
 
-        this.namespaceCollectionAdapters = new LinkedList<SenseFeedAdapter>();
+        this.namespaceCollectionAdapters = new LinkedList<FeedAdapter>();
     }
 
     public RegexTargetResolver getRegexTargetResolver() {
         return regexTargetResolver;
     }
 
-    public TemplateTargetBuilder getTemplateTargetBuilder() {
-        return templateTargetBuilder;
-    }
-
-    public void addCollectionAdapter(SenseFeedAdapter adapter) {
+    public void addCollectionAdapter(FeedAdapter adapter) {
         namespaceCollectionAdapters.add(adapter);
     }
 
-    public SenseFeedAdapter getAnsweringAdapter(RequestContext rc) {
-        for (SenseFeedAdapter adapter : namespaceCollectionAdapters) {
+    public FeedAdapter getAnsweringAdapter(RequestContext rc) {
+        for (FeedAdapter adapter : namespaceCollectionAdapters) {
             if (adapter.handles(rc.getTargetPath())) {
                 return adapter;
             }
