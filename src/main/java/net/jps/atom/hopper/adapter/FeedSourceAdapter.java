@@ -13,15 +13,7 @@ import org.apache.abdera.protocol.server.RequestContext;
  *
  * @author John Hopper
  */
-public interface FeedSourceAdapter {
-
-    /**
-     * SENSe will inject adapters with a tools object using this method during
-     * initialization of the service.
-     *
-     * @param tools
-     */
-    void setAdapterTools(AdapterTools tools);
+public interface FeedSourceAdapter extends AdapterToolsAware {
     
     /**
      * Provides internal SENSe systems with a get method for feeds that can be

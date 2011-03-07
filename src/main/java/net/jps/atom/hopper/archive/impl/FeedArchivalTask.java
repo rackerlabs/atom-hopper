@@ -7,6 +7,7 @@ package net.jps.atom.hopper.archive.impl;
 import net.jps.atom.hopper.adapter.archive.FeedArchiveAdapter;
 import java.util.Calendar;
 import java.util.TimeZone;
+import net.jps.atom.hopper.adapter.FeedSourceAdapter;
 
 /**
  *
@@ -16,16 +17,17 @@ public class FeedArchivalTask implements Runnable {
 
     public static final TimeZone DEFAULT_TIME_ZONE = TimeZone.getDefault();
     
+    private final FeedSourceAdapter feedSource;
     private final FeedArchiveAdapter archiver;
     private final TimeZone timeZone;
-    
     private long lastArchivalStamp;
 
-    public FeedArchivalTask(FeedArchiveAdapter archiver) {
-        this(archiver, DEFAULT_TIME_ZONE);
+    public FeedArchivalTask(FeedSourceAdapter feedSource, FeedArchiveAdapter archiver) {
+       this(feedSource, archiver, DEFAULT_TIME_ZONE);
     }
 
-    public FeedArchivalTask(FeedArchiveAdapter archiver, TimeZone timeZone) {
+    public FeedArchivalTask(FeedSourceAdapter feedSource, FeedArchiveAdapter archiver, TimeZone timeZone) {
+        this.feedSource = feedSource;
         this.archiver = archiver;
         this.timeZone = timeZone;
 
@@ -46,7 +48,7 @@ public class FeedArchivalTask implements Runnable {
 
     @Override
     public void run() {
-        archiver.archiveFeed(archivalTime());
+        archiver.archiveFeed(feedSource, archivalTime());
     }
 
     public boolean shouldArchive() {

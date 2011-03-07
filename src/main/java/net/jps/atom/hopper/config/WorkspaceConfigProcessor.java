@@ -24,7 +24,6 @@ import org.apache.abdera.protocol.server.TargetType;
 import org.apache.abdera.protocol.server.impl.RegexTargetResolver;
 
 /**
- * TODO: Decompose logic
  * TODO: Sanitize configured workspace and feed resource paths for regex insertion
  * 
  * @author zinic
@@ -37,9 +36,8 @@ public class WorkspaceConfigProcessor {
     private final AdapterGetter adapterGetter;
     private final WorkspaceConfiguration config;
     private final Abdera abderaReference;
-    
     private FeedArchiveAdapter defaultArchiver;
-    private FeedSourceAdapter defaultNamespaceAdapter;
+    private FeedSourceAdapter defaultFeedSource;
 
     public WorkspaceConfigProcessor(WorkspaceConfiguration workspace, ApplicationContextAdapter contextAdapter, Abdera abderaReference, FeedArchivalService feedArchivalService) {
         this.config = workspace;
@@ -53,20 +51,24 @@ public class WorkspaceConfigProcessor {
         final RegexTargetResolver regexTargetResolver = new RegexTargetResolver();
 
         final WorkspaceHandler workspace = new WorkspaceHandler(config, regexTargetResolver);
-        
-        defaultNamespaceAdapter = getFeedSource(config.getDefaultAdapterRef(), config.getDefaultAdapterClass());
 
-        if (config.getArchive() != null) {
-            final ArchiveConfiguration archiveDefault = config.getArchive();
-            
-            defaultArchiver = getArchiveAdapter(archiveDefault.getArchiverRef(), archiveDefault.getArchiverClass());
-        }
-        
         for (FeedAdapter collectionAdapter : assembleServices(config.getFeed(), namespaceCollectionAdapters, regexTargetResolver)) {
             workspace.addCollectionAdapter(collectionAdapter);
         }
 
         return workspace;
+    }
+
+    private void setDefaults(WorkspaceConfiguration workspaceConfig) {
+        if (!StringUtilities.isBlank(workspaceConfig.getDefaultAdapterRef()) || !StringUtilities.isBlank(workspaceConfig.getDefaultAdapterClass())) {
+            defaultFeedSource = getFeedSource(workspaceConfig.getDefaultAdapterRef(), workspaceConfig.getDefaultAdapterClass());
+        }
+
+        if (workspaceConfig.getArchive() != null) {
+            final ArchiveConfiguration archiveDefault = workspaceConfig.getArchive();
+
+            defaultArchiver = getArchiveAdapter(archiveDefault.getArchiverRef(), archiveDefault.getArchiverClass());
+        }
     }
 
     //TODO: compose the two methods below to avoid copy-pasta
@@ -82,8 +84,8 @@ public class WorkspaceConfigProcessor {
 
             return adapterGetter.getFeedSource(config.getDefaultAdapterRef());
         }
-        
-        return null;
+
+        return defaultFeedSource;
     }
 
     private FeedArchiveAdapter getArchiveAdapter(String adapterRef, String adapterClass) throws ConfigurationException {
@@ -98,8 +100,8 @@ public class WorkspaceConfigProcessor {
 
             return adapterGetter.getFeedArchive(config.getDefaultAdapterRef());
         }
-        
-        return null;
+
+        return defaultArchiver;
     }
 
     private List<FeedAdapter> assembleServices(List<FeedConfiguration> feedServices, List<FeedAdapter> namespaceCollectionAdapters, RegexTargetResolver regexTargetResolver) {
@@ -120,7 +122,7 @@ public class WorkspaceConfigProcessor {
                 TargetType.TYPE_CATEGORIES,
                 TargetResolverField.WORKSPACE.name());
 
-        for (FeedAdapter adapter : assembleFeedAdapters(workspaceTarget, feedServices, workspaceName, regexTargetResolver)) {
+        for (FeedAdapter adapter : assembleFeedAdapters(workspaceTarget, feedServices, regexTargetResolver)) {
             collections.add(adapter);
             namespaceCollectionAdapters.add(adapter);
         }
@@ -128,7 +130,7 @@ public class WorkspaceConfigProcessor {
         return collections;
     }
 
-    private List<FeedAdapter> assembleFeedAdapters(TargetRegexBuilder workspaceTarget, List<FeedConfiguration> feeds, String namespace, RegexTargetResolver regexTargetResolver) {
+    private List<FeedAdapter> assembleFeedAdapters(TargetRegexBuilder workspaceTarget, List<FeedConfiguration> feeds, RegexTargetResolver regexTargetResolver) {
         final List<FeedAdapter> collections = new LinkedList<FeedAdapter>();
 
         for (FeedConfiguration feed : feeds) {
@@ -174,10 +176,10 @@ public class WorkspaceConfigProcessor {
         final ArchiveConfiguration archivalElement = feed.getArchive();
 
         if (archivalElement != null) {
-            final FeedArchiveAdapter archiver = getArchiveAdapter(archivalElement.getArchiverRef(), archivalElement.getArchiverClass()); 
+            final FeedArchiveAdapter archiver = getArchiveAdapter(archivalElement.getArchiverRef(), archivalElement.getArchiverClass());
 
             //TODO: Protect this with a try statement that captures internal exceptions
-            archiver.init(new FeedAdapterTools(abderaReference), feedSource);
+            archiver.setAdapterTools(new FeedAdapterTools(abderaReference));
 
             try {
                 archiver.setArchivalInterval(archivalElement.getArchivalInterval());
@@ -187,8 +189,7 @@ public class WorkspaceConfigProcessor {
                         + " does not support time interval setting.", uoe);
             }
 
-
-            feedArchivalService.registerArchiver(archiver);
+            feedArchivalService.registerArchiveTask(feedSource, archiver);
         }
     }
 }

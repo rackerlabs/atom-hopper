@@ -15,6 +15,7 @@ import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import net.jps.atom.hopper.adapter.FeedSourceAdapter;
 
 /**
  *
@@ -49,8 +50,8 @@ public class QueuedFeedArchivalService extends TimerTask implements FeedArchival
     }
 
     @Override
-    public synchronized void registerArchiver(FeedArchiveAdapter archiver) {
-        feedArchivalTasks.add(new FeedArchivalTask(archiver));
+    public synchronized void registerArchiveTask(FeedSourceAdapter feedSource, FeedArchiveAdapter archiver) {
+        feedArchivalTasks.add(new FeedArchivalTask(feedSource, archiver));
     }
 
     @Override

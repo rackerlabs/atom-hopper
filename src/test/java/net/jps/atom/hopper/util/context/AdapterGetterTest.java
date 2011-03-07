@@ -4,17 +4,9 @@
  */
 package net.jps.atom.hopper.util.context;
 
-import java.util.Calendar;
-import net.jps.atom.hopper.adapter.AdapterTools;
-import net.jps.atom.hopper.response.AdapterResponse;
-import net.jps.atom.hopper.response.EmptyBody;
-import org.apache.abdera.model.Entry;
-import org.apache.abdera.model.Feed;
-import org.apache.abdera.protocol.server.RequestContext;
 import org.junit.Before;
 import com.rackspace.cloud.commons.util.servlet.context.ApplicationContextAdapter;
 import net.jps.atom.hopper.adapter.FeedSourceAdapter;
-import net.jps.atom.hopper.adapter.archive.FeedArchiveAdapter;
 import net.jps.atom.hopper.adapter.impl.UnimplementedFeedArchive;
 import net.jps.atom.hopper.adapter.impl.UnimplementedFeedSource;
 import org.junit.Ignore;
