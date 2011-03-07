@@ -32,14 +32,12 @@ import org.apache.abdera.protocol.server.RequestContext;
 public class FileSystemFeedArchiver implements FeedArchiveAdapter {
 
     private static final Logger log = new RCLogger(FileSystemFeedArchiver.class);
-
     public static final int HOUR_IN_MILLISECONDS = 3600000;
     public static final String ARCHIVE_FILE_EXTENSION = ".archive.xml";
     
     private final String archiveDirectoryRoot;
     
     private int archivalInterval;
-    private FeedSourceAdapter feedAdapter;
     private AdapterTools adapterTools;
 
     public FileSystemFeedArchiver(String archiveDirectoryRoot) {
@@ -48,13 +46,12 @@ public class FileSystemFeedArchiver implements FeedArchiveAdapter {
     }
 
     @Override
-    public void init(AdapterTools tools, FeedSourceAdapter fsa) {
+    public void setAdapterTools(AdapterTools tools) {
         adapterTools = tools;
-        feedAdapter = fsa;
     }
 
     @Override
-    public void archiveFeed(Calendar archivalTime) {
+    public void archiveFeed(FeedSourceAdapter feedSource, Calendar archivalTime) {
         final String destinationDirectory = StringUtilities.join(
                 archiveDirectoryRoot,
                 archiveDirectoryRoot.endsWith("/") ? "" : "/",
@@ -79,22 +76,22 @@ public class FileSystemFeedArchiver implements FeedArchiveAdapter {
 
         final Calendar endingTime = Calendar.getInstance();
         endingTime.setTime(archivalTime.getTime());
-        
+
         try {
             final FileWriter fout = new FileWriter(file);
             boolean done = false;
-            
+
             while (!done) {
-                final Feed feedToArchive = feedAdapter.getFeedByDateRange(archivalTime, endingTime);
-                
+                final Feed feedToArchive = feedSource.getFeedByDateRange(archivalTime, endingTime);
+
                 for (Entry e : feedToArchive.getEntries()) {
                     e.writeTo(fout);
                 }
-                
+
                 done = feedToArchive.getEntries().isEmpty();
                 archivalTime.roll(Calendar.MILLISECOND, getArchivalInterval());
             }
-            
+
             fout.close();
         } catch (IOException ioe) {
             //TODO: Log this
