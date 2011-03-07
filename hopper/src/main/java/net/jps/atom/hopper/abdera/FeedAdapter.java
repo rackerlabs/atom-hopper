@@ -5,10 +5,13 @@ import com.rackspace.cloud.commons.logging.RCLogger;
 import com.rackspace.cloud.commons.util.RegexList;
 import com.rackspace.cloud.commons.util.StringUtilities;
 import com.rackspace.cloud.commons.util.http.HttpStatusCode;
+import java.util.Date;
 import org.apache.abdera.model.Document;
 import net.jps.atom.hopper.adapter.FeedSourceAdapter;
 import java.util.HashMap;
 import java.util.Map;
+import net.jps.atom.hopper.abdera.response.FeedResponseHandler;
+import net.jps.atom.hopper.abdera.response.ResponseHandler;
 import org.apache.abdera.protocol.server.TargetType;
 
 import net.jps.atom.hopper.response.EmptyBody;
@@ -16,7 +19,6 @@ import net.jps.atom.hopper.response.AdapterResponse;
 import net.jps.atom.hopper.response.ResponseParameter;
 import org.apache.abdera.model.Entry;
 
-import java.util.Date;
 import net.jps.atom.hopper.config.v1_0.FeedConfiguration;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.ProviderHelper;
@@ -30,11 +32,13 @@ public class FeedAdapter extends AbstractCollectionAdapter {
     private final FeedConfiguration feedConfig;
     private final RegexList feedTargets;
     private final FeedSourceAdapter configuredDatasourceAdapter;
+    private final ResponseHandler<Feed> feedResponseHandler;
 
     public FeedAdapter(FeedConfiguration feedConfig, FeedSourceAdapter configuredDatasourceAdapter) {
         this.feedConfig = feedConfig;
         this.configuredDatasourceAdapter = configuredDatasourceAdapter;
 
+        feedResponseHandler = new FeedResponseHandler();
         feedTargets = new RegexList();
     }
 
@@ -82,9 +86,9 @@ public class FeedAdapter extends AbstractCollectionAdapter {
 
         try {
             if (!StringUtilities.isBlank(marker)) {
-                return handleFeedResponse(rc, configuredDatasourceAdapter.getFeed(rc, marker));
+                return feedResponseHandler.handleAdapterResponse(rc, configuredDatasourceAdapter.getFeed(rc, marker));
             } else {
-                return handleFeedResponse(rc, configuredDatasourceAdapter.getFeed(rc));
+                return feedResponseHandler.handleAdapterResponse(rc, configuredDatasourceAdapter.getFeed(rc));
             }
         } catch (UnsupportedOperationException uoe) {
             return ProviderHelper.notallowed(rc, uoe.getMessage(), new String[0]); //TODO: Fix this var-args bullshit
@@ -155,7 +159,7 @@ public class FeedAdapter extends AbstractCollectionAdapter {
         }
     }
 
-    private ResponseContext handleEmptyResponse(RequestContext rc, AdapterResponse<EmptyBody> response) {
+    public static ResponseContext handleEmptyResponse(RequestContext rc, AdapterResponse<EmptyBody> response) {
         switch (response.getResponseStatus()) {
             case NOT_FOUND:
                 return ProviderHelper.notfound(rc, response.getMessage());
@@ -168,7 +172,7 @@ public class FeedAdapter extends AbstractCollectionAdapter {
         }
     }
 
-    private ResponseContext handleEntryResponse(RequestContext rc, AdapterResponse<Entry> response) {
+    public static ResponseContext handleEntryResponse(RequestContext rc, AdapterResponse<Entry> response) {
         final Date lastUpdated = response.getBody() != null ? response.getBody().getUpdated() : null;
 
         switch (response.getResponseStatus()) {
@@ -185,51 +189,5 @@ public class FeedAdapter extends AbstractCollectionAdapter {
             default:
                 return ProviderHelper.notfound(rc);
         }
-    }
-
-    private ResponseContext handleFeedResponse(RequestContext rc, AdapterResponse<Feed> response) {
-        final Date lastUpdated = response.getBody() != null ? response.getBody().getUpdated() : null;
-
-        addPagingLinks(rc, response);
-
-        switch (response.getResponseStatus()) {
-            case OK:
-                return ProviderHelper.returnBase(response.getBody(), response.getResponseStatus().intValue(), lastUpdated);
-
-            case NOT_FOUND:
-                return ProviderHelper.notfound(rc, response.getMessage());
-
-            case INTERNAL_SERVER_ERROR:
-                return ProviderHelper.servererror(rc, response.getMessage(), new Exception());
-
-            default:
-                return ProviderHelper.notfound(rc);
-        }
-    }
-
-    private void addPagingLinks(RequestContext rc, AdapterResponse<Feed> response) {
-        final Feed f = response.getBody();
-        final int numEntries = f.getEntries().size();
-        final String nextMarker = f.getEntries().get(numEntries).getId().toString(), previousMarker = f.getEntries().get(0).getId().toString();
-
-        final String self = StringUtilities.join(rc.getBaseUri().toString(), rc.getTargetPath());
-
-        // Add markers
-        f.addLink(StringUtilities.join(self), "current");
-        f.addLink(StringUtilities.join(self, "?marker=", nextMarker), "next");
-        f.addLink(StringUtilities.join(self, "?marker=", previousMarker), "prev");
-    }
-
-    private String selfUriString(RequestContext rc) {
-        return rc.getBaseUri().toString() + rc.getTargetPath();
-    }
-    
-    private void addArchiveLinks(RequestContext rc, AdapterResponse<Feed> response) {
-//        final String self = selfUriString(rc);
-//        final Feed f = response.getBody();
-//        
-//        if (feedConfig.getArchive() != null) {
-//            f.addLink(StringUtilities.join(self, "?marker=", previousMarker), "prev");
-//        }
     }
 }
