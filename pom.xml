@@ -24,37 +24,9 @@
         </license>
     </licenses>
 
-    <repositories>
-        <repository>
-            <id>repos.rackspace.cloud.public</id>
-            <url>http://184.106.178.199/m2/content/groups/public/</url>
-        </repository>
-
-        <repository>
-            <id>repos.rackspace.cloud.snapshots</id>
-            <url>http://184.106.178.199/m2/content/repositories/snapshots</url>
-
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </repository>
-
-        <repository>
-            <id>repos.rackspace.cloud.releases</id>
-            <url>http://184.106.178.199/m2/content/repositories/releases</url>
-
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>repos.rackspace.cloud.public</id>
-            <url>http://184.106.178.199/m2/content/groups/public/</url>
-        </pluginRepository>
-    </pluginRepositories>
+    <scm>
+        <connection>scm:git:ssh://git@git-n01.rcloudtech.rackspacecloud.com/atom-hopper</connection>
+    </scm>
 
     <dependencies>
         <dependency>
@@ -138,6 +110,56 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>repos.rackspace.cloud.public</id>
+            <url>http://184.106.178.199/m2/content/groups/public/</url>
+        </repository>
+
+        <repository>
+            <id>repos.rackspace.cloud.snapshots</id>
+            <url>http://184.106.178.199/m2/content/repositories/snapshots</url>
+
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+
+        <repository>
+            <id>repos.rackspace.cloud.releases</id>
+            <url>http://184.106.178.199/m2/content/repositories/releases</url>
+
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>repos.rackspace.cloud.public</id>
+            <url>http://184.106.178.199/m2/content/groups/public/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <distributionManagement>
+        <repository>
+            <id>releases.internal.maven.research.rackspacecloud.com</id>
+ 
+            <name>Internal Rackspace Cloud Research Releases</name>
+            <url>http://maven-n01.rcloudtech.rackspacecloud.com/m2/content/repositories/releases</url>
+        </repository>
+
+        <snapshotRepository>
+            <uniqueVersion>false</uniqueVersion>
+            
+            <id>snapshots.internal.maven.research.rackspacecloud.com</id>
+
+            <name>Internal Rackspace Cloud Research Snapshots</name>
+            <url>http://maven-n01.rcloudtech.rackspacecloud.com/m2/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <build>
         <pluginManagement>
