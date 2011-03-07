@@ -27,7 +27,6 @@
     <modules>
         <module>hopper</module>
         <module>test-suite</module>
-        <module>sample-adapter</module>
     </modules>
 
     <scm>
