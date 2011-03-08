@@ -41,7 +41,11 @@
         </xs:annotation>
 
         <xs:sequence>
-            <xs:element name="archive" type="hopcfg:ArchiveConfiguration" minOccurs="0" maxOccurs="1" />
+            <xs:element name="defaults" type="hopcfg:ConfigurationDefaults" minOccurs="0" maxOccurs="1" />
+            <xs:element name="feed-source" type="hopcfg:AdapterDescriptor" minOccurs="0" maxOccurs="1" />
+            <xs:element name="feed-publisher" type="hopcfg:AdapterDescriptor" minOccurs="0" maxOccurs="1" />
+            <xs:element name="archive" type="hopcfg:ArchivalConfiguration" minOccurs="0" maxOccurs="1" />
+            
             <xs:element name="feed" type="hopcfg:FeedConfiguration" minOccurs="1" maxOccurs="unbounded" />
         </xs:sequence>
 
@@ -56,30 +60,10 @@
             </xs:annotation>
         </xs:attribute>
         
-        <xs:attribute name="resource-base" type="xs:string" use="required">
+        <xs:attribute name="resource" type="xs:string" use="required">
             <xs:annotation>
                 <xs:documentation>
                     <xhtml:p>
-                        
-                    </xhtml:p>
-                </xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
-
-        <xs:attribute name="default-adapter-ref" type="xs:string" use="optional">
-            <xs:annotation>
-                <xs:documentation>
-                    <xhtml:p>
-                        
-                    </xhtml:p>
-                </xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="default-adapter-class" type="xs:string" use="optional">
-            <xs:annotation>
-                <xs:documentation>
-                    <xhtml:p>
-                        
                     </xhtml:p>
                 </xs:documentation>
             </xs:annotation>
@@ -88,8 +72,9 @@
 
     <xs:complexType name="FeedConfiguration">
         <xs:sequence>
-            <xs:element name="author" type="hopcfg:Author" minOccurs="0" maxOccurs="1" />
-            <xs:element name="archive" type="hopcfg:ArchiveConfiguration" minOccurs="0" maxOccurs="1" />
+            <xs:element name="feed-source" type="hopcfg:AdapterDescriptor" minOccurs="0" maxOccurs="1" />
+            <xs:element name="feed-publisher" type="hopcfg:AdapterDescriptor" minOccurs="0" maxOccurs="1" />
+            <xs:element name="archive" type="hopcfg:ArchivalConfiguration" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
 
         <xs:attribute name="title" type="xs:string" use="required">
@@ -99,22 +84,8 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
+        
         <xs:attribute name="resource" type="xs:string" use="required">
-            <xs:annotation>
-                <xs:documentation>
-                    <xhtml:p></xhtml:p>
-                </xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
-
-        <xs:attribute name="adapter-ref" type="xs:string" use="optional">
-            <xs:annotation>
-                <xs:documentation>
-                    <xhtml:p></xhtml:p>
-                </xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="adapter-class" type="xs:string" use="optional">
             <xs:annotation>
                 <xs:documentation>
                     <xhtml:p></xhtml:p>
@@ -123,8 +94,8 @@
         </xs:attribute>
     </xs:complexType>
 
-    <xs:complexType name="ArchiveConfiguration">
-        <xs:attribute name="archiver-ref" type="xs:string" use="optional">
+    <xs:complexType name="AdapterDescriptor">
+        <xs:attribute name="reference" type="xs:string" use="optional">
             <xs:annotation>
                 <xs:documentation>
                     <xhtml:p></xhtml:p>
@@ -132,15 +103,28 @@
             </xs:annotation>
         </xs:attribute>
 
-        <xs:attribute name="archiver-class" type="xs:string" use="optional">
+        <xs:attribute name="class" type="xs:string" use="optional">
             <xs:annotation>
                 <xs:documentation>
                     <xhtml:p></xhtml:p>
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
+    </xs:complexType>
 
-        <xs:attribute name="archival-interval" type="xs:int" use="optional">
+    <xs:complexType name="ArchivalConfiguration">
+        <xs:annotation>
+            <xs:documentation>
+                <xhtml:p></xhtml:p>
+            </xs:documentation>
+        </xs:annotation>
+        
+        <xs:sequence>
+            <xs:element name="feed-archive-source" type="hopcfg:AdapterDescriptor" minOccurs="0" maxOccurs="1" />
+            <xs:element name="feed-archiver" type="hopcfg:AdapterDescriptor" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+        
+        <xs:attribute name="interval-spec" type="xs:string" use="optional">
             <xs:annotation>
                 <xs:documentation>
                     <xhtml:p></xhtml:p>

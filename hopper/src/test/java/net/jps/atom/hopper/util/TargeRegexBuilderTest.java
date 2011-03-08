@@ -258,8 +258,8 @@ public class TargeRegexBuilderTest {
             ARCHIVE_YEAR = "/workspace/feed/archives/2011",
             ARCHIVE_MONTH = "/workspace/feed/archives/2011/01",
             ARCHIVE_DAY = "/workspace/feed/archives/2011/01/01",
-            ARCHIVE_HOUR = "/workspace/feed/archives/2011/01/01/01",
-            ARCHIVE_MINUTE = "/workspace/feed/archives/2011/01/01/01:30";
+            ARCHIVE_HOUR = "/workspace/feed/archives/2011/01/01/01:00",
+            ARCHIVE_MINUTE = "/workspace/feed/archives/2011/01/01/01:35";
 
     public static String withCategories(String base, String[] categories) {
         final StringBuilder uri = new StringBuilder(base);

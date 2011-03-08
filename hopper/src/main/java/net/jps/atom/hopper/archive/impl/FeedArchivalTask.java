@@ -4,10 +4,10 @@
  */
 package net.jps.atom.hopper.archive.impl;
 
-import net.jps.atom.hopper.adapter.archive.FeedArchiveAdapter;
 import java.util.Calendar;
 import java.util.TimeZone;
-import net.jps.atom.hopper.adapter.FeedSourceAdapter;
+import net.jps.atom.hopper.adapter.FeedSource;
+import net.jps.atom.hopper.adapter.archive.FeedArchiver;
 
 /**
  *
@@ -17,16 +17,16 @@ public class FeedArchivalTask implements Runnable {
 
     public static final TimeZone DEFAULT_TIME_ZONE = TimeZone.getDefault();
     
-    private final FeedSourceAdapter feedSource;
-    private final FeedArchiveAdapter archiver;
+    private final FeedSource feedSource;
+    private final FeedArchiver archiver;
     private final TimeZone timeZone;
     private long lastArchivalStamp;
 
-    public FeedArchivalTask(FeedSourceAdapter feedSource, FeedArchiveAdapter archiver) {
+    public FeedArchivalTask(FeedSource feedSource, FeedArchiver archiver) {
        this(feedSource, archiver, DEFAULT_TIME_ZONE);
     }
 
-    public FeedArchivalTask(FeedSourceAdapter feedSource, FeedArchiveAdapter archiver, TimeZone timeZone) {
+    public FeedArchivalTask(FeedSource feedSource, FeedArchiver archiver, TimeZone timeZone) {
         this.feedSource = feedSource;
         this.archiver = archiver;
         this.timeZone = timeZone;
@@ -53,7 +53,7 @@ public class FeedArchivalTask implements Runnable {
 
     public boolean shouldArchive() {
         final long now = now();
-        final boolean shouldArchive = now - lastArchivalStamp > archiver.getArchivalInterval();
+        final boolean shouldArchive = now - lastArchivalStamp > archiver.archivalIntervalSpec();
 
         if (shouldArchive) {
             lastArchivalStamp = now;

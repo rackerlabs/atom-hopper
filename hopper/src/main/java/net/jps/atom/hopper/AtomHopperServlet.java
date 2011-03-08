@@ -22,11 +22,9 @@ import org.apache.abdera.protocol.server.servlet.AbderaServlet;
 public final class AtomHopperServlet extends AbderaServlet {
 
     private static final Logger LOG = new RCLogger(AtomHopperServlet.class);
-
     public static final String CONTEXT_ADAPTER_CLASS = "context-adapter-class";
     public static final String CONFIG_DIRECTORY = "sense-config-directory";
     public static final String DEFAULT_CONFIG_DIRECTORY = "/etc/rackspace-cloud/sense";
-
     private FeedArchivalService archivalService;
     private ApplicationContextAdapter applicationContextAdapter;
     private Abdera abderaObject;
@@ -90,16 +88,17 @@ public final class AtomHopperServlet extends AbderaServlet {
 
     @Override
     protected Provider createProvider() {
-        final WorkspaceProvider senseProvider = new WorkspaceProvider();
+        final WorkspaceProvider workspaceProvider = new WorkspaceProvider();
 
         //TODO: Provide property injection via config here
-        senseProvider.init(abderaObject, new HashMap<String, String>());
+        workspaceProvider.init(abderaObject, new HashMap<String, String>());
 
         for (WorkspaceConfiguration workspaceCfg : configuration.getWorkspace()) {
-            senseProvider.getWorkspaceManager().addWorkspace(
-                    new WorkspaceConfigProcessor(workspaceCfg, applicationContextAdapter, abderaObject, archivalService, getServletContext().getContextPath()).toHandler());
+            workspaceProvider.getWorkspaceManager().addWorkspace(
+                    new WorkspaceConfigProcessor(
+                    workspaceCfg, applicationContextAdapter, abderaObject, archivalService, getServletContext().getContextPath()).toHandler());
         }
 
-        return senseProvider;
+        return workspaceProvider;
     }
 }

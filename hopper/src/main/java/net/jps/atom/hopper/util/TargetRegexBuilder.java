@@ -17,7 +17,7 @@ public class TargetRegexBuilder {
             CATAGORY_TEMPLATE = REPLACEMENT_ELEMENT + "(" + REPLACEMENT_ELEMENT + ")/categories/?(\\?[^#]+)?",
             FEED_TEMPLATE = REPLACEMENT_ELEMENT + "(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + ")/?(\\?[^#]+)?",
             ENTRY_TEMPLATE = REPLACEMENT_ELEMENT + "(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + ")/entries/([^/#?]+)/?(\\?[^#]+)?",
-            ARCHIVE_TEMPLATE = REPLACEMENT_ELEMENT + "(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + ")/archives(/\\d\\d\\d\\d)(/\\d\\d)?(/\\d\\d)?(/\\d\\d)?(/\\d\\d:\\d\\d)?/?(\\?[^#]+)?";
+            ARCHIVE_TEMPLATE = REPLACEMENT_ELEMENT + "(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + ")/archives(/\\d\\d\\d\\d)(/\\d\\d)?(/\\d\\d)?(/\\d\\d:\\d\\d)?/?(\\?[^#]+)?";
     
     private String contextPath, workspace, feed;
 

@@ -4,9 +4,10 @@
  */
 package net.jps.atom.hopper.util.context;
 
+import net.jps.atom.hopper.adapter.FeedSource;
 import org.junit.Before;
 import com.rackspace.cloud.commons.util.servlet.context.ApplicationContextAdapter;
-import net.jps.atom.hopper.adapter.FeedSourceAdapter;
+import net.jps.atom.hopper.adapter.archive.FeedArchiveSource;
 import net.jps.atom.hopper.adapter.impl.UnimplementedFeedArchive;
 import net.jps.atom.hopper.adapter.impl.UnimplementedFeedSource;
 import org.junit.Ignore;
@@ -34,7 +35,7 @@ public class AdapterGetterTest {
     }
 
     @Ignore
-    public static abstract class NonInstanceableClass implements FeedSourceAdapter {
+    public static abstract class NonInstanceableClass implements FeedSource {
     }
 
     @Ignore
@@ -64,50 +65,45 @@ public class AdapterGetterTest {
 
         @Test
         public void shouldGetFromContext() {
-            assertNotNull(adapterGetter.getFeedSource(UnimplementedFeedSource.class));
-            assertNotNull(adapterGetter.getFeedArchive(UnimplementedFeedArchive.class));
-            assertNotNull(adapterGetter.getFeedSource(FEED_SOURCE_REFERENCE));
-            assertNotNull(adapterGetter.getFeedArchive(FEED_ARCHIVE_REFERENCE));
+            assertNotNull(adapterGetter.getByClassDefinition(UnimplementedFeedSource.class, FeedSource.class));
+            assertNotNull(adapterGetter.getByClassDefinition(UnimplementedFeedArchive.class, FeedArchiveSource.class));
+            assertNotNull(adapterGetter.getByName(FEED_SOURCE_REFERENCE, FeedSource.class));
+            assertNotNull(adapterGetter.getByName(FEED_ARCHIVE_REFERENCE, FeedArchiveSource.class));
         }
 
         @Test(expected = AdapterNotFoundException.class)
         public void shouldThrowExceptionWhenReferenceReturnsNull() {
-            adapterGetter.getFeedSource(NULL_REFERENCE);
+            adapterGetter.getByName(NULL_REFERENCE, FeedSource.class);
         }
 
         @Test(expected = IllegalArgumentException.class)
         public void shouldRejectBlankAdapterBeanReferenceNames() {
-            adapterGetter.getFeedSource("");
+            adapterGetter.getByName("", FeedSource.class);
         }
 
         @Test(expected = IllegalArgumentException.class)
         public void shouldRejectNullAdapterBeanReferenceNames() {
             final String ref = null;
 
-            adapterGetter.getFeedSource(ref);
+            adapterGetter.getByName(ref, FeedSource.class);
         }
 
         @Test(expected = AdapterConstructionException.class)
         public void shouldFailWhenGivenNonInstanceableClasses() {
-            assertNull(adapterGetter.getFeedSource(NonInstanceableClass.class));
+            adapterGetter.getByClassDefinition(NonInstanceableClass.class, FeedSource.class);
         }
     }
 
     public static class WhenCheckingForTypeSafety extends TestParent {
 
-        @Test(expected = ClassCastException.class)
+        @Test(expected = IllegalArgumentException.class)
         public void shouldDetectClassCastingErrors() {
-            assertNull(adapterGetter.getFeedArchive(BAD_REFERENCE));
+            adapterGetter.getByName(BAD_REFERENCE, FeedSource.class);
         }
 
         @Test(expected = IllegalArgumentException.class)
         public void shouldCheckForArchiveInterface() {
-            adapterGetter.getFeedArchive(InstanceableClass.class);
-        }
-        
-        @Test(expected = IllegalArgumentException.class)
-        public void shouldCheckForFeedSourceInterface() {
-            adapterGetter.getFeedSource(InstanceableClass.class);
+            adapterGetter.getByClassDefinition(InstanceableClass.class, FeedArchiveSource.class);
         }
     }
 }

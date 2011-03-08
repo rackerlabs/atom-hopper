@@ -1,6 +1,5 @@
 package net.jps.atom.hopper.abdera;
 
-import net.jps.atom.hopper.abdera.FeedAdapter;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,7 +18,7 @@ import org.apache.abdera.protocol.server.impl.RegexTargetResolver;
 
 public class WorkspaceHandler implements WorkspaceInfo {
 
-    private final List<FeedAdapter> namespaceCollectionAdapters;
+    private final List<TargetAwareAbstractCollectionAdapter> namespaceCollectionAdapters;
     private final RegexTargetResolver regexTargetResolver;
     private final WorkspaceConfiguration myConfig;
 
@@ -27,20 +26,20 @@ public class WorkspaceHandler implements WorkspaceInfo {
         this.myConfig = myConfig;
         this.regexTargetResolver = regexTargetResolver;
 
-        this.namespaceCollectionAdapters = new LinkedList<FeedAdapter>();
+        this.namespaceCollectionAdapters = new LinkedList<TargetAwareAbstractCollectionAdapter>();
     }
 
     public RegexTargetResolver getRegexTargetResolver() {
         return regexTargetResolver;
     }
 
-    public void addCollectionAdapter(FeedAdapter adapter) {
+    public void addCollectionAdapter(TargetAwareAbstractCollectionAdapter adapter) {
         namespaceCollectionAdapters.add(adapter);
     }
 
-    public FeedAdapter getAnsweringAdapter(RequestContext rc) {
-        for (FeedAdapter adapter : namespaceCollectionAdapters) {
-            if (adapter.handles(rc.getTargetPath())) {
+    public TargetAwareAbstractCollectionAdapter getAnsweringAdapter(RequestContext rc) {
+        for (TargetAwareAbstractCollectionAdapter adapter : namespaceCollectionAdapters) {
+            if (adapter.canHandleTarget(rc.getTargetPath())) {
                 return adapter;
             }
         }

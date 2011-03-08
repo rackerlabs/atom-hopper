@@ -2,21 +2,20 @@ package net.jps.atom.hopper.abdera;
 
 import com.rackspace.cloud.commons.logging.Logger;
 import com.rackspace.cloud.commons.logging.RCLogger;
-import com.rackspace.cloud.commons.util.RegexList;
 import com.rackspace.cloud.commons.util.StringUtilities;
 import com.rackspace.cloud.commons.util.http.HttpStatusCode;
-import org.apache.abdera.model.Document;
-import net.jps.atom.hopper.adapter.FeedSourceAdapter;
 import java.util.HashMap;
 import java.util.Map;
 import net.jps.atom.hopper.abdera.response.StaticFeedResponseHandler;
 import net.jps.atom.hopper.abdera.response.ResponseHandler;
+import net.jps.atom.hopper.abdera.response.StaticEmptyBodyResponseHandler;
 import net.jps.atom.hopper.abdera.response.StaticEntryResponseHandler;
+import net.jps.atom.hopper.adapter.FeedPublisher;
+import net.jps.atom.hopper.adapter.FeedSource;
 import org.apache.abdera.protocol.server.TargetType;
 
 import net.jps.atom.hopper.response.EmptyBody;
 import net.jps.atom.hopper.response.AdapterResponse;
-import net.jps.atom.hopper.response.ResponseParameter;
 import org.apache.abdera.model.Entry;
 
 import net.jps.atom.hopper.config.v1_0.FeedConfiguration;
@@ -24,38 +23,41 @@ import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.ProviderHelper;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.ResponseContext;
-import org.apache.abdera.protocol.server.impl.AbstractCollectionAdapter;
 
-public class FeedAdapter extends AbstractCollectionAdapter {
+public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
 
     private static final Logger LOG = new RCLogger(FeedAdapter.class);
+    private final FeedConfiguration feedConfiguration;
     
-    private final FeedConfiguration feedConfig;
-    private final RegexList feedTargets;
-    private final FeedSourceAdapter configuredDatasourceAdapter;
+    private final FeedPublisher feedPublisher;
+    private final FeedSource feedSource;
+    
+    //TODO: Recompose?
     private final ResponseHandler<Feed> feedResponseHandler;
+    private final ResponseHandler<EmptyBody> emptyBodyResponseHandler;
     private final ResponseHandler<Entry> entryResponseHandler;
+    
+    private String author;
 
-    public FeedAdapter(FeedConfiguration feedConfig, FeedSourceAdapter configuredDatasourceAdapter) {
-        this.feedConfig = feedConfig;
-        this.configuredDatasourceAdapter = configuredDatasourceAdapter;
+    public FeedAdapter(FeedConfiguration feedConfiguration, FeedSource feedSourequeste) {
+        //TODO: Replace null with a basic publisher that returns some 4xx status code
+        this(feedConfiguration, feedSourequeste, null);
+    }
+
+    public FeedAdapter(FeedConfiguration feedConfiguration, FeedSource feedSourequeste, FeedPublisher feedPublisher) {
+        this.feedConfiguration = feedConfiguration;
+        this.feedSource = feedSourequeste;
+        this.feedPublisher = feedPublisher;
 
         feedResponseHandler = new StaticFeedResponseHandler();
         entryResponseHandler = new StaticEntryResponseHandler();
+        emptyBodyResponseHandler = new StaticEmptyBodyResponseHandler();
 
-        feedTargets = new RegexList();
+        author = "";
     }
 
     public FeedConfiguration getFeedConfiguration() {
-        return feedConfig;
-    }
-
-    public void addTargetRegex(String target) {
-        feedTargets.add(target);
-    }
-
-    public boolean handles(String target) {
-        return feedTargets.matches(target) != null;
+        return feedConfiguration;
     }
 
     @Override
@@ -66,46 +68,46 @@ public class FeedAdapter extends AbstractCollectionAdapter {
         return request.urlFor(TargetType.TYPE_COLLECTION, params);
     }
 
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
     @Override
-    public String getAuthor(RequestContext rc) {
-        return getFeedConfiguration().getAuthor().getName();
+    public String getAuthor(RequestContext request) {
+        return author;
     }
 
     @Override
     //TODO: Reimplement this - getting there
-    public String getId(RequestContext rc) {
-
+    public String getId(RequestContext request) {
 //        return new StringBuilder("tag:").append(feedConfig.getFullUri()).append(",").append(CALENDAR_INSTANCE.get(Calendar.YEAR)).append(":").append(config.getBaseUrn()).toString();
         return "TODO: ID";
     }
 
     @Override
-    public String getTitle(RequestContext rc) {
+    public String getTitle(RequestContext request) {
         return getFeedConfiguration().getTitle();
     }
 
     @Override
-    public ResponseContext getFeed(RequestContext rc) {
-        final String marker = rc.getParameter(ResponseParameter.MARKER.toString());
-
+    public ResponseContext getFeed(RequestContext request) {
         try {
-            if (!StringUtilities.isBlank(marker)) {
-                return feedResponseHandler.handleAdapterResponse(rc, configuredDatasourceAdapter.getFeed(rc, marker));
-            } else {
-                return feedResponseHandler.handleAdapterResponse(rc, configuredDatasourceAdapter.getFeed(rc));
-            }
+            return feedResponseHandler.handleAdapterResponse(request, feedSource.getFeed(request));
         } catch (UnsupportedOperationException uoe) {
-            return ProviderHelper.notallowed(rc, uoe.getMessage(), new String[0]); //TODO: Fix this var-args bullshit
+            return ProviderHelper.notallowed(request, uoe.getMessage(), new String[0]); //TODO: Fix this var-args bullshit
         } catch (Exception ex) {
-            return ProviderHelper.servererror(rc, ex.getMessage(), ex);
+            return ProviderHelper.servererror(request, ex.getMessage(), ex);
         }
     }
 
     @Override
-    public ResponseContext postEntry(RequestContext rc) {
+    public ResponseContext postEntry(RequestContext request) {
+        if (feedPublisher == null) {
+            return ProviderHelper.notsupported(request);
+        }
+
         try {
-            final Document<Entry> entryToPost = rc.getDocument();
-            final AdapterResponse<Entry> response = configuredDatasourceAdapter.postEntry(rc, entryToPost.getRoot());
+            final AdapterResponse<Entry> response = feedPublisher.postEntry(request);
 
             if (response.getResponseStatus() == HttpStatusCode.CREATED) {
                 final Entry returnedEntryCopy = response.getBody();
@@ -116,19 +118,20 @@ public class FeedAdapter extends AbstractCollectionAdapter {
                 }
             }
 
-            return entryResponseHandler.handleAdapterResponse(rc, response);
+            return entryResponseHandler.handleAdapterResponse(request, response);
         } catch (Exception ex) {
-            return ProviderHelper.servererror(rc, ex.getMessage(), ex);
+            return ProviderHelper.servererror(request, ex.getMessage(), ex);
         }
     }
 
     @Override
     public ResponseContext putEntry(RequestContext request) {
-        try {
-            final Document<Entry> entryToUpdate = request.getDocument();
-            final String entryId = request.getParameter(TargetResolverField.ENTRY.name());
+        if (feedPublisher == null) {
+            return ProviderHelper.notsupported(request);
+        }
 
-            final AdapterResponse<Entry> response = configuredDatasourceAdapter.putEntry(request, entryId, entryToUpdate.getRoot());
+        try {
+            final AdapterResponse<Entry> response = feedPublisher.putEntry(request);
 
             return entryResponseHandler.handleAdapterResponse(request, response);
         } catch (Exception ex) {
@@ -137,39 +140,26 @@ public class FeedAdapter extends AbstractCollectionAdapter {
     }
 
     @Override
-    public ResponseContext deleteEntry(RequestContext rc) {
-        final String entryId = rc.getTarget().getParameter(TargetResolverField.ENTRY.name());
+    public ResponseContext deleteEntry(RequestContext request) {
+        if (feedPublisher == null) {
+            return ProviderHelper.notsupported(request);
+        }
 
         try {
-            final AdapterResponse<EmptyBody> response = configuredDatasourceAdapter.deleteEntry(rc, entryId);
+            final AdapterResponse<EmptyBody> response = feedPublisher.deleteEntry(request);
 
-            return handleEmptyResponse(rc, response);
+            return emptyBodyResponseHandler.handleAdapterResponse(request, response);
         } catch (Exception ex) {
-            return ProviderHelper.servererror(rc, ex.getMessage(), ex);
+            return ProviderHelper.servererror(request, ex.getMessage(), ex);
         }
     }
 
     @Override
-    public ResponseContext getEntry(RequestContext rc) {
-        final String entityId = rc.getTarget().getParameter(TargetResolverField.ENTRY.name());
-
+    public ResponseContext getEntry(RequestContext request) {
         try {
-            return entryResponseHandler.handleAdapterResponse(rc, configuredDatasourceAdapter.getEntry(rc, entityId));
+            return entryResponseHandler.handleAdapterResponse(request, feedSource.getEntry(request));
         } catch (Exception ex) {
-            return ProviderHelper.servererror(rc, ex.getMessage(), ex);
-        }
-    }
-
-    public static ResponseContext handleEmptyResponse(RequestContext rc, AdapterResponse<EmptyBody> response) {
-        switch (response.getResponseStatus()) {
-            case NOT_FOUND:
-                return ProviderHelper.notfound(rc, response.getMessage());
-
-            case INTERNAL_SERVER_ERROR:
-                return ProviderHelper.servererror(rc, response.getMessage(), new Exception());
-
-            default:
-                return ProviderHelper.nocontent();
+            return ProviderHelper.servererror(request, ex.getMessage(), ex);
         }
     }
 }

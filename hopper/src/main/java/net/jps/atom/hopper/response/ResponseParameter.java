@@ -9,7 +9,8 @@ package net.jps.atom.hopper.response;
  * @author zinic
  */
 public enum ResponseParameter {
-    MARKER;
+    PREVIOUS_MARKER,
+    NEXT_MARKER;
 
     @Override
     public String toString() {

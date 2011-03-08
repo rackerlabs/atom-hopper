@@ -7,8 +7,6 @@ package net.jps.atom.hopper.util.context;
 import com.rackspace.cloud.commons.util.StringUtilities;
 import com.rackspace.cloud.commons.util.reflection.ReflectionTools;
 import com.rackspace.cloud.commons.util.servlet.context.ApplicationContextAdapter;
-import net.jps.atom.hopper.adapter.FeedSourceAdapter;
-import net.jps.atom.hopper.adapter.archive.FeedArchiveAdapter;
 
 /**
  *
@@ -22,51 +20,33 @@ public class AdapterGetter {
         this.contextAdapter = contextAdapter;
     }
 
-    public FeedArchiveAdapter getFeedArchive(Class<?> feedArchiveAdapterClass) {
-        if (!FeedArchiveAdapter.class.isAssignableFrom(feedArchiveAdapterClass)) {
-            throw new IllegalArgumentException("Class: "
-                    + feedArchiveAdapterClass.getCanonicalName()
-                    + " does not implement the FeedArchiveAdapter interface");
-        }
-
-        return getByClassDefinition((Class<? extends FeedArchiveAdapter>) feedArchiveAdapterClass, FeedArchiveAdapter.class);
-    }
-
-    public FeedArchiveAdapter getFeedArchive(String beanReferenceName) {
-        return getByName(beanReferenceName, FeedArchiveAdapter.class);
-    }
-
-    public FeedSourceAdapter getFeedSource(Class<?> feedSourceAdapterClass) {
-        if (!FeedSourceAdapter.class.isAssignableFrom(feedSourceAdapterClass)) {
-            throw new IllegalArgumentException("Class: "
-                    + feedSourceAdapterClass.getCanonicalName()
-                    + " does not implement the FeedArchiveAdapter interface");
-        }
-
-        return getByClassDefinition((Class<? extends FeedSourceAdapter>) feedSourceAdapterClass, FeedSourceAdapter.class);
-    }
-
-    public FeedSourceAdapter getFeedSource(String beanReferenceName) {
-        return getByName(beanReferenceName, FeedSourceAdapter.class);
-    }
-
-    private <T> T getByName(String referenceName, Class<T> classToCastTo) {
+    public <T> T getByName(String referenceName, Class<T> classToCastTo) {
         if (StringUtilities.isBlank(referenceName)) {
             throw new IllegalArgumentException("Bean reference for an adapter must not be empty or null");
         }
 
-        final T reference = contextAdapter.fromContext(referenceName, classToCastTo);
+        final Object reference = contextAdapter.fromContext(referenceName, classToCastTo);
 
         if (reference == null) {
             throw new AdapterNotFoundException("Unable to find adapter by name: " + referenceName);
+        } else if (!classToCastTo.isInstance(reference)) {
+            throw new IllegalArgumentException("Class: "
+                    + reference.getClass().getCanonicalName()
+                    + " does not implement " + classToCastTo.getCanonicalName());
         }
 
-        return reference;
+        return (T) reference;
     }
 
-    private <T> T getByClassDefinition(Class<? extends T> configuredAdapterClass, Class<T> classToCastTo) {
+    public <T> T getByClassDefinition(Class<?> configuredAdapterClass, Class<T> classToCastTo) {
+        if (!classToCastTo.isAssignableFrom(configuredAdapterClass)) {
+            throw new IllegalArgumentException("Class: "
+                    + configuredAdapterClass.getCanonicalName()
+                    + " does not implement " + classToCastTo.getCanonicalName());
+        }
+
         try {
-            final T instance = contextAdapter.fromContext(configuredAdapterClass);
+            final T instance = (T) contextAdapter.fromContext(configuredAdapterClass);
 
             return instance != null
                     ? instance

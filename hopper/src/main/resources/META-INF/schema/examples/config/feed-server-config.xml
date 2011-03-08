@@ -1,17 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<atom-hopper-config xmlns="http://jpserver.net/atom/hopper-config/v1.0">
+<atom-hopper-config xmlns="http://jpserver.net/atom/hopper-config/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jpserver.net/atom/hopper-config/v1.0 ./../../config/atom-hopper-config.xsd">
     <defaults>
         <author name="Rackspace Cloud" />
     </defaults>
 
     <!-- http://localhost:8080/namespace_a/ -->
-    <workspace title="A Testing Namespace" resource-base="/namespace_a/" default-adapter-ref="zf-adapter">
-        <archive />
-
+    <workspace title="A Testing Namespace" resource="/namespace_a/">
+        <!-- Set some defaults -->
+        <feed-source reference="default-feed-ref" />
+        <feed-publisher reference="default-feed-publisher-ref" />
+        
+        <archive>
+            <feed-archive-source reference="default-archive-source-ref" />
+            <feed-archiver reference="default-feed-archiver-ref" />
+        </archive>
+        
         <!-- http://localhost:8080/namespace_a/feed_1 -->
         <feed title="feed_1" resource="/feed_1">
-            <archive archiver-ref="ref" archival-interval="3600000" />
+            <archive interval-spec="* */1 * * *" />
         </feed>
     </workspace>
 </atom-hopper-config>
