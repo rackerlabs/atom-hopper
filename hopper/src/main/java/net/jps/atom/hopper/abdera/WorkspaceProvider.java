@@ -35,7 +35,6 @@ import org.apache.abdera.protocol.server.processors.ServiceRequestProcessor;
 public class WorkspaceProvider implements Provider {
 
     private static final Logger LOG = new RCLogger(WorkspaceProvider.class);
-    
     private final Map<TargetType, RequestProcessor> requestProcessors;
     private final WorkspaceManager workspaceManager;
     private final List<Filter> filters;
@@ -121,27 +120,32 @@ public class WorkspaceProvider implements Provider {
             response = processor.process(request, wm, adapter);
             response = response != null ? response : processExtensionRequest(request, adapter);
         } catch (Exception ex) {
-            if (ex instanceof ResponseContextException) {
-                final ResponseContextException rce = (ResponseContextException) ex;
-
-                if (rce.getStatusCode() >= 400 && rce.getStatusCode() < 500) {
-                    // don't report routine 4xx HTTP errors
-                    LOG.info(ex);
-                } else {
-                    LOG.error(ex);
-                }
-            } else {
-                LOG.error(ex);
-            }
-
-            transactionCompensate(transaction, request, ex);
-            response = createErrorResponse(request, ex);
-            return response;
+            return response = handleAdapterException(ex, transaction, request, response);
         } finally {
             transactionEnd(transaction, request, response);
         }
 
         return response != null ? response : ProviderHelper.badrequest(request);
+    }
+
+    private ResponseContext handleAdapterException(Exception ex, final Transactional transaction, RequestContext request, ResponseContext response) {
+        if (ex instanceof ResponseContextException) {
+            final ResponseContextException rce = (ResponseContextException) ex;
+
+            if (rce.getStatusCode() >= 400 && rce.getStatusCode() < 500) {
+                // don't report routine 4xx HTTP errors
+                LOG.info(ex);
+            } else {
+                LOG.error(ex);
+            }
+        } else {
+            LOG.error(ex);
+        }
+
+        transactionCompensate(transaction, request, ex);
+        response = createErrorResponse(request, ex);
+
+        return response;
     }
 
     private void transactionCompensate(Transactional transactional, RequestContext request, Throwable e) {
@@ -170,21 +174,15 @@ public class WorkspaceProvider implements Provider {
         return adapter.extensionRequest(context);
     }
 
-    /**
-     * ?
-     * 
-     * @param request
-     * @return
-     */
-    private Service getServiceElement(RequestContext request) {
-        final Service service = abdera.newService();
-
-        for (WorkspaceInfo wi : getWorkspaceManager().getWorkspaces(request)) {
-            service.addWorkspace(wi.asWorkspaceElement(request));
-        }
-
-        return service;
-    }
+//    private Service getServiceElement(RequestContext request) {
+//        final Service service = abdera.newService();
+//
+//        for (WorkspaceInfo wi : getWorkspaceManager().getWorkspaces(request)) {
+//            service.addWorkspace(wi.asWorkspaceElement(request));
+//        }
+//
+//        return service;
+//    }
 
     public void setFilters(List<Filter> filters) {
         this.filters.clear();
