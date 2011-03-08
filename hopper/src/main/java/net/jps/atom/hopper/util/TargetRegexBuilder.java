@@ -22,7 +22,8 @@ public class TargetRegexBuilder {
     private String contextPath, workspace, feed;
 
     public TargetRegexBuilder() {
-        workspace = feed = null;
+        workspace = null;
+        feed = null;
         contextPath = "/";
     }
     

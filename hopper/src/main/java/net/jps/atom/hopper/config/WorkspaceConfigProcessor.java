@@ -40,8 +40,8 @@ public class WorkspaceConfigProcessor {
     private final FeedArchivalService feedArchivalService;
     private final AdapterGetter adapterGetter;
     private final WorkspaceConfiguration config;
-    private final Abdera abderaReference;
     private final String contextPath;
+    
     private FeedArchiveSource defaultArchiver;
     private FeedSource defaultFeedSource;
 
@@ -51,7 +51,6 @@ public class WorkspaceConfigProcessor {
         this.contextPath = contextPath;
         this.adapterGetter = new AdapterGetter(contextAdapter);
         this.feedArchivalService = feedArchivalService;
-        this.abderaReference = abderaReference;
     }
 
     public WorkspaceHandler toHandler() {
@@ -60,7 +59,7 @@ public class WorkspaceConfigProcessor {
 
         final WorkspaceHandler workspace = new WorkspaceHandler(config, regexTargetResolver);
 
-        setDefaults(config);
+//        setDefaults(config);
 
         for (TargetAwareAbstractCollectionAdapter collectionAdapter : assembleServices(config.getFeed(), namespaceCollectionAdapters, regexTargetResolver)) {
             workspace.addCollectionAdapter(collectionAdapter);
@@ -69,7 +68,7 @@ public class WorkspaceConfigProcessor {
         return workspace;
     }
 
-    private void setDefaults(WorkspaceConfiguration workspaceConfig) {
+//    private void setDefaults(WorkspaceConfiguration workspaceConfig) {
 //        if (!StringUtilities.isBlank(workspaceConfig.getDefaultAdapterRef()) || !StringUtilities.isBlank(workspaceConfig.getDefaultAdapterClass())) {
 //            defaultFeedSource = getFeedSource(workspaceConfig.getDefaultAdapterRef(), workspaceConfig.getDefaultAdapterClass());
 //        }
@@ -79,7 +78,7 @@ public class WorkspaceConfigProcessor {
 //
 //            defaultArchiver = getArchiveAdapter(archiveDefault.getArchiverRef(), archiveDefault.getArchiverClass());
 //        }
-    }
+//    }
 
     private List<TargetAwareAbstractCollectionAdapter> assembleServices(List<FeedConfiguration> feedServices, List<TargetAwareAbstractCollectionAdapter> namespaceCollectionAdapters, RegexTargetResolver regexTargetResolver) {
         final List<TargetAwareAbstractCollectionAdapter> collections = new LinkedList<TargetAwareAbstractCollectionAdapter>();
@@ -87,6 +86,7 @@ public class WorkspaceConfigProcessor {
         final String workspaceName = StringUtilities.trim(config.getResource(), "/");
         final TargetRegexBuilder workspaceTarget = new TargetRegexBuilder();
 
+        workspaceTarget.setContextPath(contextPath);
         workspaceTarget.setWorkspace(workspaceName);
 
         // service
