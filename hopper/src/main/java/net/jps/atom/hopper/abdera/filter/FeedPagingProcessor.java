@@ -21,7 +21,7 @@ public class FeedPagingProcessor implements AdapterResponseProcessor<Feed> {
         final int numEntries = f.getEntries().size();
 
         if (numEntries > 0) {
-            final String nextMarker = f.getEntries().get(numEntries).getId().toString(), previousMarker = f.getEntries().get(0).getId().toString();
+            final String nextMarker = f.getEntries().get(numEntries-1).getId().toString(), previousMarker = f.getEntries().get(0).getId().toString();
 
             final String self = StringUtilities.join(rc.getBaseUri().toString(), rc.getTargetPath());
 
