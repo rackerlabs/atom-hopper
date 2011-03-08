@@ -34,7 +34,8 @@ import org.apache.abdera.protocol.server.processors.ServiceRequestProcessor;
 
 public class WorkspaceProvider implements Provider {
 
-    private static final Logger log = new RCLogger(WorkspaceProvider.class);
+    private static final Logger LOG = new RCLogger(WorkspaceProvider.class);
+    
     private final Map<TargetType, RequestProcessor> requestProcessors;
     private final WorkspaceManager workspaceManager;
     private final List<Filter> filters;
@@ -125,12 +126,12 @@ public class WorkspaceProvider implements Provider {
 
                 if (rce.getStatusCode() >= 400 && rce.getStatusCode() < 500) {
                     // don't report routine 4xx HTTP errors
-                    log.info(ex);
+                    LOG.info(ex);
                 } else {
-                    log.error(ex);
+                    LOG.error(ex);
                 }
             } else {
-                log.error(ex);
+                LOG.error(ex);
             }
 
             transactionCompensate(transaction, request, ex);

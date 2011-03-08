@@ -21,7 +21,7 @@ import org.apache.abdera.protocol.server.servlet.AbderaServlet;
 
 public final class AtomHopperServlet extends AbderaServlet {
 
-    private static final Logger log = new RCLogger(AtomHopperServlet.class);
+    private static final Logger LOG = new RCLogger(AtomHopperServlet.class);
 
     public static final String CONTEXT_ADAPTER_CLASS = "context-adapter-class";
     public static final String CONFIG_DIRECTORY = "sense-config-directory";
@@ -47,11 +47,11 @@ public final class AtomHopperServlet extends AbderaServlet {
         final String configLocation = getConfigDirectory() + "/sense.cfg.xml";
 
         try {
-            log.info("Reading configuration file: " + configLocation);
+            LOG.info("Reading configuration file: " + configLocation);
 
             configuration = JAXBConfigurationParser.fromFile(configLocation, Configuration.class, net.jps.atom.hopper.config.v1_0.ObjectFactory.class).read();
         } catch (ConfigurationParserException cpe) {
-            throw log.newException("Failed to read configuration file: " + configLocation, cpe, ServletInitException.class);
+            throw LOG.newException("Failed to read configuration file: " + configLocation, cpe, ServletInitException.class);
         }
 
         applicationContextAdapter = getContextAdapter();
@@ -66,7 +66,7 @@ public final class AtomHopperServlet extends AbderaServlet {
         final String adapterClass = getInitParameter(CONTEXT_ADAPTER_CLASS);
 
         if (adapterClass == null || adapterClass.equals("")) {
-            throw log.newException("Missing context adapter init-parameter for servlet: " + CONTEXT_ADAPTER_CLASS, ContextAdapterResolutionException.class);
+            throw LOG.newException("Missing context adapter init-parameter for servlet: " + CONTEXT_ADAPTER_CLASS, ContextAdapterResolutionException.class);
         }
 
         try {
@@ -76,10 +76,10 @@ public final class AtomHopperServlet extends AbderaServlet {
                 return (ApplicationContextAdapter) freshAdapter;
             }
         } catch (Exception ex) {
-            throw log.wrapError(ex, ContextAdapterResolutionException.class);
+            throw LOG.wrapError(ex, ContextAdapterResolutionException.class);
         }
 
-        throw log.newException("Unknwon application context adapter class: " + adapterClass, ContextAdapterResolutionException.class);
+        throw LOG.newException("Unknwon application context adapter class: " + adapterClass, ContextAdapterResolutionException.class);
     }
 
     protected String getConfigDirectory() {

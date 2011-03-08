@@ -31,7 +31,8 @@ import org.apache.abdera.protocol.server.RequestContext;
  */
 public class FileSystemFeedArchiver implements FeedArchiveAdapter {
 
-    private static final Logger log = new RCLogger(FileSystemFeedArchiver.class);
+    private static final Logger LOG = new RCLogger(FileSystemFeedArchiver.class);
+    
     public static final int HOUR_IN_MILLISECONDS = 3600000;
     public static final String ARCHIVE_FILE_EXTENSION = ".archive.xml";
     
@@ -68,7 +69,7 @@ public class FileSystemFeedArchiver implements FeedArchiveAdapter {
 
         if (!dir.exists()) {
             if (!dir.mkdirs()) {
-                log.error("Unable to create archive directory, \"" + dir.getAbsolutePath() + "\"  --  Please check directory permissions");
+                LOG.error("Unable to create archive directory, \"" + dir.getAbsolutePath() + "\"  --  Please check directory permissions");
             }
         } else if (file.exists()) {
             //TODO: Log this error?
@@ -124,9 +125,9 @@ public class FileSystemFeedArchiver implements FeedArchiveAdapter {
             final Document<Feed> feedDoc = adapterTools.getAtomParser().parse(new FileInputStream(archive));
             return ResponseBuilder.found(feedDoc.getRoot());
         } catch (ParseException pe) {
-            throw log.newException("Parsing archive failed. Reason: " + pe.getMessage(), pe, ArchiveProcessingException.class);
+            throw LOG.newException("Parsing archive failed. Reason: " + pe.getMessage(), pe, ArchiveProcessingException.class);
         } catch (FileNotFoundException fnfe) {
-            throw log.newException("Archive not found.", fnfe, ArchiveProcessingException.class);
+            throw LOG.newException("Archive not found.", fnfe, ArchiveProcessingException.class);
         }
     }
 }

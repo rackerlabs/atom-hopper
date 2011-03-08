@@ -28,7 +28,8 @@ import org.apache.abdera.protocol.server.impl.AbstractCollectionAdapter;
 
 public class FeedAdapter extends AbstractCollectionAdapter {
 
-    private static final Logger log = new RCLogger(FeedAdapter.class);
+    private static final Logger LOG = new RCLogger(FeedAdapter.class);
+    
     private final FeedConfiguration feedConfig;
     private final RegexList feedTargets;
     private final FeedSourceAdapter configuredDatasourceAdapter;
@@ -111,7 +112,7 @@ public class FeedAdapter extends AbstractCollectionAdapter {
 
                 //TODO: Push into filter
                 if (StringUtilities.isBlank(returnedEntryCopy.getId().toString())) {
-                    log.warn("New ID for Entry Update was not returned. Please verify that your adapter sets the entry's ID field");
+                    LOG.warn("New ID for Entry Update was not returned. Please verify that your adapter sets the entry's ID field");
                 }
             }
 
