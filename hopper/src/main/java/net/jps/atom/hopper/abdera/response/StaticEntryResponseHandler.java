@@ -34,7 +34,7 @@ public class StaticEntryResponseHandler extends AbstractResponseHandler<Entry> {
                 return ProviderHelper.notfound(rc, adapterResponse.getMessage());
 
             case INTERNAL_SERVER_ERROR:
-                return ProviderHelper.servererror(rc, adapterResponse.getMessage(), new Exception());
+                return ProviderHelper.servererror(rc, adapterResponse.getMessage(), new InternalServerException());
 
             default:
                 return ProviderHelper.notfound(rc);

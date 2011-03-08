@@ -33,20 +33,25 @@ public class WorkspaceConfigProcessor {
 
     private static final Logger LOG = new RCLogger(WorkspaceConfigProcessor.class);
     public static final long HOUR_IN_MILLISECONDS = 3600000;
+    
     private final FeedArchivalService feedArchivalService;
     private final AdapterGetter adapterGetter;
     private final WorkspaceConfiguration config;
     private final Abdera abderaReference;
+    private final String contextPath;
+    
     private FeedArchiveAdapter defaultArchiver;
     private FeedSourceAdapter defaultFeedSource;
 
-    public WorkspaceConfigProcessor(WorkspaceConfiguration workspace, ApplicationContextAdapter contextAdapter, Abdera abderaReference, FeedArchivalService feedArchivalService) {
+    //TODO: Consider builder pattern
+    public WorkspaceConfigProcessor(WorkspaceConfiguration workspace, ApplicationContextAdapter contextAdapter, Abdera abderaReference, FeedArchivalService feedArchivalService, String contextPath) {
         this.config = workspace;
+        this.contextPath = contextPath;
         this.adapterGetter = new AdapterGetter(contextAdapter);
         this.feedArchivalService = feedArchivalService;
         this.abderaReference = abderaReference;
     }
-
+    
     public WorkspaceHandler toHandler() {
         final List<FeedAdapter> namespaceCollectionAdapters = new LinkedList<FeedAdapter>();
         final RegexTargetResolver regexTargetResolver = new RegexTargetResolver();
