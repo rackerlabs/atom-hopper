@@ -6,10 +6,11 @@ package net.jps.atom.hopper.adapter.impl;
 
 import java.util.Calendar;
 import net.jps.atom.hopper.adapter.FeedSource;
+import net.jps.atom.hopper.adapter.request.GetEntryRequest;
+import net.jps.atom.hopper.adapter.request.GetFeedRequest;
 import net.jps.atom.hopper.response.AdapterResponse;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
-import org.apache.abdera.protocol.server.RequestContext;
 
 /**
  *
@@ -18,12 +19,12 @@ import org.apache.abdera.protocol.server.RequestContext;
 public class UnimplementedFeedSource implements FeedSource {
 
     @Override
-    public AdapterResponse<Entry> getEntry(RequestContext request) {
+    public AdapterResponse<Entry> getEntry(GetEntryRequest getEntryRequest) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public AdapterResponse<Feed> getFeed(RequestContext request) {
+    public AdapterResponse<Feed> getFeed(GetFeedRequest getFeedRequest) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -31,4 +32,6 @@ public class UnimplementedFeedSource implements FeedSource {
     public Feed getFeedByDateRange(Calendar startingEntryDate, Calendar lastEntryDate) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+
 }

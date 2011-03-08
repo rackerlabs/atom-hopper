@@ -4,7 +4,6 @@
  */
 package net.jps.atom.hopper.util;
 
-import org.junit.Before;
 import org.junit.Ignore;
 import java.util.regex.Pattern;
 import org.junit.Test;
@@ -18,6 +17,19 @@ import static org.junit.Assert.*;
  */
 @RunWith(Enclosed.class)
 public class TargeRegexBuilderTest {
+
+    public static class WhenCopyingTargetRegexBuilders extends TestParent {
+
+        @Test
+        public void shouldCopyBuilderElements() {
+            final TargetRegexBuilder expected = feedRegexBuilder();
+            final TargetRegexBuilder actual = new TargetRegexBuilder(expected);            
+            
+            assertEquals("TargetRegexBuilder copy must populate the context path", expected.getContextPath(), actual.getContextPath());
+            assertEquals("TargetRegexBuilder copy must populate the workspace path", expected.getWorkspace(), actual.getWorkspace());
+            assertEquals("TargetRegexBuilder copy must populate the feed path", expected.getFeed(), actual.getFeed());
+        }
+    }
 
     public static class WhenBuildingWorkspaceRegexes extends TestParent {
 

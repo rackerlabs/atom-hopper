@@ -28,6 +28,7 @@ public class TargetRegexBuilder {
     }
     
     public TargetRegexBuilder(TargetRegexBuilder copyMe) {
+        contextPath = copyMe.contextPath;
         workspace = copyMe.workspace;
         feed = copyMe.feed;
     }
@@ -44,6 +45,18 @@ public class TargetRegexBuilder {
         this.workspace = workspace;
     }
 
+    public String getContextPath() {
+        return contextPath;
+    }
+
+    public String getFeed() {
+        return feed;
+    }
+
+    public String getWorkspace() {
+        return workspace;
+    }
+    
     private void checkWorkspaceString() {
         if (StringUtilities.isBlank(workspace)) {
             throw new IllegalStateException("Can not produce a regex pattern without the workspace field of the builder being set!");

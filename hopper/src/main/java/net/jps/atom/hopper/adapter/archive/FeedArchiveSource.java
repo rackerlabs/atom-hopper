@@ -1,9 +1,8 @@
 package net.jps.atom.hopper.adapter.archive;
 
+import net.jps.atom.hopper.adapter.request.GetFeedArchiveRequest;
 import net.jps.atom.hopper.response.AdapterResponse;
-import java.util.Calendar;
 import org.apache.abdera.model.Feed;
-import org.apache.abdera.protocol.server.RequestContext;
 
 /**
  * This interface describes an adapter that is able to archive and store feeds as
@@ -22,5 +21,5 @@ public interface FeedArchiveSource {
      * 
      * @return
      */
-    AdapterResponse<Feed> getArchivedFeed(RequestContext request, Calendar requestedDate);
+    AdapterResponse<Feed> getFeed(GetFeedArchiveRequest getFeedArchiveRequest);
 }

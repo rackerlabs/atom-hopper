@@ -5,10 +5,11 @@
 package net.jps.atom.hopper.adapter;
 
 import java.util.Calendar;
+import net.jps.atom.hopper.adapter.request.GetEntryRequest;
+import net.jps.atom.hopper.adapter.request.GetFeedRequest;
 import net.jps.atom.hopper.response.AdapterResponse;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
-import org.apache.abdera.protocol.server.RequestContext;
 
 /**
  *
@@ -26,7 +27,7 @@ public interface FeedSource {
      *
      * @return
      */
-    AdapterResponse<Feed> getFeed(RequestContext request);
+    AdapterResponse<Feed> getFeed(GetFeedRequest getFeedRequest);
 
     /**
      * Requests a single entry from the adapter. This request is scoped by the
@@ -34,12 +35,9 @@ public interface FeedSource {
      *
      * @param request
      *
-     * @param entryId
-     * Unique string ID of the entry being requested.
-     *
      * @return
      */
-    AdapterResponse<Entry> getEntry(RequestContext request);
+    AdapterResponse<Entry> getEntry(GetEntryRequest getEntryRequest);
 
     /**
      * Provides internal SENSe systems with a get method for feeds that can be

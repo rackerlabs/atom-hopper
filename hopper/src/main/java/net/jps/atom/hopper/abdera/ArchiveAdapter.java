@@ -7,6 +7,7 @@ package net.jps.atom.hopper.abdera;
 import net.jps.atom.hopper.abdera.response.ResponseHandler;
 import net.jps.atom.hopper.abdera.response.StaticFeedResponseHandler;
 import net.jps.atom.hopper.adapter.archive.FeedArchiveSource;
+import net.jps.atom.hopper.adapter.request.impl.GetFeedArchiveRequestImpl;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.ProviderHelper;
 import org.apache.abdera.protocol.server.RequestContext;
@@ -58,7 +59,7 @@ public class ArchiveAdapter extends TargetAwareAbstractCollectionAdapter {
     @Override
     public ResponseContext getFeed(RequestContext rc) {
         try {
-            return feedResponseHandler.handleAdapterResponse(rc, archiveSource.getArchivedFeed(rc, null));
+            return feedResponseHandler.handleAdapterResponse(rc, archiveSource.getFeed(new GetFeedArchiveRequestImpl(rc)));
         } catch (UnsupportedOperationException uoe) {
             return ProviderHelper.notallowed(rc, uoe.getMessage(), new String[0]); //TODO: Fix this var-args bullshit
         } catch (Exception ex) {

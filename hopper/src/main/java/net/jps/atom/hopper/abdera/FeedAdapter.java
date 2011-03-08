@@ -2,8 +2,6 @@ package net.jps.atom.hopper.abdera;
 
 import com.rackspace.cloud.commons.logging.Logger;
 import com.rackspace.cloud.commons.logging.RCLogger;
-import com.rackspace.cloud.commons.util.StringUtilities;
-import com.rackspace.cloud.commons.util.http.HttpStatusCode;
 import java.util.HashMap;
 import java.util.Map;
 import net.jps.atom.hopper.abdera.response.StaticFeedResponseHandler;
@@ -12,6 +10,11 @@ import net.jps.atom.hopper.abdera.response.StaticEmptyBodyResponseHandler;
 import net.jps.atom.hopper.abdera.response.StaticEntryResponseHandler;
 import net.jps.atom.hopper.adapter.FeedPublisher;
 import net.jps.atom.hopper.adapter.FeedSource;
+import net.jps.atom.hopper.adapter.request.impl.DeleteEntryRequestImpl;
+import net.jps.atom.hopper.adapter.request.impl.GetEntryRequestImpl;
+import net.jps.atom.hopper.adapter.request.impl.GetFeedRequestImpl;
+import net.jps.atom.hopper.adapter.request.impl.PostEntryRequestImpl;
+import net.jps.atom.hopper.adapter.request.impl.PutEntryRequestImpl;
 import org.apache.abdera.protocol.server.TargetType;
 
 import net.jps.atom.hopper.response.EmptyBody;
@@ -28,7 +31,6 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
 
     private static final Logger LOG = new RCLogger(FeedAdapter.class);
     private final FeedConfiguration feedConfiguration;
-    
     private final FeedPublisher feedPublisher;
     private final FeedSource feedSource;
     
@@ -36,7 +38,6 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
     private final ResponseHandler<Feed> feedResponseHandler;
     private final ResponseHandler<EmptyBody> emptyBodyResponseHandler;
     private final ResponseHandler<Entry> entryResponseHandler;
-    
     private String author;
 
     public FeedAdapter(FeedConfiguration feedConfiguration, FeedSource feedSourequeste) {
@@ -92,14 +93,15 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
     @Override
     public ResponseContext getFeed(RequestContext request) {
         try {
-            return feedResponseHandler.handleAdapterResponse(request, feedSource.getFeed(request));
+            return feedResponseHandler.handleAdapterResponse(request, feedSource.getFeed(new GetFeedRequestImpl(request)));
         } catch (UnsupportedOperationException uoe) {
-            return ProviderHelper.notallowed(request, uoe.getMessage(), new String[0]); //TODO: Fix this var-args bullshit
+            return ProviderHelper.notallowed(request, uoe.getMessage(), new String[0]);
         } catch (Exception ex) {
             return ProviderHelper.servererror(request, ex.getMessage(), ex);
         }
     }
 
+    //TODO: Migrate publishing work to a child class maybe... meh
     @Override
     public ResponseContext postEntry(RequestContext request) {
         if (feedPublisher == null) {
@@ -107,16 +109,17 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
         }
 
         try {
-            final AdapterResponse<Entry> response = feedPublisher.postEntry(request);
+            final AdapterResponse<Entry> response = feedPublisher.postEntry(new PostEntryRequestImpl(request));
 
-            if (response.getResponseStatus() == HttpStatusCode.CREATED) {
-                final Entry returnedEntryCopy = response.getBody();
-
-                //TODO: Push into filter
-                if (StringUtilities.isBlank(returnedEntryCopy.getId().toString())) {
-                    LOG.warn("New ID for Entry Update was not returned. Please verify that your adapter sets the entry's ID field");
-                }
-            }
+//            TODO: Push into processor
+            
+//            if (response.getResponseStatus() == HttpStatusCode.CREATED) {
+//                final Entry returnedEntryCopy = response.getBody();
+//
+//                if (StringUtilities.isBlank(returnedEntryCopy.getId().toString())) {
+//                    LOG.warn("New ID for Entry Update was not returned. Please verify that your adapter sets the entry's ID field");
+//                }
+//            }
 
             return entryResponseHandler.handleAdapterResponse(request, response);
         } catch (Exception ex) {
@@ -131,7 +134,7 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
         }
 
         try {
-            final AdapterResponse<Entry> response = feedPublisher.putEntry(request);
+            final AdapterResponse<Entry> response = feedPublisher.putEntry(new PutEntryRequestImpl(request));
 
             return entryResponseHandler.handleAdapterResponse(request, response);
         } catch (Exception ex) {
@@ -146,7 +149,7 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
         }
 
         try {
-            final AdapterResponse<EmptyBody> response = feedPublisher.deleteEntry(request);
+            final AdapterResponse<EmptyBody> response = feedPublisher.deleteEntry(new DeleteEntryRequestImpl(request));
 
             return emptyBodyResponseHandler.handleAdapterResponse(request, response);
         } catch (Exception ex) {
@@ -157,7 +160,7 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
     @Override
     public ResponseContext getEntry(RequestContext request) {
         try {
-            return entryResponseHandler.handleAdapterResponse(request, feedSource.getEntry(request));
+            return entryResponseHandler.handleAdapterResponse(request, feedSource.getEntry(new GetEntryRequestImpl(request)));
         } catch (Exception ex) {
             return ProviderHelper.servererror(request, ex.getMessage(), ex);
         }

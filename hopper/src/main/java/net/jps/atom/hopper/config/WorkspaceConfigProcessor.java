@@ -24,7 +24,6 @@ import net.jps.atom.hopper.config.v1_0.WorkspaceConfiguration;
 import net.jps.atom.hopper.util.TargetRegexBuilder;
 import net.jps.atom.hopper.util.context.AdapterGetter;
 
-import org.apache.abdera.Abdera;
 import org.apache.abdera.protocol.server.TargetType;
 import org.apache.abdera.protocol.server.impl.RegexTargetResolver;
 
@@ -40,17 +39,21 @@ public class WorkspaceConfigProcessor {
     private final FeedArchivalService feedArchivalService;
     private final AdapterGetter adapterGetter;
     private final WorkspaceConfiguration config;
-    private final String contextPath;
-    
+    private final TargetRegexBuilder workspaceTarget;
     private FeedArchiveSource defaultArchiver;
     private FeedSource defaultFeedSource;
 
     //TODO: Consider builder pattern
-    public WorkspaceConfigProcessor(WorkspaceConfiguration workspace, ApplicationContextAdapter contextAdapter, Abdera abderaReference, FeedArchivalService feedArchivalService, String contextPath) {
-        this.config = workspace;
-        this.contextPath = contextPath;
+    public WorkspaceConfigProcessor(WorkspaceConfiguration config, ApplicationContextAdapter contextAdapter, FeedArchivalService feedArchivalService, String contextPath) {
+        this.config = config;
         this.adapterGetter = new AdapterGetter(contextAdapter);
         this.feedArchivalService = feedArchivalService;
+        
+        workspaceTarget = new TargetRegexBuilder();
+        
+        if (!StringUtilities.isBlank(contextPath)) {
+            workspaceTarget.setContextPath(contextPath);
+        }
     }
 
     public WorkspaceHandler toHandler() {
@@ -79,14 +82,11 @@ public class WorkspaceConfigProcessor {
 //            defaultArchiver = getArchiveAdapter(archiveDefault.getArchiverRef(), archiveDefault.getArchiverClass());
 //        }
 //    }
-
     private List<TargetAwareAbstractCollectionAdapter> assembleServices(List<FeedConfiguration> feedServices, List<TargetAwareAbstractCollectionAdapter> namespaceCollectionAdapters, RegexTargetResolver regexTargetResolver) {
         final List<TargetAwareAbstractCollectionAdapter> collections = new LinkedList<TargetAwareAbstractCollectionAdapter>();
 
         final String workspaceName = StringUtilities.trim(config.getResource(), "/");
-        final TargetRegexBuilder workspaceTarget = new TargetRegexBuilder();
 
-        workspaceTarget.setContextPath(contextPath);
         workspaceTarget.setWorkspace(workspaceName);
 
         // service

@@ -4,11 +4,10 @@
  */
 package net.jps.atom.hopper.adapter.impl;
 
-import java.util.Calendar;
 import net.jps.atom.hopper.adapter.archive.FeedArchiveSource;
+import net.jps.atom.hopper.adapter.request.GetFeedArchiveRequest;
 import net.jps.atom.hopper.response.AdapterResponse;
 import org.apache.abdera.model.Feed;
-import org.apache.abdera.protocol.server.RequestContext;
 
 /**
  *
@@ -17,7 +16,8 @@ import org.apache.abdera.protocol.server.RequestContext;
 public class UnimplementedFeedArchive implements FeedArchiveSource {
 
     @Override
-    public AdapterResponse<Feed> getArchivedFeed(RequestContext request, Calendar requestedDate) {
+    public AdapterResponse<Feed> getFeed(GetFeedArchiveRequest getFeedArchiveRequest) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
 }

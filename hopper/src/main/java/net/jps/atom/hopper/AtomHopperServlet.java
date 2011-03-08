@@ -22,12 +22,15 @@ import org.apache.abdera.protocol.server.servlet.AbderaServlet;
 public final class AtomHopperServlet extends AbderaServlet {
 
     private static final Logger LOG = new RCLogger(AtomHopperServlet.class);
+    
     public static final String CONTEXT_ADAPTER_CLASS = "context-adapter-class";
     public static final String CONFIG_DIRECTORY = "sense-config-directory";
     public static final String DEFAULT_CONFIG_DIRECTORY = "/etc/rackspace-cloud/sense";
+    public static final String DEFAULT_CONFIG_FILE_NAME = "/atom-server.cfg.xml";
+    
     private FeedArchivalService archivalService;
     private ApplicationContextAdapter applicationContextAdapter;
-    private Abdera abderaObject;
+    private Abdera abderaReference;
     private Configuration configuration;
 
     @Override
@@ -38,11 +41,11 @@ public final class AtomHopperServlet extends AbderaServlet {
 
     @Override
     public void init() throws ServletException {
-        abderaObject = getAbdera();
+        abderaReference = getAbdera();
 
         archivalService = new QueuedFeedArchivalService();
 
-        final String configLocation = getConfigDirectory() + "/sense.cfg.xml";
+        final String configLocation = getConfigDirectory() + DEFAULT_CONFIG_FILE_NAME;
 
         try {
             LOG.info("Reading configuration file: " + configLocation);
@@ -91,12 +94,12 @@ public final class AtomHopperServlet extends AbderaServlet {
         final WorkspaceProvider workspaceProvider = new WorkspaceProvider();
 
         //TODO: Provide property injection via config here
-        workspaceProvider.init(abderaObject, new HashMap<String, String>());
+        workspaceProvider.init(abderaReference, new HashMap<String, String>());
 
         for (WorkspaceConfiguration workspaceCfg : configuration.getWorkspace()) {
             workspaceProvider.getWorkspaceManager().addWorkspace(
                     new WorkspaceConfigProcessor(
-                    workspaceCfg, applicationContextAdapter, abderaObject, archivalService, getServletContext().getContextPath()).toHandler());
+                    workspaceCfg, applicationContextAdapter, archivalService, getServletContext().getContextPath()).toHandler());
         }
 
         return workspaceProvider;

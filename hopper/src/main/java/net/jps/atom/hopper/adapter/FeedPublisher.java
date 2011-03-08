@@ -5,10 +5,12 @@
 
 package net.jps.atom.hopper.adapter;
 
+import net.jps.atom.hopper.adapter.request.DeleteEntryRequest;
+import net.jps.atom.hopper.adapter.request.PostEntryRequest;
+import net.jps.atom.hopper.adapter.request.PutEntryRequest;
 import net.jps.atom.hopper.response.AdapterResponse;
 import net.jps.atom.hopper.response.EmptyBody;
 import org.apache.abdera.model.Entry;
-import org.apache.abdera.protocol.server.RequestContext;
 
 /**
  *
@@ -27,7 +29,7 @@ public interface FeedPublisher {
      * The returned entry should contain all of the information a client would
      * need to then request the newly added entry.
      */
-    AdapterResponse<Entry> postEntry(RequestContext request);
+    AdapterResponse<Entry> postEntry(PostEntryRequest postEntryRequest);
 
     /**
      * Requests that an entry be updated. This request is scoped by the unique
@@ -39,7 +41,7 @@ public interface FeedPublisher {
      * The returned entry should contain all updated information including:
      * hrefs, datestamps and content.
      */
-    AdapterResponse<Entry> putEntry(RequestContext request);
+    AdapterResponse<Entry> putEntry(PutEntryRequest putEntryRequest);
 
     /**
      * Requests that an entry be deleted. This request is scoped by the unique
@@ -49,5 +51,5 @@ public interface FeedPublisher {
      *
      * @return
      */
-    AdapterResponse<EmptyBody> deleteEntry(RequestContext request);
+    AdapterResponse<EmptyBody> deleteEntry(DeleteEntryRequest deleteEntryRequest);
 }
