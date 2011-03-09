@@ -15,6 +15,7 @@ import java.util.HashMap;
 import javax.servlet.ServletException;
 import net.jps.atom.hopper.config.v1_0.Configuration;
 import net.jps.atom.hopper.config.v1_0.WorkspaceConfiguration;
+import net.jps.atom.hopper.servlet.ServletInitParameter;
 import org.apache.abdera.Abdera;
 import org.apache.abdera.protocol.server.Provider;
 import org.apache.abdera.protocol.server.servlet.AbderaServlet;
@@ -23,9 +24,7 @@ public final class AtomHopperServlet extends AbderaServlet {
 
     private static final Logger LOG = new RCLogger(AtomHopperServlet.class);
     
-    public static final String CONTEXT_ADAPTER_CLASS = "context-adapter-class";
-    public static final String CONFIG_DIRECTORY = "sense-config-directory";
-    public static final String DEFAULT_CONFIG_DIRECTORY = "/etc/rackspace-cloud/sense";
+    public static final String DEFAULT_CONFIG_DIRECTORY = "/etc/atom-hopper";
     public static final String DEFAULT_CONFIG_FILE_NAME = "/atom-server.cfg.xml";
     
     private FeedArchivalService archivalService;
@@ -64,10 +63,10 @@ public final class AtomHopperServlet extends AbderaServlet {
     }
 
     protected ApplicationContextAdapter getContextAdapter() throws ContextAdapterResolutionException {
-        final String adapterClass = getInitParameter(CONTEXT_ADAPTER_CLASS);
+        final String adapterClass = getInitParameter(ServletInitParameter.CONTEXT_ADAPTER_CLASS.toString());
 
         if (adapterClass == null || adapterClass.equals("")) {
-            throw LOG.newException("Missing context adapter init-parameter for servlet: " + CONTEXT_ADAPTER_CLASS, ContextAdapterResolutionException.class);
+            throw LOG.newException("Missing context adapter init-parameter for servlet: " + ServletInitParameter.CONTEXT_ADAPTER_CLASS.toString(), ContextAdapterResolutionException.class);
         }
 
         try {
@@ -84,7 +83,7 @@ public final class AtomHopperServlet extends AbderaServlet {
     }
 
     protected String getConfigDirectory() {
-        final String configDirectory = getInitParameter(CONFIG_DIRECTORY);
+        final String configDirectory = getInitParameter(ServletInitParameter.CONFIGURATION_DIRECTORY.toString());
 
         return configDirectory == null || configDirectory.equals("") ? DEFAULT_CONFIG_DIRECTORY : configDirectory;
     }

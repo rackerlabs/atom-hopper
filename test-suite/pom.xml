@@ -30,6 +30,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>net.jps.atom</groupId>
+            <artifactId>atom-hopper</artifactId>
+        </dependency>
+        
+        <dependency>
             <groupId>com.rackspace.cloud.commons</groupId>
             <artifactId>utilities</artifactId>
         </dependency>
@@ -86,11 +91,29 @@
         </dependency>
 
         <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlet</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
+            <scope>test</scope>
+        </dependency>
+        
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

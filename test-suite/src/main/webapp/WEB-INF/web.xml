@@ -19,7 +19,7 @@
         <servlet-class>net.jps.atom.hopper.AtomHopperServlet</servlet-class>
 
         <init-param>
-            <param-name>sense-config-directory</param-name>
+            <param-name>config-directory</param-name>
             <param-value>/tmp/atom</param-value>
         </init-param>
 

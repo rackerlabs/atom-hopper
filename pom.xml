@@ -36,6 +36,12 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>net.jps.atom</groupId>
+                <artifactId>atom-hopper</artifactId>
+                <version>${project.version}</version>    
+            </dependency>
+            
+            <dependency>
                 <groupId>com.rackspace.cloud.commons</groupId>
                 <artifactId>utilities</artifactId>
                 <version>1.0.6-SNAPSHOT</version>
@@ -103,9 +109,30 @@
             </dependency>
 
             <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-server</artifactId>
+                <version>8.0.0.M2</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-servlet</artifactId>
+                <version>8.0.0.M2</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-all</artifactId>
                 <version>1.8.5</version>
+                <scope>test</scope>
+            </dependency>
+                           
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-all</artifactId>
+                <version>1.1</version>
                 <scope>test</scope>
             </dependency>
 

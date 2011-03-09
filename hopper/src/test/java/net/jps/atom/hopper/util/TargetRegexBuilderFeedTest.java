@@ -57,7 +57,6 @@ public class TargetRegexBuilderFeedTest {
         @Test
         public void shouldMatchAllCategoryVariations() {
             final TargetRegexBuilder target = workspaceRegexBuilder();
-
             final Pattern targetRegex = Pattern.compile(target.toCategoryPattern());
 
             assertTrue("Should match plain categories URI - regex is: " + targetRegex.pattern(),

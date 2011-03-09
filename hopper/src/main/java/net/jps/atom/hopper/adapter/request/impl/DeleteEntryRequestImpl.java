@@ -17,7 +17,7 @@ public class DeleteEntryRequestImpl extends AbstractClientRequest implements Del
     public DeleteEntryRequestImpl(RequestContext abderaRequestContext) {
         super(abderaRequestContext);
     }
-
+    
     @Override
     public String getId() {
         return "";
