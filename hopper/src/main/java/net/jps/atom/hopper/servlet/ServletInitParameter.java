@@ -1,13 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package net.jps.atom.hopper.servlet;
 
 /**
- *
- * 
+ * Enumeration for any initialization parameters that the servlet may expect.
  */
 public enum ServletInitParameter {
     

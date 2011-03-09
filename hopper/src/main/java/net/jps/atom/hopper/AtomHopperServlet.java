@@ -4,6 +4,7 @@ import com.rackspace.cloud.commons.config.ConfigurationParserException;
 import com.rackspace.cloud.commons.config.jaxb.JAXBConfigurationParser;
 import com.rackspace.cloud.commons.logging.Logger;
 import com.rackspace.cloud.commons.logging.RCLogger;
+import com.rackspace.cloud.commons.util.StringUtilities;
 import com.rackspace.cloud.commons.util.servlet.context.ApplicationContextAdapter;
 import net.jps.atom.hopper.exceptions.ServletInitException;
 import net.jps.atom.hopper.abdera.WorkspaceProvider;
@@ -21,8 +22,12 @@ import org.apache.abdera.protocol.server.Provider;
 import org.apache.abdera.protocol.server.servlet.AbderaServlet;
 
 /**
- * 
- * 
+ * This class is the entry point for the atom server application. This servlet is
+ * responsible for setting up any required services as well as performing the
+ * parsing of the atom server configuration. In addition, the servlet is also
+ * responsible for context clean-up using the destroy method. This method should
+ * make sure that any resources that have independent thread life-cycles are correctly
+ * disposed of.
  */
 public final class AtomHopperServlet extends AbderaServlet {
 
@@ -69,7 +74,8 @@ public final class AtomHopperServlet extends AbderaServlet {
     protected ApplicationContextAdapter getContextAdapter() throws ContextAdapterResolutionException {
         final String adapterClass = getInitParameter(ServletInitParameter.CONTEXT_ADAPTER_CLASS.toString());
 
-        if (adapterClass == null || adapterClass.equals("")) {
+        //TODO: Make this optional - use dummy adapter class for the cfg proc that returns null maybe
+        if (StringUtilities.isBlank(adapterClass)) {
             throw LOG.newException("Missing context adapter init-parameter for servlet: " + ServletInitParameter.CONTEXT_ADAPTER_CLASS.toString(), ContextAdapterResolutionException.class);
         }
 

@@ -1,14 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.jps.atom.hopper.adapter.request;
 
 import org.apache.abdera.protocol.server.RequestContext;
 
 /**
- *
- * 
+ * Base class that contains the wrapped RequestContext from Abdera. All domain 
+ * specific request classes should inherit from this class.
  */
 public abstract class AbstractClientRequest implements ClientRequest {
 

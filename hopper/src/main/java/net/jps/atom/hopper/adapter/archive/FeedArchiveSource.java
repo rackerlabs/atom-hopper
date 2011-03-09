@@ -5,11 +5,11 @@ import net.jps.atom.hopper.response.AdapterResponse;
 import org.apache.abdera.model.Feed;
 
 /**
- * This interface describes an adapter that is able to archive and store feeds as
- * well as retrieve them. This interface may be tagged onto a FeedSourceAdapter
- * to combine the Functionality of both in one class.
- *
- * @author John Hopper
+ * A feed archive source, as defined by this interface, is responsible for
+ * retrieving the archived (static, unchanging) variant of a feed. Its operation
+ * life-cycle is analogous to a @see FeedSource
+ * 
+ * Note: this interface is required to serve the archived variant of a feed
  */
 public interface FeedArchiveSource {
 

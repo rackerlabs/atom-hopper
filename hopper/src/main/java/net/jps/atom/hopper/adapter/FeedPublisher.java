@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package net.jps.atom.hopper.adapter;
 
 import net.jps.atom.hopper.adapter.request.DeleteEntryRequest;
@@ -13,8 +8,10 @@ import net.jps.atom.hopper.response.EmptyBody;
 import org.apache.abdera.model.Entry;
 
 /**
- *
+ * A feed publisher, as defined by this interface, is responsible for committing
+ * client change requests to the feed it represents.
  * 
+ * Note: this interface is required for ATOMpub functionality
  */
 public interface FeedPublisher {
 
@@ -22,12 +19,12 @@ public interface FeedPublisher {
      * Requests a single entry be added to the feed.
      *
      * @param request
-     *
-     * @param entryToAdd
-     *
+     * @see PostEntryRequest
+     * 
      * @return
      * The returned entry should contain all of the information a client would
-     * need to then request the newly added entry.
+     * need to then request the newly added entry. This should include linking 
+     * and identifying the new entry in the response
      */
     AdapterResponse<Entry> postEntry(PostEntryRequest postEntryRequest);
 
@@ -36,10 +33,9 @@ public interface FeedPublisher {
      * string ID of the entry the update is being requested for.
      *
      * @param request
-     *
+     * @see PutEntryRequest
+     * 
      * @return
-     * The returned entry should contain all updated information including:
-     * hrefs, datestamps and content.
      */
     AdapterResponse<Entry> putEntry(PutEntryRequest putEntryRequest);
 
@@ -48,6 +44,7 @@ public interface FeedPublisher {
      * string ID of the entry the delete is being requested for.
      *
      * @param request
+     * @see DeleteEntryRequest
      *
      * @return
      */
