@@ -28,7 +28,7 @@ public class WorkspaceProviderTest {
 
             ResponseContext responseContext = workspaceProvider.process(requestContext);
 
-            assertEquals("Should respond with 404 not found", responseContext.getStatus(), 404);
+            assertEquals("Should respond with 404 not found", 404, responseContext.getStatus());
         }
 
         @Test
@@ -38,7 +38,7 @@ public class WorkspaceProviderTest {
 
             ResponseContext responseContext = workspaceProvider.process(requestContext);
 
-            assertEquals("Should respond with 404 not found", responseContext.getStatus(), 404);
+            assertEquals("Should respond with 404 not found", 404, responseContext.getStatus());
         }
 
         @Test
@@ -49,7 +49,7 @@ public class WorkspaceProviderTest {
 
             ResponseContext responseContext = workspaceProvider.process(requestContext);
 
-            assertEquals("Should respond with 404 not found", responseContext.getStatus(), 404);
+            assertEquals("Should respond with 404 not found", 404, responseContext.getStatus());
         }
 
         @Test
@@ -63,7 +63,7 @@ public class WorkspaceProviderTest {
             ResponseContext responseContext = workspaceProvider.process(requestContext);
 
             verify(workspaceManagerMock).getCollectionAdapter(isA(RequestContext.class));
-            assertEquals("Should respond with 404 not found", responseContext.getStatus(), 404);
+            assertEquals("Should respond with 404 not found", 404, responseContext.getStatus());
         }
 
         @Test
@@ -169,7 +169,7 @@ public class WorkspaceProviderTest {
         public void shouldReturnServerError() {
             when(requestProcessorMock.process(requestContext, workspaceManagerMock, collectionAdapterMock)).thenThrow(new RuntimeException());
             ResponseContext responseContext = workspaceProvider.process(requestContext);
-            assertEquals("Should respond with 500 server error", responseContext.getStatus(), 500);
+            assertEquals("Should respond with 500 server error", 500, responseContext.getStatus());
         }
 
     }
