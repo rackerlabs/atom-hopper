@@ -11,17 +11,17 @@ import org.apache.abdera.protocol.server.impl.AbstractCollectionAdapter;
  */
 public abstract class TargetAwareAbstractCollectionAdapter extends AbstractCollectionAdapter {
 
-    private final RegexList adpterTargets;
+    private final RegexList adapterTargets;
 
     public TargetAwareAbstractCollectionAdapter() {
-        adpterTargets = new RegexList();
+        adapterTargets = new RegexList();
     }
 
     public void addTargetRegex(String targetRegex) {
-        adpterTargets.matches(targetRegex);
+        adapterTargets.add(targetRegex);
     }
 
     public boolean canHandleTarget(String targetUri) {
-        return adpterTargets.matches(targetUri) != null;
+        return adapterTargets.matches(targetUri) != null;
     }
 }

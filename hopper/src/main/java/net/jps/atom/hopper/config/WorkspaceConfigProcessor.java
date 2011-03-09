@@ -35,11 +35,14 @@ import org.apache.abdera.protocol.server.impl.RegexTargetResolver;
 public class WorkspaceConfigProcessor {
 
     private static final Logger LOG = new RCLogger(WorkspaceConfigProcessor.class);
+    
     public static final long HOUR_IN_MILLISECONDS = 3600000;
+    
     private final FeedArchivalService feedArchivalService;
     private final AdapterGetter adapterGetter;
     private final WorkspaceConfiguration config;
-    private final TargetRegexBuilder workspaceTarget;
+    private final TargetRegexBuilder targetRegexGenerator;
+    
     private FeedArchiveSource defaultArchiver;
     private FeedSource defaultFeedSource;
 
@@ -49,22 +52,21 @@ public class WorkspaceConfigProcessor {
         this.adapterGetter = new AdapterGetter(contextAdapter);
         this.feedArchivalService = feedArchivalService;
         
-        workspaceTarget = new TargetRegexBuilder();
+        targetRegexGenerator = new TargetRegexBuilder();
         
         if (!StringUtilities.isBlank(contextPath)) {
-            workspaceTarget.setContextPath(contextPath);
+            targetRegexGenerator.setContextPath(contextPath);
         }
     }
 
     public WorkspaceHandler toHandler() {
-        final List<TargetAwareAbstractCollectionAdapter> namespaceCollectionAdapters = new LinkedList<TargetAwareAbstractCollectionAdapter>();
         final RegexTargetResolver regexTargetResolver = new RegexTargetResolver();
 
         final WorkspaceHandler workspace = new WorkspaceHandler(config, regexTargetResolver);
 
 //        setDefaults(config);
 
-        for (TargetAwareAbstractCollectionAdapter collectionAdapter : assembleServices(config.getFeed(), namespaceCollectionAdapters, regexTargetResolver)) {
+        for (TargetAwareAbstractCollectionAdapter collectionAdapter : assembleServices(config.getFeed(), regexTargetResolver)) {
             workspace.addCollectionAdapter(collectionAdapter);
         }
 
@@ -82,26 +84,26 @@ public class WorkspaceConfigProcessor {
 //            defaultArchiver = getArchiveAdapter(archiveDefault.getArchiverRef(), archiveDefault.getArchiverClass());
 //        }
 //    }
-    private List<TargetAwareAbstractCollectionAdapter> assembleServices(List<FeedConfiguration> feedServices, List<TargetAwareAbstractCollectionAdapter> namespaceCollectionAdapters, RegexTargetResolver regexTargetResolver) {
+    
+    private List<TargetAwareAbstractCollectionAdapter> assembleServices(List<FeedConfiguration> feedServices, RegexTargetResolver regexTargetResolver) {
         final List<TargetAwareAbstractCollectionAdapter> collections = new LinkedList<TargetAwareAbstractCollectionAdapter>();
 
         final String workspaceName = StringUtilities.trim(config.getResource(), "/");
 
-        workspaceTarget.setWorkspace(workspaceName);
+        targetRegexGenerator.setWorkspace(workspaceName);
 
         // service
-        regexTargetResolver.setPattern(workspaceTarget.toWorkspacePattern(),
+        regexTargetResolver.setPattern(targetRegexGenerator.toWorkspacePattern(),
                 TargetType.TYPE_SERVICE,
                 TargetResolverField.WORKSPACE.name());
 
         // categories
-        regexTargetResolver.setPattern(workspaceTarget.toCategoryPattern(),
+        regexTargetResolver.setPattern(targetRegexGenerator.toCategoryPattern(),
                 TargetType.TYPE_CATEGORIES,
                 TargetResolverField.WORKSPACE.name());
 
-        for (TargetAwareAbstractCollectionAdapter adapter : assembleFeedAdapters(workspaceTarget, feedServices, regexTargetResolver)) {
+        for (TargetAwareAbstractCollectionAdapter adapter : assembleFeedAdapters(targetRegexGenerator, feedServices, regexTargetResolver)) {
             collections.add(adapter);
-            namespaceCollectionAdapters.add(adapter);
         }
 
         return collections;

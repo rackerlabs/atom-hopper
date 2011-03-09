@@ -12,7 +12,6 @@ import java.util.Map;
 import javax.security.auth.Subject;
 
 import org.apache.abdera.Abdera;
-import org.apache.abdera.model.Service;
 import org.apache.abdera.protocol.server.CollectionAdapter;
 import org.apache.abdera.protocol.server.Filter;
 import org.apache.abdera.protocol.server.Provider;
@@ -23,7 +22,6 @@ import org.apache.abdera.protocol.server.ResponseContext;
 import org.apache.abdera.protocol.server.Target;
 import org.apache.abdera.protocol.server.TargetType;
 import org.apache.abdera.protocol.server.Transactional;
-import org.apache.abdera.protocol.server.WorkspaceInfo;
 import org.apache.abdera.protocol.server.context.ResponseContextException;
 import org.apache.abdera.protocol.server.impl.SimpleSubjectResolver;
 import org.apache.abdera.protocol.server.processors.CategoriesRequestProcessor;
