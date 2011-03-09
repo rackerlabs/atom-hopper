@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<atom-hopper-config xmlns="http://jpserver.net/atom/hopper-config/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jpserver.net/atom/hopper-config/v1.0 ./../../config/atom-hopper-config.xsd">
+    <defaults>
+        <author name="Rackspace Cloud" />
+    </defaults>
+
+    <!-- http://localhost:8080/namespace_a/ -->
+    <workspace title="A Testing Namespace" resource="/namespace/">       
+        <!-- http://localhost:8080/namespace_a/feed_1 -->
+        <feed title="feed_1" resource="/feed">
+            <feed-source reference="adapter" />
+            <feed-publisher reference="adapter" />
+        </feed>
+    </workspace>
+</atom-hopper-config>

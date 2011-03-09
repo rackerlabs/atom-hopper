@@ -6,6 +6,8 @@ import com.rackspace.cloud.commons.logging.Logger;
 import com.rackspace.cloud.commons.logging.RCLogger;
 import com.rackspace.cloud.commons.util.StringUtilities;
 import com.rackspace.cloud.commons.util.servlet.context.ApplicationContextAdapter;
+import java.net.URI;
+import java.net.URISyntaxException;
 import net.jps.atom.hopper.exceptions.ServletInitException;
 import net.jps.atom.hopper.abdera.WorkspaceProvider;
 import net.jps.atom.hopper.archive.FeedArchivalService;
@@ -33,8 +35,7 @@ public final class AtomHopperServlet extends AbderaServlet {
 
     private static final Logger LOG = new RCLogger(AtomHopperServlet.class);
     
-    public static final String DEFAULT_CONFIG_DIRECTORY = "/etc/atom-hopper";
-    public static final String DEFAULT_CONFIG_FILE_NAME = "/atom-server.cfg.xml";
+    public static final String DEFAULT_CONFIGURATION_LOCATION = "/etc/atom-server/atom-server.cfg.xml";
     
     private FeedArchivalService archivalService;
     private ApplicationContextAdapter applicationContextAdapter;
@@ -53,12 +54,17 @@ public final class AtomHopperServlet extends AbderaServlet {
 
         archivalService = new QueuedFeedArchivalService();
 
-        final String configLocation = getConfigDirectory() + DEFAULT_CONFIG_FILE_NAME;
+        final String configLocation = getConfigurationLocation();
 
         try {
-            LOG.info("Reading configuration file: " + configLocation);
+            LOG.info("Reading configuration: " + configLocation);
 
-            configuration = JAXBConfigurationParser.fromFile(configLocation, Configuration.class, net.jps.atom.hopper.config.v1_0.ObjectFactory.class).read();
+            try {
+                configuration = JAXBConfigurationParser.fromURI(new URI(configLocation), Configuration.class, net.jps.atom.hopper.config.v1_0.ObjectFactory.class).read();
+            } catch (URISyntaxException ex) {
+                //Need to find a URI validator for this instead of piggy-backing of the exception
+                configuration = JAXBConfigurationParser.fromFile(configLocation, Configuration.class, net.jps.atom.hopper.config.v1_0.ObjectFactory.class).read();
+            }
         } catch (ConfigurationParserException cpe) {
             throw LOG.newException("Failed to read configuration file: " + configLocation, cpe, ServletInitException.class);
         }
@@ -92,10 +98,10 @@ public final class AtomHopperServlet extends AbderaServlet {
         throw LOG.newException("Unknwon application context adapter class: " + adapterClass, ContextAdapterResolutionException.class);
     }
 
-    protected String getConfigDirectory() {
-        final String configDirectory = getInitParameter(ServletInitParameter.CONFIGURATION_DIRECTORY.toString());
+    protected String getConfigurationLocation() {
+        final String configLocation = getInitParameter(ServletInitParameter.CONFIGURATION_LOCATION.toString());
 
-        return configDirectory == null || configDirectory.equals("") ? DEFAULT_CONFIG_DIRECTORY : configDirectory;
+        return !StringUtilities.isBlank(configLocation) ? configLocation : DEFAULT_CONFIGURATION_LOCATION;
     }
 
     @Override
@@ -108,7 +114,7 @@ public final class AtomHopperServlet extends AbderaServlet {
         for (WorkspaceConfiguration workspaceCfg : configuration.getWorkspace()) {
             final WorkspaceConfigProcessor cfgProcessor = new WorkspaceConfigProcessor(
                     workspaceCfg, applicationContextAdapter, archivalService, getServletContext().getContextPath());
-            
+
             workspaceProvider.getWorkspaceManager().addWorkspace(cfgProcessor.toHandler());
         }
 

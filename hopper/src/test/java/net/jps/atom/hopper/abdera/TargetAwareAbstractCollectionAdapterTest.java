@@ -23,14 +23,14 @@ public class TargetAwareAbstractCollectionAdapterTest {
 
         @Test
         public void shouldReturnTrueIfRegexMatchesTarget() {
-            targetAwareAdapter.addTargetRegex("atom");
+            targetAwareAdapter.addTargetRegex(".*(atom).*");
             assertEquals("Should match targetUri with regex", true, targetAwareAdapter.canHandleTarget("myatomfeed"));
         }
 
         @Test
         public void shouldReturnTrueWhenOneRegexOfManyMatchesTarget() {
-            targetAwareAdapter.addTargetRegex("hisatomfeed");
-            targetAwareAdapter.addTargetRegex("atom");
+            targetAwareAdapter.addTargetRegex(".*(hisatomfeed)?.*");
+            targetAwareAdapter.addTargetRegex(".*(atom).*");
             assertEquals("Should match targetUri with regex", true, targetAwareAdapter.canHandleTarget("myatomfeed"));
         }
 

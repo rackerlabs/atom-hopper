@@ -6,7 +6,7 @@ package net.jps.atom.hopper.servlet;
 public enum ServletInitParameter {
     
     CONTEXT_ADAPTER_CLASS("context-adapter-class"),
-    CONFIGURATION_DIRECTORY("config-directory");
+    CONFIGURATION_LOCATION("config-location");
     
     private final String value;
     
