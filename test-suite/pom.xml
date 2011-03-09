@@ -10,7 +10,7 @@
 
     <groupId>net.jps.atom</groupId>
     <artifactId>atom-hopper-test</artifactId>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <name>ATOM Hopper - ATOMpub Server Framework Testing Suite</name>
     <url>http://jpserver.net/atom/hopper</url>
@@ -93,13 +93,11 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
-            <scope>test</scope>
         </dependency>
 
         <dependency>

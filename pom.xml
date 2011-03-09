@@ -112,14 +112,12 @@
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-server</artifactId>
                 <version>8.0.0.M2</version>
-                <scope>test</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-servlet</artifactId>
                 <version>8.0.0.M2</version>
-                <scope>test</scope>
             </dependency>
 
             <dependency>

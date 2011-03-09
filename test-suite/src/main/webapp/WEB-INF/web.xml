@@ -6,7 +6,7 @@
 
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>/WEB-INF/application-context.xml</param-value>
+        <param-value>/META-INF/application-context.xml</param-value>
     </context-param>
 
     <listener>
@@ -20,7 +20,7 @@
 
         <init-param>
             <param-name>config-directory</param-name>
-            <param-value>/tmp/atom</param-value>
+            <param-value>/tmp/atom-server</param-value>
         </init-param>
 
         <init-param>

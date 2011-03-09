@@ -1,5 +1,6 @@
 package net.jps.atom.hopper.jetty;
 
+import com.rackspace.cloud.commons.util.servlet.context.impl.ServletSpringContext;
 import net.jps.atom.hopper.AtomHopperServlet;
 import net.jps.atom.hopper.servlet.ServletInitParameter;
 import org.eclipse.jetty.server.Server;
@@ -24,11 +25,11 @@ public class AtomHopperJettyServerBuilder {
         final ServletContextHandler rootContext = buildRootContext(jettyServerReference);
 
         final ServletHolder atomHopServer = new ServletHolder(AtomHopperServlet.class);
-        atomHopServer.setInitParameter(ServletInitParameter.CONTEXT_ADAPTER_CLASS.toString(), null);
-        atomHopServer.setInitParameter(ServletInitParameter.CONFIGURATION_DIRECTORY.toString(), null);
+        atomHopServer.setInitParameter(ServletInitParameter.CONTEXT_ADAPTER_CLASS.toString(), ServletSpringContext.class.getName());
+        atomHopServer.setInitParameter(ServletInitParameter.CONFIGURATION_DIRECTORY.toString(), "/tmp/atom-server");
 
         rootContext.addServlet(atomHopServer, "/*");
-        
+
         return jettyServerReference;
     }
 
@@ -42,5 +43,9 @@ public class AtomHopperJettyServerBuilder {
 
     public Server newServer() {
         return buildNewInstance();
+    }
+
+    public static void main(String[] args) throws Exception {
+        new AtomHopperJettyServerBuilder(8080).newServer().start();
     }
 }
