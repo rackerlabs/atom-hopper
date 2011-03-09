@@ -7,7 +7,7 @@ package net.jps.atom.hopper.servlet;
 
 /**
  *
- * @author zinic
+ * 
  */
 public enum ServletInitParameter {
     

@@ -7,7 +7,7 @@ import org.junit.runner.RunWith;
 import static org.junit.Assert.assertEquals;
 
 /**
- * @author zinic
+ * 
  */
 @RunWith(Enclosed.class)
 public class TargetRegexBuilderTest {

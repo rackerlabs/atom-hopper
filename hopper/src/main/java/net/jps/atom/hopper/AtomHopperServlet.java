@@ -20,6 +20,10 @@ import org.apache.abdera.Abdera;
 import org.apache.abdera.protocol.server.Provider;
 import org.apache.abdera.protocol.server.servlet.AbderaServlet;
 
+/**
+ * 
+ * 
+ */
 public final class AtomHopperServlet extends AbderaServlet {
 
     private static final Logger LOG = new RCLogger(AtomHopperServlet.class);
@@ -96,9 +100,10 @@ public final class AtomHopperServlet extends AbderaServlet {
         workspaceProvider.init(abderaReference, new HashMap<String, String>());
 
         for (WorkspaceConfiguration workspaceCfg : configuration.getWorkspace()) {
-            workspaceProvider.getWorkspaceManager().addWorkspace(
-                    new WorkspaceConfigProcessor(
-                    workspaceCfg, applicationContextAdapter, archivalService, getServletContext().getContextPath()).toHandler());
+            final WorkspaceConfigProcessor cfgProcessor = new WorkspaceConfigProcessor(
+                    workspaceCfg, applicationContextAdapter, archivalService, getServletContext().getContextPath());
+            
+            workspaceProvider.getWorkspaceManager().addWorkspace(cfgProcessor.toHandler());
         }
 
         return workspaceProvider;

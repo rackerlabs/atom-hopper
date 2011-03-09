@@ -6,7 +6,7 @@ package net.jps.atom.hopper.config;
 
 /**
  *
- * @author zinic
+ * 
  */
 public class ConfigurationException extends RuntimeException {
 

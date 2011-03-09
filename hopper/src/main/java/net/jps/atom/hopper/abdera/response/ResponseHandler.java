@@ -10,7 +10,7 @@ import org.apache.abdera.protocol.server.ResponseContext;
 
 /**
  *
- * @author zinic
+ * 
  */
 public interface ResponseHandler<T> {
 

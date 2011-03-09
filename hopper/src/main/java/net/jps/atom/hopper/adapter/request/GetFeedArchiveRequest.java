@@ -8,7 +8,7 @@ import java.util.Calendar;
 
 /**
  *
- * @author zinic
+ * 
  */
 public interface GetFeedArchiveRequest extends ClientRequest {
 

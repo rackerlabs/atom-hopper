@@ -14,7 +14,7 @@ import org.apache.abdera.model.Feed;
 
 /**
  *
- * @author zinic
+ * 
  */
 public class UnimplementedFeedSource implements FeedSource {
 

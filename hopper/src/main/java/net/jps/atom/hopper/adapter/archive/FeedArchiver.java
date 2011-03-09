@@ -9,7 +9,7 @@ import net.jps.atom.hopper.adapter.FeedSource;
 
 /**
  *
- * @author zinic
+ * 
  */
 public interface FeedArchiver {
 

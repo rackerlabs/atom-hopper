@@ -6,7 +6,7 @@ package net.jps.atom.hopper.adapter.archive;
 
 /**
  *
- * @author zinic
+ * 
  */
 public class ArchiveProcessingException extends RuntimeException {
 

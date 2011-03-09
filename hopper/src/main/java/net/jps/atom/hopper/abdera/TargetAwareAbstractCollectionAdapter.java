@@ -11,7 +11,7 @@ import org.apache.abdera.protocol.server.impl.AbstractCollectionAdapter;
 
 /**
  *
- * @author zinic
+ * 
  */
 public abstract class TargetAwareAbstractCollectionAdapter extends AbstractCollectionAdapter {
 

@@ -13,7 +13,7 @@ import org.apache.abdera.model.Feed;
 
 /**
  *
- * @author zinic
+ * 
  */
 public interface FeedSource {
 

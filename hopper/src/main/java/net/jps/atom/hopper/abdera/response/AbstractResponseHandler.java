@@ -13,7 +13,7 @@ import org.apache.abdera.protocol.server.RequestContext;
 
 /**
  *
- * @author zinic
+ * 
  */
 public abstract class AbstractResponseHandler<T> implements ResponseHandler<T> {
 

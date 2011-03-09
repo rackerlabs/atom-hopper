@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 import static org.junit.Assert.assertTrue;
 
 /**
- * @author zinic
+ * 
  */
 @RunWith(Enclosed.class)
 public class TargetRegexBuilderWorkspaceTest {

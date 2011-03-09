@@ -10,7 +10,7 @@ import com.rackspace.cloud.commons.util.servlet.context.ApplicationContextAdapte
 
 /**
  *
- * @author zinic
+ * 
  */
 public class AdapterGetter {
 

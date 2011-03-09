@@ -6,7 +6,7 @@ package net.jps.atom.hopper.util.context;
 
 /**
  *
- * @author zinic
+ * 
  */
 public class AdapterNotFoundException extends RuntimeException {
 

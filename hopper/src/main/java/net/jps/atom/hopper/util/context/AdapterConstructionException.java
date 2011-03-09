@@ -6,7 +6,7 @@ package net.jps.atom.hopper.util.context;
 
 /**
  *
- * @author zinic
+ * 
  */
 public class AdapterConstructionException extends RuntimeException {
 

@@ -7,7 +7,7 @@ package net.jps.atom.hopper.abdera.response;
 
 /**
  *
- * @author zinic
+ * 
  */
 public class InternalServerException extends Exception {
 

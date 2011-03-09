@@ -12,7 +12,7 @@ import org.apache.abdera.protocol.server.ResponseContext;
 
 /**
  *
- * @author zinic
+ * 
  */
 public class StaticEmptyBodyResponseHandler extends AbstractResponseHandler<EmptyBody> {
 

@@ -12,7 +12,7 @@ import org.apache.abdera.protocol.server.RequestContext;
 
 /**
  *
- * @author zinic
+ * 
  */
 public class GetEntryRequestImpl extends AbstractClientRequest implements GetEntryRequest {
 

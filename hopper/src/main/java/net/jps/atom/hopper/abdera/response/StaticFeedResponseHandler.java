@@ -14,7 +14,7 @@ import org.apache.abdera.protocol.server.ResponseContext;
 
 /**
  *
- * @author zinic
+ * 
  */
 public class StaticFeedResponseHandler extends AbstractResponseHandler<Feed> {
     

@@ -11,7 +11,7 @@ import net.jps.atom.hopper.adapter.archive.FeedArchiver;
 
 /**
  *
- * @author zinic
+ * 
  */
 public class FeedArchivalTask implements Runnable {
 

@@ -10,7 +10,7 @@ import org.apache.abdera.protocol.server.RequestContext;
 
 /**
  *
- * @author zinic
+ * 
  */
 public class PostEntryRequestImpl extends AbstractClientRequest implements PostEntryRequest {
 

@@ -19,7 +19,7 @@ import net.jps.atom.hopper.adapter.archive.FeedArchiver;
 
 /**
  *
- * @author zinic
+ * 
  */
 public class QueuedFeedArchivalService extends TimerTask implements FeedArchivalService {
 

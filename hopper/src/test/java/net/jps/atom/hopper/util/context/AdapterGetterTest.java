@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 
 /**
  *
- * @author zinic
+ * 
  */
 @RunWith(Enclosed.class)
 public class AdapterGetterTest {

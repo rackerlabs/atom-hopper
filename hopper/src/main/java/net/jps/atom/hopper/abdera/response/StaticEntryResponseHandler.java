@@ -13,7 +13,7 @@ import org.apache.abdera.protocol.server.ResponseContext;
 
 /**
  *
- * @author zinic
+ * 
  */
 public class StaticEntryResponseHandler extends AbstractResponseHandler<Entry> {
 

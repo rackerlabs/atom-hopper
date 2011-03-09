@@ -30,7 +30,7 @@ import org.apache.abdera.protocol.server.impl.RegexTargetResolver;
 /**
  * TODO: Sanitize configured workspace and feed resource paths for regex insertion
  * 
- * @author zinic
+ * 
  */
 public class WorkspaceConfigProcessor {
 

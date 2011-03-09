@@ -16,7 +16,7 @@ import org.apache.abdera.protocol.server.context.ResponseContextException;
 
 /**
  *
- * @author zinic
+ * 
  */
 public class ArchiveAdapter extends TargetAwareAbstractCollectionAdapter {
 

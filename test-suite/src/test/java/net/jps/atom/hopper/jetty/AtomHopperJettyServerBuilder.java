@@ -13,13 +13,13 @@ import org.springframework.web.context.ContextLoaderListener;
 
 /**
  *
- * @author zinic
+ * 
  */
-public class JettyHarnessBuilder {
+public class AtomHopperJettyServerBuilder {
 
     private final int portNumber;
 
-    public JettyHarnessBuilder(int portNumber) throws Exception {
+    public AtomHopperJettyServerBuilder(int portNumber) throws Exception {
         this.portNumber = portNumber;
     }
 

@@ -6,7 +6,7 @@ package net.jps.atom.hopper.adapter.request;
 
 /**
  *
- * @author zinic
+ * 
  */
 public interface PutEntryRequest extends ClientRequest {
 

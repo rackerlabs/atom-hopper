@@ -6,7 +6,7 @@ package net.jps.atom.hopper.response;
 
 /**
  *
- * @author zinic
+ * 
  */
 public enum ResponseParameter {
     PREVIOUS_MARKER,

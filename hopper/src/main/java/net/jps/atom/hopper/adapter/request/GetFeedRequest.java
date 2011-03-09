@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  *
- * @author zinic
+ * 
  */
 public interface GetFeedRequest extends ClientRequest {
 

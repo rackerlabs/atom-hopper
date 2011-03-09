@@ -13,7 +13,7 @@ import org.apache.abdera.protocol.server.RequestContext;
 
 /**
  *
- * @author zinic
+ * 
  */
 public class GetFeedRequestImpl extends AbstractClientRequest implements GetFeedRequest {
 

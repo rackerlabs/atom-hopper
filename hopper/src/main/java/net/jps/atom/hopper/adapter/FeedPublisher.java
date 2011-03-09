@@ -14,7 +14,7 @@ import org.apache.abdera.model.Entry;
 
 /**
  *
- * @author zinic
+ * 
  */
 public interface FeedPublisher {
 

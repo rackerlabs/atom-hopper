@@ -8,7 +8,7 @@ import com.rackspace.cloud.commons.util.StringUtilities;
 
 /**
  *
- * @author zinic
+ * 
  */
 public class TargetRegexBuilder {
 

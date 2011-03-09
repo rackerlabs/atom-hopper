@@ -18,7 +18,7 @@ import org.junit.runner.RunWith;
 import static org.junit.Assert.*;
 
 /**
- * @author jhopper
+ * 
  */
 @RunWith(Enclosed.class)
 public class SchemaTest {

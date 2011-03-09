@@ -11,7 +11,7 @@ import org.apache.abdera.protocol.server.RequestContext;
 
 /**
  *
- * @author zinic
+ * 
  */
 public class PutEntryRequestImpl extends AbstractClientRequest implements PutEntryRequest {
 
