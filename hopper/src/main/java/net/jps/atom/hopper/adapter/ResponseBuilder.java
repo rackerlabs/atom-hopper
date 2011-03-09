@@ -8,7 +8,13 @@ import net.jps.atom.hopper.response.AdapterResponse;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 
-public class ResponseBuilder {
+/**
+ * Utility class designed to make generating an @see AdapterResponse easy
+ */
+public final class ResponseBuilder {
+
+    private ResponseBuilder() {
+    }
 
     public static <T> AdapterResponse<T> notFound() {
         return notFound("");

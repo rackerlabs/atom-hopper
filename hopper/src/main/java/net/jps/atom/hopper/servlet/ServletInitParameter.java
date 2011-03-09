@@ -6,8 +6,7 @@
 package net.jps.atom.hopper.servlet;
 
 /**
- *
- * 
+ * Enumeration for any initialization parameters that the servlet may expect.
  */
 public enum ServletInitParameter {
     
