@@ -19,25 +19,24 @@ import static org.mockito.Mockito.*;
 @RunWith(Enclosed.class)
 public class WorkspaceProviderTest {
 
+    static final RequestContext REQUEST_TARGET_ISNULL = requestContext(null);
+    static final RequestContext REQUEST_TARGET_TYPE_UNKNOWN = requestContext(target(TargetType.TYPE_NOT_FOUND));
+    static final RequestContext REQUEST_TARGET_TYPE_CATEGORIES = requestContext(target(TargetType.TYPE_CATEGORIES));
+
+
     public static class WhenProcessingRequest extends TestParent {
 
         @Test
         public void shouldReturn404GivenNullTarget() {
             final WorkspaceProvider workspaceProvider = workspaceProvider();
-            final RequestContext requestContext = requestContext(null);
-
-            ResponseContext responseContext = workspaceProvider.process(requestContext);
-
+            ResponseContext responseContext = workspaceProvider.process(REQUEST_TARGET_ISNULL);
             assertEquals("Should respond with 404 not found", 404, responseContext.getStatus());
         }
 
         @Test
         public void shouldReturn404GivenUnknownTargetType() {
             final WorkspaceProvider workspaceProvider = workspaceProvider();
-            final RequestContext requestContext = requestContext(target(TargetType.TYPE_NOT_FOUND));
-
-            ResponseContext responseContext = workspaceProvider.process(requestContext);
-
+            ResponseContext responseContext = workspaceProvider.process(REQUEST_TARGET_TYPE_UNKNOWN);
             assertEquals("Should respond with 404 not found", 404, responseContext.getStatus());
         }
 
@@ -45,29 +44,27 @@ public class WorkspaceProviderTest {
         public void shouldReturn404GivenTargetTypeWithNoMatchingRequestProcessor() {
             final WorkspaceProvider workspaceProvider = workspaceProvider();
             workspaceProvider.setRequestProcessors(new HashMap<TargetType, RequestProcessor>());
-            final RequestContext requestContext = requestContext(target(TargetType.TYPE_CATEGORIES));
-
-            ResponseContext responseContext = workspaceProvider.process(requestContext);
-
+            ResponseContext responseContext = workspaceProvider.process(REQUEST_TARGET_TYPE_CATEGORIES);
             assertEquals("Should respond with 404 not found", 404, responseContext.getStatus());
         }
 
         @Test
         public void shouldReturn404GivenRequestWithNoMatchingCollectionAdapter() {
             final WorkspaceProvider workspaceProvider = workspaceProvider();
-            final RequestContext requestContext = requestContext(target(TargetType.TYPE_CATEGORIES));
-
             final WorkspaceManager workspaceManagerMock = workspaceProvider.getWorkspaceManager();
-            when(workspaceManagerMock.getCollectionAdapter(requestContext)).thenReturn(null);
+            when(workspaceManagerMock.getCollectionAdapter(REQUEST_TARGET_TYPE_CATEGORIES)).thenReturn(null);
 
-            ResponseContext responseContext = workspaceProvider.process(requestContext);
+            ResponseContext responseContext = workspaceProvider.process(REQUEST_TARGET_TYPE_CATEGORIES);
 
             verify(workspaceManagerMock).getCollectionAdapter(isA(RequestContext.class));
             assertEquals("Should respond with 404 not found", 404, responseContext.getStatus());
         }
+    }
+
+    public static class WhenProcessingRequestWithTransactionalCollectionAdapter extends TestParent {
 
         @Test
-        public void shouldStartAndEndTransactionForTransactionalCollectionAdapter() throws ResponseContextException {
+        public void shouldStartAndEndTransaction() throws ResponseContextException {
             final WorkspaceProvider workspaceProvider = workspaceProvider();
             final RequestContext requestContext = requestContext(target(TargetType.TYPE_CATEGORIES));
             final WorkspaceManager workspaceManagerMock = workspaceProvider.getWorkspaceManager();
@@ -175,27 +172,23 @@ public class WorkspaceProviderTest {
     }
 
 
+    public static RequestContext requestContext(Target target) {
+        RequestContext context = mock(RequestContext.class);
+        when(context.getTarget()).thenReturn(target);
+        return context;
+    }
+
+    public static Target target(TargetType type) {
+        Target target = mock(Target.class);
+        when(target.getType()).thenReturn(type);
+        return target;
+    }
+
     @Ignore
     private static class TestParent {
 
         public TestableWorkspaceProvider workspaceProvider() {
             final TestableWorkspaceProvider target = new TestableWorkspaceProvider();
-            return target;
-        }
-
-        public void processRequestReturnsValidResponse() {
-
-        }
-
-        public RequestContext requestContext(Target target) {
-            RequestContext context = mock(RequestContext.class);
-            when(context.getTarget()).thenReturn(target);
-            return context;
-        }
-
-        public Target target(TargetType type) {
-            Target target = mock(Target.class);
-            when(target.getType()).thenReturn(type);
             return target;
         }
 
