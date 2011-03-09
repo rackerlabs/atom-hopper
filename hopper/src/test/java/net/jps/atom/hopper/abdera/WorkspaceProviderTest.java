@@ -4,7 +4,6 @@ import org.apache.abdera.protocol.server.*;
 import org.apache.abdera.protocol.server.context.ResponseContextException;
 import org.apache.abdera.protocol.server.impl.AbstractCollectionAdapter;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
@@ -13,7 +12,6 @@ import org.mockito.InOrder;
 import java.util.HashMap;
 
 import static junit.framework.Assert.assertEquals;
-import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.*;
 
 @RunWith(Enclosed.class)
@@ -23,26 +21,29 @@ public class WorkspaceProviderTest {
     static final RequestContext REQUEST_TARGET_TYPE_UNKNOWN = requestContext(target(TargetType.TYPE_NOT_FOUND));
     static final RequestContext REQUEST_TARGET_TYPE_CATEGORIES = requestContext(target(TargetType.TYPE_CATEGORIES));
 
+    static TestableWorkspaceProvider workspaceProvider;
 
-    public static class WhenProcessingRequest extends TestParent {
+    public static class WhenProcessingRequest {
+
+        @Before
+        public void setup() {
+            workspaceProvider =  new TestableWorkspaceProvider();
+        }
 
         @Test
         public void shouldReturn404GivenNullTarget() {
-            final WorkspaceProvider workspaceProvider = workspaceProvider();
             ResponseContext responseContext = workspaceProvider.process(REQUEST_TARGET_ISNULL);
             assertEquals("Should respond with 404 not found", 404, responseContext.getStatus());
         }
 
         @Test
         public void shouldReturn404GivenUnknownTargetType() {
-            final WorkspaceProvider workspaceProvider = workspaceProvider();
             ResponseContext responseContext = workspaceProvider.process(REQUEST_TARGET_TYPE_UNKNOWN);
             assertEquals("Should respond with 404 not found", 404, responseContext.getStatus());
         }
 
         @Test
         public void shouldReturn404GivenTargetTypeWithNoMatchingRequestProcessor() {
-            final WorkspaceProvider workspaceProvider = workspaceProvider();
             workspaceProvider.setRequestProcessors(new HashMap<TargetType, RequestProcessor>());
             ResponseContext responseContext = workspaceProvider.process(REQUEST_TARGET_TYPE_CATEGORIES);
             assertEquals("Should respond with 404 not found", 404, responseContext.getStatus());
@@ -50,36 +51,60 @@ public class WorkspaceProviderTest {
 
         @Test
         public void shouldReturn404GivenRequestWithNoMatchingCollectionAdapter() {
-            final WorkspaceProvider workspaceProvider = workspaceProvider();
             final WorkspaceManager workspaceManagerMock = workspaceProvider.getWorkspaceManager();
             when(workspaceManagerMock.getCollectionAdapter(REQUEST_TARGET_TYPE_CATEGORIES)).thenReturn(null);
 
             ResponseContext responseContext = workspaceProvider.process(REQUEST_TARGET_TYPE_CATEGORIES);
 
-            verify(workspaceManagerMock).getCollectionAdapter(isA(RequestContext.class));
+            verify(workspaceManagerMock).getCollectionAdapter(REQUEST_TARGET_TYPE_CATEGORIES);
             assertEquals("Should respond with 404 not found", 404, responseContext.getStatus());
+        }
+
+        @Test
+        public void shouldReturnServerErrorWhenProcessingExceptionOccurs() {
+            final WorkspaceManager workspaceManagerMock = workspaceProvider.getWorkspaceManager();
+            final CollectionAdapter collectionAdapterMock = mock(CollectionAdapter.class);
+            final RequestProcessor requestProcessorMock = mock(RequestProcessor.class);
+        
+            workspaceProvider.addRequestProcessors(new HashMap<TargetType, RequestProcessor>() {
+                {
+                    put(TargetType.TYPE_CATEGORIES, requestProcessorMock);
+                } });
+
+            when(workspaceManagerMock.getCollectionAdapter(REQUEST_TARGET_TYPE_CATEGORIES)).thenReturn(collectionAdapterMock);
+            when(requestProcessorMock.process(REQUEST_TARGET_TYPE_CATEGORIES, workspaceManagerMock, collectionAdapterMock)).thenThrow(new RuntimeException());
+            ResponseContext responseContext = workspaceProvider.process(REQUEST_TARGET_TYPE_CATEGORIES);
+            assertEquals("Should respond with 500 server error", 500, responseContext.getStatus());
         }
     }
 
-    public static class WhenProcessingRequestWithTransactionalCollectionAdapter extends TestParent {
+    public static class WhenProcessingRequestWithTransactionalCollectionAdapter {
+        RequestContext requestContext;
+        WorkspaceManager workspaceManagerMock;
+        AbstractCollectionAdapter collectionAdapterMock;
+        RequestProcessor categoriesRequestProcessorMock;
+
+        @Before
+        public void setup() {
+            workspaceProvider =  new TestableWorkspaceProvider();
+            requestContext = requestContext(target(TargetType.TYPE_CATEGORIES));
+            workspaceManagerMock = workspaceProvider.getWorkspaceManager();
+            collectionAdapterMock = mock(AbstractCollectionAdapter.class);
+            categoriesRequestProcessorMock = mock(RequestProcessor.class);
+
+            workspaceProvider.addRequestProcessors(new HashMap<TargetType, RequestProcessor>() {
+                {
+                    put(TargetType.TYPE_CATEGORIES, categoriesRequestProcessorMock);
+                } });
+
+            when(workspaceManagerMock.getCollectionAdapter(requestContext)).thenReturn(collectionAdapterMock);
+        }
 
         @Test
         public void shouldStartAndEndTransaction() throws ResponseContextException {
-            final WorkspaceProvider workspaceProvider = workspaceProvider();
-            final RequestContext requestContext = requestContext(target(TargetType.TYPE_CATEGORIES));
-            final WorkspaceManager workspaceManagerMock = workspaceProvider.getWorkspaceManager();
-            final AbstractCollectionAdapter collectionAdapterMock = mock(AbstractCollectionAdapter.class);
-            final RequestProcessor requestProcessorMock = mock(RequestProcessor.class);
-                      workspaceProvider.addRequestProcessors(new HashMap<TargetType, RequestProcessor>() {
-                          {
-                              put(TargetType.TYPE_CATEGORIES, requestProcessorMock);
-                          } });
-
-            when(workspaceManagerMock.getCollectionAdapter(requestContext)).thenReturn(collectionAdapterMock);
-
-            final ResponseContext responseContextMock = mock(ResponseContext.class);
-            when(requestProcessorMock.process(requestContext, workspaceManagerMock, collectionAdapterMock)).thenReturn(responseContextMock);
-
+            final ResponseContext processorResponse = mock(ResponseContext.class);
+            when(categoriesRequestProcessorMock.process(requestContext, workspaceManagerMock, collectionAdapterMock)).thenReturn(processorResponse);
+                                                                                                              
             ResponseContext responseContext = workspaceProvider.process(requestContext);
 
             InOrder inOrder = inOrder(collectionAdapterMock);
@@ -89,21 +114,9 @@ public class WorkspaceProviderTest {
         }
 
         @Test
-        public void shouldStartAndCompensateTransactionForTransactionalCollectionAdapter() throws ResponseContextException {
-        final WorkspaceProvider workspaceProvider = workspaceProvider();
-            final RequestContext requestContext = requestContext(target(TargetType.TYPE_CATEGORIES));
-            final WorkspaceManager workspaceManagerMock = workspaceProvider.getWorkspaceManager();
-            final AbstractCollectionAdapter collectionAdapterMock = mock(AbstractCollectionAdapter.class);
-            final RequestProcessor requestProcessorMock = mock(RequestProcessor.class);
-                      workspaceProvider.addRequestProcessors(new HashMap<TargetType, RequestProcessor>() {
-                          {
-                              put(TargetType.TYPE_CATEGORIES, requestProcessorMock);
-                          } });
+        public void shouldCompensateTransactionWhenExceptionOccurs() throws ResponseContextException {
 
-            when(workspaceManagerMock.getCollectionAdapter(requestContext)).thenReturn(collectionAdapterMock);
-
-            final ResponseContext responseContextMock = mock(ResponseContext.class);
-            when(requestProcessorMock.process(requestContext, workspaceManagerMock, collectionAdapterMock)).thenThrow(new RuntimeException());
+            when(categoriesRequestProcessorMock.process(requestContext, workspaceManagerMock, collectionAdapterMock)).thenThrow(new RuntimeException());
 
             ResponseContext responseContext = workspaceProvider.process(requestContext);
 
@@ -115,11 +128,11 @@ public class WorkspaceProviderTest {
 
     }
 
-    public static class WhenRequestIsNotHandledByDefaultCollectionAdapterBehavior extends TestParent {
+    public static class WhenRequestIsNotHandledByDefaultCollectionAdapterBehavior {
 
         @Test
         public void shouldProcessAsExtensionRequest() {
-            final TestableWorkspaceProvider workspaceProvider = workspaceProvider();
+            final WorkspaceProvider workspaceProvider =  new TestableWorkspaceProvider();
             final RequestContext requestContext = requestContext(target(TargetType.TYPE_CATEGORIES));
             final WorkspaceManager workspaceManagerMock = workspaceProvider.getWorkspaceManager();
             final CollectionAdapter collectionAdapterMock = mock(CollectionAdapter.class);
@@ -139,39 +152,6 @@ public class WorkspaceProviderTest {
         }
     }
 
-    public static class WhenProcessingRequestThrowsAnException extends TestParent {
-        TestableWorkspaceProvider workspaceProvider;
-        RequestContext requestContext;
-        WorkspaceManager workspaceManagerMock;
-        CollectionAdapter collectionAdapterMock;
-        RequestProcessor requestProcessorMock;
-
-        @Before
-        public void setup() {
-            workspaceProvider = workspaceProvider();
-            requestContext = requestContext(target(TargetType.TYPE_CATEGORIES));
-            workspaceManagerMock = workspaceProvider.getWorkspaceManager();
-            collectionAdapterMock = mock(CollectionAdapter.class);
-            requestProcessorMock = mock(RequestProcessor.class);
-
-            workspaceProvider.addRequestProcessors(new HashMap<TargetType, RequestProcessor>() {
-                {
-                    put(TargetType.TYPE_CATEGORIES, requestProcessorMock);
-                } });
-
-            when(workspaceManagerMock.getCollectionAdapter(requestContext)).thenReturn(collectionAdapterMock);
-        }
-
-        @Test
-        public void shouldReturnServerError() {
-            when(requestProcessorMock.process(requestContext, workspaceManagerMock, collectionAdapterMock)).thenThrow(new RuntimeException());
-            ResponseContext responseContext = workspaceProvider.process(requestContext);
-            assertEquals("Should respond with 500 server error", 500, responseContext.getStatus());
-        }
-
-    }
-
-
     public static RequestContext requestContext(Target target) {
         RequestContext context = mock(RequestContext.class);
         when(context.getTarget()).thenReturn(target);
@@ -182,16 +162,6 @@ public class WorkspaceProviderTest {
         Target target = mock(Target.class);
         when(target.getType()).thenReturn(type);
         return target;
-    }
-
-    @Ignore
-    private static class TestParent {
-
-        public TestableWorkspaceProvider workspaceProvider() {
-            final TestableWorkspaceProvider target = new TestableWorkspaceProvider();
-            return target;
-        }
-
     }
 
     private static class TestableWorkspaceProvider extends WorkspaceProvider {
