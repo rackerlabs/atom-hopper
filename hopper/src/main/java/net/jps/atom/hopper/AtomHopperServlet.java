@@ -1,7 +1,5 @@
 package net.jps.atom.hopper;
 
-import com.rackspace.cloud.commons.config.ConfigurationParserException;
-import com.rackspace.cloud.commons.config.jaxb.JAXBConfigurationParser;
 import com.rackspace.cloud.commons.logging.Logger;
 import com.rackspace.cloud.commons.logging.RCLogger;
 import com.rackspace.cloud.commons.util.StringUtilities;
@@ -19,9 +17,12 @@ import javax.servlet.ServletException;
 import net.jps.atom.hopper.config.v1_0.Configuration;
 import net.jps.atom.hopper.config.v1_0.WorkspaceConfiguration;
 import net.jps.atom.hopper.servlet.ServletInitParameter;
+import net.jps.atom.hopper.util.jaxb.ConfigurationParserException;
+import net.jps.atom.hopper.util.jaxb.JAXBConfigurationParser;
 import org.apache.abdera.Abdera;
 import org.apache.abdera.protocol.server.Provider;
 import org.apache.abdera.protocol.server.servlet.AbderaServlet;
+import org.jaxen.function.ConcatFunction;
 
 /**
  * This class is the entry point for the atom server application. This servlet is
@@ -34,9 +35,9 @@ import org.apache.abdera.protocol.server.servlet.AbderaServlet;
 public final class AtomHopperServlet extends AbderaServlet {
 
     private static final Logger LOG = new RCLogger(AtomHopperServlet.class);
-    
+
     public static final String DEFAULT_CONFIGURATION_LOCATION = "/etc/atom-server/atom-server.cfg.xml";
-    
+
     private FeedArchivalService archivalService;
     private ApplicationContextAdapter applicationContextAdapter;
     private Abdera abderaReference;
@@ -60,10 +61,10 @@ public final class AtomHopperServlet extends AbderaServlet {
             LOG.info("Reading configuration: " + configLocation);
 
             try {
-                configuration = JAXBConfigurationParser.fromURI(new URI(configLocation), Configuration.class, net.jps.atom.hopper.config.v1_0.ObjectFactory.class).read();
+                configuration = new JAXBConfigurationParser<Configuration>(new URI(configLocation), Configuration.class, net.jps.atom.hopper.config.v1_0.ObjectFactory.class).read();
             } catch (URISyntaxException ex) {
-                //Need to find a URI validator for this instead of piggy-backing of the exception
-                configuration = JAXBConfigurationParser.fromFile(configLocation, Configuration.class, net.jps.atom.hopper.config.v1_0.ObjectFactory.class).read();
+                //TODO: Should this be an error? Maybe we could have a fall back reader that tries file path by default
+                throw new ServletInitException("Configuration location must be a URI. Consider using file:/absolute/path/to/file", ex);
             }
         } catch (ConfigurationParserException cpe) {
             throw LOG.newException("Failed to read configuration file: " + configLocation, cpe, ServletInitException.class);

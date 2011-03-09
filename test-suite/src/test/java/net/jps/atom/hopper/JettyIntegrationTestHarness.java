@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.jps.atom.hopper;
 
 import net.jps.atom.hopper.jetty.AtomHopperJettyServerBuilder;
@@ -11,7 +7,7 @@ import org.junit.BeforeClass;
 
 /**
  *
- * @author zinic
+
  */
 public class JettyIntegrationTestHarness {
 
