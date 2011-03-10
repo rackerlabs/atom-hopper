@@ -6,7 +6,7 @@ import com.rackspace.cloud.commons.logging.Logger;
 import com.rackspace.cloud.commons.util.StringUtilities;
 import com.rackspace.cloud.commons.util.servlet.context.ApplicationContextAdapter;
 import net.jps.atom.hopper.abdera.FeedAdapter;
-import net.jps.atom.hopper.abdera.TargetResolverField;
+import net.jps.atom.hopper.adapter.TargetResolverField;
 import net.jps.atom.hopper.archive.FeedArchivalService;
 import net.jps.atom.hopper.adapter.archive.FeedArchiveSource;
 
@@ -29,20 +29,20 @@ import org.apache.abdera.protocol.server.impl.RegexTargetResolver;
 
 /**
  * TODO: Sanitize configured workspace and feed resource paths for regex insertion
- * 
- * 
+ *
+ *
  */
 public class WorkspaceConfigProcessor {
 
     private static final Logger LOG = new RCLogger(WorkspaceConfigProcessor.class);
-    
+
     public static final long HOUR_IN_MILLISECONDS = 3600000;
-    
+
     private final FeedArchivalService feedArchivalService;
     private final AdapterGetter adapterGetter;
     private final WorkspaceConfiguration config;
     private final TargetRegexBuilder targetRegexGenerator;
-    
+
     private FeedArchiveSource defaultArchiver;
     private FeedSource defaultFeedSource;
 
@@ -51,9 +51,9 @@ public class WorkspaceConfigProcessor {
         this.config = config;
         this.adapterGetter = new AdapterGetter(contextAdapter);
         this.feedArchivalService = feedArchivalService;
-        
+
         targetRegexGenerator = new TargetRegexBuilder();
-        
+
         if (!StringUtilities.isBlank(contextPath)) {
             targetRegexGenerator.setContextPath(contextPath);
         }
@@ -84,7 +84,7 @@ public class WorkspaceConfigProcessor {
 //            defaultArchiver = getArchiveAdapter(archiveDefault.getArchiverRef(), archiveDefault.getArchiverClass());
 //        }
 //    }
-    
+
     private List<TargetAwareAbstractCollectionAdapter> assembleServices(List<FeedConfiguration> feedServices, RegexTargetResolver regexTargetResolver) {
         final List<TargetAwareAbstractCollectionAdapter> collections = new LinkedList<TargetAwareAbstractCollectionAdapter>();
 

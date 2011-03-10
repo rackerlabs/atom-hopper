@@ -1,5 +1,5 @@
 
-package net.jps.atom.hopper.abdera;
+package net.jps.atom.hopper.adapter;
 
 public enum TargetResolverField {
     ENTRY,

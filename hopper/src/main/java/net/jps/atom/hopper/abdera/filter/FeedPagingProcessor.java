@@ -7,7 +7,7 @@ import org.apache.abdera.protocol.server.RequestContext;
 
 /**
  *
- * 
+ *
  */
 public class FeedPagingProcessor implements AdapterResponseProcessor<Feed> {
 
@@ -22,7 +22,7 @@ public class FeedPagingProcessor implements AdapterResponseProcessor<Feed> {
             final String self = StringUtilities.join(rc.getBaseUri().toString(), rc.getTargetPath());
 
             // Add markers
-            f.addLink(StringUtilities.join(self), "current");
+            f.addLink(self, "current");
             f.addLink(StringUtilities.join(self, "?marker=", nextMarker), "next");
             f.addLink(StringUtilities.join(self, "?marker=", previousMarker), "prev");
         }
