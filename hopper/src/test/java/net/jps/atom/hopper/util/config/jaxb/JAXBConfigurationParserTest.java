@@ -7,6 +7,7 @@ package net.jps.atom.hopper.util.config.jaxb;
 import org.junit.Ignore;
 import java.net.URI;
 import net.jps.atom.hopper.config.v1_0.Configuration;
+import net.jps.atom.hopper.util.config.ConfigurationParserException;
 import net.jps.atom.hopper.util.config.resource.ConfigurationResource;
 import net.jps.atom.hopper.util.config.resource.uri.URIConfigurationResource;
 import net.jps.atom.hopper.util.uri.CustomSchemeResolver;
@@ -40,6 +41,20 @@ public class JAXBConfigurationParserTest {
             configurationParser.setConfigurationResource(cfgResource);
 
             assertNotNull("Should correctly parse a static, valid configuration", configurationParser.read());
+        }
+
+        //flashing lights are not conducive to test writing
+
+        @Test (expected=ConfigurationParserException.class)
+        public void shouldVailToParseInvalidConfigurations() throws Exception {
+            final ConfigurationResource cfgResource = new URIConfigurationResource(
+                    new URI("classpath:/META-INF/schema/examples/config/broken-feed-server-config.xml"),
+                    CustomSchemeResolver.newDefaultInstance());
+
+            configurationParser.enableValidation(getClass().getResource("/META-INF/schema/config/atom-hopper-config.xsd"));
+            configurationParser.setConfigurationResource(cfgResource);
+
+            configurationParser.read();
         }
     }
 

@@ -1,6 +1,5 @@
 package net.jps.atom.hopper.util.config.jaxb;
 
-import com.rackspace.cloud.commons.config.ConfigurationParserException;
 import com.rackspace.cloud.commons.logging.Logger;
 import com.rackspace.cloud.commons.logging.RCLogger;
 import java.io.IOException;
@@ -9,18 +8,20 @@ import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.UnmarshalException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import net.jps.atom.hopper.util.config.AbstractConfigurationParser;
+import net.jps.atom.hopper.util.config.ConfigurationParserException;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 public final class JAXBConfigurationParser<T> extends AbstractConfigurationParser<T> {
 
     private static final SchemaFactory SCHEMA_FACTORY = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
     private static final Logger LOG = new RCLogger(JAXBConfigurationParser.class);
-
     private final JAXBContext jaxbContext;
     private Schema validationSchema;
 
@@ -81,10 +82,15 @@ public final class JAXBConfigurationParser<T> extends AbstractConfigurationParse
             } else if (unmarshaledObj instanceof JAXBElement) {
                 rootConfigElement = ((JAXBElement<T>) unmarshaledObj).getValue();
             } else {
-                throw LOG.newException("Failed to read config", ConfigurationParserException.class);
+                throw LOG.newException("Failed to read config and no exception was thrown. Potential bug. Please report this.", ConfigurationParserException.class);
             }
+        } catch (UnmarshalException mue) {
+            throw LOG.newException("Your configuration may be malformed. Please review it and make sure it validates correctly. Reason: "
+                    + mue.getMessage(), mue, ConfigurationParserException.class);
         } catch (Exception ex) {
-            throw LOG.wrapError(ex, ConfigurationParserException.class);
+            throw LOG.newException("Failed to read the configuration. Reason: "
+                    + "" + ex.getMessage()
+                    + " - pump cause for more details", ex, ConfigurationParserException.class);
         }
 
         return rootConfigElement;
