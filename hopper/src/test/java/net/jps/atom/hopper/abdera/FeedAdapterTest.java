@@ -3,17 +3,17 @@ package net.jps.atom.hopper.abdera;
 import com.rackspace.cloud.commons.util.http.HttpStatusCode;
 import net.jps.atom.hopper.adapter.FeedPublisher;
 import net.jps.atom.hopper.adapter.FeedSource;
-import net.jps.atom.hopper.adapter.request.DeleteEntryRequest;
-import net.jps.atom.hopper.adapter.request.GetEntryRequest;
-import net.jps.atom.hopper.adapter.request.PostEntryRequest;
-import net.jps.atom.hopper.adapter.request.PutEntryRequest;
+import net.jps.atom.hopper.adapter.request.*;
 import net.jps.atom.hopper.config.v1_0.FeedConfiguration;
 import net.jps.atom.hopper.response.AdapterResponse;
 import net.jps.atom.hopper.response.EmptyBody;
 import net.jps.atom.hopper.response.FeedSourceAdapterResponse;
+import org.apache.abdera.i18n.iri.IRI;
 import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Entry;
+import org.apache.abdera.model.Feed;
 import org.apache.abdera.parser.stax.FOMEntry;
+import org.apache.abdera.parser.stax.FOMFeed;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.ResponseContext;
 import org.junit.Ignore;
@@ -129,10 +129,38 @@ public class FeedAdapterTest {
         }
     }
 
+    public static class WhenGettingFeed extends TestParent {
+        @Test
+        public void shouldReturn200Response() {
+            FeedAdapter feedAdapter = feedAdapter(true);
+            when(feedSource.getFeed(any(GetFeedRequest.class))).thenReturn(adapterResponseForFeed());
+            ResponseContext responseContext = feedAdapter.getFeed(REQUEST_CONTEXT);
+            assertEquals("Should respond with 200", 200, responseContext.getStatus());
+        }
+
+        @Test
+        public void shouldReturn405WhenFeedSourceDoesntSupportFeed() {
+            FeedAdapter feedAdapter = feedAdapter(true);
+            when(feedSource.getFeed(any(GetFeedRequest.class))).thenThrow(new UnsupportedOperationException());
+            ResponseContext responseContext = feedAdapter.getFeed(REQUEST_CONTEXT);
+            assertEquals("Should respond with 405", 405, responseContext.getStatus());    
+        }
+
+        @Test
+        public void shouldReturnServerErrorOnFeedSourceException() throws IOException {
+            FeedAdapter feedAdapter = feedAdapter(true);
+            when(feedSource.getFeed(any(GetFeedRequest.class))).thenThrow(new RuntimeException());
+            ResponseContext responseContext = feedAdapter.getFeed(REQUEST_CONTEXT);
+        }
+
+    }
+
 
     @Ignore
     public static class TestParent {
         static final int STATUS_CODE_UNSUPPORTED_METHOD = 415;
+        static final String BASE_URI = "http://localhost:8080/atom";
+        static final String TARGET_PATH = "/foo/bar";
 
         final RequestContext REQUEST_CONTEXT = requestContext();
 
@@ -160,16 +188,36 @@ public class FeedAdapterTest {
             return entry;
         }
 
+        public Feed feed() {
+            final FOMFeed feed = new FOMFeed();
+            for (int i=0; i < 5; i++) {
+                feed.addEntry(entry());
+            }
+            return feed;
+        }
+
         public AdapterResponse<Entry> adapterResponseForEntry() {
             return new FeedSourceAdapterResponse<Entry>(entry());
         }
+
+        public AdapterResponse<Feed> adapterResponseForFeed() {
+            return new FeedSourceAdapterResponse<Feed>(feed());
+        }
+
+
 
         public AdapterResponse<EmptyBody> adapterResponseForEmptyBody(HttpStatusCode status) {
             return new FeedSourceAdapterResponse<EmptyBody>(EmptyBody.getInstance(), status, null);
         }
 
         public RequestContext requestContext() {
+
             RequestContext context = mock(RequestContext.class);
+
+            when(context.getBaseUri()).thenReturn(new IRI(BASE_URI));
+            when(context.getTargetPath()).thenReturn(TARGET_PATH);
+
+
             Document document = mock(Document.class);
             try {
                 when(context.getDocument()).thenReturn(document);
