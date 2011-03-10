@@ -17,10 +17,6 @@ import static org.mockito.Mockito.*;
 @RunWith(Enclosed.class)
 public class WorkspaceProviderTest {
 
-    static final RequestContext REQUEST_TARGET_ISNULL = requestContext(null);
-    static final RequestContext REQUEST_TARGET_TYPE_UNKNOWN = requestContext(target(TargetType.TYPE_NOT_FOUND));
-    static final RequestContext REQUEST_TARGET_TYPE_CATEGORIES = requestContext(target(TargetType.TYPE_CATEGORIES));
-
     static TestableWorkspaceProvider workspaceProvider;
 
     public static class WhenProcessingRequest {
@@ -128,6 +124,10 @@ public class WorkspaceProviderTest {
 
     }
 
+    static final RequestContext REQUEST_TARGET_ISNULL = requestContext(null);
+    static final RequestContext REQUEST_TARGET_TYPE_UNKNOWN = requestContext(target(TargetType.TYPE_NOT_FOUND));
+    static final RequestContext REQUEST_TARGET_TYPE_CATEGORIES = requestContext(target(TargetType.TYPE_CATEGORIES));
+                       
     public static class WhenRequestIsNotHandledByDefaultCollectionAdapterBehavior {
 
         @Test

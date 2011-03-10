@@ -18,7 +18,7 @@ public interface FeedPublisher {
     /**
      * Requests a single entry be added to the feed.
      *
-     * @param request
+     * @param postEntryRequest
      * @see PostEntryRequest
      * 
      * @return
@@ -32,7 +32,7 @@ public interface FeedPublisher {
      * Requests that an entry be updated. This request is scoped by the unique
      * string ID of the entry the update is being requested for.
      *
-     * @param request
+     * @param putEntryRequest
      * @see PutEntryRequest
      * 
      * @return
@@ -43,7 +43,7 @@ public interface FeedPublisher {
      * Requests that an entry be deleted. This request is scoped by the unique
      * string ID of the entry the delete is being requested for.
      *
-     * @param request
+     * @param deleteEntryRequest
      * @see DeleteEntryRequest
      *
      * @return

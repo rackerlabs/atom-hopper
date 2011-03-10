@@ -2,30 +2,25 @@ package net.jps.atom.hopper.abdera;
 
 import com.rackspace.cloud.commons.logging.Logger;
 import com.rackspace.cloud.commons.logging.RCLogger;
-import java.util.HashMap;
-import java.util.Map;
-import net.jps.atom.hopper.abdera.response.StaticFeedResponseHandler;
 import net.jps.atom.hopper.abdera.response.ResponseHandler;
 import net.jps.atom.hopper.abdera.response.StaticEmptyBodyResponseHandler;
 import net.jps.atom.hopper.abdera.response.StaticEntryResponseHandler;
+import net.jps.atom.hopper.abdera.response.StaticFeedResponseHandler;
 import net.jps.atom.hopper.adapter.FeedPublisher;
 import net.jps.atom.hopper.adapter.FeedSource;
-import net.jps.atom.hopper.adapter.request.impl.DeleteEntryRequestImpl;
-import net.jps.atom.hopper.adapter.request.impl.GetEntryRequestImpl;
-import net.jps.atom.hopper.adapter.request.impl.GetFeedRequestImpl;
-import net.jps.atom.hopper.adapter.request.impl.PostEntryRequestImpl;
-import net.jps.atom.hopper.adapter.request.impl.PutEntryRequestImpl;
-import org.apache.abdera.protocol.server.TargetType;
-
-import net.jps.atom.hopper.response.EmptyBody;
-import net.jps.atom.hopper.response.AdapterResponse;
-import org.apache.abdera.model.Entry;
-
+import net.jps.atom.hopper.adapter.request.impl.*;
 import net.jps.atom.hopper.config.v1_0.FeedConfiguration;
+import net.jps.atom.hopper.response.AdapterResponse;
+import net.jps.atom.hopper.response.EmptyBody;
+import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.ProviderHelper;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.ResponseContext;
+import org.apache.abdera.protocol.server.TargetType;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
 
@@ -40,14 +35,14 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
     private final ResponseHandler<Entry> entryResponseHandler;
     private String author;
 
-    public FeedAdapter(FeedConfiguration feedConfiguration, FeedSource feedSourequeste) {
+    public FeedAdapter(FeedConfiguration feedConfiguration, FeedSource feedSource) {
         //TODO: Replace null with a basic publisher that returns some 4xx status code
-        this(feedConfiguration, feedSourequeste, null);
+        this(feedConfiguration, feedSource, null);
     }
 
-    public FeedAdapter(FeedConfiguration feedConfiguration, FeedSource feedSourequeste, FeedPublisher feedPublisher) {
+    public FeedAdapter(FeedConfiguration feedConfiguration, FeedSource feedSource, FeedPublisher feedPublisher) {
         this.feedConfiguration = feedConfiguration;
-        this.feedSource = feedSourequeste;
+        this.feedSource = feedSource;
         this.feedPublisher = feedPublisher;
 
         feedResponseHandler = new StaticFeedResponseHandler();
