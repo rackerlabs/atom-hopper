@@ -17,12 +17,13 @@ import javax.servlet.ServletException;
 import net.jps.atom.hopper.config.v1_0.Configuration;
 import net.jps.atom.hopper.config.v1_0.WorkspaceConfiguration;
 import net.jps.atom.hopper.servlet.ServletInitParameter;
-import net.jps.atom.hopper.util.jaxb.ConfigurationParserException;
-import net.jps.atom.hopper.util.jaxb.JAXBConfigurationParser;
+import net.jps.atom.hopper.util.config.ConfigurationParser;
+import net.jps.atom.hopper.util.config.ConfigurationParserException;
+import net.jps.atom.hopper.util.config.jaxb.JAXBConfigurationParser;
+import net.jps.atom.hopper.util.config.resource.uri.URIConfigurationResource;
 import org.apache.abdera.Abdera;
 import org.apache.abdera.protocol.server.Provider;
 import org.apache.abdera.protocol.server.servlet.AbderaServlet;
-import org.jaxen.function.ConcatFunction;
 
 /**
  * This class is the entry point for the atom server application. This servlet is
@@ -38,10 +39,16 @@ public final class AtomHopperServlet extends AbderaServlet {
 
     public static final String DEFAULT_CONFIGURATION_LOCATION = "/etc/atom-server/atom-server.cfg.xml";
 
+    private final ConfigurationParser<Configuration> configurationParser;
+
     private FeedArchivalService archivalService;
     private ApplicationContextAdapter applicationContextAdapter;
     private Abdera abderaReference;
     private Configuration configuration;
+
+    public AtomHopperServlet() {
+        configurationParser = new JAXBConfigurationParser<Configuration>(Configuration.class, net.jps.atom.hopper.config.v1_0.ObjectFactory.class);
+    }
 
     @Override
     public void destroy() {
@@ -61,11 +68,13 @@ public final class AtomHopperServlet extends AbderaServlet {
             LOG.info("Reading configuration: " + configLocation);
 
             try {
-                configuration = new JAXBConfigurationParser<Configuration>(new URI(configLocation), Configuration.class, net.jps.atom.hopper.config.v1_0.ObjectFactory.class).read();
+                configurationParser.setConfigurationResource(new URIConfigurationResource(new URI(configLocation)));
             } catch (URISyntaxException ex) {
                 //TODO: Should this be an error? Maybe we could have a fall back reader that tries file path by default
                 throw new ServletInitException("Configuration location must be a URI. Consider using file:/absolute/path/to/file", ex);
             }
+
+            configuration = configurationParser.read();
         } catch (ConfigurationParserException cpe) {
             throw LOG.newException("Failed to read configuration file: " + configLocation, cpe, ServletInitException.class);
         }
