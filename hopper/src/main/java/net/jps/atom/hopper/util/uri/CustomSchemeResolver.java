@@ -13,8 +13,6 @@ import java.util.Set;
  */
 public class CustomSchemeResolver implements UriToUrlResolver {
 
-    private static final UriToUrlResolver DEFAULT_INSTANCE = newDefaultInstance();
-
     public static UriToUrlResolver newDefaultInstance() {
         final CustomSchemeResolver resolverInstance = new CustomSchemeResolver();
         resolverInstance.addMapper(new ClasspathSchemeMapper());
@@ -22,6 +20,7 @@ public class CustomSchemeResolver implements UriToUrlResolver {
         return resolverInstance;
     }
 
+    
     private Set<URISchemeMapper> schemeMapperSet;
 
     public CustomSchemeResolver() {
