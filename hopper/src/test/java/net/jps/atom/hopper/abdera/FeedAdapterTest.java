@@ -4,6 +4,7 @@ import com.rackspace.cloud.commons.util.http.HttpStatusCode;
 import net.jps.atom.hopper.adapter.FeedPublisher;
 import net.jps.atom.hopper.adapter.FeedSource;
 import net.jps.atom.hopper.adapter.request.DeleteEntryRequest;
+import net.jps.atom.hopper.adapter.request.GetEntryRequest;
 import net.jps.atom.hopper.adapter.request.PostEntryRequest;
 import net.jps.atom.hopper.adapter.request.PutEntryRequest;
 import net.jps.atom.hopper.config.v1_0.FeedConfiguration;
@@ -48,6 +49,14 @@ public class FeedAdapterTest {
             ResponseContext responseContext = feedAdapter.postEntry(REQUEST_CONTEXT);
             assertEquals("Should respond with 200", 200, responseContext.getStatus());
         }
+
+        @Test
+        public void shouldReturnServerErrorOnFeedPublisherException() throws IOException {
+            FeedAdapter feedAdapter = feedAdapter(true);
+            when(feedPublisher.postEntry(any(PostEntryRequest.class))).thenThrow(new RuntimeException());
+            ResponseContext responseContext = feedAdapter.postEntry(REQUEST_CONTEXT);
+            assertEquals("Should respond with 500", 500, responseContext.getStatus());
+        }
     }
 
     public static class WhenPuttingEntryToFeed extends TestParent {
@@ -65,6 +74,14 @@ public class FeedAdapterTest {
             when(feedPublisher.putEntry(any(PutEntryRequest.class))).thenReturn(adapterResponseForEntry());
             ResponseContext responseContext = feedAdapter.putEntry(REQUEST_CONTEXT);
             assertEquals("Should respond with 200", 200, responseContext.getStatus());
+        }
+
+        @Test
+        public void shouldReturnServerErrorOnFeedPublisherException() throws IOException {
+            FeedAdapter feedAdapter = feedAdapter(true);
+            when(feedPublisher.putEntry(any(PutEntryRequest.class))).thenThrow(new RuntimeException());
+            ResponseContext responseContext = feedAdapter.putEntry(REQUEST_CONTEXT);
+            assertEquals("Should respond with 500", 500, responseContext.getStatus());
         }
     }
 
@@ -84,7 +101,34 @@ public class FeedAdapterTest {
             ResponseContext responseContext = feedAdapter.deleteEntry(REQUEST_CONTEXT);
             assertEquals("Should respond with 204", 204, responseContext.getStatus());
         }
+
+        @Test
+        public void shouldReturnServerErrorOnFeedPublisherException() throws IOException {
+            FeedAdapter feedAdapter = feedAdapter(true);
+            when(feedPublisher.deleteEntry(any(DeleteEntryRequest.class))).thenThrow(new RuntimeException());
+            ResponseContext responseContext = feedAdapter.deleteEntry(REQUEST_CONTEXT);
+            assertEquals("Should respond with 500", 500, responseContext.getStatus());
+        }
     }
+
+    public static class WhenGettingEntryFromFeed extends TestParent {
+        @Test
+        public void shouldReturnEntryResponse() throws IOException {
+            FeedAdapter feedAdapter = feedAdapter(true);
+            when(feedSource.getEntry(any(GetEntryRequest.class))).thenReturn(adapterResponseForEntry());
+            ResponseContext responseContext = feedAdapter.getEntry(REQUEST_CONTEXT);
+            assertEquals("Should respond with 200", 200, responseContext.getStatus());
+        }
+
+        @Test
+        public void shouldReturnServerErrorOnFeedSourceException() throws IOException {
+            FeedAdapter feedAdapter = feedAdapter(true);
+            when(feedSource.getEntry(any(GetEntryRequest.class))).thenThrow(new RuntimeException());
+            ResponseContext responseContext = feedAdapter.getEntry(REQUEST_CONTEXT);
+            assertEquals("Should respond with 500", 500, responseContext.getStatus());
+        }
+    }
+
 
     @Ignore
     public static class TestParent {
