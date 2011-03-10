@@ -10,12 +10,12 @@ import net.jps.atom.hopper.util.config.AbstractConfigurationParser;
 
 /**
  *
- *
+ *  TODO: Implement schema validation for this
  */
 public final class JAXBConfigurationParser<T> extends AbstractConfigurationParser<T> {
 
     private static final Logger LOG = new RCLogger(JAXBConfigurationParser.class);
-    
+
     private final JAXBContext jaxbContext;
 
     public JAXBConfigurationParser(Class<T> configClass, Class<?>... objectFactories) {

@@ -9,10 +9,6 @@ import org.junit.runner.RunWith;
 
 import static org.junit.Assert.*;
 
-/**
- *
-
- */
 @RunWith(Enclosed.class)
 public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
 
@@ -22,7 +18,7 @@ public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
 
         @Test
         public void shouldReturnEmptyFeed() throws Exception {
-            final GetMethod method = new GetMethod("http://localhost:8080/namespace/feed");
+            final GetMethod method = new GetMethod("http://localhost:" + getPort() + "/namespace/feed");
             assertEquals("Getting a feed should return a 200", HttpStatusCode.OK.intValue(), c.executeMethod(method));
         }
     }
