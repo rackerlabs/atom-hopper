@@ -18,7 +18,7 @@ public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
 
         @Test
         public void shouldReturnEmptyFeed() throws Exception {
-            final GetMethod method = new GetMethod("http://localhost:" + getPort() + "/namespace/feed");
+            final GetMethod method = new GetMethod("http://localhost:" + getPort() + "/namespace/feed/?categories=a;b;c;d");
             assertEquals("Getting a feed should return a 200", HttpStatusCode.OK.intValue(), c.executeMethod(method));
         }
     }

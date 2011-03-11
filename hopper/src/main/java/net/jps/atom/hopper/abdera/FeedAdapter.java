@@ -2,6 +2,8 @@ package net.jps.atom.hopper.abdera;
 
 import com.rackspace.cloud.commons.logging.Logger;
 import com.rackspace.cloud.commons.logging.RCLogger;
+import com.rackspace.cloud.commons.util.http.HttpStatusCode;
+import java.util.Calendar;
 import net.jps.atom.hopper.abdera.response.ResponseHandler;
 import net.jps.atom.hopper.abdera.response.StaticEmptyBodyResponseHandler;
 import net.jps.atom.hopper.abdera.response.StaticEntryResponseHandler;
@@ -14,6 +16,7 @@ import net.jps.atom.hopper.response.AdapterResponse;
 import net.jps.atom.hopper.response.EmptyBody;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
+import org.apache.abdera.protocol.server.CategoriesInfo;
 import org.apache.abdera.protocol.server.ProviderHelper;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.ResponseContext;
@@ -22,13 +25,20 @@ import org.apache.abdera.protocol.server.TargetType;
 import java.util.HashMap;
 import java.util.Map;
 
+//TODO: Recompose and clean up this class
 public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
 
     private static final Logger LOG = new RCLogger(FeedAdapter.class);
+
+    private static final String[] FEED_SOURCE_METHODS = {"GET"},
+            FEED_PUBLISHER_METHODS = {"POST", "PUT", "DELETE"},
+            COMBINED_ALLOWED_METHODS = {"GET", "POST", "PUT", "DELETE"};
+
+    private final String[] allowedMethods;
     private final FeedConfiguration feedConfiguration;
     private final FeedPublisher feedPublisher;
     private final FeedSource feedSource;
-    
+
     //TODO: Recompose?
     private final ResponseHandler<Feed> feedResponseHandler;
     private final ResponseHandler<EmptyBody> emptyBodyResponseHandler;
@@ -44,6 +54,12 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
         this.feedConfiguration = feedConfiguration;
         this.feedSource = feedSource;
         this.feedPublisher = feedPublisher;
+
+        if (this.feedPublisher == null) {
+            allowedMethods = FEED_SOURCE_METHODS;
+        } else {
+            allowedMethods = COMBINED_ALLOWED_METHODS;
+        }
 
         feedResponseHandler = new StaticFeedResponseHandler();
         entryResponseHandler = new StaticEntryResponseHandler();
@@ -74,6 +90,24 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
     }
 
     @Override
+    public ResponseContext getCategories(RequestContext request) {
+        try {
+            //TODO: Cache this
+
+            return ProviderHelper.returnBase(feedSource.getCategories(
+                    new GetCategoriesRequestImpl(request)).getBody(),
+                    HttpStatusCode.OK.intValue(), Calendar.getInstance().getTime());
+        } catch (Exception ex) {
+            return ProviderHelper.servererror(request, ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    public CategoriesInfo[] getCategoriesInfo(RequestContext request) {
+        return super.getCategoriesInfo(request);
+    }
+
+    @Override
     //TODO: Reimplement this - getting there
     public String getId(RequestContext request) {
 //        return new StringBuilder("tag:").append(feedConfig.getFullUri()).append(",").append(CALENDAR_INSTANCE.get(Calendar.YEAR)).append(":").append(config.getBaseUrn()).toString();
@@ -89,8 +123,6 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
     public ResponseContext getFeed(RequestContext request) {
         try {
             return feedResponseHandler.handleAdapterResponse(request, feedSource.getFeed(new GetFeedRequestImpl(request)));
-        } catch (UnsupportedOperationException uoe) {
-            return ProviderHelper.notallowed(request, uoe.getMessage(), new String[0]);
         } catch (Exception ex) {
             return ProviderHelper.servererror(request, ex.getMessage(), ex);
         }
@@ -100,21 +132,11 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
     @Override
     public ResponseContext postEntry(RequestContext request) {
         if (feedPublisher == null) {
-            return ProviderHelper.notsupported(request);
+            return ProviderHelper.notallowed(request, allowedMethods);
         }
 
         try {
             final AdapterResponse<Entry> response = feedPublisher.postEntry(new PostEntryRequestImpl(request));
-
-//            TODO: Push into processor
-            
-//            if (response.getResponseStatus() == HttpStatusCode.CREATED) {
-//                final Entry returnedEntryCopy = response.getBody();
-//
-//                if (StringUtilities.isBlank(returnedEntryCopy.getId().toString())) {
-//                    LOG.warn("New ID for Entry Update was not returned. Please verify that your adapter sets the entry's ID field");
-//                }
-//            }
 
             return entryResponseHandler.handleAdapterResponse(request, response);
         } catch (Exception ex) {
@@ -125,7 +147,7 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
     @Override
     public ResponseContext putEntry(RequestContext request) {
         if (feedPublisher == null) {
-            return ProviderHelper.notsupported(request);
+            return ProviderHelper.notallowed(request, allowedMethods);
         }
 
         try {
@@ -140,7 +162,7 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
     @Override
     public ResponseContext deleteEntry(RequestContext request) {
         if (feedPublisher == null) {
-            return ProviderHelper.notsupported(request);
+            return ProviderHelper.notallowed(request, allowedMethods);
         }
 
         try {

@@ -139,14 +139,6 @@ public class FeedAdapterTest {
         }
 
         @Test
-        public void shouldReturn405WhenFeedSourceDoesntSupportFeed() {
-            FeedAdapter feedAdapter = feedAdapter(true);
-            when(feedSource.getFeed(any(GetFeedRequest.class))).thenThrow(new UnsupportedOperationException());
-            ResponseContext responseContext = feedAdapter.getFeed(REQUEST_CONTEXT);
-            assertEquals("Should respond with 405", 405, responseContext.getStatus());    
-        }
-
-        @Test
         public void shouldReturnServerErrorOnFeedSourceException() throws IOException {
             FeedAdapter feedAdapter = feedAdapter(true);
             when(feedSource.getFeed(any(GetFeedRequest.class))).thenThrow(new RuntimeException());
@@ -158,7 +150,7 @@ public class FeedAdapterTest {
 
     @Ignore
     public static class TestParent {
-        static final int STATUS_CODE_UNSUPPORTED_METHOD = 415;
+        static final int STATUS_CODE_UNSUPPORTED_METHOD = 405;
         static final String BASE_URI = "http://localhost:8080/atom";
         static final String TARGET_PATH = "/foo/bar";
 

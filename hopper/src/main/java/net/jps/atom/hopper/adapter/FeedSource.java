@@ -1,16 +1,18 @@
 package net.jps.atom.hopper.adapter;
 
 import java.util.Calendar;
+import net.jps.atom.hopper.adapter.request.GetCategoriesRequest;
 import net.jps.atom.hopper.adapter.request.GetEntryRequest;
 import net.jps.atom.hopper.adapter.request.GetFeedRequest;
 import net.jps.atom.hopper.response.AdapterResponse;
+import org.apache.abdera.model.Categories;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 
 /**
  * A feed source, as defined by this interface, is responsible for retrieving the
  * feed and its associated entry data.
- * 
+ *
  * Note: this interface is required to serve the lossy variant of a feed (i.e. head)
  */
 public interface FeedSource {
@@ -38,19 +40,29 @@ public interface FeedSource {
     AdapterResponse<Entry> getEntry(GetEntryRequest getEntryRequest);
 
     /**
-     * Provides internal systems with a get method for feeds that can be scoped 
+     * Retrieves a list of categories supported by this feed source.
+     *
+     * A workspace provider may poll all of its associated feeds for their
+     * categories and then aggregate them into said document.
+     *
+     * @return
+     */
+    AdapterResponse<Categories> getCategories(GetCategoriesRequest getCategoriesRequest);
+
+    /**
+     * Provides internal systems with a get method for feeds that can be scoped
      * by a starting time and an ending time.
-     * 
+     *
      * This method does not carry the guarantee that the feed returned will
      * represent the entire feed over the requested date range. Instead, the
      * internal system consumers of this method (archivers in the usual case)
      * will continue to request the feed while narrowing the date range with the
      * creation date of the last feed entry until a feed of zero length is
      * returned.
-     * 
+     *
      * @param startingEntryDate
      * @param lastEntryDate
-     * @return 
+     * @return
      */
     Feed getFeedByDateRange(Calendar startingEntryDate, Calendar lastEntryDate);
 }

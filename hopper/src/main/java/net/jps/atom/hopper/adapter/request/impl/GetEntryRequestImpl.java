@@ -3,6 +3,7 @@ package net.jps.atom.hopper.adapter.request.impl;
 import net.jps.atom.hopper.adapter.TargetResolverField;
 import net.jps.atom.hopper.adapter.request.AbstractClientRequest;
 import net.jps.atom.hopper.adapter.request.GetEntryRequest;
+import org.apache.abdera.model.Entry;
 import org.apache.abdera.protocol.server.RequestContext;
 
 /**
@@ -23,6 +24,11 @@ public class GetEntryRequestImpl extends AbstractClientRequest implements GetEnt
         final RequestContext requestContext = getRequestContext();
 
         entryId = requestContext.getParameter(TargetResolverField.ENTRY.name());
+    }
+
+    @Override
+    public Entry newEntry() {
+        return getRequestContext().getAbdera().newEntry();
     }
 
     @Override

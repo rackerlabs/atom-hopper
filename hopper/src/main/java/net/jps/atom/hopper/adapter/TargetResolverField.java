@@ -1,4 +1,3 @@
-
 package net.jps.atom.hopper.adapter;
 
 public enum TargetResolverField {
@@ -8,7 +7,6 @@ public enum TargetResolverField {
     USER,
     WORKSPACE,
     FEED_TYPE,
-    CATEGORY_LIST,
     MARKER,
     ARCHIVE_YEAR,
     ARCHIVE_MONTH,

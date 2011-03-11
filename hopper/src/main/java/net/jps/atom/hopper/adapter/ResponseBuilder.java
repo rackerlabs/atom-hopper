@@ -4,12 +4,13 @@ import com.rackspace.cloud.commons.util.http.HttpStatusCode;
 import net.jps.atom.hopper.response.EmptyBody;
 import net.jps.atom.hopper.response.FeedSourceAdapterResponse;
 import net.jps.atom.hopper.response.AdapterResponse;
+import org.apache.abdera.model.Categories;
 
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 
 /**
- * Utility class designed to make generating an @see AdapterResponse easy
+ * Utility class designed to make generating an AdapterResponse easy
  */
 public final class ResponseBuilder {
 
@@ -30,6 +31,10 @@ public final class ResponseBuilder {
 
     public static AdapterResponse<Feed> found(Feed f) {
         return new FeedSourceAdapterResponse<Feed>(f, HttpStatusCode.OK, "");
+    }
+
+    public static AdapterResponse<Categories> found(Categories c) {
+        return new FeedSourceAdapterResponse<Categories>(c, HttpStatusCode.OK, "");
     }
 
     public static AdapterResponse<Entry> found(Entry e) {

@@ -12,8 +12,8 @@ import org.apache.abdera.protocol.server.impl.RegexTargetResolver;
 
 /**
  * TODO: Re-add support for TargetBuilder for URL construction
- * 
- * 
+ *
+ *
  */
 
 public class WorkspaceHandler implements WorkspaceInfo {
