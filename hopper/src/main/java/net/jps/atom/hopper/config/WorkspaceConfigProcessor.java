@@ -35,16 +35,11 @@ import org.apache.abdera.protocol.server.impl.RegexTargetResolver;
 public class WorkspaceConfigProcessor {
 
     private static final Logger LOG = new RCLogger(WorkspaceConfigProcessor.class);
-
     public static final long HOUR_IN_MILLISECONDS = 3600000;
-
     private final FeedArchivalService feedArchivalService;
     private final AdapterGetter adapterGetter;
     private final WorkspaceConfiguration config;
     private final TargetRegexBuilder targetRegexGenerator;
-
-    private FeedArchiveSource defaultArchiver;
-    private FeedSource defaultFeedSource;
 
     //TODO: Consider builder pattern
     public WorkspaceConfigProcessor(WorkspaceConfiguration config, ApplicationContextAdapter contextAdapter, FeedArchivalService feedArchivalService, String contextPath) {
@@ -60,32 +55,20 @@ public class WorkspaceConfigProcessor {
     }
 
     public WorkspaceHandler toHandler() {
-        final RegexTargetResolver regexTargetResolver = new RegexTargetResolver();
+//        final TemplateTargetBuilder ttb = new TemplateTargetBuilder();
 
+
+        final RegexTargetResolver regexTargetResolver = new RegexTargetResolver();
         final WorkspaceHandler workspace = new WorkspaceHandler(config, regexTargetResolver);
 
-//        setDefaults(config);
-
-        for (TargetAwareAbstractCollectionAdapter collectionAdapter : assembleServices(config.getFeed(), regexTargetResolver)) {
-            workspace.addCollectionAdapter(collectionAdapter);
+        for (TargetAwareAbstractCollectionAdapter collectionAdapter : assembleFeeds(config.getFeed(), regexTargetResolver)) {
+            workspace.addCollectionAdapter(collectionAdapter.getTarget(), collectionAdapter);
         }
 
         return workspace;
     }
 
-//    private void setDefaults(WorkspaceConfiguration workspaceConfig) {
-//        if (!StringUtilities.isBlank(workspaceConfig.getDefaultAdapterRef()) || !StringUtilities.isBlank(workspaceConfig.getDefaultAdapterClass())) {
-//            defaultFeedSource = getFeedSource(workspaceConfig.getDefaultAdapterRef(), workspaceConfig.getDefaultAdapterClass());
-//        }
-//
-//        if (workspaceConfig.getArchive() != null) {
-//            final ArchiveConfiguration archiveDefault = workspaceConfig.getArchive();
-//
-//            defaultArchiver = getArchiveAdapter(archiveDefault.getArchiverRef(), archiveDefault.getArchiverClass());
-//        }
-//    }
-
-    private List<TargetAwareAbstractCollectionAdapter> assembleServices(List<FeedConfiguration> feedServices, RegexTargetResolver regexTargetResolver) {
+    private List<TargetAwareAbstractCollectionAdapter> assembleFeeds(List<FeedConfiguration> feedServices, RegexTargetResolver regexTargetResolver) {
         final List<TargetAwareAbstractCollectionAdapter> collections = new LinkedList<TargetAwareAbstractCollectionAdapter>();
 
         final String workspaceName = StringUtilities.trim(config.getResource(), "/");
@@ -95,7 +78,7 @@ public class WorkspaceConfigProcessor {
         // service
         regexTargetResolver.setPattern(targetRegexGenerator.toWorkspacePattern(),
                 TargetType.TYPE_SERVICE,
-                TargetResolverField.WORKSPACE.name());
+                TargetRegexBuilder.getWorkspaceResolverFieldList());
 
         // categories
         regexTargetResolver.setPattern(targetRegexGenerator.toCategoryPattern(),
@@ -127,45 +110,36 @@ public class WorkspaceConfigProcessor {
         return resolvedReference;
     }
 
-    public <T> T getAdapter(AdapterDescriptor descriptor, Class<T> expectedClass, T defaultReturn) {
+    public <T> T getAdapter(AdapterDescriptor descriptor, Class<T> expectedClass) {
         final T adapter = descriptor != null
                 ? getFromApplicationContext(descriptor.getReference(), descriptor.getClazz(), expectedClass)
                 : null;
 
-        return adapter != null ? adapter : defaultReturn;
+        return adapter;
     }
 
     private List<TargetAwareAbstractCollectionAdapter> assembleFeedAdapters(TargetRegexBuilder workspaceTarget, List<FeedConfiguration> feeds, RegexTargetResolver regexTargetResolver) {
         final List<TargetAwareAbstractCollectionAdapter> collections = new LinkedList<TargetAwareAbstractCollectionAdapter>();
 
         for (FeedConfiguration feed : feeds) {
-            final FeedSource feedSource = getAdapter(feed.getFeedSource(), FeedSource.class, defaultFeedSource);
-            final FeedPublisher feedPublisher = getAdapter(feed.getFeedPublisher(), FeedPublisher.class, null);
-
-            final FeedAdapter feedAdapter = new FeedAdapter(feed, feedSource, feedPublisher);
-            final String feedResource = StringUtilities.trim(feed.getResource(), "/");
+            final FeedSource feedSource = getAdapter(feed.getFeedSource(), FeedSource.class);
+            final FeedPublisher feedPublisher = getAdapter(feed.getFeedPublisher(), FeedPublisher.class);
 
             final TargetRegexBuilder feedTargetRegexBuilder = new TargetRegexBuilder(workspaceTarget);
-            feedTargetRegexBuilder.setFeed(feedResource);
+            feedTargetRegexBuilder.setFeed(feed.getResource());
 
-            final String feedRegex = feedTargetRegexBuilder.toFeedPattern();
-            final String entryRegex = feedTargetRegexBuilder.toEntryPattern();
-
-            feedAdapter.addTargetRegex(feedRegex);
-            feedAdapter.addTargetRegex(entryRegex);
+            final FeedAdapter feedAdapter = new FeedAdapter(
+                    feedTargetRegexBuilder.getFeedResource(), feed, feedSource, feedPublisher);
 
             // feed regex matching
-            regexTargetResolver.setPattern(feedRegex,
+            regexTargetResolver.setPattern(feedTargetRegexBuilder.toFeedPattern(),
                     TargetType.TYPE_COLLECTION,
-                    TargetResolverField.WORKSPACE.name(),
-                    TargetResolverField.FEED.name());
+                    TargetRegexBuilder.getFeedResolverFieldList());
 
             // entry regex matching
-            regexTargetResolver.setPattern(entryRegex,
+            regexTargetResolver.setPattern(feedTargetRegexBuilder.toEntryPattern(),
                     TargetType.TYPE_ENTRY,
-                    TargetResolverField.WORKSPACE.name(),
-                    TargetResolverField.FEED.name(),
-                    TargetResolverField.ENTRY.name());
+                    TargetRegexBuilder.getEntryResolverFieldList());
 
             //Should we enable the archiver for this service?
             if (feed.getArchive() != null) {
@@ -181,8 +155,8 @@ public class WorkspaceConfigProcessor {
     private void readArchivalConfiguration(FeedConfiguration feed, FeedSource feedSource, FeedAdapter feedAdapter, TargetRegexBuilder feedTargetRegexBuilder, RegexTargetResolver regexTargetResolver, List<TargetAwareAbstractCollectionAdapter> collections) {
         final ArchivalConfiguration archivalConfig = feed.getArchive();
 
-        final FeedArchiveSource archiveSource = getAdapter(archivalConfig.getFeedArchiveSource(), FeedArchiveSource.class, null);
-        final FeedArchiver archiver = getAdapter(archivalConfig.getFeedArchiver(), FeedArchiver.class, null);
+        final FeedArchiveSource archiveSource = getAdapter(archivalConfig.getFeedArchiveSource(), FeedArchiveSource.class);
+        final FeedArchiver archiver = getAdapter(archivalConfig.getFeedArchiver(), FeedArchiver.class);
 
         if (archiver != null) {
             //TODO: Implements archivalConfig.getIntervalSpec();
@@ -191,21 +165,13 @@ public class WorkspaceConfigProcessor {
         }
 
         if (archiveSource != null) {
-            final ArchiveAdapter archiveAdapter = new ArchiveAdapter(archiveSource, feedAdapter);
-
-            final String archiveRegex = feedTargetRegexBuilder.toArchivePattern();
-            archiveAdapter.addTargetRegex(archiveRegex);
+            final ArchiveAdapter archiveAdapter = new ArchiveAdapter(
+                    feedTargetRegexBuilder.getArchivesResource(), archiveSource, feedAdapter);
 
             // archive
-            regexTargetResolver.setPattern(archiveRegex,
+            regexTargetResolver.setPattern(feedTargetRegexBuilder.toArchivePattern(),
                     TargetType.TYPE_COLLECTION,
-                    TargetResolverField.WORKSPACE.name(),
-                    TargetResolverField.FEED.name(),
-                    TargetResolverField.ENTRY.name(),
-                    TargetResolverField.ARCHIVE_YEAR.name(),
-                    TargetResolverField.ARCHIVE_MONTH.name(),
-                    TargetResolverField.ARCHIVE_DAY.name(),
-                    TargetResolverField.ARCHIVE_TIME.name());
+                    TargetRegexBuilder.getArchiveResolverFieldList());
 
             collections.add(archiveAdapter);
         }

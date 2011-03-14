@@ -14,6 +14,7 @@ import static junit.framework.Assert.assertEquals;
 public class TargetAwareAbstractCollectionAdapterTest {
 
     public static class WhenEvaluatingTargetUriAgainstRegexes {
+
         TestableTargetAwareAbstractCollectionAdapter targetAwareAdapter;
 
         @Before
@@ -22,35 +23,14 @@ public class TargetAwareAbstractCollectionAdapterTest {
         }
 
         @Test
-        public void shouldReturnTrueIfRegexMatchesTarget() {
-            targetAwareAdapter.addTargetRegex(".*(atom).*");
-            assertEquals("Should match targetUri with regex", true, targetAwareAdapter.canHandleTarget("myatomfeed"));
+        public void shouldMatchResource() {
         }
-
-        @Test
-        public void shouldReturnTrueWhenOneRegexOfManyMatchesTarget() {
-            targetAwareAdapter.addTargetRegex(".*(hisatomfeed)?.*");
-            targetAwareAdapter.addTargetRegex(".*(atom).*");
-            assertEquals("Should match targetUri with regex", true, targetAwareAdapter.canHandleTarget("myatomfeed"));
-        }
-
-        @Test
-        public void shouldReturnFalseIfNoRegexes() {
-            assertEquals("Should not match when no regexes set", false, targetAwareAdapter.canHandleTarget("myatomfeed"));
-        }
-
-        @Test
-        public void shouldReturnFalseIfNoMatchingRegexes() {
-            targetAwareAdapter.addTargetRegex("foo");
-            targetAwareAdapter.addTargetRegex("bar");
-            assertEquals("Should not match against regexes", false, targetAwareAdapter.canHandleTarget("myatomfeed"));
-        }
-
     }
 
     private static class TestableTargetAwareAbstractCollectionAdapter extends TargetAwareAbstractCollectionAdapter {
+
         public TestableTargetAwareAbstractCollectionAdapter() {
-            super();
+            super("test");
         }
 
         @Override

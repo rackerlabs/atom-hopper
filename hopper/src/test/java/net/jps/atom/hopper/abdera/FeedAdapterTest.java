@@ -112,6 +112,7 @@ public class FeedAdapterTest {
     }
 
     public static class WhenGettingEntryFromFeed extends TestParent {
+
         @Test
         public void shouldReturnEntryResponse() throws IOException {
             FeedAdapter feedAdapter = feedAdapter(true);
@@ -130,6 +131,7 @@ public class FeedAdapterTest {
     }
 
     public static class WhenGettingFeed extends TestParent {
+
         @Test
         public void shouldReturn200Response() {
             FeedAdapter feedAdapter = feedAdapter(true);
@@ -144,18 +146,17 @@ public class FeedAdapterTest {
             when(feedSource.getFeed(any(GetFeedRequest.class))).thenThrow(new RuntimeException());
             ResponseContext responseContext = feedAdapter.getFeed(REQUEST_CONTEXT);
         }
-
     }
-
 
     @Ignore
     public static class TestParent {
+
         static final int STATUS_CODE_UNSUPPORTED_METHOD = 405;
         static final String BASE_URI = "http://localhost:8080/atom";
         static final String TARGET_PATH = "/foo/bar";
 
         final RequestContext REQUEST_CONTEXT = requestContext();
-
+        
         FeedConfiguration feedConfiguration;
         FeedSource feedSource;
         FeedPublisher feedPublisher;
@@ -169,7 +170,8 @@ public class FeedAdapterTest {
                 feedPublisher = null;
             }
 
-            final FeedAdapter target = new FeedAdapter(feedConfiguration, feedSource, feedPublisher);
+            final FeedAdapter target = new FeedAdapter("foo", feedConfiguration, feedSource, feedPublisher);
+
             return target;
         }
 
@@ -182,7 +184,7 @@ public class FeedAdapterTest {
 
         public Feed feed() {
             final FOMFeed feed = new FOMFeed();
-            for (int i=0; i < 5; i++) {
+            for (int i = 0; i < 5; i++) {
                 feed.addEntry(entry());
             }
             return feed;
@@ -195,8 +197,6 @@ public class FeedAdapterTest {
         public AdapterResponse<Feed> adapterResponseForFeed() {
             return new FeedSourceAdapterResponse<Feed>(feed());
         }
-
-
 
         public AdapterResponse<EmptyBody> adapterResponseForEmptyBody(HttpStatusCode status) {
             return new FeedSourceAdapterResponse<EmptyBody>(EmptyBody.getInstance(), status, null);
@@ -220,8 +220,5 @@ public class FeedAdapterTest {
 
             return context;
         }
-
     }
-
-
 }

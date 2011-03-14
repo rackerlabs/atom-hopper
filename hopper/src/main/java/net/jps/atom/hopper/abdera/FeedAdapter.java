@@ -45,16 +45,14 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
     private final ResponseHandler<Entry> entryResponseHandler;
     private String author;
 
-    public FeedAdapter(FeedConfiguration feedConfiguration, FeedSource feedSource) {
-        //TODO: Replace null with a basic publisher that returns some 4xx status code
-        this(feedConfiguration, feedSource, null);
-    }
+    public FeedAdapter(String target, FeedConfiguration feedConfiguration, FeedSource feedSource, FeedPublisher feedPublisher) {
+        super(target);
 
-    public FeedAdapter(FeedConfiguration feedConfiguration, FeedSource feedSource, FeedPublisher feedPublisher) {
         this.feedConfiguration = feedConfiguration;
         this.feedSource = feedSource;
         this.feedPublisher = feedPublisher;
 
+        //TODO: Replace null with a basic publisher that returns some 4xx status code
         if (this.feedPublisher == null) {
             allowedMethods = FEED_SOURCE_METHODS;
         } else {
@@ -75,7 +73,7 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
     @Override
     public String getHref(RequestContext request) {
         final Map<String, Object> params = new HashMap<String, Object>();
-        params.put("collection", "feed");
+        params.put("collection", getTarget());
 
         return request.urlFor(TargetType.TYPE_COLLECTION, params);
     }
@@ -93,7 +91,6 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
     public ResponseContext getCategories(RequestContext request) {
         try {
             //TODO: Cache this
-
             return ProviderHelper.returnBase(feedSource.getCategories(
                     new GetCategoriesRequestImpl(request)).getBody(),
                     HttpStatusCode.OK.intValue(), Calendar.getInstance().getTime());

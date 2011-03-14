@@ -1,8 +1,11 @@
 package net.jps.atom.hopper.abdera;
 
+import com.rackspace.cloud.commons.util.StringUtilities;
 import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import net.jps.atom.hopper.adapter.TargetResolverField;
 import net.jps.atom.hopper.config.v1_0.WorkspaceConfiguration;
 import org.apache.abdera.model.Workspace;
 import org.apache.abdera.protocol.server.CollectionInfo;
@@ -18,7 +21,7 @@ import org.apache.abdera.protocol.server.impl.RegexTargetResolver;
 
 public class WorkspaceHandler implements WorkspaceInfo {
 
-    private final List<TargetAwareAbstractCollectionAdapter> namespaceCollectionAdapters;
+    private final Map<String, TargetAwareAbstractCollectionAdapter> collectionAdapterMap;
     private final RegexTargetResolver regexTargetResolver;
     private final WorkspaceConfiguration myConfig;
 
@@ -26,35 +29,32 @@ public class WorkspaceHandler implements WorkspaceInfo {
         this.myConfig = myConfig;
         this.regexTargetResolver = regexTargetResolver;
 
-        this.namespaceCollectionAdapters = new LinkedList<TargetAwareAbstractCollectionAdapter>();
+        this.collectionAdapterMap = new HashMap<String, TargetAwareAbstractCollectionAdapter>();
     }
 
     public RegexTargetResolver getRegexTargetResolver() {
         return regexTargetResolver;
     }
 
-    public void addCollectionAdapter(TargetAwareAbstractCollectionAdapter adapter) {
-        namespaceCollectionAdapters.add(adapter);
+    public void addCollectionAdapter(String collectionId, TargetAwareAbstractCollectionAdapter adapter) {
+        collectionAdapterMap.put(collectionId, adapter);
     }
 
     public TargetAwareAbstractCollectionAdapter getAnsweringAdapter(RequestContext rc) {
-        for (TargetAwareAbstractCollectionAdapter adapter : namespaceCollectionAdapters) {
-            if (adapter.canHandleTarget(rc.getTargetPath())) {
-                return adapter;
-            }
-        }
+        final String feedSpec = rc.getTarget().getParameter(TargetResolverField.FEED.toString());
 
-        return null;
+        return !StringUtilities.isBlank(feedSpec) ? collectionAdapterMap.get(feedSpec) : null;
     }
 
     @Override
     public Workspace asWorkspaceElement(RequestContext rc) {
+        //TODO: Implement this D:
         return null;
     }
 
     @Override
     public Collection<CollectionInfo> getCollections(RequestContext rc) {
-        return (Collection) namespaceCollectionAdapters;
+        return (Collection) Collections.unmodifiableCollection(collectionAdapterMap.values());
     }
 
     @Override

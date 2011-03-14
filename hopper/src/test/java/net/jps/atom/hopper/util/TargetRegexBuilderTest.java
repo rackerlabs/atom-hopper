@@ -7,7 +7,7 @@ import org.junit.runner.RunWith;
 import static org.junit.Assert.assertEquals;
 
 /**
- * 
+ *
  */
 @RunWith(Enclosed.class)
 public class TargetRegexBuilderTest {
@@ -17,11 +17,11 @@ public class TargetRegexBuilderTest {
         @Test
         public void shouldCopyBuilderElements() {
             final TargetRegexBuilder expected = feedRegexBuilder();
-            final TargetRegexBuilder actual = new TargetRegexBuilder(expected);            
-            
+            final TargetRegexBuilder actual = new TargetRegexBuilder(expected);
+
             assertEquals("TargetRegexBuilder copy must populate the context path", expected.getContextPath(), actual.getContextPath());
-            assertEquals("TargetRegexBuilder copy must populate the workspace path", expected.getWorkspace(), actual.getWorkspace());
-            assertEquals("TargetRegexBuilder copy must populate the feed path", expected.getFeed(), actual.getFeed());
+            assertEquals("TargetRegexBuilder copy must populate the workspace path", expected.getWorkspaceResource(), actual.getWorkspaceResource());
+            assertEquals("TargetRegexBuilder copy must populate the feed path", expected.getFeedResource(), actual.getFeedResource());
         }
     }
 }
