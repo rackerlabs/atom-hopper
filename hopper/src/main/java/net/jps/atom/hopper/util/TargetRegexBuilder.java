@@ -10,11 +10,11 @@ import net.jps.atom.hopper.adapter.TargetResolverField;
 public class TargetRegexBuilder {
 
     private static final String REPLACEMENT_ELEMENT = "@_",
-            WORKSPACE_TEMPLATE = "(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/?(\\?[^#]+)?",
-            CATAGORY_TEMPLATE = "(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/categories/?(\\?[^#]+)?",
-            FEED_TEMPLATE = "(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + ")/?(\\?[^#]+)?",
-            ENTRY_TEMPLATE = "(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + ")/entries/([^/#?]+)/?(\\?[^#]+)?",
-            ARCHIVE_TEMPLATE = "(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + "/archives)(/\\d\\d\\d\\d)(/\\d\\d)?(/\\d\\d)?(/\\d\\d:\\d\\d)?/?(\\?[^#]+)?",
+            WORKSPACE_TEMPLATE = "/(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/?(\\?[^#]+)?",
+            CATAGORY_TEMPLATE = "/(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/categories/?(\\?[^#]+)?",
+            FEED_TEMPLATE = "/(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + ")/?(\\?[^#]+)?",
+            ENTRY_TEMPLATE = "/(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + ")/entries/([^/#?]+)/?(\\?[^#]+)?",
+            ARCHIVE_TEMPLATE = "/(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + "/archives)(/\\d\\d\\d\\d)(/\\d\\d)?(/\\d\\d)?(/\\d\\d:\\d\\d)?/?(\\?[^#]+)?",
 
             ARCHIVES_URI_FRAGMENT = "archives";
 
@@ -23,7 +23,7 @@ public class TargetRegexBuilder {
     public TargetRegexBuilder() {
         workspace = null;
         feed = null;
-        contextPath = "/";
+        contextPath = "";
     }
 
     public TargetRegexBuilder(TargetRegexBuilder copyMe) {
@@ -35,11 +35,11 @@ public class TargetRegexBuilder {
     public void setContextPath(String contextPath) {
         final StringBuilder builder = new StringBuilder();
 
-        if (!contextPath.startsWith("/")) {
-            builder.append("/");
+        if (contextPath.startsWith("/")) {
+            builder.append(contextPath.substring(1));
+        } else {
+            builder.append(contextPath);
         }
-
-        builder.append(contextPath);
 
         if (!contextPath.endsWith("/")) {
             builder.append("/");
