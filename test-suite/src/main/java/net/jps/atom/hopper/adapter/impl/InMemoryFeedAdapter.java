@@ -51,6 +51,8 @@ public class InMemoryFeedAdapter implements FeedSource, FeedPublisher {
             feed.addEntry(ae.getEntry());
         }
 
+        feed.addEntry().setTitle("Title");
+
         return ResponseBuilder.found(feed);
     }
 
