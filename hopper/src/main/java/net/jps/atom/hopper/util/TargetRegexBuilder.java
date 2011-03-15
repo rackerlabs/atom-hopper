@@ -10,11 +10,11 @@ import net.jps.atom.hopper.adapter.TargetResolverField;
 public class TargetRegexBuilder {
 
     private static final String REPLACEMENT_ELEMENT = "@_",
-            WORKSPACE_TEMPLATE = REPLACEMENT_ELEMENT + "(" + REPLACEMENT_ELEMENT + ")/?(\\?[^#]+)?",
-            CATAGORY_TEMPLATE = REPLACEMENT_ELEMENT + "(" + REPLACEMENT_ELEMENT + ")/categories/?(\\?[^#]+)?",
-            FEED_TEMPLATE = REPLACEMENT_ELEMENT + "(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + ")/?(\\?[^#]+)?",
-            ENTRY_TEMPLATE = REPLACEMENT_ELEMENT + "(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + ")/entries/([^/#?]+)/?(\\?[^#]+)?",
-            ARCHIVE_TEMPLATE = REPLACEMENT_ELEMENT + "(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + "/archives)(/\\d\\d\\d\\d)(/\\d\\d)?(/\\d\\d)?(/\\d\\d:\\d\\d)?/?(\\?[^#]+)?",
+            WORKSPACE_TEMPLATE = "(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/?(\\?[^#]+)?",
+            CATAGORY_TEMPLATE = "(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/categories/?(\\?[^#]+)?",
+            FEED_TEMPLATE = "(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + ")/?(\\?[^#]+)?",
+            ENTRY_TEMPLATE = "(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + ")/entries/([^/#?]+)/?(\\?[^#]+)?",
+            ARCHIVE_TEMPLATE = "(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + "/archives)(/\\d\\d\\d\\d)(/\\d\\d)?(/\\d\\d)?(/\\d\\d:\\d\\d)?/?(\\?[^#]+)?",
 
             ARCHIVES_URI_FRAGMENT = "archives";
 
@@ -130,12 +130,14 @@ public class TargetRegexBuilder {
 
     public static String[] getWorkspaceResolverFieldList() {
         return new String[]{
+                    TargetResolverField.CONTEXT_PATH.toString(),
                     TargetResolverField.WORKSPACE.toString()
                 };
     }
 
     public static String[] getFeedResolverFieldList() {
         return new String[]{
+                    TargetResolverField.CONTEXT_PATH.toString(),
                     TargetResolverField.WORKSPACE.toString(),
                     TargetResolverField.FEED.toString()
                 };
@@ -143,6 +145,7 @@ public class TargetRegexBuilder {
 
     public static String[] getCategoriesResolverFieldList() {
         return new String[]{
+                    TargetResolverField.CONTEXT_PATH.toString(),
                     TargetResolverField.WORKSPACE.toString(),
                     TargetResolverField.FEED.toString()
                 };
@@ -150,6 +153,7 @@ public class TargetRegexBuilder {
 
     public static String[] getEntryResolverFieldList() {
         return new String[]{
+                    TargetResolverField.CONTEXT_PATH.toString(),
                     TargetResolverField.WORKSPACE.toString(),
                     TargetResolverField.FEED.toString(),
                     TargetResolverField.ENTRY.toString()
@@ -158,6 +162,7 @@ public class TargetRegexBuilder {
 
     public static String[] getArchiveResolverFieldList() {
         return new String[]{
+                    TargetResolverField.CONTEXT_PATH.toString(),
                     TargetResolverField.WORKSPACE.toString(),
                     TargetResolverField.FEED.toString(),
                     TargetResolverField.ARCHIVE_YEAR.toString(),

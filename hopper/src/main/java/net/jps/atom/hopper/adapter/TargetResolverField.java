@@ -6,6 +6,7 @@ public enum TargetResolverField {
     FEED,
     USER,
     WORKSPACE,
+    CONTEXT_PATH,
     FEED_TYPE,
     MARKER,
     ARCHIVE_YEAR,
