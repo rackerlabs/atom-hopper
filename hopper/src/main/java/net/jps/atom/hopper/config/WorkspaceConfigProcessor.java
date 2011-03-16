@@ -55,9 +55,6 @@ public class WorkspaceConfigProcessor {
     }
 
     public WorkspaceHandler toHandler() {
-//        final TemplateTargetBuilder ttb = new TemplateTargetBuilder();
-
-
         final RegexTargetResolver regexTargetResolver = new RegexTargetResolver();
         final WorkspaceHandler workspace = new WorkspaceHandler(config, regexTargetResolver);
 

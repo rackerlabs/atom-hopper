@@ -34,8 +34,9 @@ public class WorkspaceProvider implements Provider {
 
     private static final Logger LOG = new RCLogger(WorkspaceProvider.class);
     private final Map<TargetType, RequestProcessor> requestProcessors;
-    private final WorkspaceManager workspaceManager;
     private final List<Filter> filters;
+
+    private WorkspaceManager workspaceManager;
     private Map<String, String> properties;
     private Abdera abdera;
 
@@ -49,8 +50,10 @@ public class WorkspaceProvider implements Provider {
         this.requestProcessors.put(TargetType.TYPE_COLLECTION, new CollectionRequestProcessor());
         this.requestProcessors.put(TargetType.TYPE_ENTRY, new EntryRequestProcessor());
         this.requestProcessors.put(TargetType.TYPE_MEDIA, new MediaRequestProcessor());
+    }
 
-        workspaceManager = new WorkspaceManager();
+    public void setWorkspaceManager(WorkspaceManager workspaceManager) {
+        this.workspaceManager = workspaceManager;
     }
 
     public WorkspaceManager getWorkspaceManager() {
@@ -111,8 +114,6 @@ public class WorkspaceProvider implements Provider {
         final CollectionAdapter adapter = wm.getCollectionAdapter(request);
         final Transactional transaction = adapter instanceof Transactional ? (Transactional) adapter : null;
 
-        System.out.println("Got request. Method is: " + request.getMethod());
-
         ResponseContext response = null;
 
         try {
@@ -120,7 +121,7 @@ public class WorkspaceProvider implements Provider {
             response = processor.process(request, wm, adapter);
             response = response != null ? response : processExtensionRequest(request, adapter);
         } catch (Exception ex) {
-            return response = handleAdapterException(ex, transaction, request, response);
+            return handleAdapterException(ex, transaction, request, response);
         } finally {
             transactionEnd(transaction, request, response);
         }
@@ -128,7 +129,7 @@ public class WorkspaceProvider implements Provider {
         return response != null ? response : ProviderHelper.badrequest(request);
     }
 
-    private ResponseContext handleAdapterException(Exception ex, final Transactional transaction, RequestContext request, ResponseContext response) {
+    private ResponseContext handleAdapterException(Exception ex, Transactional transaction, RequestContext request, ResponseContext response) {
         if (ex instanceof ResponseContextException) {
             final ResponseContextException rce = (ResponseContextException) ex;
 
@@ -143,9 +144,7 @@ public class WorkspaceProvider implements Provider {
         }
 
         transactionCompensate(transaction, request, ex);
-        response = createErrorResponse(request, ex);
-
-        return response;
+        return createErrorResponse(request, ex);
     }
 
     private void transactionCompensate(Transactional transactional, RequestContext request, Throwable e) {

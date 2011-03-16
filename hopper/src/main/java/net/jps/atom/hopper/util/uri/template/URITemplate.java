@@ -1,4 +1,4 @@
-package net.jps.atom.hopper.util.uri;
+package net.jps.atom.hopper.util.uri.template;
 
 public class URITemplate {
     private final String uriTemplate;

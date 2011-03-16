@@ -1,4 +1,4 @@
-package net.jps.atom.hopper.util.uri;
+package net.jps.atom.hopper.util.uri.template;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -6,6 +6,7 @@ import java.util.HashMap;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.impl.TemplateTargetBuilder;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
@@ -18,18 +19,7 @@ public class TemplateTargetBuilderTest {
 
     public static final Object ARCHIVE = new Object(), COLLECTION = new Object();
 
-    public static class WhenGeneratingFeedTemplates {
-
-        private TemplateTargetBuilder targetBuilder;
-        private RequestContext requestContext;
-
-        @Before
-        public void standUp() {
-            requestContext = mock(RequestContext.class);
-            when(requestContext.getTargetBasePath()).thenReturn("/root/context");
-
-            targetBuilder = new TemplateTargetBuilder();
-        }
+    public static class WhenGeneratingURLsFromFeedTemplates extends TestParent {
 
         @Test
         public void shouldGenerateFeedURLWithDefaults() {
@@ -53,13 +43,13 @@ public class TemplateTargetBuilderTest {
 
             targetBuilder.setTemplate(TemplateTargetKey.FEED, templateBuilder.toFeedTemplate().toString());
 
-            final URITemplateParameters<TemplateTargetKey> params = new URITemplateParameters<TemplateTargetKey>(TemplateTargetKey.FEED);
-            params.setMarker("12345");
+            final EnumKeyedTemplateParameters<TemplateTargetKey> params = new EnumKeyedTemplateParameters<TemplateTargetKey>(TemplateTargetKey.FEED);
+            params.set(URITemplateParameter.MARKER, "12345");
 
             final String expected = "http://domain.com/root/context/a/b/?lochint=12345";
 
             assertEquals("URL built from template should match expected feed URL",
-                    expected, targetBuilder.urlFor(requestContext, params.getTargetTemplateKey(), params.getParameters()));
+                    expected, targetBuilder.urlFor(requestContext, params.getTargetTemplateKey(), params.toMap()));
         }
 
         @Test
@@ -70,28 +60,21 @@ public class TemplateTargetBuilderTest {
 
             targetBuilder.setTemplate(TemplateTargetKey.FEED, templateBuilder.toFeedTemplate().toString());
 
-            final URITemplateParameters<TemplateTargetKey> params = new URITemplateParameters<TemplateTargetKey>(TemplateTargetKey.FEED);
-            params.setMarker("12345");
-            params.setLimit("5");
+            final EnumKeyedTemplateParameters<TemplateTargetKey> params = new EnumKeyedTemplateParameters<TemplateTargetKey>(TemplateTargetKey.FEED);
+            params.set(URITemplateParameter.MARKER, "12345");
+            params.set(URITemplateParameter.PAGE_LIMIT, "5");
 
             final String expected = "http://domain.com/root/context/a/b/?lochint=12345&limit=5";
 
             assertEquals("URL built from template should match expected feed URL",
-                    expected, targetBuilder.urlFor(requestContext, params.getTargetTemplateKey(), params.getParameters()));
+                    expected, targetBuilder.urlFor(requestContext, params.getTargetTemplateKey(), params.toMap()));
         }
     }
 
-    public static class WhenBuildingTemplatesManually {
-
-        private TemplateTargetBuilder targetBuilder;
-        private RequestContext requestContext;
+    public static class WhenBuildingTemplatesManually extends TestParent {
 
         @Before
-        public void standUp() {
-            requestContext = mock(RequestContext.class);
-            when(requestContext.getTargetBasePath()).thenReturn("/root/context");
-
-            targetBuilder = new TemplateTargetBuilder();
+        public void setArchiveTemplate() {
             targetBuilder.setTemplate(ARCHIVE, "{target_base}/{workspace=a}/{feed=b}{-prefix|/|entry}/{-opt|?|categories,marker,limit}{-opt|categories=|categories}{-listjoin|;|categories}{-opt|&|categories}{-join|&|marker,limit}");
         }
 
@@ -133,6 +116,21 @@ public class TemplateTargetBuilderTest {
             final String expected = "/root/context/a/b/c/?categories=cata;catb;catc&marker=12345&limit=5";
 
             assertEquals("URL built from template should match expected", expected, targetBuilder.urlFor(requestContext, ARCHIVE, parameterMap));
+        }
+    }
+
+    @Ignore
+    public static class TestParent {
+
+        protected TemplateTargetBuilder targetBuilder;
+        protected RequestContext requestContext;
+
+        @Before
+        public void standUp() {
+            requestContext = mock(RequestContext.class);
+            when(requestContext.getTargetBasePath()).thenReturn("/root/context");
+
+            targetBuilder = new TemplateTargetBuilder();
         }
     }
 }

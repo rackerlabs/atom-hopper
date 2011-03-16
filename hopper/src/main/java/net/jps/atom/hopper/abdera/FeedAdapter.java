@@ -28,10 +28,10 @@ import java.util.Map;
 //TODO: Recompose and clean up this class
 public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
 
-    private static final Logger LOG = new RCLogger(FeedAdapter.class);
+//    private static final Logger LOG = new RCLogger(FeedAdapter.class);
 
     private static final String[] FEED_SOURCE_METHODS = {"GET"},
-            FEED_PUBLISHER_METHODS = {"POST", "PUT", "DELETE"},
+//            FEED_PUBLISHER_METHODS = {"POST", "PUT", "DELETE"},
             COMBINED_ALLOWED_METHODS = {"GET", "POST", "PUT", "DELETE"};
 
     private final String[] allowedMethods;
@@ -99,10 +99,12 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
         }
     }
 
-    @Override
-    public CategoriesInfo[] getCategoriesInfo(RequestContext request) {
-        return super.getCategoriesInfo(request);
-    }
+//  TODO: Implement this?
+//
+//    @Override
+//    public CategoriesInfo[] getCategoriesInfo(RequestContext request) {
+//        return super.getCategoriesInfo(request);
+//    }
 
     @Override
     //TODO: Reimplement this - getting there

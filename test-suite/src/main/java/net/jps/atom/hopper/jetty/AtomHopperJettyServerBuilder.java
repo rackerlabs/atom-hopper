@@ -10,13 +10,13 @@ import org.springframework.web.context.ContextLoaderListener;
 
 /**
  *
- * 
+ *
  */
 public class AtomHopperJettyServerBuilder {
 
     private final int portNumber;
 
-    public AtomHopperJettyServerBuilder(int portNumber) throws Exception {
+    public AtomHopperJettyServerBuilder(int portNumber) {
         this.portNumber = portNumber;
     }
 
@@ -43,9 +43,5 @@ public class AtomHopperJettyServerBuilder {
 
     public Server newServer() {
         return buildNewInstance();
-    }
-
-    public static void main(String[] args) throws Exception {
-        new AtomHopperJettyServerBuilder(8080).newServer().start();
     }
 }
