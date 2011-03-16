@@ -1,5 +1,7 @@
 package net.jps.atom.hopper.adapter.impl;
 
+import com.rackspace.cloud.commons.util.StringUtilities;
+import com.rackspace.cloud.commons.util.http.HttpStatusCode;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.SortedMap;
@@ -32,12 +34,14 @@ public class InMemoryFeedAdapter implements FeedSource, FeedPublisher {
 
     @Override
     public AdapterResponse<Entry> getEntry(GetEntryRequest getEntryRequest) {
-        final AtomEntry entry = liveFeed.get(getEntryRequest.getId());
+        if (!StringUtilities.isBlank(getEntryRequest.getId())) {
+            final AtomEntry entry = liveFeed.get(getEntryRequest.getId());
 
-        if (entry != null) {
-            return ResponseBuilder.found(entry.getEntry());
+            if (entry != null) {
+                return ResponseBuilder.found(entry.getEntry());
+            }
         }
-
+        
         return ResponseBuilder.notFound();
     }
 
@@ -50,8 +54,6 @@ public class InMemoryFeedAdapter implements FeedSource, FeedPublisher {
         for (AtomEntry ae : liveFeed.values()) {
             feed.addEntry(ae.getEntry());
         }
-
-        feed.addEntry().setTitle("Title");
 
         return ResponseBuilder.found(feed);
     }
@@ -75,7 +77,13 @@ public class InMemoryFeedAdapter implements FeedSource, FeedPublisher {
     public AdapterResponse<Entry> postEntry(PostEntryRequest postEntryRequest) {
         final Entry entryToPost = postEntryRequest.getEntry();
 
-        return ResponseBuilder.notFound();
+        if (entryToPost.getId() == null) {
+            return ResponseBuilder.reply(HttpStatusCode.BAD_REQUEST, "Entry should supply an id");
+        } else {
+            liveFeed.put(entryToPost.getId().toString(), new AtomEntry(entryToPost));
+        }
+
+        return ResponseBuilder.created(entryToPost);
     }
 
     @Override

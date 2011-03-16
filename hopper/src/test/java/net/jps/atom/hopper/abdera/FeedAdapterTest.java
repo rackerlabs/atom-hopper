@@ -23,12 +23,11 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.util.UUID;
+import org.apache.abdera.protocol.server.Target;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.fail;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(Enclosed.class)
 public class FeedAdapterTest {
@@ -154,9 +153,7 @@ public class FeedAdapterTest {
         static final int STATUS_CODE_UNSUPPORTED_METHOD = 405;
         static final String BASE_URI = "http://localhost:8080/atom";
         static final String TARGET_PATH = "/foo/bar";
-
         final RequestContext REQUEST_CONTEXT = requestContext();
-        
         FeedConfiguration feedConfiguration;
         FeedSource feedSource;
         FeedPublisher feedPublisher;
@@ -203,14 +200,17 @@ public class FeedAdapterTest {
         }
 
         public RequestContext requestContext() {
+            final RequestContext context = mock(RequestContext.class);
+            final Target targetMock = mock(Target.class);
 
-            RequestContext context = mock(RequestContext.class);
+            when(targetMock.getParameter(anyString())).thenReturn("");
 
             when(context.getBaseUri()).thenReturn(new IRI(BASE_URI));
+            when(context.getTarget()).thenReturn(targetMock);
             when(context.getTargetPath()).thenReturn(TARGET_PATH);
 
-
             Document document = mock(Document.class);
+
             try {
                 when(context.getDocument()).thenReturn(document);
             } catch (IOException e) {

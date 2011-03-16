@@ -111,6 +111,8 @@ public class WorkspaceProvider implements Provider {
         final CollectionAdapter adapter = wm.getCollectionAdapter(request);
         final Transactional transaction = adapter instanceof Transactional ? (Transactional) adapter : null;
 
+        System.out.println("Got request. Method is: " + request.getMethod());
+
         ResponseContext response = null;
 
         try {

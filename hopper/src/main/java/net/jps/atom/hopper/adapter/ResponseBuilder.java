@@ -41,6 +41,22 @@ public final class ResponseBuilder {
         return new FeedSourceAdapterResponse<Entry>(e, HttpStatusCode.OK, "");
     }
 
+    public static <T> AdapterResponse<T> reply(HttpStatusCode status, T payload, String message) {
+        return new FeedSourceAdapterResponse<T>(payload, status, message != null ? message : "");
+    }
+
+    public static <T> AdapterResponse<T> reply(HttpStatusCode status, String message) {
+        return reply(status, null, message);
+    }
+
+    public static <T> AdapterResponse<T> reply(HttpStatusCode status, T payload) {
+        return reply(status, payload, null);
+    }
+
+    public static AdapterResponse<EmptyBody> reply(HttpStatusCode status) {
+        return reply(status, EmptyBody.getInstance(), null);
+    }
+
     public static <T> AdapterResponse<T> error() {
         return error("");
     }

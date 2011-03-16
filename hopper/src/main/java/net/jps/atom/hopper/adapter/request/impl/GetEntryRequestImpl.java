@@ -23,7 +23,7 @@ public class GetEntryRequestImpl extends AbstractClientRequest implements GetEnt
     private void populateSelf() {
         final RequestContext requestContext = getRequestContext();
 
-        entryId = requestContext.getParameter(TargetResolverField.ENTRY.name());
+        entryId = requestContext.getTarget().getParameter(TargetResolverField.ENTRY.name());
     }
 
     @Override
