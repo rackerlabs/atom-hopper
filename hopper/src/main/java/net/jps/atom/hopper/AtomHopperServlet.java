@@ -23,6 +23,7 @@ import net.jps.atom.hopper.util.config.jaxb.JAXBConfigurationParser;
 import net.jps.atom.hopper.util.config.resource.uri.URIConfigurationResource;
 import org.apache.abdera.Abdera;
 import org.apache.abdera.protocol.server.Provider;
+import org.apache.abdera.protocol.server.impl.RegexTargetResolver;
 import org.apache.abdera.protocol.server.servlet.AbderaServlet;
 
 /**
@@ -123,7 +124,8 @@ public final class AtomHopperServlet extends AbderaServlet {
 
         for (WorkspaceConfiguration workspaceCfg : configuration.getWorkspace()) {
             final WorkspaceConfigProcessor cfgProcessor = new WorkspaceConfigProcessor(
-                    workspaceCfg, applicationContextAdapter, archivalService, getServletContext().getContextPath());
+                    workspaceCfg, applicationContextAdapter, archivalService,
+                    workspaceProvider.getTargetResolver(), getServletContext().getContextPath());
 
             workspaceProvider.getWorkspaceManager().addWorkspace(cfgProcessor.toHandler());
         }

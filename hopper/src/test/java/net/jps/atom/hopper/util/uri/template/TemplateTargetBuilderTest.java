@@ -24,26 +24,27 @@ public class TemplateTargetBuilderTest {
         @Test
         public void shouldGenerateFeedURLWithDefaults() {
             final URITemplateBuilder templateBuilder = new URITemplateBuilder("domain.com");
-            templateBuilder.setWorkspaceResource("a");
-            templateBuilder.setFeedResource("b");
-
             targetBuilder.setTemplate(TemplateTargetKey.FEED, templateBuilder.toFeedTemplate().toString());
+
+            final EnumKeyedTemplateParameters<TemplateTargetKey> params = new EnumKeyedTemplateParameters<TemplateTargetKey>(TemplateTargetKey.FEED);
+            params.set(URITemplateParameter.WORKSPACE_RESOURCE, "a");
+            params.set(URITemplateParameter.FEED_RESOURCE, "b");
 
             final String expected = "http://domain.com/root/context/a/b/";
 
             assertEquals("URL built from template should match expected feed URL",
-                    expected, targetBuilder.urlFor(requestContext, TemplateTargetKey.FEED, null));
+                    expected, targetBuilder.urlFor(requestContext, TemplateTargetKey.FEED, params.toMap()));
         }
 
         @Test
         public void shouldGenerateFeedURLWithMarker() {
             final URITemplateBuilder templateBuilder = new URITemplateBuilder("domain.com");
-            templateBuilder.setWorkspaceResource("a");
-            templateBuilder.setFeedResource("b");
 
             targetBuilder.setTemplate(TemplateTargetKey.FEED, templateBuilder.toFeedTemplate().toString());
 
             final EnumKeyedTemplateParameters<TemplateTargetKey> params = new EnumKeyedTemplateParameters<TemplateTargetKey>(TemplateTargetKey.FEED);
+            params.set(URITemplateParameter.WORKSPACE_RESOURCE, "a");
+            params.set(URITemplateParameter.FEED_RESOURCE, "b");
             params.set(URITemplateParameter.MARKER, "12345");
 
             final String expected = "http://domain.com/root/context/a/b/?lochint=12345";
@@ -55,12 +56,12 @@ public class TemplateTargetBuilderTest {
         @Test
         public void shouldGenerateFeedURLWithLimitAndMarker() {
             final URITemplateBuilder templateBuilder = new URITemplateBuilder("domain.com");
-            templateBuilder.setWorkspaceResource("a");
-            templateBuilder.setFeedResource("b");
 
             targetBuilder.setTemplate(TemplateTargetKey.FEED, templateBuilder.toFeedTemplate().toString());
 
             final EnumKeyedTemplateParameters<TemplateTargetKey> params = new EnumKeyedTemplateParameters<TemplateTargetKey>(TemplateTargetKey.FEED);
+            params.set(URITemplateParameter.WORKSPACE_RESOURCE, "a");
+            params.set(URITemplateParameter.FEED_RESOURCE, "b");
             params.set(URITemplateParameter.MARKER, "12345");
             params.set(URITemplateParameter.PAGE_LIMIT, "5");
 

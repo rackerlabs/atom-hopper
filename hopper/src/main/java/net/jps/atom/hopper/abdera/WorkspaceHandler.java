@@ -8,32 +8,19 @@ import java.util.Map;
 import net.jps.atom.hopper.adapter.TargetResolverField;
 import net.jps.atom.hopper.config.v1_0.WorkspaceConfiguration;
 import org.apache.abdera.model.Workspace;
+import org.apache.abdera.parser.stax.FOMWorkspace;
 import org.apache.abdera.protocol.server.CollectionInfo;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.WorkspaceInfo;
-import org.apache.abdera.protocol.server.impl.RegexTargetResolver;
-
-/**
- * TODO: Re-add support for TargetBuilder for URL construction
- *
- *
- */
 
 public class WorkspaceHandler implements WorkspaceInfo {
 
     private final Map<String, TargetAwareAbstractCollectionAdapter> collectionAdapterMap;
-    private final RegexTargetResolver regexTargetResolver;
     private final WorkspaceConfiguration myConfig;
 
-    public WorkspaceHandler(WorkspaceConfiguration myConfig, RegexTargetResolver regexTargetResolver) {
+    public WorkspaceHandler(WorkspaceConfiguration myConfig) {
         this.myConfig = myConfig;
-        this.regexTargetResolver = regexTargetResolver;
-
         this.collectionAdapterMap = new HashMap<String, TargetAwareAbstractCollectionAdapter>();
-    }
-
-    public RegexTargetResolver getRegexTargetResolver() {
-        return regexTargetResolver;
     }
 
     public void addCollectionAdapter(String collectionId, TargetAwareAbstractCollectionAdapter adapter) {
@@ -48,8 +35,8 @@ public class WorkspaceHandler implements WorkspaceInfo {
 
     @Override
     public Workspace asWorkspaceElement(RequestContext rc) {
-        //TODO: Implement this D:
-        return null;
+        final Workspace ws = new FOMWorkspace(myConfig.getTitle());
+        return ws;
     }
 
     @Override

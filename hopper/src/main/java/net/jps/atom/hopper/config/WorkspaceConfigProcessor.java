@@ -28,24 +28,26 @@ import org.apache.abdera.protocol.server.TargetType;
 import org.apache.abdera.protocol.server.impl.RegexTargetResolver;
 
 /**
+ * I eat configurations.
+ *
  * TODO: Sanitize configured workspace and feed resource paths for regex insertion
- *
- *
  */
 public class WorkspaceConfigProcessor {
 
     private static final Logger LOG = new RCLogger(WorkspaceConfigProcessor.class);
-    public static final long HOUR_IN_MILLISECONDS = 3600000;
+
+    private final RegexTargetResolver regexTargetResolver;
     private final FeedArchivalService feedArchivalService;
     private final AdapterGetter adapterGetter;
     private final WorkspaceConfiguration config;
     private final TargetRegexBuilder targetRegexGenerator;
 
     //TODO: Consider builder pattern
-    public WorkspaceConfigProcessor(WorkspaceConfiguration config, ApplicationContextAdapter contextAdapter, FeedArchivalService feedArchivalService, String contextPath) {
+    public WorkspaceConfigProcessor(WorkspaceConfiguration config, ApplicationContextAdapter contextAdapter, FeedArchivalService feedArchivalService, RegexTargetResolver regexTargetResolver, String contextPath) {
         this.config = config;
         this.adapterGetter = new AdapterGetter(contextAdapter);
         this.feedArchivalService = feedArchivalService;
+        this.regexTargetResolver = regexTargetResolver;
 
         targetRegexGenerator = new TargetRegexBuilder();
 
@@ -55,17 +57,16 @@ public class WorkspaceConfigProcessor {
     }
 
     public WorkspaceHandler toHandler() {
-        final RegexTargetResolver regexTargetResolver = new RegexTargetResolver();
-        final WorkspaceHandler workspace = new WorkspaceHandler(config, regexTargetResolver);
+        final WorkspaceHandler workspace = new WorkspaceHandler(config);
 
-        for (TargetAwareAbstractCollectionAdapter collectionAdapter : assembleFeeds(config.getFeed(), regexTargetResolver)) {
+        for (TargetAwareAbstractCollectionAdapter collectionAdapter : assembleFeeds(config.getFeed())) {
             workspace.addCollectionAdapter(collectionAdapter.getTarget(), collectionAdapter);
         }
 
         return workspace;
     }
 
-    private List<TargetAwareAbstractCollectionAdapter> assembleFeeds(List<FeedConfiguration> feedServices, RegexTargetResolver regexTargetResolver) {
+    private List<TargetAwareAbstractCollectionAdapter> assembleFeeds(List<FeedConfiguration> feedServices) {
         final List<TargetAwareAbstractCollectionAdapter> collections = new LinkedList<TargetAwareAbstractCollectionAdapter>();
 
         final String workspaceName = StringUtilities.trim(config.getResource(), "/");
@@ -82,7 +83,7 @@ public class WorkspaceConfigProcessor {
                 TargetType.TYPE_CATEGORIES,
                 TargetResolverField.WORKSPACE.name());
 
-        for (TargetAwareAbstractCollectionAdapter adapter : assembleFeedAdapters(targetRegexGenerator, feedServices, regexTargetResolver)) {
+        for (TargetAwareAbstractCollectionAdapter adapter : assembleFeedAdapters(targetRegexGenerator, feedServices)) {
             collections.add(adapter);
         }
 
@@ -115,7 +116,7 @@ public class WorkspaceConfigProcessor {
         return adapter;
     }
 
-    private List<TargetAwareAbstractCollectionAdapter> assembleFeedAdapters(TargetRegexBuilder workspaceTarget, List<FeedConfiguration> feeds, RegexTargetResolver regexTargetResolver) {
+    private List<TargetAwareAbstractCollectionAdapter> assembleFeedAdapters(TargetRegexBuilder workspaceTarget, List<FeedConfiguration> feeds) {
         final List<TargetAwareAbstractCollectionAdapter> collections = new LinkedList<TargetAwareAbstractCollectionAdapter>();
 
         for (FeedConfiguration feed : feeds) {
@@ -156,7 +157,7 @@ public class WorkspaceConfigProcessor {
         final FeedArchiver archiver = getAdapter(archivalConfig.getFeedArchiver(), FeedArchiver.class);
 
         if (archiver != null) {
-            //TODO: Implements archivalConfig.getIntervalSpec();
+            //TODO: Implements archivalConfig.getIntervalSpec(); DOIT!
             archiver.setArchivalIntervalSpec(3600000);
             feedArchivalService.registerArchiveTask(feedSource, archiver);
         }
