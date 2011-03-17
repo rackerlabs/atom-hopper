@@ -21,7 +21,7 @@ public class TargetRegexBuilderTestParent {
             DEFAULT_CATEGORIES_LONG = new String[]{"category_a", "category_b", "category_c", "category_d", "category_e"};
     public static final String CONTEXT_PATH = "/approot",
             WORKSPACE = "/workspace",
-            CATEGORIES = "/workspace/categories",
+            CATEGORIES = "/workspace/feed/categories",
             FEED = "/workspace/feed",
             ENTRY = "/workspace/feed/entries/tag:domain.com,2011-01-01:entry-id";
 

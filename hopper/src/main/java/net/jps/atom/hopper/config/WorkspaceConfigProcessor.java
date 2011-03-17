@@ -6,7 +6,6 @@ import com.rackspace.cloud.commons.logging.Logger;
 import com.rackspace.cloud.commons.util.StringUtilities;
 import com.rackspace.cloud.commons.util.servlet.context.ApplicationContextAdapter;
 import net.jps.atom.hopper.abdera.FeedAdapter;
-import net.jps.atom.hopper.adapter.TargetResolverField;
 import net.jps.atom.hopper.archive.FeedArchivalService;
 import net.jps.atom.hopper.adapter.archive.FeedArchiveSource;
 
@@ -35,7 +34,6 @@ import org.apache.abdera.protocol.server.impl.RegexTargetResolver;
 public class WorkspaceConfigProcessor {
 
     private static final Logger LOG = new RCLogger(WorkspaceConfigProcessor.class);
-
     private final RegexTargetResolver regexTargetResolver;
     private final FeedArchivalService feedArchivalService;
     private final AdapterGetter adapterGetter;
@@ -77,11 +75,6 @@ public class WorkspaceConfigProcessor {
         regexTargetResolver.setPattern(targetRegexGenerator.toWorkspacePattern(),
                 TargetType.TYPE_SERVICE,
                 TargetRegexBuilder.getWorkspaceResolverFieldList());
-
-        // categories
-        regexTargetResolver.setPattern(targetRegexGenerator.toCategoryPattern(),
-                TargetType.TYPE_CATEGORIES,
-                TargetResolverField.WORKSPACE.name());
 
         for (TargetAwareAbstractCollectionAdapter adapter : assembleFeedAdapters(targetRegexGenerator, feedServices)) {
             collections.add(adapter);
@@ -134,6 +127,11 @@ public class WorkspaceConfigProcessor {
                     TargetType.TYPE_COLLECTION,
                     TargetRegexBuilder.getFeedResolverFieldList());
 
+            // feed categories
+            regexTargetResolver.setPattern(feedTargetRegexBuilder.toCategoriesPattern(),
+                    TargetType.TYPE_CATEGORIES,
+                    TargetRegexBuilder.getCategoriesResolverFieldList());
+
             // entry regex matching
             regexTargetResolver.setPattern(feedTargetRegexBuilder.toEntryPattern(),
                     TargetType.TYPE_ENTRY,
@@ -167,7 +165,7 @@ public class WorkspaceConfigProcessor {
                     feedTargetRegexBuilder.getArchivesResource(), archiveSource, feedAdapter);
 
             // archive
-            regexTargetResolver.setPattern(feedTargetRegexBuilder.toArchivePattern(),
+            regexTargetResolver.setPattern(feedTargetRegexBuilder.toArchivesPattern(),
                     TargetType.TYPE_COLLECTION,
                     TargetRegexBuilder.getArchiveResolverFieldList());
 

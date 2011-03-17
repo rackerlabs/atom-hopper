@@ -3,15 +3,11 @@ package net.jps.atom.hopper.util;
 import com.rackspace.cloud.commons.util.StringUtilities;
 import net.jps.atom.hopper.adapter.TargetResolverField;
 
-/**
- *
- *
- */
 public class TargetRegexBuilder {
 
     private static final String REPLACEMENT_ELEMENT = "@_",
             WORKSPACE_TEMPLATE = "/(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/?(\\?[^#]+)?",
-            CATAGORY_TEMPLATE = "/(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/categories/?(\\?[^#]+)?",
+            CATAGORY_TEMPLATE = "/(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + ")/categories/?(\\?[^#]+)?",
             FEED_TEMPLATE = "/(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + ")/?(\\?[^#]+)?",
             ENTRY_TEMPLATE = "/(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + ")/entries/([^/#?]+)/?(\\?[^#]+)?",
             ARCHIVE_TEMPLATE = "/(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + "/archives)(/\\d\\d\\d\\d)(/\\d\\d)?(/\\d\\d)?(/\\d\\d:\\d\\d)?/?(\\?[^#]+)?",
@@ -104,10 +100,10 @@ public class TargetRegexBuilder {
         return asWorkspacePattern(WORKSPACE_TEMPLATE);
     }
 
-    public String toCategoryPattern() {
+    public String toCategoriesPattern() {
         checkWorkspaceString();
 
-        return asWorkspacePattern(CATAGORY_TEMPLATE);
+        return asFeedPattern(CATAGORY_TEMPLATE);
     }
 
     public String toFeedPattern() {
@@ -122,7 +118,7 @@ public class TargetRegexBuilder {
         return asFeedPattern(ENTRY_TEMPLATE);
     }
 
-    public String toArchivePattern() {
+    public String toArchivesPattern() {
         checkFeedString();
 
         return asFeedPattern(ARCHIVE_TEMPLATE);

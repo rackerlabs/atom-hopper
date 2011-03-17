@@ -1,14 +1,21 @@
 package net.jps.atom.hopper.util.uri.template;
 
-public class URITemplate {
-    private final String uriTemplate;
+public enum URITemplate {
 
-    public URITemplate(String uriTemplate) {
-        this.uriTemplate = uriTemplate;
+    WORKSPACE("http://{host=}{-prefix|:|port}{target_base}/{workspace}"),
+    FEED(WORKSPACE.toString() + "/{feed}{-prefix|/entries/|entry}/{-opt|?|lochint,limit}{-join|&|lochint,limit}"),
+    FEED_CATEGORIES(WORKSPACE.toString() + "/{feed}/categories"),
+    FEED_ARCHIVES(WORKSPACE.toString() + "/{feed}/archives/{-prefix|/|year}{-prefix|/|month}{-prefix|/|day}{-prefix|/|time}");
+
+    //Class Contents
+    private final String templateString;
+
+    private URITemplate(String templateString) {
+        this.templateString = templateString;
     }
 
     @Override
     public String toString() {
-        return uriTemplate;
+        return templateString;
     }
 }

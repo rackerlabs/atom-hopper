@@ -5,8 +5,10 @@
         <author name="Rackspace Cloud" />
     </defaults>
 
+    <host domain="domain.com" />
+
     <!-- http://localhost:8080/namespace_a/ -->
-    <workspace title="A Testing Namespace" resource="/namespace/">       
+    <workspace title="A Testing Namespace" resource="/namespace/">
         <!-- http://localhost:8080/namespace_a/feed_1 -->
         <feed title="feed_1" resource="/feed">
             <feed-source reference="adapter" />

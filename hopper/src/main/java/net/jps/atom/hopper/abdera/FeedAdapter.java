@@ -1,7 +1,5 @@
 package net.jps.atom.hopper.abdera;
 
-import com.rackspace.cloud.commons.logging.Logger;
-import com.rackspace.cloud.commons.logging.RCLogger;
 import com.rackspace.cloud.commons.util.http.HttpStatusCode;
 import java.util.Calendar;
 import net.jps.atom.hopper.abdera.response.ResponseHandler;
@@ -16,7 +14,6 @@ import net.jps.atom.hopper.response.AdapterResponse;
 import net.jps.atom.hopper.response.EmptyBody;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
-import org.apache.abdera.protocol.server.CategoriesInfo;
 import org.apache.abdera.protocol.server.ProviderHelper;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.ResponseContext;

@@ -10,6 +10,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import javax.security.auth.Subject;
+import net.jps.atom.hopper.adapter.TargetResolverField;
+import net.jps.atom.hopper.config.v1_0.HostConfiguration;
+import net.jps.atom.hopper.util.uri.template.TemplateParameters;
+import net.jps.atom.hopper.util.uri.template.URITemplateParameter;
 
 import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Service;
@@ -27,6 +31,7 @@ import org.apache.abdera.protocol.server.WorkspaceInfo;
 import org.apache.abdera.protocol.server.context.ResponseContextException;
 import org.apache.abdera.protocol.server.impl.RegexTargetResolver;
 import org.apache.abdera.protocol.server.impl.SimpleSubjectResolver;
+import org.apache.abdera.protocol.server.impl.TemplateTargetBuilder;
 import org.apache.abdera.protocol.server.processors.CategoriesRequestProcessor;
 import org.apache.abdera.protocol.server.processors.CollectionRequestProcessor;
 import org.apache.abdera.protocol.server.processors.EntryRequestProcessor;
@@ -35,23 +40,32 @@ import org.apache.abdera.protocol.server.processors.ServiceRequestProcessor;
 public class WorkspaceProvider implements Provider {
 
     private static final Logger LOG = new RCLogger(WorkspaceProvider.class);
+
     private final Map<TargetType, RequestProcessor> requestProcessors;
     private final List<Filter> filters;
     private final WorkspaceManager workspaceManager;
     private final RegexTargetResolver targetResolver;
+    private final HostConfiguration hostConfiguration;
+    private final TemplateTargetBuilder templateTargetBuilder;
+
     private Map<String, String> properties;
     private Abdera abdera;
 
-    public WorkspaceProvider() {
+    public WorkspaceProvider(HostConfiguration hostConfiguration) {
         requestProcessors = new HashMap<TargetType, RequestProcessor>();
         filters = new LinkedList<Filter>();
         targetResolver = new RegexTargetResolver();
 
+        // Set the host configuration
+        this.hostConfiguration = hostConfiguration;
+
         // Setting default request processors:
-        this.requestProcessors.put(TargetType.TYPE_SERVICE, new ServiceRequestProcessor());
-        this.requestProcessors.put(TargetType.TYPE_CATEGORIES, new CategoriesRequestProcessor());
-        this.requestProcessors.put(TargetType.TYPE_COLLECTION, new CollectionRequestProcessor());
-        this.requestProcessors.put(TargetType.TYPE_ENTRY, new EntryRequestProcessor());
+        requestProcessors.put(TargetType.TYPE_SERVICE, new ServiceRequestProcessor());
+        requestProcessors.put(TargetType.TYPE_CATEGORIES, new CategoriesRequestProcessor());
+        requestProcessors.put(TargetType.TYPE_COLLECTION, new CollectionRequestProcessor());
+        requestProcessors.put(TargetType.TYPE_ENTRY, new EntryRequestProcessor());
+
+        templateTargetBuilder = new TemplateTargetBuilder();
 
         workspaceManager = new WorkspaceManager();
     }
@@ -97,7 +111,32 @@ public class WorkspaceProvider implements Provider {
 
     @Override
     public String urlFor(RequestContext request, Object key, Object param) {
-        return "";
+        final Target resolvedTarget = request.getTarget();
+
+        if (param instanceof TemplateParameters) {
+            final TemplateParameters<?> templateParameters = (TemplateParameters<?>) param;
+
+            templateParameters.set(URITemplateParameter.HOST_DOMAIN, hostConfiguration.getDomain());
+
+            //This is what happens when you don't use enumerations :p
+            if (resolvedTarget.getType() == TargetType.TYPE_SERVICE) {
+                templateParameters.set(URITemplateParameter.WORKSPACE_RESOURCE, resolvedTarget.getParameter(TargetResolverField.WORKSPACE.toString()));
+            } else if (resolvedTarget.getType() == TargetType.TYPE_COLLECTION) {
+                templateParameters.set(URITemplateParameter.WORKSPACE_RESOURCE, resolvedTarget.getParameter(TargetResolverField.WORKSPACE.toString()));
+                templateParameters.set(URITemplateParameter.FEED_RESOURCE, resolvedTarget.getParameter(TargetResolverField.FEED.toString()));
+            } else if (resolvedTarget.getType() == TargetType.TYPE_CATEGORIES) {
+                templateParameters.set(URITemplateParameter.WORKSPACE_RESOURCE, resolvedTarget.getParameter(TargetResolverField.WORKSPACE.toString()));
+                templateParameters.set(URITemplateParameter.FEED_RESOURCE, resolvedTarget.getParameter(TargetResolverField.FEED.toString()));
+            } else if (resolvedTarget.getType() == TargetType.TYPE_ENTRY) {
+                templateParameters.set(URITemplateParameter.WORKSPACE_RESOURCE, resolvedTarget.getParameter(TargetResolverField.WORKSPACE.toString()));
+                templateParameters.set(URITemplateParameter.FEED_RESOURCE, resolvedTarget.getParameter(TargetResolverField.FEED.toString()));
+                templateParameters.set(URITemplateParameter.ENTRY_RESOURCE, resolvedTarget.getParameter(TargetResolverField.ENTRY.toString()));
+            }
+
+
+        }
+
+        throw new IllegalArgumentException("URL Generation expects a TemplateParameters object");
     }
 
     @Override

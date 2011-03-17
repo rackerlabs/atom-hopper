@@ -1,5 +1,6 @@
 package net.jps.atom.hopper.util.uri.template;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,14 +12,20 @@ public class EnumKeyedTemplateParameters<T extends Enum<?>> implements TemplateP
     private final Map<String, Object> parameterMap;
 
     public EnumKeyedTemplateParameters(T temlpateTargetKey) {
-        this(temlpateTargetKey, new HashMap<String, Object>());
+        this.temlpateTargetKey = temlpateTargetKey;
+        this.parameterMap = new HashMap<String, Object>();
     }
 
     public EnumKeyedTemplateParameters(T temlpateTargetKey, Map<String, Object> parameterMap) {
-        this.temlpateTargetKey = temlpateTargetKey;
-        this.parameterMap = parameterMap;
+        this(temlpateTargetKey);
+
+        this.parameterMap.putAll(parameterMap);
     }
 
+    public EnumKeyedTemplateParameters(T temlpateTargetKey, TemplateParameters<T> parameters) {
+        this(temlpateTargetKey, parameters.toMap());
+    }
+    
     @Override
     public void set(URITemplateParameter parameter, Object value) {
         parameterMap.put(parameter.toString(), value);
@@ -26,7 +33,7 @@ public class EnumKeyedTemplateParameters<T extends Enum<?>> implements TemplateP
 
     @Override
     public Map<String, Object> toMap() {
-        return new HashMap(parameterMap);
+        return Collections.unmodifiableMap(parameterMap);
     }
 
     @Override

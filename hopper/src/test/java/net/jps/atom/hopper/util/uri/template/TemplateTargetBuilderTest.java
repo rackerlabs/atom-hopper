@@ -23,10 +23,10 @@ public class TemplateTargetBuilderTest {
 
         @Test
         public void shouldGenerateFeedURLWithDefaults() {
-            final URITemplateBuilder templateBuilder = new URITemplateBuilder("domain.com");
-            targetBuilder.setTemplate(TemplateTargetKey.FEED, templateBuilder.toFeedTemplate().toString());
+            targetBuilder.setTemplate(TemplateTargetKey.FEED, URITemplate.FEED.toString());
 
             final EnumKeyedTemplateParameters<TemplateTargetKey> params = new EnumKeyedTemplateParameters<TemplateTargetKey>(TemplateTargetKey.FEED);
+            params.set(URITemplateParameter.HOST_DOMAIN, "domain.com");
             params.set(URITemplateParameter.WORKSPACE_RESOURCE, "a");
             params.set(URITemplateParameter.FEED_RESOURCE, "b");
 
@@ -38,11 +38,10 @@ public class TemplateTargetBuilderTest {
 
         @Test
         public void shouldGenerateFeedURLWithMarker() {
-            final URITemplateBuilder templateBuilder = new URITemplateBuilder("domain.com");
-
-            targetBuilder.setTemplate(TemplateTargetKey.FEED, templateBuilder.toFeedTemplate().toString());
+            targetBuilder.setTemplate(TemplateTargetKey.FEED, URITemplate.FEED.toString());
 
             final EnumKeyedTemplateParameters<TemplateTargetKey> params = new EnumKeyedTemplateParameters<TemplateTargetKey>(TemplateTargetKey.FEED);
+            params.set(URITemplateParameter.HOST_DOMAIN, "domain.com");
             params.set(URITemplateParameter.WORKSPACE_RESOURCE, "a");
             params.set(URITemplateParameter.FEED_RESOURCE, "b");
             params.set(URITemplateParameter.MARKER, "12345");
@@ -55,11 +54,10 @@ public class TemplateTargetBuilderTest {
 
         @Test
         public void shouldGenerateFeedURLWithLimitAndMarker() {
-            final URITemplateBuilder templateBuilder = new URITemplateBuilder("domain.com");
-
-            targetBuilder.setTemplate(TemplateTargetKey.FEED, templateBuilder.toFeedTemplate().toString());
+            targetBuilder.setTemplate(TemplateTargetKey.FEED, URITemplate.FEED.toString());
 
             final EnumKeyedTemplateParameters<TemplateTargetKey> params = new EnumKeyedTemplateParameters<TemplateTargetKey>(TemplateTargetKey.FEED);
+            params.set(URITemplateParameter.HOST_DOMAIN, "domain.com");
             params.set(URITemplateParameter.WORKSPACE_RESOURCE, "a");
             params.set(URITemplateParameter.FEED_RESOURCE, "b");
             params.set(URITemplateParameter.MARKER, "12345");

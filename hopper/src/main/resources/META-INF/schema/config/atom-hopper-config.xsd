@@ -7,10 +7,11 @@
            xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
     <xs:element name="atom-hopper-config" type="hopcfg:Configuration" />
-    
+
     <xs:complexType name="Configuration">
         <xs:sequence>
             <xs:element name="defaults" type="hopcfg:ConfigurationDefaults" minOccurs="0" maxOccurs="1" />
+            <xs:element name="host" type="hopcfg:HostConfiguration" minOccurs="1" maxOccurs="1" />
             <xs:element name="workspace" type="hopcfg:WorkspaceConfiguration" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
     </xs:complexType>
@@ -30,6 +31,24 @@
         </xs:sequence>
     </xs:complexType>
 
+    <xs:complexType name="HostConfiguration">
+        <xs:annotation>
+            <xs:documentation>
+                <xhtml:p>
+                </xhtml:p>
+            </xs:documentation>
+        </xs:annotation>
+
+        <xs:attribute name="domain" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>
+                    <xhtml:p>
+                    </xhtml:p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
     <xs:complexType name="WorkspaceConfiguration">
         <xs:annotation>
             <xs:documentation>
@@ -45,7 +64,7 @@
             <xs:element name="feed-source" type="hopcfg:AdapterDescriptor" minOccurs="0" maxOccurs="1" />
             <xs:element name="feed-publisher" type="hopcfg:AdapterDescriptor" minOccurs="0" maxOccurs="1" />
             <xs:element name="archive" type="hopcfg:ArchivalConfiguration" minOccurs="0" maxOccurs="1" />
-            
+
             <xs:element name="feed" type="hopcfg:FeedConfiguration" minOccurs="1" maxOccurs="unbounded" />
         </xs:sequence>
 
@@ -59,7 +78,7 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        
+
         <xs:attribute name="resource" type="xs:string" use="required">
             <xs:annotation>
                 <xs:documentation>
@@ -84,7 +103,7 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        
+
         <xs:attribute name="resource" type="xs:string" use="required">
             <xs:annotation>
                 <xs:documentation>
@@ -118,12 +137,12 @@
                 <xhtml:p></xhtml:p>
             </xs:documentation>
         </xs:annotation>
-        
+
         <xs:sequence>
             <xs:element name="feed-archive-source" type="hopcfg:AdapterDescriptor" minOccurs="0" maxOccurs="1" />
             <xs:element name="feed-archiver" type="hopcfg:AdapterDescriptor" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
-        
+
         <xs:attribute name="interval-spec" type="xs:string" use="optional">
             <xs:annotation>
                 <xs:documentation>

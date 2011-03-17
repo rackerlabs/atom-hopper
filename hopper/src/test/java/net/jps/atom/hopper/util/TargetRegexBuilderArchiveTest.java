@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 import static org.junit.Assert.assertTrue;
 
 /**
- * 
+ *
  */
 @RunWith(Enclosed.class)
 public class TargetRegexBuilderArchiveTest {
@@ -19,7 +19,7 @@ public class TargetRegexBuilderArchiveTest {
         @Test
         public void shouldMatchAllArchiveVariations() {
             final TargetRegexBuilder target = feedRegexBuilder();
-            final Pattern targetRegex = Pattern.compile(target.toArchivePattern());
+            final Pattern targetRegex = Pattern.compile(target.toArchivesPattern());
 
             assertTrue("Should match plain year scoped archive URI - regex is: " + targetRegex.pattern(),
                     targetRegex.matcher(ARCHIVE_YEAR).matches());
@@ -92,7 +92,7 @@ public class TargetRegexBuilderArchiveTest {
             final TargetRegexBuilder target = feedRegexBuilder();
             target.setContextPath(CONTEXT_PATH);
 
-            final Pattern targetRegex = Pattern.compile(target.toArchivePattern());
+            final Pattern targetRegex = Pattern.compile(target.toArchivesPattern());
 
             assertTrue("Should match archive URI with a context root - regex is: " + targetRegex.pattern(),
                     targetRegex.matcher(addContextRoot(ARCHIVE_MINUTE)).matches());

@@ -16,7 +16,6 @@ import javax.xml.validation.SchemaFactory;
 import net.jps.atom.hopper.util.config.AbstractConfigurationParser;
 import net.jps.atom.hopper.util.config.ConfigurationParserException;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 public final class JAXBConfigurationParser<T> extends AbstractConfigurationParser<T> {
 

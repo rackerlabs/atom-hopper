@@ -13,8 +13,11 @@ import net.jps.atom.hopper.archive.impl.QueuedFeedArchivalService;
 import net.jps.atom.hopper.config.WorkspaceConfigProcessor;
 import net.jps.atom.hopper.exceptions.ContextAdapterResolutionException;
 import java.util.HashMap;
+import java.util.Map;
 import javax.servlet.ServletException;
 import net.jps.atom.hopper.config.v1_0.Configuration;
+import net.jps.atom.hopper.config.v1_0.ConfigurationDefaults;
+import net.jps.atom.hopper.config.v1_0.HostConfiguration;
 import net.jps.atom.hopper.config.v1_0.WorkspaceConfiguration;
 import net.jps.atom.hopper.servlet.ServletInitParameter;
 import net.jps.atom.hopper.util.config.ConfigurationParser;
@@ -23,7 +26,6 @@ import net.jps.atom.hopper.util.config.jaxb.JAXBConfigurationParser;
 import net.jps.atom.hopper.util.config.resource.uri.URIConfigurationResource;
 import org.apache.abdera.Abdera;
 import org.apache.abdera.protocol.server.Provider;
-import org.apache.abdera.protocol.server.impl.RegexTargetResolver;
 import org.apache.abdera.protocol.server.servlet.AbderaServlet;
 
 /**
@@ -37,7 +39,6 @@ import org.apache.abdera.protocol.server.servlet.AbderaServlet;
 public final class AtomHopperServlet extends AbderaServlet {
 
     private static final Logger LOG = new RCLogger(AtomHopperServlet.class);
-
     public static final String DEFAULT_CONFIGURATION_LOCATION = "/etc/atom-server/atom-server.cfg.xml";
 
     private final ConfigurationParser<Configuration> configurationParser;
@@ -117,10 +118,8 @@ public final class AtomHopperServlet extends AbderaServlet {
 
     @Override
     protected Provider createProvider() {
-        final WorkspaceProvider workspaceProvider = new WorkspaceProvider();
-
-        //TODO: Provide property injection via config here
-        workspaceProvider.init(abderaReference, new HashMap<String, String>());
+        final WorkspaceProvider workspaceProvider = new WorkspaceProvider(getHostConfiguration());
+        workspaceProvider.init(abderaReference, parseDefaults(configuration.getDefaults()));
 
         for (WorkspaceConfiguration workspaceCfg : configuration.getWorkspace()) {
             final WorkspaceConfigProcessor cfgProcessor = new WorkspaceConfigProcessor(
@@ -131,5 +130,28 @@ public final class AtomHopperServlet extends AbderaServlet {
         }
 
         return workspaceProvider;
+    }
+
+    private HostConfiguration getHostConfiguration() {
+        //Initial parsing validation rules specify that there must always be a host configuration
+        final HostConfiguration hostConfiguration = configuration.getHost();
+
+        if (StringUtilities.isBlank(hostConfiguration.getDomain())) {
+            throw new ConfigurationParserException("No domain specified in the host configuration. This is required for link generation. Halting.");
+        }
+
+        return hostConfiguration;
+    }
+
+    private Map<String, String> parseDefaults(ConfigurationDefaults defaults) {
+        final Map<String, String> parameterMap = new HashMap<String, String>();
+
+        if (defaults != null) {
+            if (defaults.getAuthor() != null && !StringUtilities.isBlank(defaults.getAuthor().getName())) {
+                parameterMap.put("author", defaults.getAuthor().getName());
+            }
+        }
+
+        return parameterMap;
     }
 }

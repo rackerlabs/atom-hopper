@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 import static org.junit.Assert.assertTrue;
 
 /**
- * 
+ *
  */
 @RunWith(Enclosed.class)
 public class TargetRegexBuilderFeedTest {
@@ -56,8 +56,8 @@ public class TargetRegexBuilderFeedTest {
 
         @Test
         public void shouldMatchAllCategoryVariations() {
-            final TargetRegexBuilder target = workspaceRegexBuilder();
-            final Pattern targetRegex = Pattern.compile(target.toCategoryPattern());
+            final TargetRegexBuilder target = feedRegexBuilder();
+            final Pattern targetRegex = Pattern.compile(target.toCategoriesPattern());
 
             assertTrue("Should match plain categories URI - regex is: " + targetRegex.pattern(),
                     targetRegex.matcher(CATEGORIES).matches());
@@ -67,10 +67,10 @@ public class TargetRegexBuilderFeedTest {
 
         @Test
         public void shouldMatchWithNonRootContextPath() {
-            final TargetRegexBuilder target = workspaceRegexBuilder();
+            final TargetRegexBuilder target = feedRegexBuilder();
             target.setContextPath(CONTEXT_PATH);
 
-            final Pattern targetRegex = Pattern.compile(target.toCategoryPattern());
+            final Pattern targetRegex = Pattern.compile(target.toCategoriesPattern());
 
             assertTrue("Should match categories URI with a context root - regex is: " + targetRegex.pattern(),
                     targetRegex.matcher(addContextRoot(CATEGORIES)).matches());

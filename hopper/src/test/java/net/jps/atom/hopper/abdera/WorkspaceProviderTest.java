@@ -10,6 +10,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 
 import java.util.HashMap;
+import net.jps.atom.hopper.config.v1_0.HostConfiguration;
 
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.*;
@@ -174,7 +175,7 @@ public class WorkspaceProviderTest {
         final WorkspaceManager workspaceManagerMock = mock(WorkspaceManager.class);
 
         private TestableWorkspaceProvider() {
-            super();
+            super(new HostConfiguration());
         }
 
         @Override
