@@ -6,7 +6,7 @@ import java.util.Map;
 
 //TODO: Consider making domain scoped child classes with helper methods
 //      Something like setMarker(String markerId) or setPageLimit(int pageLimit)
-public class EnumKeyedTemplateParameters<T extends Enum<?>> implements TemplateParameters {
+public class EnumKeyedTemplateParameters<T extends Enum> implements TemplateParameters<T> {
 
     private final T temlpateTargetKey;
     private final Map<String, Object> parameterMap;
@@ -25,7 +25,7 @@ public class EnumKeyedTemplateParameters<T extends Enum<?>> implements TemplateP
     public EnumKeyedTemplateParameters(T temlpateTargetKey, TemplateParameters<T> parameters) {
         this(temlpateTargetKey, parameters.toMap());
     }
-    
+
     @Override
     public void set(URITemplateParameter parameter, Object value) {
         parameterMap.put(parameter.toString(), value);

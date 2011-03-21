@@ -12,7 +12,9 @@ import java.util.Map;
 import javax.security.auth.Subject;
 import net.jps.atom.hopper.adapter.TargetResolverField;
 import net.jps.atom.hopper.config.v1_0.HostConfiguration;
+import net.jps.atom.hopper.util.uri.template.EnumKeyedTemplateParameters;
 import net.jps.atom.hopper.util.uri.template.TemplateParameters;
+import net.jps.atom.hopper.util.uri.template.URITemplate;
 import net.jps.atom.hopper.util.uri.template.URITemplateParameter;
 
 import org.apache.abdera.Abdera;
@@ -40,14 +42,12 @@ import org.apache.abdera.protocol.server.processors.ServiceRequestProcessor;
 public class WorkspaceProvider implements Provider {
 
     private static final Logger LOG = new RCLogger(WorkspaceProvider.class);
-
     private final Map<TargetType, RequestProcessor> requestProcessors;
     private final List<Filter> filters;
     private final WorkspaceManager workspaceManager;
     private final RegexTargetResolver targetResolver;
     private final HostConfiguration hostConfiguration;
     private final TemplateTargetBuilder templateTargetBuilder;
-
     private Map<String, String> properties;
     private Abdera abdera;
 
@@ -66,6 +66,10 @@ public class WorkspaceProvider implements Provider {
         requestProcessors.put(TargetType.TYPE_ENTRY, new EntryRequestProcessor());
 
         templateTargetBuilder = new TemplateTargetBuilder();
+        templateTargetBuilder.setTemplate(URITemplate.WORKSPACE, URITemplate.WORKSPACE.toString());
+        templateTargetBuilder.setTemplate(URITemplate.FEED, URITemplate.FEED.toString());
+        templateTargetBuilder.setTemplate(URITemplate.FEED_CATEGORIES, URITemplate.FEED_CATEGORIES.toString());
+        templateTargetBuilder.setTemplate(URITemplate.FEED_ARCHIVES, URITemplate.FEED_ARCHIVES.toString());
 
         workspaceManager = new WorkspaceManager();
     }
@@ -113,8 +117,10 @@ public class WorkspaceProvider implements Provider {
     public String urlFor(RequestContext request, Object key, Object param) {
         final Target resolvedTarget = request.getTarget();
 
-        if (param instanceof TemplateParameters) {
-            final TemplateParameters<?> templateParameters = (TemplateParameters<?>) param;
+        if (param == null || param instanceof TemplateParameters) {
+            final TemplateParameters templateParameters = param != null
+                    ? (TemplateParameters) param
+                    : new EnumKeyedTemplateParameters((Enum) key);
 
             templateParameters.set(URITemplateParameter.HOST_DOMAIN, hostConfiguration.getDomain());
 
@@ -133,9 +139,10 @@ public class WorkspaceProvider implements Provider {
                 templateParameters.set(URITemplateParameter.ENTRY_RESOURCE, resolvedTarget.getParameter(TargetResolverField.ENTRY.toString()));
             }
 
-
+            return templateTargetBuilder.urlFor(request, key, templateParameters.toMap());
         }
 
+        //Support maps eventually for this
         throw new IllegalArgumentException("URL Generation expects a TemplateParameters object");
     }
 

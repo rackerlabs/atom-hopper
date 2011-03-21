@@ -17,6 +17,8 @@ import net.jps.atom.hopper.adapter.request.PostEntryRequest;
 import net.jps.atom.hopper.adapter.request.PutEntryRequest;
 import net.jps.atom.hopper.response.AdapterResponse;
 import net.jps.atom.hopper.response.EmptyBody;
+import net.jps.atom.hopper.util.uri.template.EnumKeyedTemplateParameters;
+import net.jps.atom.hopper.util.uri.template.URITemplate;
 import org.apache.abdera.model.Categories;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
@@ -41,7 +43,7 @@ public class InMemoryFeedAdapter implements FeedSource, FeedPublisher {
                 return ResponseBuilder.found(entry.getEntry());
             }
         }
-        
+
         return ResponseBuilder.notFound();
     }
 
@@ -50,6 +52,8 @@ public class InMemoryFeedAdapter implements FeedSource, FeedPublisher {
         final Feed feed = getFeedRequest.getRequestContext().getAbdera().newFeed();
 
         feed.setTitle("A Feed");
+        feed.addLink(getFeedRequest.urlFor(
+                new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED))).setRel("self");
 
         for (AtomEntry ae : liveFeed.values()) {
             feed.addEntry(ae.getEntry());
