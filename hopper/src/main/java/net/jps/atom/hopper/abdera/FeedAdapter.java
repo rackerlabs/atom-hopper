@@ -22,7 +22,6 @@ import org.apache.abdera.protocol.server.TargetType;
 import java.util.HashMap;
 import java.util.Map;
 
-//TODO: Recompose and clean up this class
 public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
 
 //    private static final Logger LOG = new RCLogger(FeedAdapter.class);
@@ -106,6 +105,7 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
     @Override
     //TODO: Reimplement this - getting there
     public String getId(RequestContext request) {
+
 //        return new StringBuilder("tag:").append(feedConfig.getFullUri()).append(",").append(CALENDAR_INSTANCE.get(Calendar.YEAR)).append(":").append(config.getBaseUrn()).toString();
         return "TODO: ID";
     }

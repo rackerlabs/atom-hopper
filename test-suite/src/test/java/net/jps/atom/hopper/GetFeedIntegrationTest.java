@@ -39,7 +39,7 @@ public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
         public void shouldReturnEmptyFeed() throws Exception {
             final HttpMethod getFeedMethod = newGetFeedMethod();
             assertEquals("Getting a feed should return a 200", HttpStatusCode.OK.intValue(), httpClient.executeMethod(getFeedMethod));
-//
+            
             System.out.println(new String(getFeedMethod.getResponseBody()));
         }
     }
