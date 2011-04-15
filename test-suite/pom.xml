@@ -27,16 +27,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.rackspace.cloud.commons</groupId>
-            <artifactId>logging</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.rackspace.cloud.commons</groupId>
-            <artifactId>configuration</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>net.jps.fava</groupId>
             <artifactId>fava-lib</artifactId>
         </dependency>

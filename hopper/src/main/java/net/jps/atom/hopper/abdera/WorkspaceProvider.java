@@ -1,35 +1,16 @@
 package net.jps.atom.hopper.abdera;
 
-import com.rackspace.cloud.commons.logging.Logger;
-import com.rackspace.cloud.commons.logging.RCLogger;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import javax.security.auth.Subject;
 import net.jps.atom.hopper.adapter.TargetResolverField;
 import net.jps.atom.hopper.config.v1_0.HostConfiguration;
+import net.jps.atom.hopper.util.log.Logger;
+import net.jps.atom.hopper.util.log.RCLogger;
 import net.jps.atom.hopper.util.uri.template.EnumKeyedTemplateParameters;
 import net.jps.atom.hopper.util.uri.template.TemplateParameters;
 import net.jps.atom.hopper.util.uri.template.URITemplate;
 import net.jps.atom.hopper.util.uri.template.URITemplateParameter;
-
 import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Service;
-import org.apache.abdera.protocol.server.CollectionAdapter;
-import org.apache.abdera.protocol.server.Filter;
-import org.apache.abdera.protocol.server.Provider;
-import org.apache.abdera.protocol.server.ProviderHelper;
-import org.apache.abdera.protocol.server.RequestContext;
-import org.apache.abdera.protocol.server.RequestProcessor;
-import org.apache.abdera.protocol.server.ResponseContext;
-import org.apache.abdera.protocol.server.Target;
-import org.apache.abdera.protocol.server.TargetType;
-import org.apache.abdera.protocol.server.Transactional;
-import org.apache.abdera.protocol.server.WorkspaceInfo;
+import org.apache.abdera.protocol.server.*;
 import org.apache.abdera.protocol.server.context.ResponseContextException;
 import org.apache.abdera.protocol.server.impl.RegexTargetResolver;
 import org.apache.abdera.protocol.server.impl.SimpleSubjectResolver;
@@ -38,6 +19,9 @@ import org.apache.abdera.protocol.server.processors.CategoriesRequestProcessor;
 import org.apache.abdera.protocol.server.processors.CollectionRequestProcessor;
 import org.apache.abdera.protocol.server.processors.EntryRequestProcessor;
 import org.apache.abdera.protocol.server.processors.ServiceRequestProcessor;
+
+import javax.security.auth.Subject;
+import java.util.*;
 
 public class WorkspaceProvider implements Provider {
 

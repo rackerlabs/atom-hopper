@@ -1,32 +1,33 @@
 package net.jps.atom.hopper;
 
-import com.rackspace.cloud.commons.logging.Logger;
-import com.rackspace.cloud.commons.logging.RCLogger;
 import com.rackspace.cloud.commons.util.StringUtilities;
 import com.rackspace.cloud.commons.util.servlet.context.ApplicationContextAdapter;
-import java.net.URI;
-import java.net.URISyntaxException;
-import net.jps.atom.hopper.exceptions.ServletInitException;
 import net.jps.atom.hopper.abdera.WorkspaceProvider;
 import net.jps.atom.hopper.archive.FeedArchivalService;
 import net.jps.atom.hopper.archive.impl.QueuedFeedArchivalService;
 import net.jps.atom.hopper.config.WorkspaceConfigProcessor;
-import net.jps.atom.hopper.exceptions.ContextAdapterResolutionException;
-import java.util.HashMap;
-import java.util.Map;
-import javax.servlet.ServletException;
 import net.jps.atom.hopper.config.v1_0.Configuration;
 import net.jps.atom.hopper.config.v1_0.ConfigurationDefaults;
 import net.jps.atom.hopper.config.v1_0.HostConfiguration;
 import net.jps.atom.hopper.config.v1_0.WorkspaceConfiguration;
+import net.jps.atom.hopper.exceptions.ContextAdapterResolutionException;
+import net.jps.atom.hopper.exceptions.ServletInitException;
 import net.jps.atom.hopper.servlet.ServletInitParameter;
 import net.jps.atom.hopper.util.config.ConfigurationParser;
 import net.jps.atom.hopper.util.config.ConfigurationParserException;
 import net.jps.atom.hopper.util.config.jaxb.JAXBConfigurationParser;
 import net.jps.atom.hopper.util.config.resource.uri.URIConfigurationResource;
+import net.jps.atom.hopper.util.log.Logger;
+import net.jps.atom.hopper.util.log.RCLogger;
 import org.apache.abdera.Abdera;
 import org.apache.abdera.protocol.server.Provider;
 import org.apache.abdera.protocol.server.servlet.AbderaServlet;
+
+import javax.servlet.ServletException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class is the entry point for the atom server application. This servlet is

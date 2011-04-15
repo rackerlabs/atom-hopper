@@ -1,30 +1,29 @@
 package net.jps.atom.hopper.config;
 
-import net.jps.atom.hopper.abdera.WorkspaceHandler;
-import com.rackspace.cloud.commons.logging.RCLogger;
-import com.rackspace.cloud.commons.logging.Logger;
 import com.rackspace.cloud.commons.util.StringUtilities;
 import com.rackspace.cloud.commons.util.servlet.context.ApplicationContextAdapter;
-import net.jps.atom.hopper.abdera.FeedAdapter;
-import net.jps.atom.hopper.archive.FeedArchivalService;
-import net.jps.atom.hopper.adapter.archive.FeedArchiveSource;
-
-import java.util.LinkedList;
-import java.util.List;
 import net.jps.atom.hopper.abdera.ArchiveAdapter;
+import net.jps.atom.hopper.abdera.FeedAdapter;
 import net.jps.atom.hopper.abdera.TargetAwareAbstractCollectionAdapter;
+import net.jps.atom.hopper.abdera.WorkspaceHandler;
 import net.jps.atom.hopper.adapter.FeedPublisher;
 import net.jps.atom.hopper.adapter.FeedSource;
+import net.jps.atom.hopper.adapter.archive.FeedArchiveSource;
 import net.jps.atom.hopper.adapter.archive.FeedArchiver;
+import net.jps.atom.hopper.archive.FeedArchivalService;
 import net.jps.atom.hopper.config.v1_0.AdapterDescriptor;
 import net.jps.atom.hopper.config.v1_0.ArchivalConfiguration;
 import net.jps.atom.hopper.config.v1_0.FeedConfiguration;
 import net.jps.atom.hopper.config.v1_0.WorkspaceConfiguration;
 import net.jps.atom.hopper.util.TargetRegexBuilder;
 import net.jps.atom.hopper.util.context.AdapterGetter;
-
+import net.jps.atom.hopper.util.log.Logger;
+import net.jps.atom.hopper.util.log.RCLogger;
 import org.apache.abdera.protocol.server.TargetType;
 import org.apache.abdera.protocol.server.impl.RegexTargetResolver;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * I eat configurations.

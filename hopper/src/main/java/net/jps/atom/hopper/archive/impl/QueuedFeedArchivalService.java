@@ -1,8 +1,11 @@
 package net.jps.atom.hopper.archive.impl;
 
-import com.rackspace.cloud.commons.logging.Logger;
-import com.rackspace.cloud.commons.logging.RCLogger;
+import net.jps.atom.hopper.adapter.FeedSource;
+import net.jps.atom.hopper.adapter.archive.FeedArchiver;
 import net.jps.atom.hopper.archive.FeedArchivalService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
@@ -10,8 +13,6 @@ import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import net.jps.atom.hopper.adapter.FeedSource;
-import net.jps.atom.hopper.adapter.archive.FeedArchiver;
 
 /**
  *
@@ -19,7 +20,7 @@ import net.jps.atom.hopper.adapter.archive.FeedArchiver;
  */
 public class QueuedFeedArchivalService extends TimerTask implements FeedArchivalService {
 
-    private static final Logger LOG = new RCLogger(QueuedFeedArchivalService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(QueuedFeedArchivalService.class);
     
     //In milliseconds
     public static final long QUEUE_SCAN_INTERVAL = 60000;

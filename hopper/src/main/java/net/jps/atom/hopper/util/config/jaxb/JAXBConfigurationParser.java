@@ -1,21 +1,18 @@
 package net.jps.atom.hopper.util.config.jaxb;
 
-import com.rackspace.cloud.commons.logging.Logger;
-import com.rackspace.cloud.commons.logging.RCLogger;
-import java.io.IOException;
-import java.net.URL;
+import net.jps.atom.hopper.util.config.AbstractConfigurationParser;
+import net.jps.atom.hopper.util.config.ConfigurationParserException;
+import net.jps.atom.hopper.util.log.Logger;
+import net.jps.atom.hopper.util.log.RCLogger;
+import org.xml.sax.SAXException;
+
 import javax.xml.XMLConstants;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.UnmarshalException;
-import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.*;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
-import net.jps.atom.hopper.util.config.AbstractConfigurationParser;
-import net.jps.atom.hopper.util.config.ConfigurationParserException;
-import org.xml.sax.SAXException;
+import java.io.IOException;
+import java.net.URL;
 
 public final class JAXBConfigurationParser<T> extends AbstractConfigurationParser<T> {
 
