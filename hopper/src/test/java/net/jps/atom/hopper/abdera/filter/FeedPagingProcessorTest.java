@@ -1,6 +1,5 @@
 package net.jps.atom.hopper.abdera.filter;
 
-import com.rackspace.cloud.commons.util.http.HttpStatusCode;
 import net.jps.atom.hopper.response.AdapterResponse;
 import net.jps.atom.hopper.response.FeedSourceAdapterResponse;
 import org.apache.abdera.Abdera;
@@ -12,6 +11,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
+import org.springframework.http.HttpStatus;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -165,7 +165,7 @@ public class FeedPagingProcessorTest {
                 feed.addEntry(entry);
             }
 
-            return new FeedSourceAdapterResponse<Feed>(feed, HttpStatusCode.OK, "");
+            return new FeedSourceAdapterResponse<Feed>(feed, HttpStatus.OK, "");
         }
 
         public RequestContext requestContext() {

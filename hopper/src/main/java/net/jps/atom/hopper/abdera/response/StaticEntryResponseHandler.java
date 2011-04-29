@@ -1,11 +1,12 @@
 package net.jps.atom.hopper.abdera.response;
 
-import java.util.Date;
 import net.jps.atom.hopper.response.AdapterResponse;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.protocol.server.ProviderHelper;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.ResponseContext;
+
+import java.util.Date;
 
 /**
  *
@@ -24,7 +25,7 @@ public class StaticEntryResponseHandler extends AbstractResponseHandler<Entry> {
         switch (adapterResponse.getResponseStatus()) {
             case OK:
             case CREATED:
-                return ProviderHelper.returnBase(adapterResponse.getBody(), adapterResponse.getResponseStatus().intValue(), lastUpdated);
+                return ProviderHelper.returnBase(adapterResponse.getBody(), adapterResponse.getResponseStatus().value(), lastUpdated);
 
             case NOT_FOUND:
                 return ProviderHelper.notfound(rc, adapterResponse.getMessage());

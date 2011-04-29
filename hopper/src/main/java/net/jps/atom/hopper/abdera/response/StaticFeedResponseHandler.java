@@ -1,12 +1,13 @@
 package net.jps.atom.hopper.abdera.response;
 
-import java.util.Date;
 import net.jps.atom.hopper.abdera.filter.FeedPagingProcessor;
 import net.jps.atom.hopper.response.AdapterResponse;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.ProviderHelper;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.ResponseContext;
+
+import java.util.Date;
 
 /**
  *
@@ -25,7 +26,7 @@ public class StaticFeedResponseHandler extends AbstractResponseHandler<Feed> {
         switch (adapterResponse.getResponseStatus()) {
             case OK:
                 processResponse(rc, adapterResponse);
-                return ProviderHelper.returnBase(adapterResponse.getBody(), adapterResponse.getResponseStatus().intValue(), lastUpdated);
+                return ProviderHelper.returnBase(adapterResponse.getBody(), adapterResponse.getResponseStatus().value(), lastUpdated);
             
             case NOT_FOUND:
                 return ProviderHelper.notfound(rc, adapterResponse.getMessage());

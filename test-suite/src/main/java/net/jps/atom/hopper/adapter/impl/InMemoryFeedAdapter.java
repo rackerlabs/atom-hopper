@@ -1,6 +1,5 @@
 package net.jps.atom.hopper.adapter.impl;
 
-import com.rackspace.cloud.commons.util.http.HttpStatusCode;
 import net.jps.atom.hopper.adapter.FeedPublisher;
 import net.jps.atom.hopper.adapter.FeedSource;
 import net.jps.atom.hopper.adapter.ResponseBuilder;
@@ -13,6 +12,7 @@ import org.apache.abdera.model.Categories;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.http.HttpStatus;
 
 import java.util.Calendar;
 import java.util.Collections;
@@ -78,7 +78,7 @@ public class InMemoryFeedAdapter implements FeedSource, FeedPublisher {
         final Entry entryToPost = postEntryRequest.getEntry();
 
         if (entryToPost.getId() == null) {
-            return ResponseBuilder.reply(HttpStatusCode.BAD_REQUEST, "Entry should supply an id");
+            return ResponseBuilder.reply(HttpStatus.BAD_REQUEST, "Entry should supply an id");
         } else {
             liveFeed.put(entryToPost.getId().toString(), new AtomEntry(entryToPost));
         }

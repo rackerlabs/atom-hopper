@@ -1,6 +1,5 @@
 package net.jps.atom.hopper.abdera;
 
-import com.rackspace.cloud.commons.util.http.HttpStatusCode;
 import net.jps.atom.hopper.adapter.FeedPublisher;
 import net.jps.atom.hopper.adapter.FeedSource;
 import net.jps.atom.hopper.adapter.request.*;
@@ -16,14 +15,15 @@ import org.apache.abdera.parser.stax.FOMEntry;
 import org.apache.abdera.parser.stax.FOMFeed;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.ResponseContext;
+import org.apache.abdera.protocol.server.Target;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
+import org.springframework.http.HttpStatus;
 
 import java.io.IOException;
 import java.util.UUID;
-import org.apache.abdera.protocol.server.Target;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.fail;
@@ -96,7 +96,7 @@ public class FeedAdapterTest {
         @Test
         public void shouldReturnEntryResponse() throws IOException {
             FeedAdapter feedAdapter = feedAdapter(true);
-            when(feedPublisher.deleteEntry(any(DeleteEntryRequest.class))).thenReturn(adapterResponseForEmptyBody(HttpStatusCode.OK));
+            when(feedPublisher.deleteEntry(any(DeleteEntryRequest.class))).thenReturn(adapterResponseForEmptyBody(HttpStatus.OK));
             ResponseContext responseContext = feedAdapter.deleteEntry(REQUEST_CONTEXT);
             assertEquals("Should respond with 204", 204, responseContext.getStatus());
         }
@@ -195,7 +195,7 @@ public class FeedAdapterTest {
             return new FeedSourceAdapterResponse<Feed>(feed());
         }
 
-        public AdapterResponse<EmptyBody> adapterResponseForEmptyBody(HttpStatusCode status) {
+        public AdapterResponse<EmptyBody> adapterResponseForEmptyBody(HttpStatus status) {
             return new FeedSourceAdapterResponse<EmptyBody>(EmptyBody.getInstance(), status, null);
         }
 

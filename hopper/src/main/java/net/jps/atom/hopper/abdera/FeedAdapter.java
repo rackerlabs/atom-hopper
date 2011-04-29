@@ -1,7 +1,5 @@
 package net.jps.atom.hopper.abdera;
 
-import com.rackspace.cloud.commons.util.http.HttpStatusCode;
-import java.util.Calendar;
 import net.jps.atom.hopper.abdera.response.ResponseHandler;
 import net.jps.atom.hopper.abdera.response.StaticEmptyBodyResponseHandler;
 import net.jps.atom.hopper.abdera.response.StaticEntryResponseHandler;
@@ -18,7 +16,9 @@ import org.apache.abdera.protocol.server.ProviderHelper;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.ResponseContext;
 import org.apache.abdera.protocol.server.TargetType;
+import org.springframework.http.HttpStatus;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -89,7 +89,7 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
             //TODO: Cache this
             return ProviderHelper.returnBase(feedSource.getCategories(
                     new GetCategoriesRequestImpl(request)).getBody(),
-                    HttpStatusCode.OK.intValue(), Calendar.getInstance().getTime());
+                    HttpStatus.OK.value(), Calendar.getInstance().getTime());
         } catch (Exception ex) {
             return ProviderHelper.servererror(request, ex.getMessage(), ex);
         }

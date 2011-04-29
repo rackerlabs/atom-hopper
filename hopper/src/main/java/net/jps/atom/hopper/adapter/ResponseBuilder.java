@@ -1,13 +1,12 @@
 package net.jps.atom.hopper.adapter;
 
-import com.rackspace.cloud.commons.util.http.HttpStatusCode;
+import net.jps.atom.hopper.response.AdapterResponse;
 import net.jps.atom.hopper.response.EmptyBody;
 import net.jps.atom.hopper.response.FeedSourceAdapterResponse;
-import net.jps.atom.hopper.response.AdapterResponse;
 import org.apache.abdera.model.Categories;
-
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
+import org.springframework.http.HttpStatus;
 
 /**
  * Utility class designed to make generating an AdapterResponse easy
@@ -22,38 +21,38 @@ public final class ResponseBuilder {
     }
 
     public static <T> AdapterResponse<T> notFound(String message) {
-        return new FeedSourceAdapterResponse<T>(null, HttpStatusCode.NOT_FOUND, message);
+        return new FeedSourceAdapterResponse<T>(null, HttpStatus.NOT_FOUND, message);
     }
 
     public static AdapterResponse<EmptyBody> ok() {
-        return new FeedSourceAdapterResponse<EmptyBody>(EmptyBody.getInstance(), HttpStatusCode.OK, "");
+        return new FeedSourceAdapterResponse<EmptyBody>(EmptyBody.getInstance(), HttpStatus.OK, "");
     }
 
     public static AdapterResponse<Feed> found(Feed f) {
-        return new FeedSourceAdapterResponse<Feed>(f, HttpStatusCode.OK, "");
+        return new FeedSourceAdapterResponse<Feed>(f, HttpStatus.OK, "");
     }
 
     public static AdapterResponse<Categories> found(Categories c) {
-        return new FeedSourceAdapterResponse<Categories>(c, HttpStatusCode.OK, "");
+        return new FeedSourceAdapterResponse<Categories>(c, HttpStatus.OK, "");
     }
 
     public static AdapterResponse<Entry> found(Entry e) {
-        return new FeedSourceAdapterResponse<Entry>(e, HttpStatusCode.OK, "");
+        return new FeedSourceAdapterResponse<Entry>(e, HttpStatus.OK, "");
     }
 
-    public static <T> AdapterResponse<T> reply(HttpStatusCode status, T payload, String message) {
+    public static <T> AdapterResponse<T> reply(HttpStatus status, T payload, String message) {
         return new FeedSourceAdapterResponse<T>(payload, status, message != null ? message : "");
     }
 
-    public static <T> AdapterResponse<T> reply(HttpStatusCode status, String message) {
+    public static <T> AdapterResponse<T> reply(HttpStatus status, String message) {
         return reply(status, null, message);
     }
 
-    public static <T> AdapterResponse<T> reply(HttpStatusCode status, T payload) {
+    public static <T> AdapterResponse<T> reply(HttpStatus status, T payload) {
         return reply(status, payload, null);
     }
 
-    public static AdapterResponse<EmptyBody> reply(HttpStatusCode status) {
+    public static AdapterResponse<EmptyBody> reply(HttpStatus status) {
         return reply(status, EmptyBody.getInstance(), null);
     }
 
@@ -62,7 +61,7 @@ public final class ResponseBuilder {
     }
 
     public static <T> AdapterResponse<T> error(String message) {
-        return new FeedSourceAdapterResponse<T>(null, HttpStatusCode.INTERNAL_SERVER_ERROR, message);
+        return new FeedSourceAdapterResponse<T>(null, HttpStatus.INTERNAL_SERVER_ERROR, message);
     }
 
     public static AdapterResponse<Entry> updated(Entry e) {
@@ -70,7 +69,7 @@ public final class ResponseBuilder {
     }
 
     public static AdapterResponse<Entry> updated(Entry e, String message) {
-        return new FeedSourceAdapterResponse<Entry>(e, HttpStatusCode.ACCEPTED, message);
+        return new FeedSourceAdapterResponse<Entry>(e, HttpStatus.ACCEPTED, message);
     }
 
     public static AdapterResponse<Entry> created(Entry e) {
@@ -78,6 +77,6 @@ public final class ResponseBuilder {
     }
 
     public static AdapterResponse<Entry> created(Entry e, String message) {
-        return new FeedSourceAdapterResponse<Entry>(e, HttpStatusCode.CREATED, message);
+        return new FeedSourceAdapterResponse<Entry>(e, HttpStatus.CREATED, message);
     }
 }

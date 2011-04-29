@@ -1,15 +1,16 @@
 package net.jps.atom.hopper.response;
 
-import com.rackspace.cloud.commons.util.http.HttpStatusCode;
+import org.springframework.http.HttpStatus;
+
 import java.util.EnumMap;
 import java.util.Map;
 
 public class FeedSourceAdapterResponse<T> implements AdapterResponse<T> {
 
-    public static final HttpStatusCode DEFAULT_HTTP_STATUS_CODE = HttpStatusCode.OK;
+    public static final HttpStatus DEFAULT_HTTP_STATUS_CODE = HttpStatus.OK;
 
     private final T responseBody;
-    private final HttpStatusCode statusCode;
+    private final HttpStatus statusCode;
     private final String message;
     
     private Map<ResponseParameter, String> parameters;
@@ -18,7 +19,7 @@ public class FeedSourceAdapterResponse<T> implements AdapterResponse<T> {
         this(responseBody, DEFAULT_HTTP_STATUS_CODE, "");
     }
 
-    public FeedSourceAdapterResponse(T responseBody, HttpStatusCode statusCode, String message) {
+    public FeedSourceAdapterResponse(T responseBody, HttpStatus statusCode, String message) {
         this.responseBody = responseBody;
         this.statusCode = statusCode;
         this.message = message;
@@ -61,7 +62,7 @@ public class FeedSourceAdapterResponse<T> implements AdapterResponse<T> {
     }
 
     @Override
-    public HttpStatusCode getResponseStatus() {
+    public HttpStatus getResponseStatus() {
         return statusCode;
     }
 }

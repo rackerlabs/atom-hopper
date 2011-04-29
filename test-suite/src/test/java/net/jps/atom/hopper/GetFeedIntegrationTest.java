@@ -1,16 +1,16 @@
 package net.jps.atom.hopper;
 
-import com.rackspace.cloud.commons.util.http.HttpStatusCode;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.*;
+import static junit.framework.Assert.assertEquals;
 
 @RunWith(Enclosed.class)
 public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
@@ -38,7 +38,7 @@ public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
         @Test
         public void shouldReturnEmptyFeed() throws Exception {
             final HttpMethod getFeedMethod = newGetFeedMethod();
-            assertEquals("Getting a feed should return a 200", HttpStatusCode.OK.intValue(), httpClient.executeMethod(getFeedMethod));
+            assertEquals("Getting a feed should return a 200", HttpStatus.SC_OK, httpClient.executeMethod(getFeedMethod));
             
             System.out.println(new String(getFeedMethod.getResponseBody()));
         }
@@ -49,10 +49,10 @@ public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
         @Test
         public void shouldReturnFeedWithOneElementAfterPublishingAnEntry() throws Exception {
             final HttpMethod postMethod = newPostEntryMethod("1");
-            assertEquals("Getting a feed should return a 201", HttpStatusCode.CREATED.intValue(), httpClient.executeMethod(postMethod));
+            assertEquals("Getting a feed should return a 201", HttpStatus.SC_CREATED, httpClient.executeMethod(postMethod));
 
             final HttpMethod getEntryMethod = newGetEntryMethod("1");
-            assertEquals("Getting a recently added entry should return a 200", HttpStatusCode.OK.intValue(), httpClient.executeMethod(getEntryMethod));
+            assertEquals("Getting a recently added entry should return a 200", HttpStatus.SC_OK, httpClient.executeMethod(getEntryMethod));
         }
     }
 }

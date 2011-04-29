@@ -1,6 +1,6 @@
 package net.jps.atom.hopper.response;
 
-import com.rackspace.cloud.commons.util.http.HttpStatusCode;
+import org.springframework.http.HttpStatus;
 
 public interface AdapterResponse<T> {
 
@@ -37,5 +37,5 @@ public interface AdapterResponse<T> {
      * 
      * @return 
      */
-    HttpStatusCode getResponseStatus();
+    HttpStatus getResponseStatus();
 }
