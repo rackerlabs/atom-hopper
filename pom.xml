@@ -42,12 +42,6 @@
             </dependency>
 
             <dependency>
-                <groupId>com.rackspace.cloud.commons</groupId>
-                <artifactId>utilities</artifactId>
-                <version>1.0.5</version>
-            </dependency>
-
-            <dependency>
                 <groupId>net.jps.fava</groupId>
                 <artifactId>fava-lib</artifactId>
                 <version>1.0.6</version>
