@@ -25,7 +25,7 @@
 
         <init-param>
             <param-name>context-adapter-class</param-name>
-            <param-value>com.rackspace.cloud.commons.util.servlet.context.impl.ServletSpringContext</param-value>
+            <param-value>net.jps.atom.hopper.servlet.context.impl.ServletSpringContext</param-value>
         </init-param>
     </servlet>
 
