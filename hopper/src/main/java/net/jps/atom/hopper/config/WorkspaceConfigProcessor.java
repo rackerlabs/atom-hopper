@@ -1,6 +1,5 @@
 package net.jps.atom.hopper.config;
 
-import com.rackspace.cloud.commons.util.StringUtilities;
 import com.rackspace.cloud.commons.util.servlet.context.ApplicationContextAdapter;
 import net.jps.atom.hopper.abdera.ArchiveAdapter;
 import net.jps.atom.hopper.abdera.FeedAdapter;
@@ -21,6 +20,7 @@ import net.jps.atom.hopper.util.log.Logger;
 import net.jps.atom.hopper.util.log.RCLogger;
 import org.apache.abdera.protocol.server.TargetType;
 import org.apache.abdera.protocol.server.impl.RegexTargetResolver;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -48,7 +48,7 @@ public class WorkspaceConfigProcessor {
 
         targetRegexGenerator = new TargetRegexBuilder();
 
-        if (!StringUtilities.isBlank(contextPath)) {
+        if (!StringUtils.isBlank(contextPath)) {
             targetRegexGenerator.setContextPath(contextPath);
         }
     }
@@ -66,7 +66,7 @@ public class WorkspaceConfigProcessor {
     private List<TargetAwareAbstractCollectionAdapter> assembleFeeds(List<FeedConfiguration> feedServices) {
         final List<TargetAwareAbstractCollectionAdapter> collections = new LinkedList<TargetAwareAbstractCollectionAdapter>();
 
-        final String workspaceName = StringUtilities.trim(config.getResource(), "/");
+        final String workspaceName = StringUtils.strip(config.getResource(), "/");
 
         targetRegexGenerator.setWorkspace(workspaceName);
 
@@ -85,11 +85,11 @@ public class WorkspaceConfigProcessor {
     public <T> T getFromApplicationContext(String referenceName, String className, Class<T> expectedClass) {
         T resolvedReference = null;
 
-        if (!StringUtilities.isBlank(referenceName)) {
+        if (!StringUtils.isBlank(referenceName)) {
             resolvedReference = adapterGetter.getByName(referenceName, expectedClass);
         }
 
-        if (resolvedReference == null && !StringUtilities.isBlank(className)) {
+        if (resolvedReference == null && !StringUtils.isBlank(className)) {
             try {
                 resolvedReference = adapterGetter.getByClassDefinition(Class.forName(className), expectedClass);
             } catch (ClassNotFoundException cnfe) {

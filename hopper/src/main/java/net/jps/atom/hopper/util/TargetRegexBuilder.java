@@ -1,7 +1,7 @@
 package net.jps.atom.hopper.util;
 
-import com.rackspace.cloud.commons.util.StringUtilities;
 import net.jps.atom.hopper.adapter.TargetResolverField;
+import org.apache.commons.lang.StringUtils;
 
 public class TargetRegexBuilder {
 
@@ -45,11 +45,11 @@ public class TargetRegexBuilder {
     }
 
     public void setFeed(String feed) {
-        this.feed = StringUtilities.trim(feed, "/");
+        this.feed = StringUtils.strip(feed, "/");
     }
 
     public void setWorkspace(String workspace) {
-        this.workspace = StringUtilities.trim(workspace, "/");
+        this.workspace = StringUtils.strip(workspace, "/");
     }
 
     public String getContextPath() {
@@ -69,7 +69,7 @@ public class TargetRegexBuilder {
     }
 
     private void checkWorkspaceString() {
-        if (StringUtilities.isBlank(workspace)) {
+        if (StringUtils.isBlank(workspace)) {
             throw new IllegalStateException("Can not produce a regex pattern without the workspace field of the builder being set!");
         }
     }
@@ -77,7 +77,7 @@ public class TargetRegexBuilder {
     private void checkFeedString() {
         checkWorkspaceString();
 
-        if (StringUtilities.isBlank(feed)) {
+        if (StringUtils.isBlank(feed)) {
             throw new IllegalStateException("Can not produce a regex pattern without the workspace or feed fields of the builder being set!");
         }
     }

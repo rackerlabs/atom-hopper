@@ -1,8 +1,8 @@
 package net.jps.atom.hopper.util.context;
 
-import com.rackspace.cloud.commons.util.StringUtilities;
 import com.rackspace.cloud.commons.util.reflection.ReflectionTools;
 import com.rackspace.cloud.commons.util.servlet.context.ApplicationContextAdapter;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -17,7 +17,7 @@ public class AdapterGetter {
     }
 
     public <T> T getByName(String referenceName, Class<T> classToCastTo) {
-        if (StringUtilities.isBlank(referenceName)) {
+        if (StringUtils.isBlank(referenceName)) {
             throw new IllegalArgumentException("Bean reference for an adapter must not be empty or null");
         }
 

@@ -1,6 +1,5 @@
 package net.jps.atom.hopper;
 
-import com.rackspace.cloud.commons.util.StringUtilities;
 import com.rackspace.cloud.commons.util.servlet.context.ApplicationContextAdapter;
 import net.jps.atom.hopper.abdera.WorkspaceProvider;
 import net.jps.atom.hopper.archive.FeedArchivalService;
@@ -22,6 +21,7 @@ import net.jps.atom.hopper.util.log.RCLogger;
 import org.apache.abdera.Abdera;
 import org.apache.abdera.protocol.server.Provider;
 import org.apache.abdera.protocol.server.servlet.AbderaServlet;
+import org.apache.commons.lang.StringUtils;
 
 import javax.servlet.ServletException;
 import java.net.URI;
@@ -94,7 +94,7 @@ public final class AtomHopperServlet extends AbderaServlet {
         final String adapterClass = getInitParameter(ServletInitParameter.CONTEXT_ADAPTER_CLASS.toString());
 
         //TODO: Make this optional - use dummy adapter class for the cfg proc that returns null maybe
-        if (StringUtilities.isBlank(adapterClass)) {
+        if (StringUtils.isBlank(adapterClass)) {
             throw LOG.newException("Missing context adapter init-parameter for servlet: " + ServletInitParameter.CONTEXT_ADAPTER_CLASS.toString(), ContextAdapterResolutionException.class);
         }
 
@@ -114,7 +114,7 @@ public final class AtomHopperServlet extends AbderaServlet {
     protected String getConfigurationLocation() {
         final String configLocation = getInitParameter(ServletInitParameter.CONFIGURATION_LOCATION.toString());
 
-        return !StringUtilities.isBlank(configLocation) ? configLocation : DEFAULT_CONFIGURATION_LOCATION;
+        return !StringUtils.isBlank(configLocation) ? configLocation : DEFAULT_CONFIGURATION_LOCATION;
     }
 
     @Override
@@ -137,7 +137,7 @@ public final class AtomHopperServlet extends AbderaServlet {
         //Initial parsing validation rules specify that there must always be a host configuration
         final HostConfiguration hostConfiguration = configuration.getHost();
 
-        if (StringUtilities.isBlank(hostConfiguration.getDomain())) {
+        if (StringUtils.isBlank(hostConfiguration.getDomain())) {
             throw new ConfigurationParserException("No domain specified in the host configuration. This is required for link generation. Halting.");
         }
 
@@ -148,7 +148,7 @@ public final class AtomHopperServlet extends AbderaServlet {
         final Map<String, String> parameterMap = new HashMap<String, String>();
 
         if (defaults != null) {
-            if (defaults.getAuthor() != null && !StringUtilities.isBlank(defaults.getAuthor().getName())) {
+            if (defaults.getAuthor() != null && !StringUtils.isBlank(defaults.getAuthor().getName())) {
                 parameterMap.put("author", defaults.getAuthor().getName());
             }
         }

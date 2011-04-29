@@ -1,20 +1,10 @@
 package net.jps.atom.hopper.adapter.impl;
 
-import com.rackspace.cloud.commons.util.StringUtilities;
 import com.rackspace.cloud.commons.util.http.HttpStatusCode;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import net.jps.atom.hopper.adapter.FeedPublisher;
 import net.jps.atom.hopper.adapter.FeedSource;
 import net.jps.atom.hopper.adapter.ResponseBuilder;
-import net.jps.atom.hopper.adapter.request.DeleteEntryRequest;
-import net.jps.atom.hopper.adapter.request.GetCategoriesRequest;
-import net.jps.atom.hopper.adapter.request.GetEntryRequest;
-import net.jps.atom.hopper.adapter.request.GetFeedRequest;
-import net.jps.atom.hopper.adapter.request.PostEntryRequest;
-import net.jps.atom.hopper.adapter.request.PutEntryRequest;
+import net.jps.atom.hopper.adapter.request.*;
 import net.jps.atom.hopper.response.AdapterResponse;
 import net.jps.atom.hopper.response.EmptyBody;
 import net.jps.atom.hopper.util.uri.template.EnumKeyedTemplateParameters;
@@ -22,6 +12,12 @@ import net.jps.atom.hopper.util.uri.template.URITemplate;
 import org.apache.abdera.model.Categories;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  *
@@ -36,7 +32,7 @@ public class InMemoryFeedAdapter implements FeedSource, FeedPublisher {
 
     @Override
     public AdapterResponse<Entry> getEntry(GetEntryRequest getEntryRequest) {
-        if (!StringUtilities.isBlank(getEntryRequest.getId())) {
+        if (!StringUtils.isBlank(getEntryRequest.getId())) {
             final AtomEntry entry = liveFeed.get(getEntryRequest.getId());
 
             if (entry != null) {

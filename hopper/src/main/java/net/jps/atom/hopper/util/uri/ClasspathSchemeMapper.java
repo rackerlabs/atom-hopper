@@ -1,6 +1,7 @@
 package net.jps.atom.hopper.util.uri;
 
-import com.rackspace.cloud.commons.util.StringUtilities;
+import org.apache.commons.lang.StringUtils;
+
 import java.net.URI;
 import java.net.URL;
 
@@ -10,7 +11,7 @@ public class ClasspathSchemeMapper implements URISchemeMapper {
     public boolean canMap(URI uriToMatch) {
         final String uriScheme = uriToMatch.getScheme();
 
-        return !StringUtilities.isBlank(uriScheme)
+        return !StringUtils.isBlank(uriScheme)
                 ? uriScheme.startsWith("classpath")
                 : false;
     }

@@ -1,10 +1,10 @@
 package net.jps.atom.hopper.abdera.filter;
 
-import com.rackspace.cloud.commons.util.StringUtilities;
 import net.jps.atom.hopper.response.AdapterResponse;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.RequestContext;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -23,12 +23,12 @@ public class FeedPagingProcessor implements AdapterResponseProcessor<Feed> {
             if (first.getId() != null && last.getId() != null) {
                 final String nextMarker = last.getId().toString(), previousMarker = first.getId().toString();
 
-                final String self = StringUtilities.join(rc.getBaseUri().toString(), rc.getTargetPath());
+                final String self = StringUtils.join(new String[]{rc.getBaseUri().toString(), rc.getTargetPath()});
 
                 // Add markers
                 f.addLink(self, "current");
-                f.addLink(StringUtilities.join(self, "?marker=", nextMarker), "next");
-                f.addLink(StringUtilities.join(self, "?marker=", previousMarker), "prev");
+                f.addLink(StringUtils.join(new String[]{self, "?marker=", nextMarker}), "next");
+                f.addLink(StringUtils.join(new String[]{self, "?marker=", previousMarker}), "prev");
             }
         }
     }
