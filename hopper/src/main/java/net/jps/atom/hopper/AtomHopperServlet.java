@@ -1,6 +1,5 @@
 package net.jps.atom.hopper;
 
-import com.rackspace.cloud.commons.util.servlet.context.ApplicationContextAdapter;
 import net.jps.atom.hopper.abdera.WorkspaceProvider;
 import net.jps.atom.hopper.archive.FeedArchivalService;
 import net.jps.atom.hopper.archive.impl.QueuedFeedArchivalService;
@@ -11,6 +10,7 @@ import net.jps.atom.hopper.config.v1_0.HostConfiguration;
 import net.jps.atom.hopper.config.v1_0.WorkspaceConfiguration;
 import net.jps.atom.hopper.exceptions.ContextAdapterResolutionException;
 import net.jps.atom.hopper.exceptions.ServletInitException;
+import net.jps.atom.hopper.servlet.ApplicationContextAdapter;
 import net.jps.atom.hopper.servlet.ServletInitParameter;
 import net.jps.atom.hopper.util.config.ConfigurationParser;
 import net.jps.atom.hopper.util.config.ConfigurationParserException;

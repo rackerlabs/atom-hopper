@@ -1,7 +1,7 @@
 package net.jps.atom.hopper.util.context;
 
-import com.rackspace.cloud.commons.util.reflection.ReflectionTools;
-import com.rackspace.cloud.commons.util.servlet.context.ApplicationContextAdapter;
+import net.jps.atom.hopper.servlet.ApplicationContextAdapter;
+import net.jps.fava.reflection.ReflectionTools;
 import org.apache.commons.lang.StringUtils;
 
 /**

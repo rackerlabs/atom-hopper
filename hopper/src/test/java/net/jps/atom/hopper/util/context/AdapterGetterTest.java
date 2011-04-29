@@ -1,17 +1,17 @@
 package net.jps.atom.hopper.util.context;
 
 import net.jps.atom.hopper.adapter.FeedSource;
-import org.junit.Before;
-import com.rackspace.cloud.commons.util.servlet.context.ApplicationContextAdapter;
 import net.jps.atom.hopper.adapter.archive.FeedArchiveSource;
 import net.jps.atom.hopper.adapter.impl.UnimplementedFeedArchive;
 import net.jps.atom.hopper.adapter.impl.UnimplementedFeedSource;
+import net.jps.atom.hopper.servlet.ApplicationContextAdapter;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.*;
 
 /**

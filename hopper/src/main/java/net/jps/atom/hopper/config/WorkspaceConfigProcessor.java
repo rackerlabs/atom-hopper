@@ -1,6 +1,5 @@
 package net.jps.atom.hopper.config;
 
-import com.rackspace.cloud.commons.util.servlet.context.ApplicationContextAdapter;
 import net.jps.atom.hopper.abdera.ArchiveAdapter;
 import net.jps.atom.hopper.abdera.FeedAdapter;
 import net.jps.atom.hopper.abdera.TargetAwareAbstractCollectionAdapter;
@@ -14,6 +13,7 @@ import net.jps.atom.hopper.config.v1_0.AdapterDescriptor;
 import net.jps.atom.hopper.config.v1_0.ArchivalConfiguration;
 import net.jps.atom.hopper.config.v1_0.FeedConfiguration;
 import net.jps.atom.hopper.config.v1_0.WorkspaceConfiguration;
+import net.jps.atom.hopper.servlet.ApplicationContextAdapter;
 import net.jps.atom.hopper.util.TargetRegexBuilder;
 import net.jps.atom.hopper.util.context.AdapterGetter;
 import net.jps.atom.hopper.util.log.Logger;
