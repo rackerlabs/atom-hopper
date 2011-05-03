@@ -16,9 +16,8 @@ public interface FeedArchiveSource {
     /**
      * Requests an archived version of the feed.
      * 
-     * @param request
-     * @param date
-     * 
+     * @param getFeedArchiveRequest
+     *
      * @return
      */
     AdapterResponse<Feed> getFeed(GetFeedArchiveRequest getFeedArchiveRequest);

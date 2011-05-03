@@ -10,9 +10,13 @@ public class TargetRegexBuilder {
             CATAGORY_TEMPLATE = "/(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + ")/categories/?(\\?[^#]+)?",
             FEED_TEMPLATE = "/(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + ")/?(\\?[^#]+)?",
             ENTRY_TEMPLATE = "/(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + ")/entries/([^/#?]+)/?(\\?[^#]+)?",
-            ARCHIVE_TEMPLATE = "/(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + "/archives)(/\\d\\d\\d\\d)(/\\d\\d)?(/\\d\\d)?(/\\d\\d:\\d\\d)?/?(\\?[^#]+)?",
+            ARCHIVE_TEMPLATE = "/(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + ")/archives([^/#?]?)/?(\\?[^#]+)?",
 
             ARCHIVES_URI_FRAGMENT = "archives";
+
+    // TODO: Implement the ability to query for the archive marker that matches the date specified
+    //      ARCHIVE_QUERY_TEMPLATE = "/(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + "/archives)(/\\d\\d\\d\\d)(/\\d\\d)?(/\\d\\d)?(/\\d\\d:\\d\\d)?/?(\\?[^#]+)?",
+
 
     private String contextPath, workspace, feed;
 
@@ -126,45 +130,42 @@ public class TargetRegexBuilder {
 
     public static String[] getWorkspaceResolverFieldList() {
         return new String[]{
-                    TargetResolverField.CONTEXT_PATH.toString(),
-                    TargetResolverField.WORKSPACE.toString()
-                };
+                TargetResolverField.CONTEXT_PATH.toString(),
+                TargetResolverField.WORKSPACE.toString()
+        };
     }
 
     public static String[] getFeedResolverFieldList() {
         return new String[]{
-                    TargetResolverField.CONTEXT_PATH.toString(),
-                    TargetResolverField.WORKSPACE.toString(),
-                    TargetResolverField.FEED.toString()
-                };
+                TargetResolverField.CONTEXT_PATH.toString(),
+                TargetResolverField.WORKSPACE.toString(),
+                TargetResolverField.FEED.toString()
+        };
     }
 
     public static String[] getCategoriesResolverFieldList() {
         return new String[]{
-                    TargetResolverField.CONTEXT_PATH.toString(),
-                    TargetResolverField.WORKSPACE.toString(),
-                    TargetResolverField.FEED.toString()
-                };
+                TargetResolverField.CONTEXT_PATH.toString(),
+                TargetResolverField.WORKSPACE.toString(),
+                TargetResolverField.FEED.toString()
+        };
     }
 
     public static String[] getEntryResolverFieldList() {
         return new String[]{
-                    TargetResolverField.CONTEXT_PATH.toString(),
-                    TargetResolverField.WORKSPACE.toString(),
-                    TargetResolverField.FEED.toString(),
-                    TargetResolverField.ENTRY.toString()
-                };
+                TargetResolverField.CONTEXT_PATH.toString(),
+                TargetResolverField.WORKSPACE.toString(),
+                TargetResolverField.FEED.toString(),
+                TargetResolverField.ENTRY.toString()
+        };
     }
 
     public static String[] getArchiveResolverFieldList() {
         return new String[]{
-                    TargetResolverField.CONTEXT_PATH.toString(),
-                    TargetResolverField.WORKSPACE.toString(),
-                    TargetResolverField.FEED.toString(),
-                    TargetResolverField.ARCHIVE_YEAR.toString(),
-                    TargetResolverField.ARCHIVE_MONTH.toString(),
-                    TargetResolverField.ARCHIVE_DAY.toString(),
-                    TargetResolverField.ARCHIVE_TIME.toString()
-                };
+                TargetResolverField.CONTEXT_PATH.toString(),
+                TargetResolverField.WORKSPACE.toString(),
+                TargetResolverField.FEED.toString(),
+                TargetResolverField.MARKER.toString()
+        };
     }
 }
