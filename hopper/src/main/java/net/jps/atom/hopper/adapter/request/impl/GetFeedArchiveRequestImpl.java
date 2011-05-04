@@ -3,6 +3,7 @@ package net.jps.atom.hopper.adapter.request.impl;
 import net.jps.atom.hopper.adapter.TargetResolverField;
 import net.jps.atom.hopper.adapter.request.AbstractClientRequest;
 import net.jps.atom.hopper.adapter.request.GetFeedArchiveRequest;
+import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.RequestContext;
 
 /**
@@ -11,7 +12,7 @@ import org.apache.abdera.protocol.server.RequestContext;
  */
 public class GetFeedArchiveRequestImpl extends AbstractClientRequest implements GetFeedArchiveRequest {
 
-    private String archiveMarker;
+    private String archiveId;
 
     public GetFeedArchiveRequestImpl(RequestContext abderaRequestContext) {
         super(abderaRequestContext);
@@ -22,11 +23,16 @@ public class GetFeedArchiveRequestImpl extends AbstractClientRequest implements 
     private void populateSelf() {
         final RequestContext requestContext = getRequestContext();
 
-        archiveMarker = requestContext.getTarget().getParameter(TargetResolverField.MARKER.name());
+        archiveId = requestContext.getTarget().getParameter(TargetResolverField.ARCHIVE.name());
     }
 
     @Override
-    public String getArchiveMarker() {
-        return archiveMarker;
+    public String getArchiveId() {
+        return archiveId;
+    }
+
+    @Override
+    public Feed newFeed() {
+        return getRequestContext().getAbdera().newFeed();
     }
 }

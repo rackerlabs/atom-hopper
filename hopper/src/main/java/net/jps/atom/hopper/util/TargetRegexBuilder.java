@@ -171,7 +171,7 @@ public class TargetRegexBuilder {
                 TargetResolverField.CONTEXT_PATH.toString(),
                 TargetResolverField.WORKSPACE.toString(),
                 TargetResolverField.FEED.toString(),
-                TargetResolverField.MARKER.toString()
+                TargetResolverField.ARCHIVE.toString()
         };
     }
 }

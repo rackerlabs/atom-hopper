@@ -8,7 +8,7 @@ public enum TargetResolverField {
     WORKSPACE,
     CONTEXT_PATH,
     FEED_TYPE,
-    MARKER,
+    ARCHIVE,
     ARCHIVE_YEAR,
     ARCHIVE_MONTH,
     ARCHIVE_DAY,
