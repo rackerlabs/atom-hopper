@@ -30,7 +30,7 @@
     </modules>
 
     <scm>
-        <connection>scm:git:ssh://git@repoman.rackspace.com/atom-hopper</connection>
+        <connection>scm:git:ssh://git@git-n01.rcloudtech.rackspacecloud.com/atom-hopper</connection>
     </scm>
 
     <dependencyManagement>
