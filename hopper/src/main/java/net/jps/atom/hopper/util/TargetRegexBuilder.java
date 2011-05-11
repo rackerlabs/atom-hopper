@@ -5,17 +5,17 @@ import org.apache.commons.lang.StringUtils;
 
 public class TargetRegexBuilder {
 
-    //TODO: Is it necessary to include query parsing in these regexes?  We can simplify the regex by ensuring that
-    // the url being parsed does not include the query or fragment
-
     private static final String REPLACEMENT_ELEMENT = "@_",
             WORKSPACE_TEMPLATE = "/(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/?(\\?[^#]+)?",
             CATAGORY_TEMPLATE = "/(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + ")/categories/?(\\?[^#]+)?",
             FEED_TEMPLATE = "/(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + ")/?(\\?[^#]+)?",
             ENTRY_TEMPLATE = "/(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + ")/entries/([^/#?]+)/?(\\?[^#]+)?",
-            ARCHIVE_TEMPLATE = "/(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + ")/archives(?:/([^/?]+))?/?(\\\\?.*)?",
-            ARCHIVE_QUERY_TEMPLATE = "/(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + "/archives)(/\\d\\d\\d\\d)(/\\d\\d)?(/\\d\\d)?(/\\d\\d:\\d\\d)?/?(\\?[^#]+)?",
+            ARCHIVE_TEMPLATE = "/(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + ")/archives([^/#?]?)/?(\\?[^#]+)?",
+
             ARCHIVES_URI_FRAGMENT = "archives";
+
+    // TODO: Implement the ability to query for the archive marker that matches the date specified
+    //      ARCHIVE_QUERY_TEMPLATE = "/(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + "/archives)(/\\d\\d\\d\\d)(/\\d\\d)?(/\\d\\d)?(/\\d\\d:\\d\\d)?/?(\\?[^#]+)?",
 
 
     private String contextPath, workspace, feed;
@@ -126,12 +126,6 @@ public class TargetRegexBuilder {
         checkFeedString();
 
         return asFeedPattern(ARCHIVE_TEMPLATE);
-    }
-
-    public String toArchivesQueryPattern() {
-        checkFeedString();
-
-        return asFeedPattern(ARCHIVE_QUERY_TEMPLATE);
     }
 
     public static String[] getWorkspaceResolverFieldList() {

@@ -34,6 +34,7 @@ public class TargetRegexBuilderArchiveTest {
             assertTrue("Should match archive feed URI with a long category list and a slash - regex is: " + targetRegex.pattern(),
                     targetRegex.matcher(addTrailingSlash(withCategories(ARCHIVE, DEFAULT_CATEGORIES_LONG))).matches());
 
+
             assertTrue("Should match archive marker feed URI - regex is: " + targetRegex.pattern(),
                     targetRegex.matcher(ARCHIVE_MARKER).matches());
             assertTrue("Should match archive marker feed URI with a slash - regex is: " + targetRegex.pattern(),
