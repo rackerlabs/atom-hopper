@@ -23,10 +23,7 @@ public class TargetRegexBuilderTestParent {
             WORKSPACE = "/workspace",
             CATEGORIES = "/workspace/feed/categories",
             FEED = "/workspace/feed",
-            ENTRY = "/workspace/feed/entries/tag:domain.com,2011-01-01:entry-id",
-            ARCHIVE = "/workspace/feed/archives",
-            ARCHIVE_MARKER = "/workspace/feed/archives/abc123";
-
+            ENTRY = "/workspace/feed/entries/tag:domain.com,2011-01-01:entry-id";
 
     public static String withCategories(String base, String[] categories) {
         final StringBuilder uri = new StringBuilder(base);
