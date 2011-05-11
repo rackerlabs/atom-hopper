@@ -6,7 +6,7 @@
     <artifactId>parent</artifactId>
     <packaging>pom</packaging>
 
-    <version>1.1.1-SNAPSHOT</version>
+    <version>1.1.0-SNAPSHOT</version>
     <name>ATOM Hopper - ATOMpub Server Collection</name>
 
     <url>http://jpserver.net/atom/hopper</url>
@@ -138,42 +138,52 @@
     </dependencyManagement>
 
     <repositories>
-        <!-- This is the internal maven repository used by the project. -->
         <repository>
-            <id>Rackspace Nexus Repository</id>
-            <name>Rackspace Nexus Repository</name>
-            <url>http://build3.sat1.core.rackspace.com:8091/nexus/content/groups/public</url>
+            <id>repos.rackspace.cloud.public</id>
+            <url>http://184.106.178.199/m2/content/groups/public/</url>
+        </repository>
+
+        <repository>
+            <id>repos.rackspace.cloud.snapshots</id>
+            <url>http://184.106.178.199/m2/content/repositories/snapshots</url>
+
             <releases>
-                <updatePolicy>always</updatePolicy>
-                <checksumPolicy>fail</checksumPolicy>
+                <enabled>false</enabled>
             </releases>
+        </repository>
+
+        <repository>
+            <id>repos.rackspace.cloud.releases</id>
+            <url>http://184.106.178.199/m2/content/repositories/releases</url>
+
             <snapshots>
-                <updatePolicy>always</updatePolicy>
-                <checksumPolicy>fail</checksumPolicy>
+                <enabled>false</enabled>
             </snapshots>
         </repository>
     </repositories>
 
     <pluginRepositories>
-        <!-- This is the internal maven repository used by the project. -->
         <pluginRepository>
-            <id>Rackspace Nexus Plugin Repository</id>
-            <name>Rackspace Nexus Plugin Repository</name>
-            <url>http://build3.sat1.core.rackspace.com:8091/nexus/content/groups/public</url>
+            <id>repos.rackspace.cloud.public</id>
+            <url>http://184.106.178.199/m2/content/groups/public/</url>
         </pluginRepository>
     </pluginRepositories>
 
     <distributionManagement>
         <repository>
-            <id>releases</id>
-            <name>Internal Releases</name>
-            <url>http://build3.sat1.core.rackspace.com:8091/nexus/content/repositories/releases</url>
+            <id>releases.internal.maven.research.rackspacecloud.com</id>
+
+            <name>Internal Rackspace Cloud Research Releases</name>
+            <url>http://maven-n01.rcloudtech.rackspacecloud.com/m2/content/repositories/releases</url>
         </repository>
 
         <snapshotRepository>
-            <id>snapshots</id>
-            <name>Internal Snapshots</name>
-            <url>http://build3.sat1.core.rackspace.com:8091/nexus/content/repositories/snapshots</url>
+            <uniqueVersion>false</uniqueVersion>
+
+            <id>snapshots.internal.maven.research.rackspacecloud.com</id>
+
+            <name>Internal Rackspace Cloud Research Snapshots</name>
+            <url>http://maven-n01.rcloudtech.rackspacecloud.com/m2/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
 
