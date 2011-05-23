@@ -21,9 +21,11 @@ public class FeedPagingProcessor implements AdapterResponseProcessor<Feed> {
             final Entry first = f.getEntries().get(0), last = f.getEntries().get(numEntries - 1);
 
             if (first.getId() != null && last.getId() != null) {
-                final String nextMarker = last.getId().toString(), previousMarker = first.getId().toString();
+                final String nextMarker = last.getId().toString();
+                final String previousMarker = first.getId().toString();
 
-                final String self = StringUtils.join(new String[]{rc.getBaseUri().toString(), rc.getTargetPath()});
+                final String path = StringUtils.split(rc.getTargetPath(), '?')[0];
+                final String self = StringUtils.join(new String[]{rc.getBaseUri().toString(), path});
 
                 // Add markers
                 f.addLink(self, "current");

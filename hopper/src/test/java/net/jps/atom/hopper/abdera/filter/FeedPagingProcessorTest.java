@@ -145,6 +145,7 @@ public class FeedPagingProcessorTest {
 
         static final String BASE_URI = "http://localhost:8080/atom";
         static final String TARGET_PATH = "/foo/bar";
+        static final String TARGET_PARAMS = "?marker=1";
         static final String SELF_URL = BASE_URI + TARGET_PATH;
         static final String REL_CURRENT = "current";
         static final String REL_NEXT = "next";
@@ -172,7 +173,7 @@ public class FeedPagingProcessorTest {
             RequestContext target = mock(RequestContext.class);
 
             when(target.getBaseUri()).thenReturn(new IRI(BASE_URI));
-            when(target.getTargetPath()).thenReturn(TARGET_PATH);
+            when(target.getTargetPath()).thenReturn(TARGET_PATH + TARGET_PARAMS);
 
             return target;
         }
