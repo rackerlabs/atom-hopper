@@ -21,6 +21,10 @@ public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
         return new GetMethod("http://localhost:" + getPort() + "/namespace/feed/");
     }
 
+    public static GetMethod newGetFeedMethodWithMarker() {
+      return new GetMethod("http://localhost:" + getPort() + "/namespace/feed?marker=1");
+    }
+
     public static GetMethod newGetEntryMethod(String entryId) {
         return new GetMethod("http://localhost:" + getPort() + "/namespace/feed/entries/" + entryId);
     }
@@ -42,6 +46,17 @@ public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
             
             System.out.println(new String(getFeedMethod.getResponseBody()));
         }
+    }
+
+    public static class WhenGettingFeedsWithMarker {
+
+      @Test
+      public void shouldReturnEmptyFeed() throws Exception {
+        final HttpMethod getFeedMethod = newGetFeedMethodWithMarker();
+        assertEquals("Getting a feed should return a 200", HttpStatus.SC_OK, httpClient.executeMethod(getFeedMethod));
+
+        System.out.println(new String(getFeedMethod.getResponseBody()));
+      }
     }
 
     public static class WhenPublishingToFeeds {
