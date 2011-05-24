@@ -9,6 +9,7 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
+import org.w3c.dom.Document;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -16,6 +17,7 @@ import static junit.framework.Assert.assertEquals;
 public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
 
     public static final HttpClient httpClient = new HttpClient();
+    public static final XmlUtil xml = new XmlUtil();
 
     public static GetMethod newGetFeedMethod() {
         return new GetMethod("http://localhost:" + getPort() + "/namespace/feed/");
@@ -54,6 +56,12 @@ public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
       public void shouldReturnEmptyFeed() throws Exception {
         final HttpMethod getFeedMethod = newGetFeedMethodWithMarker();
         assertEquals("Getting a feed should return a 200", HttpStatus.SC_OK, httpClient.executeMethod(getFeedMethod));
+
+        Document doc = xml.toDOM(getFeedMethod.getResponseBodyAsString());
+
+        xml.assertHasValue(doc,"/feed/link[@rel='current']/@href", "http://localhost:24156//namespace/feed");
+        xml.assertHasValue(doc,"/feed/link[@rel='next']/@href", "http://localhost:24156//namespace/feed?marker=1");
+        xml.assertHasValue(doc,"/feed/link[@rel='prev']/@href", "http://localhost:24156//namespace/feed?marker=1");
 
         System.out.println(new String(getFeedMethod.getResponseBody()));
       }
