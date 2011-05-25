@@ -161,7 +161,7 @@ public class WorkspaceConfigProcessor {
 
         if (archiveSource != null) {
             final ArchiveAdapter archiveAdapter = new ArchiveAdapter(
-                    feedTargetRegexBuilder.getArchivesResource(), archiveSource, feedAdapter);
+                    feedTargetRegexBuilder.getArchivesResource(), feed, archiveSource, feedAdapter);
 
             // archive
             regexTargetResolver.setPattern(feedTargetRegexBuilder.toArchivesPattern(),

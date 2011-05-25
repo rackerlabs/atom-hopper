@@ -6,6 +6,7 @@ import net.jps.atom.hopper.abdera.response.ResponseHandler;
 import net.jps.atom.hopper.abdera.response.StaticFeedResponseHandler;
 import net.jps.atom.hopper.adapter.archive.FeedArchiveSource;
 import net.jps.atom.hopper.adapter.request.impl.GetFeedArchiveRequestImpl;
+import net.jps.atom.hopper.config.v1_0.FeedConfiguration;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.ProviderHelper;
 import org.apache.abdera.protocol.server.RequestContext;
@@ -23,13 +24,13 @@ public class ArchiveAdapter extends TargetAwareAbstractCollectionAdapter {
     private final FeedArchiveSource archiveSource;
     private final ResponseHandler<Feed> feedResponseHandler;
 
-    public ArchiveAdapter(String target, FeedArchiveSource archiveSource, FeedAdapter feedAdapter) {
+    public ArchiveAdapter(String target, FeedConfiguration feedConfiguration, FeedArchiveSource archiveSource, FeedAdapter feedAdapter) {
         super(target);
 
         this.feedAdapter = feedAdapter;
         this.archiveSource = archiveSource;
 
-        feedResponseHandler = new StaticFeedResponseHandler();
+        feedResponseHandler = new StaticFeedResponseHandler(feedConfiguration);
     }
 
     @Override

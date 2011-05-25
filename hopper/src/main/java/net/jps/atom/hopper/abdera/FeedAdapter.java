@@ -55,7 +55,7 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
             allowedMethods = COMBINED_ALLOWED_METHODS;
         }
 
-        feedResponseHandler = new StaticFeedResponseHandler();
+        feedResponseHandler = new StaticFeedResponseHandler(feedConfiguration);
         entryResponseHandler = new StaticEntryResponseHandler();
         emptyBodyResponseHandler = new StaticEmptyBodyResponseHandler();
 
