@@ -108,7 +108,7 @@ public final class AtomHopperServlet extends AbderaServlet {
             throw LOG.wrapError(ex, ContextAdapterResolutionException.class);
         }
 
-        throw LOG.newException("Unknwon application context adapter class: " + adapterClass, ContextAdapterResolutionException.class);
+        throw LOG.newException("Unknown application context adapter class: " + adapterClass, ContextAdapterResolutionException.class);
     }
 
     protected String getConfigurationLocation() {
