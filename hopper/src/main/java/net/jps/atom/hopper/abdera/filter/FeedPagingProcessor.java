@@ -31,16 +31,14 @@ public class FeedPagingProcessor implements AdapterResponseProcessor<Feed> {
             f.addLink(self, CURRENT_LINK);
         }
 
-        if (linkNotSet(f, NEXT_LINK)) {
+        if (linkNotSet(f, NEXT_LINK) && linkNotSet(f, PREV_LINK)) {
             final Entry last = f.getEntries().get(numEntries - 1);
 
             if (last.getId() != null) {
                 final String nextMarker = last.getId().toString();
                 f.addLink(StringUtils.join(new String[]{self, "?marker=", nextMarker}), NEXT_LINK);
             }
-        }
 
-        if (linkNotSet(f, PREV_LINK)) {
             final Entry first = f.getEntries().get(0);
             if (first.getId() != null) {
                 final String previousMarker = first.getId().toString();

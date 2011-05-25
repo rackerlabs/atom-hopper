@@ -154,7 +154,7 @@ public class FeedPagingProcessorTest {
             assertThat("Should set current link", feed.getLink(REL_CURRENT), notNullValue());
 
             assertThat("Should not override prev link", feed.getLink(REL_PREV).getHref().toString(), equalTo(REL_PREV));
-            assertThat("Should not override next link", feed.getLink(REL_NEXT).getHref().toString(), equalTo(REL_NEXT));
+            assertThat("Should not override next link", feed.getLink(REL_NEXT), nullValue());
         }
 
         @Test
@@ -168,7 +168,7 @@ public class FeedPagingProcessorTest {
             Feed feed = feedResponse.getBody().getAsFeed();
             assertThat("Should set current link", feed.getLink(REL_CURRENT), notNullValue());
 
-            assertThat("Should not override prev link", feed.getLink(REL_PREV).getHref().toString(), equalTo(REL_PREV));
+            assertThat("Should not override prev link", feed.getLink(REL_PREV), nullValue());
             assertThat("Should not override next link", feed.getLink(REL_NEXT).getHref().toString(), equalTo(REL_NEXT));
 
         }
