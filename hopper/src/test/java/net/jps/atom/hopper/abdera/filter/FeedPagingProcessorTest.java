@@ -75,7 +75,7 @@ public class FeedPagingProcessorTest {
 
 
     public static class WhenProcessingFeedWithOneEntry extends TestParent {
-        int TOTAL_FEED_ENTRIES = 1;                               
+        int TOTAL_FEED_ENTRIES = 1;
 
         @Test
         public void shouldAddCurrentLink() {
@@ -140,6 +140,60 @@ public class FeedPagingProcessorTest {
         }
     }
 
+    public static class WhenProcessingFeedWithPresetMarkers extends TestParent {
+
+        @Test
+        public void shouldNotOverrideWhenPrevIsSet() {
+            final FeedPagingProcessor target = feedPagingProcessor();
+            final AdapterResponse<Feed> feedResponse = adapterResponse(1, false, true);
+            final RequestContext rc = requestContext();
+
+            target.process(rc, feedResponse);
+
+            Feed feed = feedResponse.getBody().getAsFeed();
+            assertThat("Should set current link", feed.getLink(REL_CURRENT), notNullValue());
+
+            assertThat("Should not override prev link", feed.getLink(REL_PREV).getHref().toString(), equalTo(REL_PREV));
+            assertThat("Should not override next link", feed.getLink(REL_NEXT), nullValue());
+        }
+
+        @Test
+        public void shouldNotOverrideWhenNextIsSet() {
+            final FeedPagingProcessor target = feedPagingProcessor();
+            final AdapterResponse<Feed> feedResponse = adapterResponse(1, true, false);
+            final RequestContext rc = requestContext();
+
+            target.process(rc, feedResponse);
+
+            Feed feed = feedResponse.getBody().getAsFeed();
+            assertThat("Should set current link", feed.getLink(REL_CURRENT), notNullValue());
+
+            assertThat("Should not override prev link", feed.getLink(REL_PREV), nullValue());
+            assertThat("Should not override next link", feed.getLink(REL_NEXT).getHref().toString(), equalTo(REL_NEXT));
+
+        }
+
+
+        @Test
+        public void shouldNotOverrideWhenBothAreSet() {
+            final FeedPagingProcessor target = feedPagingProcessor();
+            final AdapterResponse<Feed> feedResponse = adapterResponse(1, true, true);
+            final RequestContext rc = requestContext();
+
+            target.process(rc, feedResponse);
+
+            Feed feed = feedResponse.getBody().getAsFeed();
+            assertThat("Should set current link", feed.getLink(REL_CURRENT), notNullValue());
+
+            assertThat("Should not override prev link", feed.getLink(REL_PREV).getHref().toString(), equalTo(REL_PREV));
+            assertThat("Should not override next link", feed.getLink(REL_NEXT).getHref().toString(), equalTo(REL_NEXT));
+
+        }
+
+
+    }
+
+
     @Ignore
     public static class TestParent {
 
@@ -157,12 +211,23 @@ public class FeedPagingProcessorTest {
         }
 
         public AdapterResponse<Feed> adapterResponse(int entriesOnFeed) {
+            return adapterResponse(entriesOnFeed, false, false);
+        }
+
+        public AdapterResponse<Feed> adapterResponse(int entriesOnFeed, boolean hasNextMarker, boolean hasPrevMarker) {
             final Feed feed = Abdera.getInstance().newFeed();
 
-            for (int i=1; i <= entriesOnFeed; i++) {
+            for (int i = 1; i <= entriesOnFeed; i++) {
                 Entry entry = Abdera.getInstance().newEntry();
                 entry.setId(Integer.toString(i));
                 feed.addEntry(entry);
+            }
+
+            if (hasNextMarker) {
+                feed.addLink("next", REL_NEXT);
+            }
+            if (hasPrevMarker) {
+                feed.addLink("prev", REL_PREV);
             }
 
             return new FeedSourceAdapterResponse<Feed>(feed, HttpStatus.OK, "");
