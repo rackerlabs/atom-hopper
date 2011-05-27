@@ -20,7 +20,7 @@ public class FeedConfigurationResponseProcessor implements AdapterResponseProces
 
         if (author != null) {
             String name = author.getName();
-            if ((name != null) && !(name.isEmpty())) {
+            if ((name != null) && !(name.isEmpty()) && (feed.getAuthor() == null)) {
                 feed.addAuthor(name);
             }
         }
