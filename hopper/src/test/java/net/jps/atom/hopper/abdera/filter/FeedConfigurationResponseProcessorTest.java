@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -22,12 +23,19 @@ import static org.mockito.Mockito.when;
 public class FeedConfigurationResponseProcessorTest extends TestParent {
 
     @Test
-    public void shouldSetFeedAuthor() {
+    public void shouldSetFeedAuthorIfSpecified() {
         feedConfiguration.setAuthor(feedAuthor);
         Feed feed = getFeedResponseAsFeed(feedConfiguration);
         Person author = feed.getAuthor();
         assertThat("author should exist", author, notNullValue());
         assertThat("author should match", feed.getAuthor().getName(), equalTo(feedAuthorName));
+    }
+
+    @Test
+    public void shouldNotSetFeedAuthorIfNotSpecified() {
+        Feed feed = getFeedResponseAsFeed(feedConfiguration);
+        Person author = feed.getAuthor();
+        assertThat("author should not exist", author, nullValue());
     }
 }
 
