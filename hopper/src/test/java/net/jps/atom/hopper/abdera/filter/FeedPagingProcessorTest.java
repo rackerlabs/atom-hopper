@@ -7,11 +7,14 @@ import org.apache.abdera.i18n.iri.IRI;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.RequestContext;
+import org.apache.commons.lang.StringUtils;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.springframework.http.HttpStatus;
+
+import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -120,6 +123,28 @@ public class FeedPagingProcessorTest {
             assertThat("Should set prev link", feed.getLink(REL_PREV), notNullValue());
             assertThat("Should reference first entry on feed", feed.getLink(REL_PREV).getHref().toString(), equalTo(SELF_URL + "?marker=" + firstEntryId));
         }
+
+        @Test
+        public void testMapToString() {
+          final FeedPagingProcessor target = feedPagingProcessor();
+
+          Map<String,String> test = new TreeMap<String,String>();
+          test.put("key1", "value1");
+          test.put("key2", "value2");
+          assertThat("Should return", target.mapToString(test),equalTo("key1=value1&key2=value2"));
+
+        }
+        @Test
+        public void testGetParameterMap() {
+          final FeedPagingProcessor target = feedPagingProcessor();
+
+          Map<String,String> map = new TreeMap<String,String>();
+          map.put("marker", "1");
+          assertThat("Should return", target.getParameterMap( requestContext() ), equalTo( map ) );
+
+        }
+
+
     }
 
     public static class WhenProcessingEmptyFeed extends TestParent {
@@ -197,9 +222,10 @@ public class FeedPagingProcessorTest {
     @Ignore
     public static class TestParent {
 
-        static final String BASE_URI = "http://localhost:8080/atom";
+        static final String BASE_URI = "http://localhost:8080/atom/";
         static final String TARGET_PATH = "/foo/bar";
-        static final String SELF_URL = BASE_URI + TARGET_PATH;
+        static final String TARGET_PARAMS = "?marker=1";
+        static final String SELF_URL = StringUtils.chop(BASE_URI) + TARGET_PATH;
         static final String REL_CURRENT = "current";
         static final String REL_NEXT = "next";
         static final String REL_PREV = "prev";
@@ -237,7 +263,9 @@ public class FeedPagingProcessorTest {
             RequestContext target = mock(RequestContext.class);
 
             when(target.getBaseUri()).thenReturn(new IRI(BASE_URI));
-            when(target.getTargetPath()).thenReturn(TARGET_PATH);
+            when(target.getTargetPath()).thenReturn(TARGET_PATH + TARGET_PARAMS);
+            when(target.getParameterNames()).thenReturn(new String[]{"marker"});
+            when(target.getParameter("marker")).thenReturn("1");
 
             return target;
         }

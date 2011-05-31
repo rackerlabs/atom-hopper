@@ -151,7 +151,7 @@ public class FeedAdapterTest {
     public static class TestParent {
 
         static final int STATUS_CODE_UNSUPPORTED_METHOD = 405;
-        static final String BASE_URI = "http://localhost:8080/atom";
+        static final String BASE_URI = "http://localhost:8080/atom/";
         static final String TARGET_PATH = "/foo/bar";
         final RequestContext REQUEST_CONTEXT = requestContext();
         FeedConfiguration feedConfiguration;
@@ -208,6 +208,7 @@ public class FeedAdapterTest {
             when(context.getBaseUri()).thenReturn(new IRI(BASE_URI));
             when(context.getTarget()).thenReturn(targetMock);
             when(context.getTargetPath()).thenReturn(TARGET_PATH);
+            when(context.getParameterNames()).thenReturn(new String[]{});
 
             Document document = mock(Document.class);
 
