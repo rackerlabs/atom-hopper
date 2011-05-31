@@ -1,6 +1,8 @@
 package net.jps.atom.hopper.abdera.response;
 
+import net.jps.atom.hopper.abdera.filter.FeedConfigurationResponseProcessor;
 import net.jps.atom.hopper.abdera.filter.FeedPagingProcessor;
+import net.jps.atom.hopper.config.v1_0.FeedConfiguration;
 import net.jps.atom.hopper.response.AdapterResponse;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.ProviderHelper;
@@ -15,8 +17,8 @@ import java.util.Date;
  */
 public class StaticFeedResponseHandler extends AbstractResponseHandler<Feed> {
     
-    public StaticFeedResponseHandler() {
-        super(new FeedPagingProcessor());
+    public StaticFeedResponseHandler(FeedConfiguration feedConfiguration) {
+        super(new FeedPagingProcessor(), new FeedConfigurationResponseProcessor(feedConfiguration));
     }
     
     @Override
