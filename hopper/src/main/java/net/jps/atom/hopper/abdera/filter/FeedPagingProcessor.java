@@ -39,7 +39,7 @@ public class FeedPagingProcessor implements AdapterResponseProcessor<Feed> {
 
         // Add current link
         if (linkNotSet(f, CURRENT_LINK)) {
-            f.addLink(StringUtils.join(new String[]{self, "?", mapToString(parameters)}), CURRENT_LINK);
+            f.addLink(StringUtils.join(new String[]{self, mapToParameters(parameters)}), CURRENT_LINK);
         }
 
         // If the feed source hasn't already defined this link
@@ -47,7 +47,7 @@ public class FeedPagingProcessor implements AdapterResponseProcessor<Feed> {
             // Get the id of the last entry on this page
             String id = f.getEntries().get(f.getEntries().size() - 1).getId().toString();
             parameters.put("marker", id);
-            f.addLink(StringUtils.join(new String[]{self, "?", mapToString(parameters)}), NEXT_LINK);
+            f.addLink(StringUtils.join(new String[]{self, mapToParameters(parameters)}), NEXT_LINK);
         }
     }
 
@@ -64,7 +64,7 @@ public class FeedPagingProcessor implements AdapterResponseProcessor<Feed> {
       return parameters;
     }
 
-    public static String mapToString(Map<String,String> parameters) {
+    public static String mapToParameters(Map<String,String> parameters) {
       try {
           List<String> result = new ArrayList<String>();
 
@@ -73,8 +73,12 @@ public class FeedPagingProcessor implements AdapterResponseProcessor<Feed> {
             result.add(encode(key, "UTF-8") + '=' + encode(parameters.get(key), "UTF-8"));
           }
 
-          // Join the list into a string separated by '&'
-          return StringUtils.join(result.toArray(),"&");
+          if(result.isEmpty()){
+              return "";
+          }
+
+          // Join the list into a string separated by '&' and prefix with '?'
+          return StringUtils.join(new String[]{ "?", StringUtils.join(result.toArray(),"&")});
       }
       catch (UnsupportedEncodingException e) {
           throw new IllegalArgumentException(e);

@@ -99,11 +99,13 @@ public class FeedPagingProcessorTest {
           final FeedPagingProcessor target = feedPagingProcessor();
 
           Map<String,String> test = new TreeMap<String,String>();
+          // Empty map returns blank string
+          assertThat(target.mapToParameters(test),equalTo(""));
           test.put("key1", "value1");
           test.put("key2", "value2");
-          assertThat("Should return", target.mapToString(test),equalTo("key1=value1&key2=value2"));
-
+          assertThat(target.mapToParameters(test),equalTo("?key1=value1&key2=value2"));
         }
+
         @Test
         public void testGetParameterMap() {
           final FeedPagingProcessor target = feedPagingProcessor();
