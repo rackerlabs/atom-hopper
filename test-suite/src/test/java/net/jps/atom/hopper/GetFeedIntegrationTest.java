@@ -58,7 +58,6 @@ public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
 
         xml.assertHasValue(doc,"/feed/link[@rel='current']/@href", "http://localhost:24156/namespace/feed");
         xml.assertHasValue(doc,"/feed/link[@rel='next']/@href", "http://localhost:24156/namespace/feed?marker=1");
-        xml.assertHasValue(doc,"/feed/link[@rel='prev']/@href", "http://localhost:24156/namespace/feed?marker=1");
 
         System.out.println(new String(getFeedMethod.getResponseBody()));
       }
@@ -73,7 +72,6 @@ public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
 
         xml.assertHasValue(doc,"/feed/link[@rel='current']/@href", "http://localhost:24156/namespace/feed");
         xml.assertHasValue(doc,"/feed/link[@rel='next']/@href", "http://localhost:24156/namespace/feed?marker=1&foo=bar");
-        xml.assertHasValue(doc,"/feed/link[@rel='prev']/@href", "http://localhost:24156/namespace/feed?marker=1&foo=bar");
 
         System.out.println(new String(getFeedMethod.getResponseBody()));
       }
