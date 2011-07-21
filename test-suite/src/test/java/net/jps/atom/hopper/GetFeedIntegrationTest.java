@@ -1,8 +1,5 @@
 package net.jps.atom.hopper;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
