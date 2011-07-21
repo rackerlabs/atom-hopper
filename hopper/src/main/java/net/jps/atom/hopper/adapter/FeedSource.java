@@ -43,7 +43,7 @@ public interface FeedSource {
      * Retrieves a list of categories supported by this feed source.
      *
      * A workspace provider may poll all of its associated feeds for their
-     * categories and then aggregate them into said document.
+     * categories and then aggregate them into a service document.
      *
      * @return
      */
