@@ -156,7 +156,7 @@ public class WorkspaceProvider implements Provider {
                 response = processor.process(request, workspaceManager, adapter);
                 response = response != null ? response : processExtensionRequest(request, adapter);
             } catch (Exception ex) {
-                response = handleAdapterException(ex, transaction, request, response);
+                response = handleAdapterException(ex, transaction, request);
             } finally {
                 transactionEnd(transaction, request, response);
             }
@@ -167,7 +167,7 @@ public class WorkspaceProvider implements Provider {
         return response != null ? response : ProviderHelper.badrequest(request);
     }
 
-    private ResponseContext handleAdapterException(Exception ex, Transactional transaction, RequestContext request, ResponseContext response) {
+    private ResponseContext handleAdapterException(Exception ex, Transactional transaction, RequestContext request) {
         if (ex instanceof ResponseContextException) {
             final ResponseContextException rce = (ResponseContextException) ex;
 
@@ -206,7 +206,7 @@ public class WorkspaceProvider implements Provider {
     private ResponseContext processExtensionRequest(RequestContext context, CollectionAdapter adapter) {
         return adapter.extensionRequest(context);
     }
-
+/*
     private Service getServiceElement(RequestContext request) {
         final Service service = abdera.newService();
 
@@ -216,7 +216,7 @@ public class WorkspaceProvider implements Provider {
 
         return service;
     }
-
+*/
     public void setFilters(List<Filter> filters) {
         this.filters.clear();
         this.filters.addAll(filters);

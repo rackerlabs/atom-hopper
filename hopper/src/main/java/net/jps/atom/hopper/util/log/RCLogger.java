@@ -13,7 +13,7 @@ import org.slf4j.MarkerFactory;
  */
 public class RCLogger implements Logger {
 
-    private final static Marker SEVERE = MarkerFactory.getMarker("SEVERE");
+    private static final Marker SEVERE = MarkerFactory.getMarker("SEVERE");
 
     private final org.slf4j.Logger loggerRef;
 

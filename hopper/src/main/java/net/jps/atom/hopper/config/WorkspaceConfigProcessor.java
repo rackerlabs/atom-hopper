@@ -152,10 +152,11 @@ public class WorkspaceConfigProcessor {
 
         final FeedArchiveSource archiveSource = getAdapter(archivalConfig.getFeedArchiveSource(), FeedArchiveSource.class);
         final FeedArchiver archiver = getAdapter(archivalConfig.getFeedArchiver(), FeedArchiver.class);
+        final int archivalInterval = 3600000;
 
         if (archiver != null) {
             //TODO: Implements archivalConfig.getIntervalSpec(); DOIT!
-            archiver.setArchivalIntervalSpec(3600000);
+            archiver.setArchivalIntervalSpec(archivalInterval);
             feedArchivalService.registerArchiveTask(feedSource, archiver);
         }
 
