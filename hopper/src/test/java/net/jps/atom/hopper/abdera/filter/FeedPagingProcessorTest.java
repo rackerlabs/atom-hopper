@@ -7,14 +7,14 @@ import org.apache.abdera.i18n.iri.IRI;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.RequestContext;
-import org.apache.commons.lang.StringUtils;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.springframework.http.HttpStatus;
 
-import java.util.*;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -56,7 +56,7 @@ public class FeedPagingProcessorTest {
             String lastEntryId = Integer.toString(TOTAL_FEED_ENTRIES);
 
             assertThat("Should set next link", feed.getLink(REL_NEXT), notNullValue());
-            assertThat("Should reference last entry on feed", feed.getLink(REL_NEXT).getHref().toString(), equalTo(TARGET_PATH + "?marker=" + lastEntryId));
+            assertThat("Should reference last entry on feed", feed.getLink(REL_NEXT).getHref().toString(), equalTo(BASE_URI + TARGET_PATH + "?marker=" + lastEntryId));
         }
 
     }
@@ -91,7 +91,7 @@ public class FeedPagingProcessorTest {
             String lastEntryId = Integer.toString(TOTAL_FEED_ENTRIES);
 
             assertThat("Should set next link", feed.getLink(REL_NEXT), notNullValue());
-            assertThat("Should reference last entry on feed", feed.getLink(REL_NEXT).getHref().toString(), equalTo(TARGET_PATH + "?marker=" + lastEntryId));
+            assertThat("Should reference last entry on feed", feed.getLink(REL_NEXT).getHref().toString(), equalTo(BASE_URI + TARGET_PATH + "?marker=" + lastEntryId));
         }
 
         @Test
@@ -162,7 +162,7 @@ public class FeedPagingProcessorTest {
         static final String BASE_URI = "http://localhost:8080";
         static final String TARGET_PATH = "/foo/bar";
         static final String TARGET_PARAMS = "?marker=1";
-        static final String SELF_URL = TARGET_PATH + TARGET_PARAMS;
+        static final String SELF_URL = BASE_URI + TARGET_PATH + TARGET_PARAMS;
         static final String REL_CURRENT = "current";
         static final String REL_NEXT = "next";
 
