@@ -27,7 +27,7 @@ public class FeedPagingProcessor implements AdapterResponseProcessor<Feed> {
         final Feed f = adapterResponse.getBody();
 
         // Build the URL and PATH without the parameters
-        final String self = rc.getBaseUri().toString() + StringUtils.split(rc.getTargetPath(), '?')[0];
+        final String self = StringUtils.split(rc.getResolvedUri().toString(), '?')[0];
 
         // Get a map of the url parameters
         Map<String,String> parameters = getParameterMap(rc);

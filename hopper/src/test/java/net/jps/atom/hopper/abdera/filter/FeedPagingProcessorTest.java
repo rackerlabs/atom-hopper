@@ -56,7 +56,7 @@ public class FeedPagingProcessorTest {
             String lastEntryId = Integer.toString(TOTAL_FEED_ENTRIES);
 
             assertThat("Should set next link", feed.getLink(REL_NEXT), notNullValue());
-            assertThat("Should reference last entry on feed", feed.getLink(REL_NEXT).getHref().toString(), equalTo(BASE_URI + TARGET_PATH + "?marker=" + lastEntryId));
+            assertThat("Should reference last entry on feed", feed.getLink(REL_NEXT).getHref().toString(), equalTo("http://localhost:8080/foo/bar?marker=" + lastEntryId));
         }
 
     }
@@ -91,7 +91,7 @@ public class FeedPagingProcessorTest {
             String lastEntryId = Integer.toString(TOTAL_FEED_ENTRIES);
 
             assertThat("Should set next link", feed.getLink(REL_NEXT), notNullValue());
-            assertThat("Should reference last entry on feed", feed.getLink(REL_NEXT).getHref().toString(), equalTo(BASE_URI + TARGET_PATH + "?marker=" + lastEntryId));
+            assertThat("Should reference last entry on feed", feed.getLink(REL_NEXT).getHref().toString(), equalTo("http://localhost:8080/foo/bar?marker=" + lastEntryId));
         }
 
         @Test
@@ -159,10 +159,10 @@ public class FeedPagingProcessorTest {
     @Ignore
     public static class TestParent {
 
-        static final String BASE_URI = "http://localhost:8080";
+        static final String BASE_URI = "http://localhost:8080/";
         static final String TARGET_PATH = "/foo/bar";
         static final String TARGET_PARAMS = "?marker=1";
-        static final String SELF_URL = BASE_URI + TARGET_PATH + TARGET_PARAMS;
+        static final String SELF_URL = "http://localhost:8080/foo/bar?marker=1";
         static final String REL_CURRENT = "current";
         static final String REL_NEXT = "next";
 
@@ -195,6 +195,7 @@ public class FeedPagingProcessorTest {
         public RequestContext requestContext() {
             RequestContext target = mock(RequestContext.class);
 
+            when(target.getResolvedUri()).thenReturn(new IRI(SELF_URL));
             when(target.getBaseUri()).thenReturn(new IRI(BASE_URI));
             when(target.getTargetPath()).thenReturn(TARGET_PATH + TARGET_PARAMS);
             when(target.getParameterNames()).thenReturn(new String[]{"marker"});
