@@ -53,14 +53,17 @@ public class WorkspaceConfigProcessor {
         }
     }
 
-    public WorkspaceHandler toHandler() {
-        final WorkspaceHandler workspace = new WorkspaceHandler(config);
+    public List<WorkspaceHandler> toHandler() {
+        final List<WorkspaceHandler> workspaces = new LinkedList<WorkspaceHandler>();        
 
         for (TargetAwareAbstractCollectionAdapter collectionAdapter : assembleFeeds(config.getFeed())) {
+            final WorkspaceHandler workspace = new WorkspaceHandler(config);
             workspace.addCollectionAdapter(collectionAdapter.getTarget(), collectionAdapter);
+            LOG.info("Loading Workspace: " + collectionAdapter.getTarget());
+            workspaces.add(workspace);
         }
 
-        return workspace;
+        return workspaces;
     }
 
     private List<TargetAwareAbstractCollectionAdapter> assembleFeeds(List<FeedConfiguration> feedServices) {

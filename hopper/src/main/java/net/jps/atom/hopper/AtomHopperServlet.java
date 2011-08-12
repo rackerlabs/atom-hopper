@@ -127,7 +127,7 @@ public final class AtomHopperServlet extends AbderaServlet {
                     workspaceCfg, applicationContextAdapter, archivalService,
                     workspaceProvider.getTargetResolver(), getServletContext().getContextPath());
 
-            workspaceProvider.getWorkspaceManager().addWorkspace(cfgProcessor.toHandler());
+            workspaceProvider.getWorkspaceManager().addWorkspaces(cfgProcessor.toHandler());
         }
 
         return workspaceProvider;
