@@ -63,7 +63,6 @@
             <xs:element name="defaults" type="hopcfg:ConfigurationDefaults" minOccurs="0" maxOccurs="1" />
             <xs:element name="feed-source" type="hopcfg:AdapterDescriptor" minOccurs="0" maxOccurs="1" />
             <xs:element name="feed-publisher" type="hopcfg:AdapterDescriptor" minOccurs="0" maxOccurs="1" />
-            <xs:element name="archive" type="hopcfg:ArchivalConfiguration" minOccurs="0" maxOccurs="1" />
 
             <xs:element name="feed" type="hopcfg:FeedConfiguration" minOccurs="1" maxOccurs="unbounded" />
         </xs:sequence>
@@ -93,7 +92,6 @@
         <xs:sequence>
             <xs:element name="feed-source" type="hopcfg:AdapterDescriptor" minOccurs="0" maxOccurs="1" />
             <xs:element name="feed-publisher" type="hopcfg:AdapterDescriptor" minOccurs="0" maxOccurs="1" />
-            <xs:element name="archive" type="hopcfg:ArchivalConfiguration" minOccurs="0" maxOccurs="1" />
             <xs:element name="author" type="hopcfg:Author" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
 
