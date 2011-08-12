@@ -1,8 +1,6 @@
 package net.jps.atom.hopper;
 
 import net.jps.atom.hopper.abdera.WorkspaceProvider;
-import net.jps.atom.hopper.archive.FeedArchivalService;
-import net.jps.atom.hopper.archive.impl.QueuedFeedArchivalService;
 import net.jps.atom.hopper.config.WorkspaceConfigProcessor;
 import net.jps.atom.hopper.config.v1_0.Configuration;
 import net.jps.atom.hopper.config.v1_0.ConfigurationDefaults;
@@ -44,7 +42,6 @@ public final class AtomHopperServlet extends AbderaServlet {
 
     private final ConfigurationParser<Configuration> configurationParser;
 
-    private FeedArchivalService archivalService;
     private ApplicationContextAdapter applicationContextAdapter;
     private Abdera abderaReference;
     private Configuration configuration;
@@ -55,15 +52,12 @@ public final class AtomHopperServlet extends AbderaServlet {
 
     @Override
     public void destroy() {
-        archivalService.stopService();
         super.destroy();
     }
 
     @Override
     public void init() throws ServletException {
         abderaReference = getAbdera();
-
-        archivalService = new QueuedFeedArchivalService();
 
         final String configLocation = getConfigurationLocation();
 
@@ -84,8 +78,6 @@ public final class AtomHopperServlet extends AbderaServlet {
 
         applicationContextAdapter = getContextAdapter();
         applicationContextAdapter.usingServletContext(getServletContext());
-
-        archivalService.startService();
 
         super.init();
     }
@@ -124,7 +116,7 @@ public final class AtomHopperServlet extends AbderaServlet {
 
         for (WorkspaceConfiguration workspaceCfg : configuration.getWorkspace()) {
             final WorkspaceConfigProcessor cfgProcessor = new WorkspaceConfigProcessor(
-                    workspaceCfg, applicationContextAdapter, archivalService,
+                    workspaceCfg, applicationContextAdapter,
                     workspaceProvider.getTargetResolver(), getServletContext().getContextPath());
 
             workspaceProvider.getWorkspaceManager().addWorkspaces(cfgProcessor.toHandler());
