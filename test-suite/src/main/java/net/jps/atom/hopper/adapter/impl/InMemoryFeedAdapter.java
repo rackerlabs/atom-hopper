@@ -11,7 +11,7 @@ import net.jps.atom.hopper.util.uri.template.URITemplate;
 import org.apache.abdera.model.Categories;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.http.HttpStatus;
 
 import java.util.Calendar;
