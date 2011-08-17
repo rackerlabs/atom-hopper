@@ -2,8 +2,6 @@ package net.jps.atom.hopper.util.config.jaxb;
 
 import net.jps.atom.hopper.util.config.AbstractConfigurationParser;
 import net.jps.atom.hopper.util.config.ConfigurationParserException;
-import net.jps.atom.hopper.util.log.Logger;
-import net.jps.atom.hopper.util.log.RCLogger;
 import org.xml.sax.SAXException;
 
 import javax.xml.XMLConstants;
@@ -13,11 +11,13 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import java.io.IOException;
 import java.net.URL;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class JAXBConfigurationParser<T> extends AbstractConfigurationParser<T> {
 
     private static final SchemaFactory SCHEMA_FACTORY = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-    private static final Logger LOG = new RCLogger(JAXBConfigurationParser.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JAXBConfigurationParser.class);
     private final JAXBContext jaxbContext;
     private Schema validationSchema;
 
@@ -29,7 +29,10 @@ public final class JAXBConfigurationParser<T> extends AbstractConfigurationParse
         try {
             jaxbContext = JAXBContext.newInstance(objectFactories);
         } catch (JAXBException jaxbex) {
-            throw LOG.newException("Failed to create the JAXB context required for configuration marshalling", jaxbex, ConfigurationParserException.class);
+            final String message = "Failed to create the JAXB context required for configuration marshalling";
+            
+            LOG.error(message);
+            throw new ConfigurationParserException(message, jaxbex);
         }
     }
 
@@ -78,15 +81,15 @@ public final class JAXBConfigurationParser<T> extends AbstractConfigurationParse
             } else if (unmarshaledObj instanceof JAXBElement) {
                 rootConfigElement = ((JAXBElement<T>) unmarshaledObj).getValue();
             } else {
-                throw LOG.newException("Failed to read config and no exception was thrown. Potential bug. Please report this.", ConfigurationParserException.class);
+                throw new ConfigurationParserException("Failed to read config and no exception was thrown. Potential bug. Please report this.");
             }
         } catch (UnmarshalException mue) {
-            throw LOG.newException("Your configuration may be malformed. Please review it and make sure it validates correctly. Reason: "
-                    + mue.getMessage(), mue, ConfigurationParserException.class);
+            throw new ConfigurationParserException("Your configuration may be malformed. Please review it and make sure it validates correctly. Reason: "
+                    + mue.getMessage(), mue);
         } catch (Exception ex) {
-            throw LOG.newException("Failed to read the configuration. Reason: "
+            throw new ConfigurationParserException("Failed to read the configuration. Reason: "
                     + "" + ex.getMessage()
-                    + " - pump cause for more details", ex, ConfigurationParserException.class);
+                    + " - pump cause for more details", ex);
         }
 
         return rootConfigElement;

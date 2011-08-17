@@ -11,14 +11,14 @@ import net.jps.atom.hopper.config.v1_0.WorkspaceConfiguration;
 import net.jps.atom.hopper.servlet.ApplicationContextAdapter;
 import net.jps.atom.hopper.util.TargetRegexBuilder;
 import net.jps.atom.hopper.util.context.AdapterGetter;
-import net.jps.atom.hopper.util.log.Logger;
-import net.jps.atom.hopper.util.log.RCLogger;
 import org.apache.abdera.protocol.server.TargetType;
 import org.apache.abdera.protocol.server.impl.RegexTargetResolver;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.LinkedList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * I eat configurations.
@@ -27,7 +27,7 @@ import java.util.List;
  */
 public class WorkspaceConfigProcessor {
 
-    private static final Logger LOG = new RCLogger(WorkspaceConfigProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WorkspaceConfigProcessor.class);
     private final RegexTargetResolver regexTargetResolver;
     private final AdapterGetter adapterGetter;
     private final WorkspaceConfiguration config;
@@ -89,7 +89,9 @@ public class WorkspaceConfigProcessor {
             try {
                 resolvedReference = adapterGetter.getByClassDefinition(Class.forName(className), expectedClass);
             } catch (ClassNotFoundException cnfe) {
-                throw LOG.newException("Unable to find specified default adapter class: " + className, cnfe, ConfigurationException.class);
+                LOG.error("Unable to find specified default adapter class: " + className, cnfe);
+                
+                throw new ConfigurationException("Unable to find specified default adapter class: " + className, cnfe);
             }
         }
 

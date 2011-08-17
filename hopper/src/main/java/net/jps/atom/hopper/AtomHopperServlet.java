@@ -14,8 +14,6 @@ import net.jps.atom.hopper.util.config.ConfigurationParser;
 import net.jps.atom.hopper.util.config.ConfigurationParserException;
 import net.jps.atom.hopper.util.config.jaxb.JAXBConfigurationParser;
 import net.jps.atom.hopper.util.config.resource.uri.URIConfigurationResource;
-import net.jps.atom.hopper.util.log.Logger;
-import net.jps.atom.hopper.util.log.RCLogger;
 import org.apache.abdera.Abdera;
 import org.apache.abdera.protocol.server.Provider;
 import org.apache.abdera.protocol.server.servlet.AbderaServlet;
@@ -26,6 +24,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is the entry point for the atom server application. This servlet is
@@ -37,7 +37,7 @@ import java.util.Map;
  */
 public final class AtomHopperServlet extends AbderaServlet {
 
-    private static final Logger LOG = new RCLogger(AtomHopperServlet.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AtomHopperServlet.class);
     public static final String DEFAULT_CONFIGURATION_LOCATION = "/etc/atom-server/atom-server.cfg.xml";
 
     private final ConfigurationParser<Configuration> configurationParser;
@@ -73,7 +73,9 @@ public final class AtomHopperServlet extends AbderaServlet {
 
             configuration = configurationParser.read();
         } catch (ConfigurationParserException cpe) {
-            throw LOG.newException("Failed to read configuration file: " + configLocation, cpe, ServletInitException.class);
+            LOG.error("Failed to read configuration file: " + configLocation, cpe);
+            
+            throw new ServletInitException(cpe.getMessage(), cpe);
         }
 
         applicationContextAdapter = getContextAdapter();
@@ -87,7 +89,7 @@ public final class AtomHopperServlet extends AbderaServlet {
 
         //TODO: Make this optional - use dummy adapter class for the cfg proc that returns null maybe
         if (StringUtils.isBlank(adapterClass)) {
-            throw LOG.newException("Missing context adapter init-parameter for servlet: " + ServletInitParameter.CONTEXT_ADAPTER_CLASS.toString(), ContextAdapterResolutionException.class);
+            throw new ContextAdapterResolutionException("Missing context adapter init-parameter for servlet: " + ServletInitParameter.CONTEXT_ADAPTER_CLASS.toString());
         }
 
         try {
@@ -97,10 +99,12 @@ public final class AtomHopperServlet extends AbderaServlet {
                 return (ApplicationContextAdapter) freshAdapter;
             }
         } catch (Exception ex) {
-            throw LOG.wrapError(ex, ContextAdapterResolutionException.class);
+            LOG.error(ex.getMessage(), ex);
+            
+            throw new ContextAdapterResolutionException(ex.getMessage(), ex);
         }
 
-        throw LOG.newException("Unknown application context adapter class: " + adapterClass, ContextAdapterResolutionException.class);
+        throw new ContextAdapterResolutionException("Unknown application context adapter class: " + adapterClass);
     }
 
     protected String getConfigurationLocation() {

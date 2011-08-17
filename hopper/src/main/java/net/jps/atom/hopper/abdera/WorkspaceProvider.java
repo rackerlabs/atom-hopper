@@ -2,14 +2,11 @@ package net.jps.atom.hopper.abdera;
 
 import net.jps.atom.hopper.adapter.TargetResolverField;
 import net.jps.atom.hopper.config.v1_0.HostConfiguration;
-import net.jps.atom.hopper.util.log.Logger;
-import net.jps.atom.hopper.util.log.RCLogger;
 import net.jps.atom.hopper.util.uri.template.EnumKeyedTemplateParameters;
 import net.jps.atom.hopper.util.uri.template.TemplateParameters;
 import net.jps.atom.hopper.util.uri.template.URITemplate;
 import net.jps.atom.hopper.util.uri.template.URITemplateParameter;
 import org.apache.abdera.Abdera;
-import org.apache.abdera.model.Service;
 import org.apache.abdera.protocol.server.*;
 import org.apache.abdera.protocol.server.context.ResponseContextException;
 import org.apache.abdera.protocol.server.impl.RegexTargetResolver;
@@ -22,10 +19,12 @@ import org.apache.abdera.protocol.server.processors.ServiceRequestProcessor;
 
 import javax.security.auth.Subject;
 import java.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WorkspaceProvider implements Provider {
 
-    private static final Logger LOG = new RCLogger(WorkspaceProvider.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WorkspaceProvider.class);
     private final Map<TargetType, RequestProcessor> requestProcessors;
     private final List<Filter> filters;
     private final WorkspaceManager workspaceManager;
@@ -173,12 +172,12 @@ public class WorkspaceProvider implements Provider {
 
             if (rce.getStatusCode() >= 400 && rce.getStatusCode() < 500) {
                 // don't report routine 4xx HTTP errors
-                LOG.info(ex);
+                LOG.info(ex.getMessage(), ex);
             } else {
-                LOG.error(ex);
+                LOG.error(ex.getMessage(), ex);
             }
         } else {
-            LOG.error(ex);
+            LOG.error(ex.getMessage(), ex);
         }
 
         transactionCompensate(transaction, request, ex);
