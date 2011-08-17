@@ -59,8 +59,8 @@ public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
           Document doc = xml.toDOM(getFeedMethod.getResponseBodyAsString());
           
           assertNotNull("The returned XML should not be null", doc);
-          xml.assertHasValue(doc,"/feed/link[@rel='current']/@href", "/namespace/feed");          
-          xml.assertHasValue(doc,"/feed/link[@rel='next']/@href", "/namespace/feed?marker=" + entryId);          
+          xml.assertHasValue(doc,"/feed/link[@rel='current']/@href", urlAndPort + "/namespace/feed");          
+          xml.assertHasValue(doc,"/feed/link[@rel='next']/@href", urlAndPort + "/namespace/feed?marker=" + entryId);          
       }
       
       @Test
@@ -71,8 +71,8 @@ public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
           Document doc = xml.toDOM(getFeedMethod.getResponseBodyAsString());
 
           assertNotNull("The returned XML should not be null", doc);
-          xml.assertHasValue(doc,"/feed/link[@rel='current']/@href", "/namespace/feed?marker=" + entryId + "&foo=bar");
-          xml.assertHasValue(doc,"/feed/link[@rel='next']/@href", "/namespace/feed?marker=" + entryId + "&foo=bar");
+          xml.assertHasValue(doc,"/feed/link[@rel='current']/@href", urlAndPort + "/namespace/feed?marker=" + entryId + "&foo=bar");
+          xml.assertHasValue(doc,"/feed/link[@rel='next']/@href", urlAndPort + "/namespace/feed?marker=" + entryId + "&foo=bar");
       }
     }
 
