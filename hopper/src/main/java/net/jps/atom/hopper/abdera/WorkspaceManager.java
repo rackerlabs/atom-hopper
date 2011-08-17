@@ -15,9 +15,9 @@ public class WorkspaceManager implements org.apache.abdera.protocol.server.Works
     public WorkspaceManager() {
         handlers = new LinkedList<WorkspaceHandler>();
     }
-
-    public void addWorkspace(WorkspaceHandler workspace) {
-        handlers.add(workspace);
+    
+    public void addWorkspaces(List<WorkspaceHandler> workspaces) {
+        handlers.addAll(workspaces);
     }
 
     @Override

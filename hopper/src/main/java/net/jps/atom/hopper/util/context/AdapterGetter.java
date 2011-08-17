@@ -1,7 +1,7 @@
 package net.jps.atom.hopper.util.context;
 
 import net.jps.atom.hopper.servlet.ApplicationContextAdapter;
-import net.jps.fava.reflection.ReflectionTools;
+import net.jps.atom.hopper.util.reflection.ReflectionTools;
 import org.apache.commons.lang.StringUtils;
 
 /**

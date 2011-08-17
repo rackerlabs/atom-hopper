@@ -15,4 +15,11 @@
             <feed-publisher reference="adapter" />
         </feed>
     </workspace>
+    
+    <workspace title="Another Testing Namespace" resource="/uber-namespace/">
+        <feed title="uber-feed" resource="/uberfeed">
+            <feed-source reference="adapter" />
+            <feed-publisher reference="adapter" />
+        </feed>
+    </workspace>    
 </atom-hopper-config>

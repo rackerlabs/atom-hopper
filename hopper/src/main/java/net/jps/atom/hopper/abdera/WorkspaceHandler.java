@@ -36,8 +36,7 @@ public class WorkspaceHandler implements WorkspaceInfo {
 
     @Override
     public Workspace asWorkspaceElement(RequestContext rc) {
-        final Workspace ws = new FOMWorkspace(myConfig.getTitle());
-        return ws;
+        return new FOMWorkspace(myConfig.getTitle());
     }
 
     @Override

@@ -13,14 +13,8 @@
         <feed-source reference="default-feed-ref" />
         <feed-publisher reference="default-feed-publisher-ref" />
 
-        <archive>
-            <feed-archive-source reference="default-archive-source-ref" />
-            <feed-archiver reference="default-feed-archiver-ref" />
-        </archive>
-
         <!-- http://localhost:8080/namespace_a/feed_1 -->
         <feed title="feed_1" resource="/feed_1">
-            <archive interval-spec="* */1 * * *" />
             <author name="John Doe"/>
         </feed>
     </workspace>

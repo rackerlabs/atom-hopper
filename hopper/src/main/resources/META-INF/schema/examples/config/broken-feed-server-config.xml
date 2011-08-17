@@ -10,8 +10,6 @@
         <atom value="yaaay" />
 
         <!-- http://localhost:8080/namespace_a/feed_1 -->
-        <feed title="feed_1" resource="/feed_1">
-            <archive interval-spec="* */1 * * *" />
-        </feed>
+        <feed title="feed_1" resource="/feed_1" />
     </workspace>
 </atom-hopper-config>

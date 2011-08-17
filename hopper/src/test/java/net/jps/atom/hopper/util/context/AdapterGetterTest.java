@@ -1,8 +1,6 @@
 package net.jps.atom.hopper.util.context;
 
 import net.jps.atom.hopper.adapter.FeedSource;
-import net.jps.atom.hopper.adapter.archive.FeedArchiveSource;
-import net.jps.atom.hopper.adapter.impl.UnimplementedFeedArchive;
 import net.jps.atom.hopper.adapter.impl.UnimplementedFeedSource;
 import net.jps.atom.hopper.servlet.ApplicationContextAdapter;
 import org.junit.Before;
@@ -46,12 +44,8 @@ public class AdapterGetterTest {
 
             when(contextAdapterMock.fromContext(eq(BAD_REFERENCE), any(Class.class))).thenReturn(new InstanceableClass());
             when(contextAdapterMock.fromContext(eq(NULL_REFERENCE), any(Class.class))).thenReturn(null);
-
             when(contextAdapterMock.fromContext(eq(UnimplementedFeedSource.class))).thenReturn(new UnimplementedFeedSource());
-            when(contextAdapterMock.fromContext(eq(UnimplementedFeedArchive.class))).thenReturn(new UnimplementedFeedArchive());
-
             when(contextAdapterMock.fromContext(eq(FEED_SOURCE_REFERENCE), any(Class.class))).thenReturn(new UnimplementedFeedSource());
-            when(contextAdapterMock.fromContext(eq(FEED_ARCHIVE_REFERENCE), any(Class.class))).thenReturn(new UnimplementedFeedArchive());
 
             adapterGetter = new AdapterGetter(contextAdapterMock);
         }
@@ -62,9 +56,7 @@ public class AdapterGetterTest {
         @Test
         public void shouldGetFromContext() {
             assertNotNull(adapterGetter.getByClassDefinition(UnimplementedFeedSource.class, FeedSource.class));
-            assertNotNull(adapterGetter.getByClassDefinition(UnimplementedFeedArchive.class, FeedArchiveSource.class));
             assertNotNull(adapterGetter.getByName(FEED_SOURCE_REFERENCE, FeedSource.class));
-            assertNotNull(adapterGetter.getByName(FEED_ARCHIVE_REFERENCE, FeedArchiveSource.class));
         }
 
         @Test(expected = AdapterNotFoundException.class)
@@ -95,11 +87,6 @@ public class AdapterGetterTest {
         @Test(expected = IllegalArgumentException.class)
         public void shouldDetectClassCastingErrors() {
             adapterGetter.getByName(BAD_REFERENCE, FeedSource.class);
-        }
-
-        @Test(expected = IllegalArgumentException.class)
-        public void shouldCheckForArchiveInterface() {
-            adapterGetter.getByClassDefinition(InstanceableClass.class, FeedArchiveSource.class);
         }
     }
 }
