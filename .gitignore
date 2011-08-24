@@ -14,3 +14,6 @@ target
 *.swp
 *.out
 /test-suite/nb-configuration.xml
+/hopper/nb-configuration.xml
+/server/nb-configuration.xml
+/server/nbactions.xml

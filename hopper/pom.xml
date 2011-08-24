@@ -13,7 +13,6 @@
     <packaging>jar</packaging>
 
     <name>ATOM Hopper - ATOMpub Server Framework</name>
-    <url>http://jpserver.net/atom/hopper</url>
 
     <dependencies>
         <dependency>
@@ -99,15 +98,6 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-
-                <configuration>
-                    <failOnMissingWebXml>true</failOnMissingWebXml>
-                </configuration>
-            </plugin>
-
             <plugin>
                 <groupId>com.sun.tools.xjc.maven2</groupId>
                 <artifactId>maven-jaxb-plugin</artifactId>
