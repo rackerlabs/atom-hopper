@@ -3,13 +3,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>net.jps.atom</groupId>
+        <groupId>org.atomhopper</groupId>
         <artifactId>parent</artifactId>
         <version>1.1.6-SNAPSHOT</version>
     </parent>
 
-    <groupId>net.jps.atom</groupId>
-    <artifactId>atom-hopper-test</artifactId>
+    <groupId>org.atomhopper</groupId>
+    <artifactId>test</artifactId>
     <packaging>jar</packaging>
 
     <name>ATOM Hopper - ATOMpub Server Framework Testing Suite</name>
@@ -22,8 +22,8 @@
         </dependency>
         
         <dependency>
-            <groupId>net.jps.atom</groupId>
-            <artifactId>atom-hopper</artifactId>
+            <groupId>org.atomhopper</groupId>
+            <artifactId>core</artifactId>
         </dependency>
 
         <dependency>

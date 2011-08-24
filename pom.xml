@@ -2,11 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>net.jps.atom</groupId>
+    <groupId>org.atomhopper</groupId>
     <artifactId>parent</artifactId>
     <packaging>pom</packaging>
 
-    <version>1.1.6-SNAPSHOT</version>
+    <version>0.9-SNAPSHOT</version>
     <name>ATOM Hopper - ATOMpub Server Collection</name>
 
     <url>http://atomhopper.org/</url>
@@ -36,8 +36,8 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>net.jps.atom</groupId>
-                <artifactId>atom-hopper</artifactId>
+                <groupId>org.atomhopper</groupId>
+                <artifactId>core</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
