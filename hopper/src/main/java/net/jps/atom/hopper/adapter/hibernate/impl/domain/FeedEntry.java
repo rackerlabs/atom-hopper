@@ -1,42 +1,49 @@
 package net.jps.atom.hopper.adapter.hibernate.impl.domain;
 
+import java.util.Collections;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "entries")
 public class FeedEntry {
 
     @Id
-    @Column(name = "id")
-    @GeneratedValue(generator = "increment")
-    @GenericGenerator(name = "increment", strategy = "increment")
-    private long id;
+    @Column(name = "entryId")
+    private String entryId;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "feedId")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "feed")
     private Feed feed;
     
     @ManyToMany(fetch= FetchType.LAZY)
     @JoinTable(name = "CategoryEntryReferences",
         joinColumns = {
-            @JoinColumn(name = "feedId", referencedColumnName = "id")},
+            @JoinColumn(name = "entryId", referencedColumnName = "entryId")},
         inverseJoinColumns = {
-            @JoinColumn(name = "categoryId", referencedColumnName = "id")})
+            @JoinColumn(name = "category", referencedColumnName = "name")})
     private Set<Category> categories;
         
     @Column(name = "entryBody")
     private String entryBody;
+
+    public FeedEntry() {
+        categories = Collections.EMPTY_SET;
+    }
+    
+    public FeedEntry(String entryId) {
+        this();
+        
+        this.entryId = entryId;
+    }
 
     public Set<Category> getCategories() {
         return categories;
@@ -62,11 +69,11 @@ public class FeedEntry {
         this.feed = feed;
     }
 
-    public long getId() {
-        return id;
+    public String getEntryId() {
+        return entryId;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setEntryId(String entryId) {
+        this.entryId = entryId;
     }
 }
