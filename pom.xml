@@ -14,7 +14,7 @@
     <properties>
         <project.license>apache20</project.license>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <org.springframework.version>3.0.3.RELEASE</org.springframework.version>
+        <org.springframework.version>3.0.6.RELEASE</org.springframework.version>
     </properties>
 
     <licenses>
@@ -30,7 +30,7 @@
     </modules>
 
     <scm>
-        <connection>scm:git:ssh://git@git-n01.rcloudtech.rackspacecloud.com/atom-hopper</connection>
+        <connection>scm:git:ssh://git@github.com/rackspace/atom-hopper.git</connection>
     </scm>
 
     <dependencyManagement>
@@ -67,6 +67,12 @@
             </dependency>
 
             <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>2.6</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.apache.abdera</groupId>
                 <artifactId>abdera-core</artifactId>
                 <version>1.1.2</version>
@@ -80,52 +86,66 @@
 
             <dependency>
                 <groupId>org.springframework</groupId>
-                <artifactId>org.springframework.core</artifactId>
+                <artifactId>spring-core</artifactId>
                 <version>${org.springframework.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.springframework</groupId>
-                <artifactId>org.springframework.beans</artifactId>
+                <artifactId>spring-beans</artifactId>
                 <version>${org.springframework.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.springframework</groupId>
-                <artifactId>org.springframework.context</artifactId>
+                <artifactId>spring-context</artifactId>
                 <version>${org.springframework.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.springframework</groupId>
-                <artifactId>org.springframework.web.servlet</artifactId>
+                <artifactId>spring-web</artifactId>
                 <version>${org.springframework.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-server</artifactId>
-                <version>8.0.0.M2</version>
+                <version>8.0.0.M3</version>
             </dependency>
 
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-servlet</artifactId>
-                <version>8.0.0.M2</version>
+                <version>8.0.0.M3</version>
             </dependency>
 
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>1.6.1</version>
+                <version>1.6.2</version>
             </dependency>
 
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-jdk14</artifactId>
-                <version>1.6.1</version>
+                <version>1.6.2</version>
             </dependency>
-                                  
+                         
+            <dependency>
+                <groupId>commons-httpclient</groupId>
+                <artifactId>commons-httpclient</artifactId>
+                <version>3.1</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>httpunit</groupId>
+                <artifactId>httpunit</artifactId>
+                <version>1.7</version>
+                <scope>test</scope>
+            </dependency>
+
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-all</artifactId>
@@ -151,51 +171,26 @@
 
     <repositories>
         <repository>
-            <id>repos.rackspace.cloud.public</id>
-            <url>http://184.106.178.199/m2/content/groups/public/</url>
-        </repository>
-
-        <repository>
-            <id>repos.rackspace.cloud.snapshots</id>
-            <url>http://184.106.178.199/m2/content/repositories/snapshots</url>
-
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </repository>
-
-        <repository>
-            <id>repos.rackspace.cloud.releases</id>
-            <url>http://184.106.178.199/m2/content/repositories/releases</url>
-
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
+            <id>public.maven.research.rackspace.com</id>
+            
+            <name>Rackspace Research</name>
+            <url>http://maven.research.rackspacecloud.com/content/groups/all/</url>
         </repository>
     </repositories>
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>repos.rackspace.cloud.public</id>
-            <url>http://184.106.178.199/m2/content/groups/public/</url>
-        </pluginRepository>
-    </pluginRepositories>
-
     <distributionManagement>
         <repository>
-            <id>releases.internal.maven.research.rackspacecloud.com</id>
-
-            <name>Internal Rackspace Cloud Research Releases</name>
-            <url>http://maven-n01.rcloudtech.rackspacecloud.com/m2/content/repositories/releases</url>
+            <id>releases.maven.research.rackspace.com</id>
+ 
+            <name>Rackspace Research Releases</name>
+            <url>http://maven.research.rackspacecloud.com/content/repositories/releases</url>
         </repository>
-
+        
         <snapshotRepository>
-            <uniqueVersion>false</uniqueVersion>
+            <id>snapshots.maven.research.rackspace.com</id>
 
-            <id>snapshots.internal.maven.research.rackspacecloud.com</id>
-
-            <name>Internal Rackspace Cloud Research Snapshots</name>
-            <url>http://maven-n01.rcloudtech.rackspacecloud.com/m2/content/repositories/snapshots</url>
+            <name>Rackspace Research Snapshots</name>
+            <url>http://maven.research.rackspacecloud.com/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
 
