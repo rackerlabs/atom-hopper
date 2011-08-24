@@ -5,11 +5,11 @@
     <parent>
         <groupId>org.atomhopper</groupId>
         <artifactId>parent</artifactId>
-        <version>1.1.6-SNAPSHOT</version>
+        <version>0.9-SNAPSHOT</version>
     </parent>
 
     <groupId>org.atomhopper</groupId>
-    <artifactId>test</artifactId>
+    <artifactId>test-suite</artifactId>
     <packaging>jar</packaging>
 
     <name>ATOM Hopper - ATOMpub Server Framework Testing Suite</name>
