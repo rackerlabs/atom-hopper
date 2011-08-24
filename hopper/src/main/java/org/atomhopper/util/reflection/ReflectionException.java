@@ -1,4 +1,4 @@
-package net.jps.atom.hopper.util.reflection;
+package org.atomhopper.util.reflection;
 
 /**
  *

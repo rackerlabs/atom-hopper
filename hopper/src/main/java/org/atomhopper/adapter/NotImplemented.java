@@ -1,4 +1,4 @@
-package net.jps.atom.hopper.adapter;
+package org.atomhopper.adapter;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

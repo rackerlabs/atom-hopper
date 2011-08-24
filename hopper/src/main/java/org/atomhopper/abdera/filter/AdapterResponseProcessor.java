@@ -1,6 +1,6 @@
-package net.jps.atom.hopper.abdera.filter;
+package org.atomhopper.abdera.filter;
 
-import net.jps.atom.hopper.response.AdapterResponse;
+import org.atomhopper.response.AdapterResponse;
 import org.apache.abdera.protocol.server.RequestContext;
 
 /**

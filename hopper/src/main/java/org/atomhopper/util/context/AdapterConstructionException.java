@@ -1,4 +1,4 @@
-package net.jps.atom.hopper.util.context;
+package org.atomhopper.util.context;
 
 /**
  *

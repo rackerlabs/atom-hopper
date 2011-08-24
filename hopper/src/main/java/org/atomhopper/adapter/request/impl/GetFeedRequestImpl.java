@@ -1,11 +1,11 @@
-package net.jps.atom.hopper.adapter.request.impl;
+package org.atomhopper.adapter.request.impl;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import net.jps.atom.hopper.adapter.request.AbstractClientRequest;
-import net.jps.atom.hopper.adapter.request.GetFeedRequest;
-import net.jps.atom.hopper.adapter.request.RequestQueryParameter;
+import org.atomhopper.adapter.request.AbstractClientRequest;
+import org.atomhopper.adapter.request.GetFeedRequest;
+import org.atomhopper.adapter.request.RequestQueryParameter;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.RequestContext;
 

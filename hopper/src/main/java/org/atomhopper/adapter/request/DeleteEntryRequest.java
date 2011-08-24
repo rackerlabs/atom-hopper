@@ -1,4 +1,4 @@
-package net.jps.atom.hopper.adapter.request;
+package org.atomhopper.adapter.request;
 
 /**
  *

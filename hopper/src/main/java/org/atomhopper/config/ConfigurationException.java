@@ -1,4 +1,4 @@
-package net.jps.atom.hopper.config;
+package org.atomhopper.config;
 
 /**
  *

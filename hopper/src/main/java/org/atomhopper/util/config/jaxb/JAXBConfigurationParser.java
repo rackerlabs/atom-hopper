@@ -1,7 +1,7 @@
-package net.jps.atom.hopper.util.config.jaxb;
+package org.atomhopper.util.config.jaxb;
 
-import net.jps.atom.hopper.util.config.AbstractConfigurationParser;
-import net.jps.atom.hopper.util.config.ConfigurationParserException;
+import org.atomhopper.util.config.AbstractConfigurationParser;
+import org.atomhopper.util.config.ConfigurationParserException;
 import org.xml.sax.SAXException;
 
 import javax.xml.XMLConstants;

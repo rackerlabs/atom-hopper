@@ -1,4 +1,4 @@
-package net.jps.atom.hopper.response;
+package org.atomhopper.response;
 
 public final class EmptyBody {
 

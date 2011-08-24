@@ -1,10 +1,10 @@
-package net.jps.atom.hopper.adapter;
+package org.atomhopper.adapter;
 
 import java.util.Calendar;
-import net.jps.atom.hopper.adapter.request.GetCategoriesRequest;
-import net.jps.atom.hopper.adapter.request.GetEntryRequest;
-import net.jps.atom.hopper.adapter.request.GetFeedRequest;
-import net.jps.atom.hopper.response.AdapterResponse;
+import org.atomhopper.adapter.request.GetCategoriesRequest;
+import org.atomhopper.adapter.request.GetEntryRequest;
+import org.atomhopper.adapter.request.GetFeedRequest;
+import org.atomhopper.response.AdapterResponse;
 import org.apache.abdera.model.Categories;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;

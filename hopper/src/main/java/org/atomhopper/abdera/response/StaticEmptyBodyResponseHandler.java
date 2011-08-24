@@ -1,7 +1,7 @@
-package net.jps.atom.hopper.abdera.response;
+package org.atomhopper.abdera.response;
 
-import net.jps.atom.hopper.response.AdapterResponse;
-import net.jps.atom.hopper.response.EmptyBody;
+import org.atomhopper.response.AdapterResponse;
+import org.atomhopper.response.EmptyBody;
 import org.apache.abdera.protocol.server.ProviderHelper;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.ResponseContext;

@@ -1,4 +1,4 @@
-package net.jps.atom.hopper.adapter.impl;
+package org.atomhopper.adapter.impl;
 
 import java.util.Calendar;
 import org.apache.abdera.model.Entry;

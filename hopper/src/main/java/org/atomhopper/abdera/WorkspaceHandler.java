@@ -1,7 +1,7 @@
-package net.jps.atom.hopper.abdera;
+package org.atomhopper.abdera;
 
-import net.jps.atom.hopper.adapter.TargetResolverField;
-import net.jps.atom.hopper.config.v1_0.WorkspaceConfiguration;
+import org.atomhopper.adapter.TargetResolverField;
+import org.atomhopper.config.v1_0.WorkspaceConfiguration;
 import org.apache.abdera.model.Workspace;
 import org.apache.abdera.parser.stax.FOMWorkspace;
 import org.apache.abdera.protocol.server.CollectionInfo;

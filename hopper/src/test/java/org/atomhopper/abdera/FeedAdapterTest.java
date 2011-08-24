@@ -1,12 +1,13 @@
-package net.jps.atom.hopper.abdera;
+package org.atomhopper.abdera;
 
-import net.jps.atom.hopper.adapter.FeedPublisher;
-import net.jps.atom.hopper.adapter.FeedSource;
-import net.jps.atom.hopper.adapter.request.*;
-import net.jps.atom.hopper.config.v1_0.FeedConfiguration;
-import net.jps.atom.hopper.response.AdapterResponse;
-import net.jps.atom.hopper.response.EmptyBody;
-import net.jps.atom.hopper.response.FeedSourceAdapterResponse;
+import org.atomhopper.abdera.FeedAdapter;
+import org.atomhopper.adapter.FeedPublisher;
+import org.atomhopper.adapter.FeedSource;
+import org.atomhopper.adapter.request.*;
+import org.atomhopper.config.v1_0.FeedConfiguration;
+import org.atomhopper.response.AdapterResponse;
+import org.atomhopper.response.EmptyBody;
+import org.atomhopper.response.FeedSourceAdapterResponse;
 import org.apache.abdera.i18n.iri.IRI;
 import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Entry;

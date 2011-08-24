@@ -1,10 +1,10 @@
-package net.jps.atom.hopper.abdera.response;
+package org.atomhopper.abdera.response;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import net.jps.atom.hopper.abdera.filter.AdapterResponseProcessor;
-import net.jps.atom.hopper.response.AdapterResponse;
+import org.atomhopper.abdera.filter.AdapterResponseProcessor;
+import org.atomhopper.response.AdapterResponse;
 import org.apache.abdera.protocol.server.RequestContext;
 
 /**

@@ -1,7 +1,7 @@
-package net.jps.atom.hopper.adapter.request.impl;
+package org.atomhopper.adapter.request.impl;
 
-import net.jps.atom.hopper.adapter.request.AbstractClientRequest;
-import net.jps.atom.hopper.adapter.request.PostEntryRequest;
+import org.atomhopper.adapter.request.AbstractClientRequest;
+import org.atomhopper.adapter.request.PostEntryRequest;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.protocol.server.RequestContext;
 

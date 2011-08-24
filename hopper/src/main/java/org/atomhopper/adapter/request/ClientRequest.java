@@ -1,6 +1,6 @@
-package net.jps.atom.hopper.adapter.request;
+package org.atomhopper.adapter.request;
 
-import net.jps.atom.hopper.util.uri.template.TemplateParameters;
+import org.atomhopper.util.uri.template.TemplateParameters;
 import org.apache.abdera.protocol.server.RequestContext;
 
 /**

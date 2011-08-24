@@ -1,4 +1,4 @@
-package net.jps.atom.hopper;
+package org.atomhopper;
 
 import static junit.framework.Assert.fail;
 

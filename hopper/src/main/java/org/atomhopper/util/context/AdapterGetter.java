@@ -1,7 +1,7 @@
-package net.jps.atom.hopper.util.context;
+package org.atomhopper.util.context;
 
-import net.jps.atom.hopper.servlet.ApplicationContextAdapter;
-import net.jps.atom.hopper.util.reflection.ReflectionTools;
+import org.atomhopper.servlet.ApplicationContextAdapter;
+import org.atomhopper.util.reflection.ReflectionTools;
 import org.apache.commons.lang.StringUtils;
 
 /**

@@ -1,9 +1,9 @@
-package net.jps.atom.hopper.abdera.response;
+package org.atomhopper.abdera.response;
 
-import net.jps.atom.hopper.abdera.filter.FeedConfigurationResponseProcessor;
-import net.jps.atom.hopper.abdera.filter.FeedPagingProcessor;
-import net.jps.atom.hopper.config.v1_0.FeedConfiguration;
-import net.jps.atom.hopper.response.AdapterResponse;
+import org.atomhopper.abdera.filter.FeedConfigurationResponseProcessor;
+import org.atomhopper.abdera.filter.FeedPagingProcessor;
+import org.atomhopper.config.v1_0.FeedConfiguration;
+import org.atomhopper.response.AdapterResponse;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.ProviderHelper;
 import org.apache.abdera.protocol.server.RequestContext;

@@ -1,4 +1,4 @@
-package net.jps.atom.hopper.servlet;
+package org.atomhopper.servlet;
 
 import javax.servlet.ServletContext;
 

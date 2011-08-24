@@ -1,10 +1,10 @@
-package net.jps.atom.hopper.adapter;
+package org.atomhopper.adapter;
 
-import net.jps.atom.hopper.adapter.request.DeleteEntryRequest;
-import net.jps.atom.hopper.adapter.request.PostEntryRequest;
-import net.jps.atom.hopper.adapter.request.PutEntryRequest;
-import net.jps.atom.hopper.response.AdapterResponse;
-import net.jps.atom.hopper.response.EmptyBody;
+import org.atomhopper.adapter.request.DeleteEntryRequest;
+import org.atomhopper.adapter.request.PostEntryRequest;
+import org.atomhopper.adapter.request.PutEntryRequest;
+import org.atomhopper.response.AdapterResponse;
+import org.atomhopper.response.EmptyBody;
 import org.apache.abdera.model.Entry;
 
 /**

@@ -1,4 +1,4 @@
-package net.jps.atom.hopper.response;
+package org.atomhopper.response;
 
 import org.springframework.http.HttpStatus;
 

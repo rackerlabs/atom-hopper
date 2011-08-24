@@ -1,4 +1,4 @@
-package net.jps.atom.hopper.abdera.response;
+package org.atomhopper.abdera.response;
 
 /**
  *

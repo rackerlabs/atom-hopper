@@ -1,4 +1,4 @@
-package net.jps.atom.hopper.adapter.hibernate.impl.domain;
+package org.atomhopper.adapter.hibernate.impl.domain;
 
 import java.util.Set;
 import javax.persistence.Column;

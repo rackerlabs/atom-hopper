@@ -1,6 +1,6 @@
-package net.jps.atom.hopper.util.config;
+package org.atomhopper.util.config;
 
-import net.jps.atom.hopper.util.config.AbstractConfigurationParser;
+import org.atomhopper.util.config.AbstractConfigurationParser;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;

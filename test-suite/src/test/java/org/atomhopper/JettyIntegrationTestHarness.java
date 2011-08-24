@@ -1,6 +1,6 @@
-package net.jps.atom.hopper;
+package org.atomhopper;
 
-import net.jps.atom.hopper.jetty.AtomHopperJettyServerBuilder;
+import org.atomhopper.jetty.AtomHopperJettyServerBuilder;
 import org.eclipse.jetty.server.Server;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

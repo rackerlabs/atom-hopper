@@ -1,5 +1,9 @@
-package net.jps.atom.hopper.util.uri.template;
+package org.atomhopper.util.uri.template;
 
+import org.atomhopper.util.uri.template.URITemplateParameter;
+import org.atomhopper.util.uri.template.EnumKeyedTemplateParameters;
+import org.atomhopper.util.uri.template.URITemplate;
+import org.atomhopper.util.uri.template.TemplateTargetKey;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.HashMap;

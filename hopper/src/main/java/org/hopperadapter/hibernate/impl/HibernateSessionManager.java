@@ -1,8 +1,8 @@
-package net.jps.atom.hopper.adapter.hibernate.impl;
+package org.hopperadapter.hibernate.impl;
 
-import net.jps.atom.hopper.adapter.hibernate.impl.domain.Category;
-import net.jps.atom.hopper.adapter.hibernate.impl.domain.Feed;
-import net.jps.atom.hopper.adapter.hibernate.impl.domain.FeedEntry;
+import org.atomhopper.adapter.hibernate.impl.domain.Category;
+import org.atomhopper.adapter.hibernate.impl.domain.Feed;
+import org.atomhopper.adapter.hibernate.impl.domain.FeedEntry;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 

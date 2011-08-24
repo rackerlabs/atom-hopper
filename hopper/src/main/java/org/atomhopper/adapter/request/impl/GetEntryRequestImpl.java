@@ -1,8 +1,8 @@
-package net.jps.atom.hopper.adapter.request.impl;
+package org.atomhopper.adapter.request.impl;
 
-import net.jps.atom.hopper.adapter.TargetResolverField;
-import net.jps.atom.hopper.adapter.request.AbstractClientRequest;
-import net.jps.atom.hopper.adapter.request.GetEntryRequest;
+import org.atomhopper.adapter.TargetResolverField;
+import org.atomhopper.adapter.request.AbstractClientRequest;
+import org.atomhopper.adapter.request.GetEntryRequest;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.protocol.server.RequestContext;
 

@@ -1,5 +1,7 @@
-package net.jps.atom.hopper.util.uri;
+package org.atomhopper.util.uri;
 
+import org.atomhopper.util.uri.ClasspathSchemeMapper;
+import org.atomhopper.util.uri.URISchemeMapper;
 import java.net.URI;
 import org.junit.Before;
 import org.junit.Test;

@@ -1,5 +1,7 @@
-package net.jps.atom.hopper.adapter.request.impl;
+package org.atomhopper.adapter.request.impl;
 
+import org.atomhopper.adapter.request.impl.RequestParsingException;
+import org.atomhopper.adapter.request.impl.PostEntryRequestImpl;
 import java.io.IOException;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.junit.Before;

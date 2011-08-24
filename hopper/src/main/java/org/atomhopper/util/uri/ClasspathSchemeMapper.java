@@ -1,4 +1,4 @@
-package net.jps.atom.hopper.util.uri;
+package org.atomhopper.util.uri;
 
 import org.apache.commons.lang.StringUtils;
 

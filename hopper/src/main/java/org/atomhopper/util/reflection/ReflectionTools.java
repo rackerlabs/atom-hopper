@@ -14,7 +14,7 @@
  *  limitations under the License.
  *  under the License.
  */
-package net.jps.atom.hopper.util.reflection;
+package org.atomhopper.util.reflection;
 
 import java.lang.reflect.Constructor;
 

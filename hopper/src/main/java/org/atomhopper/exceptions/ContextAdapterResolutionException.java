@@ -1,4 +1,4 @@
-package net.jps.atom.hopper.exceptions;
+package org.atomhopper.exceptions;
 
 public class ContextAdapterResolutionException extends RuntimeException {
 

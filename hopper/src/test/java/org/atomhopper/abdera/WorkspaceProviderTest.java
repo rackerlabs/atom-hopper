@@ -1,5 +1,7 @@
-package net.jps.atom.hopper.abdera;
+package org.atomhopper.abdera;
 
+import org.atomhopper.abdera.WorkspaceManager;
+import org.atomhopper.abdera.WorkspaceProvider;
 import org.apache.abdera.protocol.server.*;
 import org.apache.abdera.protocol.server.context.ResponseContextException;
 import org.apache.abdera.protocol.server.impl.AbstractCollectionAdapter;
@@ -10,7 +12,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 
 import java.util.HashMap;
-import net.jps.atom.hopper.config.v1_0.HostConfiguration;
+import org.atomhopper.config.v1_0.HostConfiguration;
 
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.*;

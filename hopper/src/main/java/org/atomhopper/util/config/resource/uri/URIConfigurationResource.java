@@ -1,14 +1,14 @@
-package net.jps.atom.hopper.util.config.resource.uri;
+package org.atomhopper.util.config.resource.uri;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import net.jps.atom.hopper.util.config.resource.ConfigurationResource;
-import net.jps.atom.hopper.util.config.resource.ConfigurationResourceException;
-import net.jps.atom.hopper.util.uri.CustomSchemeResolver;
-import net.jps.atom.hopper.util.uri.UriToUrlResolver;
+import org.atomhopper.util.config.resource.ConfigurationResource;
+import org.atomhopper.util.config.resource.ConfigurationResourceException;
+import org.atomhopper.util.uri.CustomSchemeResolver;
+import org.atomhopper.util.uri.UriToUrlResolver;
 
 public class URIConfigurationResource implements ConfigurationResource {
 

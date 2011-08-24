@@ -1,5 +1,6 @@
-package net.jps.atom.hopper.abdera;
+package org.atomhopper.abdera;
 
+import org.atomhopper.abdera.TargetAwareAbstractCollectionAdapter;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.ResponseContext;
 import org.apache.abdera.protocol.server.context.ResponseContextException;

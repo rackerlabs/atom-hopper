@@ -1,4 +1,4 @@
-package net.jps.atom.hopper.servlet;
+package org.atomhopper.servlet;
 
 /**
  * Enumeration for any initialization parameters that the servlet may expect.

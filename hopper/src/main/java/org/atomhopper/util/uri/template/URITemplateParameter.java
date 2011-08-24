@@ -1,4 +1,4 @@
-package net.jps.atom.hopper.util.uri.template;
+package org.atomhopper.util.uri.template;
 
 public enum URITemplateParameter {
 

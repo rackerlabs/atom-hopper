@@ -1,4 +1,4 @@
-package net.jps.atom.hopper.abdera;
+package org.atomhopper.abdera;
 
 import org.apache.abdera.protocol.server.impl.AbstractCollectionAdapter;
 

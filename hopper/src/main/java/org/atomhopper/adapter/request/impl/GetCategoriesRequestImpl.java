@@ -2,10 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.jps.atom.hopper.adapter.request.impl;
+package org.atomhopper.adapter.request.impl;
 
-import net.jps.atom.hopper.adapter.request.AbstractClientRequest;
-import net.jps.atom.hopper.adapter.request.GetCategoriesRequest;
+import org.atomhopper.adapter.request.AbstractClientRequest;
+import org.atomhopper.adapter.request.GetCategoriesRequest;
 import org.apache.abdera.model.Categories;
 import org.apache.abdera.protocol.server.RequestContext;
 

@@ -1,8 +1,9 @@
-package net.jps.atom.hopper.util.config.resource.uri;
+package org.atomhopper.util.config.resource.uri;
 
+import org.atomhopper.util.config.resource.uri.URIConfigurationResource;
 import java.io.InputStream;
 import java.net.URI;
-import net.jps.atom.hopper.util.uri.CustomSchemeResolver;
+import org.atomhopper.util.uri.CustomSchemeResolver;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;

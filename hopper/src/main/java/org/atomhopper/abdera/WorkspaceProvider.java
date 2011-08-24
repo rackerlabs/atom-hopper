@@ -1,11 +1,11 @@
-package net.jps.atom.hopper.abdera;
+package org.atomhopper.abdera;
 
-import net.jps.atom.hopper.adapter.TargetResolverField;
-import net.jps.atom.hopper.config.v1_0.HostConfiguration;
-import net.jps.atom.hopper.util.uri.template.EnumKeyedTemplateParameters;
-import net.jps.atom.hopper.util.uri.template.TemplateParameters;
-import net.jps.atom.hopper.util.uri.template.URITemplate;
-import net.jps.atom.hopper.util.uri.template.URITemplateParameter;
+import org.atomhopper.adapter.TargetResolverField;
+import org.atomhopper.config.v1_0.HostConfiguration;
+import org.atomhopper.util.uri.template.EnumKeyedTemplateParameters;
+import org.atomhopper.util.uri.template.TemplateParameters;
+import org.atomhopper.util.uri.template.URITemplate;
+import org.atomhopper.util.uri.template.URITemplateParameter;
 import org.apache.abdera.Abdera;
 import org.apache.abdera.protocol.server.*;
 import org.apache.abdera.protocol.server.context.ResponseContextException;

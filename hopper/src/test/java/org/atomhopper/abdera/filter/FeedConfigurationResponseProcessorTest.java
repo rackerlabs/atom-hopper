@@ -1,9 +1,10 @@
-package net.jps.atom.hopper.abdera.filter;
+package org.atomhopper.abdera.filter;
 
-import net.jps.atom.hopper.config.v1_0.Author;
-import net.jps.atom.hopper.config.v1_0.FeedConfiguration;
-import net.jps.atom.hopper.response.AdapterResponse;
-import net.jps.atom.hopper.response.FeedSourceAdapterResponse;
+import org.atomhopper.abdera.filter.FeedConfigurationResponseProcessor;
+import org.atomhopper.config.v1_0.Author;
+import org.atomhopper.config.v1_0.FeedConfiguration;
+import org.atomhopper.response.AdapterResponse;
+import org.atomhopper.response.FeedSourceAdapterResponse;
 import org.apache.abdera.Abdera;
 import org.apache.abdera.i18n.iri.IRI;
 import org.apache.abdera.model.Feed;

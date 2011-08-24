@@ -1,4 +1,4 @@
-package net.jps.atom.hopper;
+package org.atomhopper;
 
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;

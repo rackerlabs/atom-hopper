@@ -1,4 +1,6 @@
-package net.jps.atom.hopper.util;
+package org.atomhopper.util;
+
+import org.atomhopper.util.TargetRegexBuilder;
 
 public class TargetRegexBuilderTestParent {
 

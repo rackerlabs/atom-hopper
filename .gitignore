@@ -17,3 +17,5 @@ target
 /hopper/nb-configuration.xml
 /server/nb-configuration.xml
 /server/nbactions.xml
+/test-suite/nbactions.xml
+/hopper/nbactions.xml

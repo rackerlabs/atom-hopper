@@ -1,13 +1,13 @@
-package net.jps.atom.hopper.adapter.impl;
+package org.atomhopper.adapter.impl;
 
-import net.jps.atom.hopper.adapter.FeedPublisher;
-import net.jps.atom.hopper.adapter.FeedSource;
-import net.jps.atom.hopper.adapter.ResponseBuilder;
-import net.jps.atom.hopper.adapter.request.*;
-import net.jps.atom.hopper.response.AdapterResponse;
-import net.jps.atom.hopper.response.EmptyBody;
-import net.jps.atom.hopper.util.uri.template.EnumKeyedTemplateParameters;
-import net.jps.atom.hopper.util.uri.template.URITemplate;
+import org.atomhopper.adapter.FeedPublisher;
+import org.atomhopper.adapter.FeedSource;
+import org.atomhopper.adapter.ResponseBuilder;
+import org.atomhopper.adapter.request.*;
+import org.atomhopper.response.AdapterResponse;
+import org.atomhopper.response.EmptyBody;
+import org.atomhopper.util.uri.template.EnumKeyedTemplateParameters;
+import org.atomhopper.util.uri.template.URITemplate;
 import org.apache.abdera.model.Categories;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;

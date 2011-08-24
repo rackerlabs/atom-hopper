@@ -7,7 +7,7 @@
  *
  *       http://www.apache.org/licenses/LICENSE-2.0
  */
-package net.jps.atom.hopper.util.config;
+package org.atomhopper.util.config;
 
 /**
  *

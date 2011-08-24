@@ -2,15 +2,15 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.jps.atom.hopper.util.config.jaxb;
+package org.atomhopper.util.config.jaxb;
 
 import org.junit.Ignore;
 import java.net.URI;
-import net.jps.atom.hopper.config.v1_0.Configuration;
-import net.jps.atom.hopper.util.config.ConfigurationParserException;
-import net.jps.atom.hopper.util.config.resource.ConfigurationResource;
-import net.jps.atom.hopper.util.config.resource.uri.URIConfigurationResource;
-import net.jps.atom.hopper.util.uri.CustomSchemeResolver;
+import org.atomhopper.config.v1_0.Configuration;
+import org.atomhopper.util.config.ConfigurationParserException;
+import org.atomhopper.util.config.resource.ConfigurationResource;
+import org.atomhopper.util.config.resource.uri.URIConfigurationResource;
+import org.atomhopper.util.uri.CustomSchemeResolver;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
@@ -28,7 +28,7 @@ public class JAXBConfigurationParserTest {
         @Before
         public void standUp() {
             configurationParser = new JAXBConfigurationParser<Configuration>(
-                    Configuration.class, net.jps.atom.hopper.config.v1_0.ObjectFactory.class);
+                    Configuration.class, org.atomhopper.config.v1_0.ObjectFactory.class);
         }
 
         @Test

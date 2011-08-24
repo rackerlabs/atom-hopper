@@ -1,4 +1,4 @@
-package net.jps.atom.hopper.util.config.resource;
+package org.atomhopper.util.config.resource;
 
 /**
  *

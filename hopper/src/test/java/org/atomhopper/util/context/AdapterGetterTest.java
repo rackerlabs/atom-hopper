@@ -1,8 +1,11 @@
-package net.jps.atom.hopper.util.context;
+package org.atomhopper.util.context;
 
-import net.jps.atom.hopper.adapter.FeedSource;
-import net.jps.atom.hopper.adapter.impl.UnimplementedFeedSource;
-import net.jps.atom.hopper.servlet.ApplicationContextAdapter;
+import org.atomhopper.util.context.AdapterNotFoundException;
+import org.atomhopper.util.context.AdapterConstructionException;
+import org.atomhopper.util.context.AdapterGetter;
+import org.atomhopper.adapter.FeedSource;
+import org.atomhopper.adapter.impl.UnimplementedFeedSource;
+import org.atomhopper.servlet.ApplicationContextAdapter;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;

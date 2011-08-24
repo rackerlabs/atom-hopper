@@ -1,4 +1,4 @@
-package net.jps.atom.hopper.adapter;
+package org.atomhopper.adapter;
 
 public enum TargetResolverField {
     ENTRY,

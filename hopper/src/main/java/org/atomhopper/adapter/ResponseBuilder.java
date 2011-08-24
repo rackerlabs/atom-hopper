@@ -1,8 +1,8 @@
-package net.jps.atom.hopper.adapter;
+package org.atomhopper.adapter;
 
-import net.jps.atom.hopper.response.AdapterResponse;
-import net.jps.atom.hopper.response.EmptyBody;
-import net.jps.atom.hopper.response.FeedSourceAdapterResponse;
+import org.atomhopper.response.AdapterResponse;
+import org.atomhopper.response.EmptyBody;
+import org.atomhopper.response.FeedSourceAdapterResponse;
 import org.apache.abdera.model.Categories;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;

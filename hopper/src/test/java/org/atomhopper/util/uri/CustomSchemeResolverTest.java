@@ -1,5 +1,8 @@
-package net.jps.atom.hopper.util.uri;
+package org.atomhopper.util.uri;
 
+import org.atomhopper.util.uri.CustomSchemeResolver;
+import org.atomhopper.util.uri.URISchemeMapper;
+import org.atomhopper.util.uri.UriToUrlResolver;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;

@@ -1,11 +1,11 @@
-package net.jps.atom.hopper.config;
+package org.atomhopper.config;
 
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.SchemaFactory;
-import net.jps.atom.hopper.config.v1_0.Configuration;
+import org.atomhopper.config.v1_0.Configuration;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
@@ -29,7 +29,7 @@ public class SchemaTest {
         @Before
         public void standUp() throws Exception {
             jaxbContext = JAXBContext.newInstance(
-                    net.jps.atom.hopper.config.v1_0.ObjectFactory.class);
+                    org.atomhopper.config.v1_0.ObjectFactory.class);
 
             jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 

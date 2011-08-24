@@ -1,6 +1,6 @@
-package net.jps.atom.hopper.util.config;
+package org.atomhopper.util.config;
 
-import net.jps.atom.hopper.util.config.resource.ConfigurationResource;
+import org.atomhopper.util.config.resource.ConfigurationResource;
 
 public interface ConfigurationParser<T> {
 

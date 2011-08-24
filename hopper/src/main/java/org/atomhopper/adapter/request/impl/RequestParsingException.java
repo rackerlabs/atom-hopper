@@ -1,4 +1,4 @@
-package net.jps.atom.hopper.adapter.request.impl;
+package org.atomhopper.adapter.request.impl;
 
 public class RequestParsingException extends RuntimeException {
 

@@ -1,8 +1,8 @@
-package net.jps.atom.hopper.jetty;
+package org.atomhopper.jetty;
 
-import net.jps.atom.hopper.AtomHopperServlet;
-import net.jps.atom.hopper.servlet.ServletInitParameter;
-import net.jps.atom.hopper.servlet.ServletSpringContext;
+import org.atomhopper.AtomHopperServlet;
+import org.atomhopper.servlet.ServletInitParameter;
+import org.atomhopper.servlet.ServletSpringContext;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
