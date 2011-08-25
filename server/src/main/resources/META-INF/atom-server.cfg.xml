@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<atom-hopper-config xmlns="http://atomhopper.org/atom/hopper-config/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://atomhopper.org/atom/hopper-config/v1.0 ./../../config/atom-hopper-config.xsd">
+    <defaults>
+        <author name="Atom Hopper" />
+    </defaults>
+
+    <host domain="domain.com" />
+
+    <!-- http://localhost:8080/namespace_a/ -->
+    <workspace title="A Testing Namespace" resource="/namespace/">
+        <!-- http://localhost:8080/namespace_a/feed_1 -->
+        <feed title="feed_1" resource="/feed">
+            <feed-source reference="adapter" />
+            <feed-publisher reference="adapter" />
+        </feed>
+    </workspace>
+    
+    <workspace title="Another Testing Namespace" resource="/uber-namespace/">
+        <feed title="uber-feed" resource="/uberfeed">
+            <feed-source reference="adapter" />
+            <feed-publisher reference="adapter" />
+        </feed>
+    </workspace>    
+</atom-hopper-config>

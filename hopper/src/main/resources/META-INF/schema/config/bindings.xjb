@@ -6,6 +6,6 @@
         schemaLocation="atom-hopper-config.xsd">
 
     <schemaBindings>
-        <package name="net.jps.atom.hopper.config.v1_0" />
+        <package name="org.atomhopper.config.v1_0" />
     </schemaBindings>
 </bindings>
