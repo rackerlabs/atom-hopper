@@ -3,13 +3,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>net.jps.atom</groupId>
+        <groupId>org.atomhopper</groupId>
         <artifactId>parent</artifactId>
-        <version>1.1.4-SNAPSHOT</version>
+        <version>0.9-SNAPSHOT</version>
     </parent>
 
-    <groupId>net.jps.atom</groupId>
-    <artifactId>atom-hopper-test</artifactId>
+    <groupId>org.atomhopper</groupId>
+    <artifactId>test-suite</artifactId>
     <packaging>jar</packaging>
 
     <name>ATOM Hopper - ATOMpub Server Framework Testing Suite</name>
@@ -17,8 +17,13 @@
 
     <dependencies>
         <dependency>
-            <groupId>net.jps.atom</groupId>
-            <artifactId>atom-hopper</artifactId>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.atomhopper</groupId>
+            <artifactId>core</artifactId>
         </dependency>
 
         <dependency>
@@ -33,22 +38,22 @@
 
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>org.springframework.core</artifactId>
+            <artifactId>spring-core</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>org.springframework.beans</artifactId>
+            <artifactId>spring-beans</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>org.springframework.context</artifactId>
+            <artifactId>spring-context</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>org.springframework.web.servlet</artifactId>
+            <artifactId>spring-web</artifactId>
         </dependency>
 
         <dependency>
@@ -64,31 +69,36 @@
         <dependency>
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
-            <version>3.1</version>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-all</artifactId>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>httpunit</groupId>
             <artifactId>httpunit</artifactId>
-            <version>1.7</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
         </dependency>
     </dependencies>
 
@@ -136,20 +146,5 @@
             </build>
         </profile>
     </profiles>
-
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-war-plugin</artifactId>
-
-                    <configuration>
-                        <failOnMissingWebXml>true</failOnMissingWebXml>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
 </project>
 

@@ -3,13 +3,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>net.jps.atom</groupId>
+        <groupId>org.atomhopper</groupId>
         <artifactId>parent</artifactId>
-        <version>1.1.4-SNAPSHOT</version>
+        <version>0.9-SNAPSHOT</version>
     </parent>
 
-    <groupId>net.jps.atom</groupId>
-    <artifactId>atom-hopper</artifactId>
+    <groupId>org.atomhopper</groupId>
+    <artifactId>core</artifactId>
     <packaging>jar</packaging>
 
     <name>ATOM Hopper - ATOMpub Server Framework</name>
@@ -19,7 +19,6 @@
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-web-api</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -49,22 +48,22 @@
 
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>org.springframework.core</artifactId>
+            <artifactId>spring-core</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>org.springframework.beans</artifactId>
+            <artifactId>spring-beans</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>org.springframework.context</artifactId>
+            <artifactId>spring-context</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>org.springframework.web.servlet</artifactId>
+            <artifactId>spring-web</artifactId>
         </dependency>
         
         <dependency>
@@ -80,111 +79,26 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
-            <scope>test</scope>
         </dependency>
                            
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-all</artifactId>
-            <scope>test</scope>
         </dependency>
         
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <scope>test</scope>
         </dependency>
+        
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
-            <version>2.6</version>
         </dependency>
     </dependencies>
 
-    <repositories>
-        <repository>
-            <id>repos.rackspace.cloud.public</id>
-            <url>http://184.106.178.199/m2/content/groups/public/</url>
-        </repository>
-
-        <repository>
-            <id>repos.rackspace.cloud.snapshots</id>
-            <url>http://184.106.178.199/m2/content/repositories/snapshots</url>
-
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </repository>
-
-        <repository>
-            <id>repos.rackspace.cloud.releases</id>
-            <url>http://184.106.178.199/m2/content/repositories/releases</url>
-
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>repos.rackspace.cloud.public</id>
-            <url>http://184.106.178.199/m2/content/groups/public/</url>
-        </pluginRepository>
-    </pluginRepositories>
-
-    <distributionManagement>
-        <repository>
-            <id>releases.internal.maven.research.rackspacecloud.com</id>
- 
-            <name>Internal Rackspace Cloud Research Releases</name>
-            <url>http://maven-n01.rcloudtech.rackspacecloud.com/m2/content/repositories/releases</url>
-        </repository>
-
-        <snapshotRepository>
-            <uniqueVersion>false</uniqueVersion>
-            
-            <id>snapshots.internal.maven.research.rackspacecloud.com</id>
-
-            <name>Internal Rackspace Cloud Research Snapshots</name>
-            <url>http://maven-n01.rcloudtech.rackspacecloud.com/m2/content/repositories/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
-
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>2.3.2</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-war-plugin</artifactId>
-                    <version>2.1.1</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>com.sun.tools.xjc.maven2</groupId>
-                    <artifactId>maven-jaxb-plugin</artifactId>
-                    <version>1.1.1</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
-            </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>

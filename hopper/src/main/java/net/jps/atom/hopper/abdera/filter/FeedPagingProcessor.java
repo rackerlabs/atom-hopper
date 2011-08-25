@@ -1,17 +1,17 @@
 package net.jps.atom.hopper.abdera.filter;
 
 import net.jps.atom.hopper.response.AdapterResponse;
-import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.UnsupportedEncodingException;
-import static java.net.URLEncoder.encode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static java.net.URLEncoder.encode;
 
 /**
  *
@@ -27,7 +27,7 @@ public class FeedPagingProcessor implements AdapterResponseProcessor<Feed> {
         final Feed f = adapterResponse.getBody();
 
         // Build the URL and PATH without the parameters
-        final String self = StringUtils.split(rc.getTargetPath(), '?')[0];
+        final String self = StringUtils.split(rc.getResolvedUri().toString(), '?')[0];
 
         // Get a map of the url parameters
         Map<String,String> parameters = getParameterMap(rc);
