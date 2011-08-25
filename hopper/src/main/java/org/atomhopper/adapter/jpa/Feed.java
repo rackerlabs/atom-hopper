@@ -1,6 +1,7 @@
 package org.atomhopper.adapter.jpa;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,7 +26,7 @@ public class Feed {
     }
 
     public Feed(String name) {
-        this();
+        entries = new HashSet<FeedEntry>();
         
         this.name = name;
     }

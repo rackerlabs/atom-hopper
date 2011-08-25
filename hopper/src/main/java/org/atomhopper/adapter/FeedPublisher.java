@@ -1,8 +1,8 @@
 package org.atomhopper.adapter;
 
-import org.atomhopper.adapter.request.DeleteEntryRequest;
-import org.atomhopper.adapter.request.PostEntryRequest;
-import org.atomhopper.adapter.request.PutEntryRequest;
+import org.atomhopper.adapter.request.adapter.DeleteEntryRequest;
+import org.atomhopper.adapter.request.adapter.PostEntryRequest;
+import org.atomhopper.adapter.request.adapter.PutEntryRequest;
 import org.atomhopper.response.AdapterResponse;
 import org.atomhopper.response.EmptyBody;
 import org.apache.abdera.model.Entry;

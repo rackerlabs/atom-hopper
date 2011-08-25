@@ -1,5 +1,11 @@
 package org.atomhopper.adapter.impl;
 
+import org.atomhopper.adapter.request.adapter.GetEntryRequest;
+import org.atomhopper.adapter.request.adapter.GetCategoriesRequest;
+import org.atomhopper.adapter.request.adapter.PutEntryRequest;
+import org.atomhopper.adapter.request.adapter.GetFeedRequest;
+import org.atomhopper.adapter.request.adapter.DeleteEntryRequest;
+import org.atomhopper.adapter.request.adapter.PostEntryRequest;
 import org.atomhopper.adapter.FeedPublisher;
 import org.atomhopper.adapter.FeedSource;
 import org.atomhopper.adapter.ResponseBuilder;
@@ -32,8 +38,8 @@ public class InMemoryFeedAdapter implements FeedSource, FeedPublisher {
 
     @Override
     public AdapterResponse<Entry> getEntry(GetEntryRequest getEntryRequest) {
-        if (!StringUtils.isBlank(getEntryRequest.getId())) {
-            final AtomEntry entry = liveFeed.get(getEntryRequest.getId());
+        if (!StringUtils.isBlank(getEntryRequest.getEntryId())) {
+            final AtomEntry entry = liveFeed.get(getEntryRequest.getEntryId());
 
             if (entry != null) {
                 return ResponseBuilder.found(entry.getEntry());

@@ -10,9 +10,9 @@ public interface FeedRepository {
 
     Feed getFeed(String resourceName);
     
-    void addFeed(String feedName);
+    void saveFeed(String feedName);
 
     FeedEntry getEntry(String entryId);
 
-    void addEntry(FeedEntry entry);
+    void saveEntry(FeedEntry entry);
 }

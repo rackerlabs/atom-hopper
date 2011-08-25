@@ -1,6 +1,7 @@
-package org.atomhopper.adapter.request;
+package org.atomhopper.adapter.request.adapter;
 
 import org.apache.abdera.model.Categories;
+import org.atomhopper.adapter.request.ClientRequest;
 
 /**
  *

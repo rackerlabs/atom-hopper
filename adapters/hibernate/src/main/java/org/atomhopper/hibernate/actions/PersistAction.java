@@ -2,7 +2,7 @@ package org.atomhopper.hibernate.actions;
 
 import org.hibernate.Session;
 
-public class PersistAction implements SessionAction {
+public class PersistAction implements SimpleSessionAction {
 
     private final Object persistMe;
 

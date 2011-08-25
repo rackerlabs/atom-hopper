@@ -1,15 +1,11 @@
-package org.atomhopper.adapter.request.impl;
+package org.atomhopper.adapter.request.adapter.impl;
 
 import java.util.Calendar;
-import org.atomhopper.adapter.request.AbstractClientRequest;
-import org.atomhopper.adapter.request.GetFeedArchiveRequest;
+import org.atomhopper.adapter.request.adapter.GetFeedArchiveRequest;
 import org.apache.abdera.protocol.server.RequestContext;
+import org.atomhopper.adapter.request.feed.AbstractFeedRequest;
 
-/**
- *
- * 
- */
-public class GetFeedArchiveRequestImpl extends AbstractClientRequest implements GetFeedArchiveRequest {
+public class GetFeedArchiveRequestImpl extends AbstractFeedRequest implements GetFeedArchiveRequest {
 
     public GetFeedArchiveRequestImpl(RequestContext abderaRequestContext) {
         super(abderaRequestContext);

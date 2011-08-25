@@ -2,9 +2,9 @@ package org.atomhopper.hibernate.adapter;
 
 import java.util.Calendar;
 import org.atomhopper.adapter.FeedSource;
-import org.atomhopper.adapter.request.GetCategoriesRequest;
-import org.atomhopper.adapter.request.GetEntryRequest;
-import org.atomhopper.adapter.request.GetFeedRequest;
+import org.atomhopper.adapter.request.adapter.GetCategoriesRequest;
+import org.atomhopper.adapter.request.adapter.GetEntryRequest;
+import org.atomhopper.adapter.request.adapter.GetFeedRequest;
 import org.atomhopper.response.AdapterResponse;
 import org.apache.abdera.model.Categories;
 import org.apache.abdera.model.Entry;

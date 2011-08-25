@@ -7,19 +7,10 @@
 
     <host domain="domain.com" />
 
-    <!-- http://localhost:8080/namespace_a/ -->
     <workspace title="A Testing Namespace" resource="/namespace/">
-        <!-- http://localhost:8080/namespace_a/feed_1 -->
         <feed title="feed_1" resource="/feed">
-            <feed-source reference="adapter" />
-            <feed-publisher reference="adapter" />
+<!--            <feed-source reference="adapter" />-->
+            <feed-publisher reference="hibernate-feed-publisher" />
         </feed>
     </workspace>
-    
-    <workspace title="Another Testing Namespace" resource="/uber-namespace/">
-        <feed title="uber-feed" resource="/uberfeed">
-            <feed-source reference="adapter" />
-            <feed-publisher reference="adapter" />
-        </feed>
-    </workspace>    
 </atom-hopper-config>

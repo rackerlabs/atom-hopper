@@ -1,4 +1,4 @@
-package org.atomhopper.adapter.request.impl;
+package org.atomhopper.adapter.request.adapter.impl;
 
 public class RequestParsingException extends RuntimeException {
 

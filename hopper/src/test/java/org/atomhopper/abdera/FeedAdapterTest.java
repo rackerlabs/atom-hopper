@@ -1,5 +1,10 @@
 package org.atomhopper.abdera;
 
+import org.atomhopper.adapter.request.adapter.PutEntryRequest;
+import org.atomhopper.adapter.request.adapter.GetEntryRequest;
+import org.atomhopper.adapter.request.adapter.GetFeedRequest;
+import org.atomhopper.adapter.request.adapter.PostEntryRequest;
+import org.atomhopper.adapter.request.adapter.DeleteEntryRequest;
 import org.atomhopper.abdera.FeedAdapter;
 import org.atomhopper.adapter.FeedPublisher;
 import org.atomhopper.adapter.FeedSource;

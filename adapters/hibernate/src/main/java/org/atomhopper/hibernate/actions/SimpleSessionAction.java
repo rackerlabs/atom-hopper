@@ -2,7 +2,7 @@ package org.atomhopper.hibernate.actions;
 
 import org.hibernate.Session;
 
-public interface SessionAction {
+public interface SimpleSessionAction {
 
     void perform(Session liveSession);
 }

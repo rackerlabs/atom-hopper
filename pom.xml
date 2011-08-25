@@ -43,6 +43,12 @@
                 <artifactId>core</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            
+            <dependency>
+                <groupId>org.atomhopper.adapter</groupId>
+                <artifactId>hibernate</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.hibernate</groupId>

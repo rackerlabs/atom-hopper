@@ -9,9 +9,9 @@ import org.atomhopper.adapter.ResponseBuilder;
 import org.atomhopper.adapter.jpa.Category;
 import org.atomhopper.adapter.jpa.Feed;
 import org.atomhopper.adapter.jpa.FeedEntry;
-import org.atomhopper.adapter.request.DeleteEntryRequest;
-import org.atomhopper.adapter.request.PostEntryRequest;
-import org.atomhopper.adapter.request.PutEntryRequest;
+import org.atomhopper.adapter.request.adapter.DeleteEntryRequest;
+import org.atomhopper.adapter.request.adapter.PostEntryRequest;
+import org.atomhopper.adapter.request.adapter.PutEntryRequest;
 import org.atomhopper.response.AdapterResponse;
 import org.atomhopper.response.EmptyBody;
 

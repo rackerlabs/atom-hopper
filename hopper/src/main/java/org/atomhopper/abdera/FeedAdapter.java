@@ -6,7 +6,6 @@ import org.atomhopper.abdera.response.StaticEntryResponseHandler;
 import org.atomhopper.abdera.response.StaticFeedResponseHandler;
 import org.atomhopper.adapter.FeedPublisher;
 import org.atomhopper.adapter.FeedSource;
-import org.atomhopper.adapter.request.impl.*;
 import org.atomhopper.config.v1_0.FeedConfiguration;
 import org.atomhopper.response.AdapterResponse;
 import org.atomhopper.response.EmptyBody;
@@ -21,6 +20,12 @@ import org.springframework.http.HttpStatus;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import org.atomhopper.adapter.request.adapter.impl.DeleteEntryRequestImpl;
+import org.atomhopper.adapter.request.adapter.impl.GetCategoriesRequestImpl;
+import org.atomhopper.adapter.request.adapter.impl.GetEntryRequestImpl;
+import org.atomhopper.adapter.request.adapter.impl.GetFeedRequestImpl;
+import org.atomhopper.adapter.request.adapter.impl.PostEntryRequestImpl;
+import org.atomhopper.adapter.request.adapter.impl.PutEntryRequestImpl;
 
 public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
 
@@ -86,7 +91,6 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
     @Override
     public ResponseContext getCategories(RequestContext request) {
         try {
-            //TODO: Cache this
             return ProviderHelper.returnBase(feedSource.getCategories(
                     new GetCategoriesRequestImpl(request)).getBody(),
                     HttpStatus.OK.value(), Calendar.getInstance().getTime());
