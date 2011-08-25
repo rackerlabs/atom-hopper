@@ -13,7 +13,6 @@
     <packaging>jar</packaging>
 
     <name>ATOM Hopper - ATOMpub Server Framework Testing Suite</name>
-    <url>http://jpserver.net/atom/hopper</url>
 
     <dependencies>
         <dependency>

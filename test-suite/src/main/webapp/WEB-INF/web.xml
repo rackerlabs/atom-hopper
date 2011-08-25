@@ -16,7 +16,7 @@
 
     <servlet id="atom-hopper">
         <servlet-name>Atom-Hopper</servlet-name>
-        <servlet-class>net.jps.atom.hopper.AtomHopperServlet</servlet-class>
+        <servlet-class>org.atomhopper.AtomHopperServlet</servlet-class>
 
         <init-param>
             <param-name>config-directory</param-name>
@@ -25,7 +25,7 @@
 
         <init-param>
             <param-name>context-adapter-class</param-name>
-            <param-value>net.jps.atom.hopper.servlet.context.impl.ServletSpringContext</param-value>
+            <param-value>org.atomhopper.servlet.context.impl.ServletSpringContext</param-value>
         </init-param>
     </servlet>
 

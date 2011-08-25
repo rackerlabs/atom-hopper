@@ -27,6 +27,9 @@
     <modules>
         <module>hopper</module>
         <module>test-suite</module>
+        <module>server</module>
+        
+        <module>adapters/hibernate</module>
     </modules>
 
     <scm>
@@ -38,6 +41,12 @@
             <dependency>
                 <groupId>org.atomhopper</groupId>
                 <artifactId>core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.atomhopper.adapter</groupId>
+                <artifactId>hibernate</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -71,6 +80,12 @@
                 <artifactId>commons-lang</artifactId>
                 <version>2.6</version>
             </dependency>
+
+            <dependency>
+                <groupId>args4j</groupId>
+                <artifactId>args4j</artifactId>
+                <version>2.0.16</version>
+            </dependency>            
 
             <dependency>
                 <groupId>org.apache.abdera</groupId>
@@ -225,6 +240,12 @@
                     <artifactId>maven-jaxb-plugin</artifactId>
                     <version>1.1.1</version>
                 </plugin>
+                
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>1.4</version>
+                </plugin>                    
             </plugins>
         </pluginManagement>
     </build>
