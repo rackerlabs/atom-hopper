@@ -24,7 +24,7 @@ public class AtomHopperServer {
         }
 
         if (commandLineArgs != null) {
-            if((!(portIsInRange(commandLineArgs.port))) || (!(portIsInRange(commandLineArgs.stopport)))) {
+            if( (!(portIsInRange(commandLineArgs.port))) || (!(portIsInRange(commandLineArgs.stopport))) ) {
                 LOG.info("Invalid Atom Hopper port setting, use a value between 1024 and 49150");
                 return;
             }
@@ -43,9 +43,9 @@ public class AtomHopperServer {
     }
     
     private static boolean portIsInRange(int portNum) {
-        if((portNum > 49150) && (portNum < 1024)) {
-            return false;
+        if((portNum < 49150) && (portNum > 1024)) {
+            return true;
         }
-        return true;
+        return false;
     }
 }
