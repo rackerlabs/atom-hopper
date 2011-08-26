@@ -3,12 +3,11 @@ package org.atomhopper.hibernate;
 import org.atomhopper.dbal.FeedRepository;
 import org.atomhopper.hibernate.actions.SimpleSessionAction;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import org.atomhopper.adapter.jpa.Category;
-import org.atomhopper.hibernate.actions.PersistAction;
 import org.atomhopper.adapter.jpa.Feed;
 import org.atomhopper.adapter.jpa.FeedEntry;
+import org.atomhopper.dbal.AtomDatabaseException;
 import org.atomhopper.hibernate.actions.ComplexSessionAction;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -34,11 +33,11 @@ public class HibernateFeedRepository implements FeedRepository {
 
             tx.commit();
         } catch (Exception ex) {
-            //TODO: Log exception
-
             if (tx != null) {
                 tx.rollback();
             }
+
+            throw new AtomDatabaseException("Failure performing hibernate action: " + action.toString(), ex);
         } finally {
             session.close();
         }
@@ -59,41 +58,25 @@ public class HibernateFeedRepository implements FeedRepository {
 
             return returnable;
         } catch (Exception ex) {
-            //TODO: Log exception
-
             if (tx != null) {
                 tx.rollback();
             }
+
+            throw new AtomDatabaseException("Failure performing hibernate action: " + action.toString(), ex);
         } finally {
             session.close();
         }
-
-        return returnable;
-    }
-
-    private <T> T lookupUnique(Class<T> entityClass, String lookupCollumn, String value) {
-        final Session session = sessionManager.getSession();
-
-        try {
-            final List<T> matchingFeedEntries = session.createCriteria(entityClass).add(Restrictions.eq(lookupCollumn, value)).list();
-
-            if (!matchingFeedEntries.isEmpty()) {
-                if (matchingFeedEntries.size() > 1) {
-                    //TODO: Log DB consistency warning
-                }
-
-                return matchingFeedEntries.get(0);
-            }
-        } finally {
-            session.close();
-        }
-
-        return null;
     }
 
     @Override
-    public void saveFeed(String feedName) {
-        performSimpleAction(new PersistAction(new Feed(feedName)));
+    public void saveFeed(final String feedName) {
+        performSimpleAction(new SimpleSessionAction() {
+
+            @Override
+            public void perform(Session liveSession) {
+                liveSession.persist(new Feed(feedName));
+            }
+        });
     }
 
     @Override
@@ -107,16 +90,16 @@ public class HibernateFeedRepository implements FeedRepository {
                 if (feed == null) {
                     feed = entry.getFeed();
                 }
-                
+
                 feed.getEntries().add(entry);
-                
+
                 liveSession.saveOrUpdate(feed);
                 liveSession.persist(entry);
 
                 // Make sure to update our category objects
                 for (Category cat : entry.getCategories()) {
                     Category category = (Category) liveSession.createCriteria(Category.class).add(Restrictions.idEq(cat.getName())).uniqueResult();
-                    
+
                     if (category == null) {
                         category = cat;
                     }
@@ -130,22 +113,34 @@ public class HibernateFeedRepository implements FeedRepository {
 
     @Override
     public Collection<Feed> getAllFeeds() {
-        final Session session = sessionManager.getSession();
+        return performComplexAction(new ComplexSessionAction<Collection<Feed>>() {
 
-        try {
-            return session.createCriteria(Feed.class).list();
-        } finally {
-            session.close();
-        }
+            @Override
+            public Collection<Feed> perform(Session liveSession) {
+                return liveSession.createCriteria(Feed.class).list();
+            }
+        });
     }
 
     @Override
-    public FeedEntry getEntry(String entryId) {
-        return lookupUnique(FeedEntry.class, "entryId", entryId);
+    public FeedEntry getEntry(final String entryId) {
+        return performComplexAction(new ComplexSessionAction<FeedEntry>() {
+
+            @Override
+            public FeedEntry perform(Session liveSession) {
+                return (FeedEntry) liveSession.createCriteria(FeedEntry.class).add(Restrictions.idEq(entryId)).uniqueResult();
+            }
+        });
     }
 
     @Override
-    public Feed getFeed(String name) {
-        return lookupUnique(Feed.class, "name", name);
+    public Feed getFeed(final String name) {
+        return performComplexAction(new ComplexSessionAction<Feed>() {
+
+            @Override
+            public Feed perform(Session liveSession) {
+                return (Feed) liveSession.createCriteria(Feed.class).add(Restrictions.idEq(name)).uniqueResult();
+            }
+        });
     }
 }
