@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 public class HibernateFeedPublisher implements FeedPublisher {
     private static final Logger LOG = LoggerFactory.getLogger(HibernateFeedPublisher.class);
+    private static final String UUID_URI_SCHEME = "urn:uuid:";
     
     private FeedRepository feedRepository;
 
@@ -38,9 +39,9 @@ public class HibernateFeedPublisher implements FeedPublisher {
         final PersistedEntry domainFeedEntry = new PersistedEntry();
 
         domainFeedEntry.setCategories(processCategories(abderaParsedEntry.getCategories(), domainFeedEntry));
-        domainFeedEntry.setEntryId("uuid:" + UUID.randomUUID().toString());
+        domainFeedEntry.setEntryId(UUID_URI_SCHEME + UUID.randomUUID().toString());
 
-        final PersistedFeed feedRef = new PersistedFeed(postEntryRequest.getFeedName(), "uuid:" + UUID.randomUUID().toString());
+        final PersistedFeed feedRef = new PersistedFeed(postEntryRequest.getFeedName(), UUID_URI_SCHEME + UUID.randomUUID().toString());
 
         domainFeedEntry.setFeed(feedRef);
         domainFeedEntry.setEntryBody(entryToString(abderaParsedEntry));
