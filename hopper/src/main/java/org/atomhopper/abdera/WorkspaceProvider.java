@@ -1,6 +1,5 @@
 package org.atomhopper.abdera;
 
-import org.atomhopper.adapter.TargetResolverField;
 import org.atomhopper.config.v1_0.HostConfiguration;
 import org.atomhopper.util.uri.template.EnumKeyedTemplateParameters;
 import org.atomhopper.util.uri.template.TemplateParameters;

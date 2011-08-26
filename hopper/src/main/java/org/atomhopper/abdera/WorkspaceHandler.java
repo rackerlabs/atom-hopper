@@ -1,6 +1,5 @@
 package org.atomhopper.abdera;
 
-import org.atomhopper.adapter.TargetResolverField;
 import org.atomhopper.config.v1_0.WorkspaceConfiguration;
 import org.apache.abdera.model.Workspace;
 import org.apache.abdera.parser.stax.FOMWorkspace;

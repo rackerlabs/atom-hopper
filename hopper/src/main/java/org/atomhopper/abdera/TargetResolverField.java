@@ -1,4 +1,4 @@
-package org.atomhopper.adapter;
+package org.atomhopper.abdera;
 
 public enum TargetResolverField {
     ENTRY,

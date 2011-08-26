@@ -1,6 +1,6 @@
 package org.atomhopper.util;
 
-import org.atomhopper.adapter.TargetResolverField;
+import org.atomhopper.abdera.TargetResolverField;
 import org.apache.commons.lang.StringUtils;
 
 public class TargetRegexBuilder {
