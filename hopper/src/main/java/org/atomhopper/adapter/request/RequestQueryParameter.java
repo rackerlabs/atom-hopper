@@ -3,6 +3,7 @@ package org.atomhopper.adapter.request;
 public enum RequestQueryParameter {
 
     CATEGORIES("categories"),
+    PAGE_DIRECTION("direction"),
     MARKER("marker");
 
     //Class contents

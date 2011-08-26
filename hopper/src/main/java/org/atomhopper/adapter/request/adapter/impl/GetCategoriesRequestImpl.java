@@ -13,6 +13,6 @@ public class GetCategoriesRequestImpl extends AbstractClientRequest implements G
 
     @Override
     public Categories newCategories() {
-        return getRequestContext().getAbdera().newCategories();
+        return getAbdera().newCategories();
     }
 }

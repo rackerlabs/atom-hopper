@@ -12,9 +12,9 @@ import org.atomhopper.adapter.FeedPublisher;
 import org.atomhopper.adapter.NotImplemented;
 import org.atomhopper.adapter.PublicationException;
 import org.atomhopper.adapter.ResponseBuilder;
-import org.atomhopper.adapter.jpa.Category;
-import org.atomhopper.adapter.jpa.Feed;
-import org.atomhopper.adapter.jpa.FeedEntry;
+import org.atomhopper.adapter.jpa.PersistedCategory;
+import org.atomhopper.adapter.jpa.PersistedFeed;
+import org.atomhopper.adapter.jpa.PersistedEntry;
 import org.atomhopper.adapter.request.adapter.DeleteEntryRequest;
 import org.atomhopper.adapter.request.adapter.PostEntryRequest;
 import org.atomhopper.adapter.request.adapter.PutEntryRequest;
@@ -35,12 +35,12 @@ public class HibernateFeedPublisher implements FeedPublisher {
     @Override
     public AdapterResponse<Entry> postEntry(PostEntryRequest postEntryRequest) {
         final Entry abderaParsedEntry = postEntryRequest.getEntry();
-        final FeedEntry domainFeedEntry = new FeedEntry();
+        final PersistedEntry domainFeedEntry = new PersistedEntry();
 
         domainFeedEntry.setCategories(processCategories(abderaParsedEntry.getCategories(), domainFeedEntry));
-        domainFeedEntry.setEntryId(UUID.randomUUID().toString());
+        domainFeedEntry.setEntryId("uuid:" + UUID.randomUUID().toString());
 
-        final Feed feedRef = new Feed(postEntryRequest.getFeedName());
+        final PersistedFeed feedRef = new PersistedFeed(postEntryRequest.getFeedName(), "uuid:" + UUID.randomUUID().toString());
 
         domainFeedEntry.setFeed(feedRef);
         domainFeedEntry.setEntryBody(entryToString(abderaParsedEntry));
@@ -52,13 +52,13 @@ public class HibernateFeedPublisher implements FeedPublisher {
         return ResponseBuilder.created(abderaParsedEntry);
     }
 
-    private Set<Category> processCategories(List<org.apache.abdera.model.Category> abderaCategories, FeedEntry feedEntryRef) {
-        final Set<Category> entryCategories = new HashSet<Category>();
-        final Set<FeedEntry> entrySet = new HashSet<FeedEntry>();
+    private Set<PersistedCategory> processCategories(List<org.apache.abdera.model.Category> abderaCategories, PersistedEntry feedEntryRef) {
+        final Set<PersistedCategory> entryCategories = new HashSet<PersistedCategory>();
+        final Set<PersistedEntry> entrySet = new HashSet<PersistedEntry>();
         entrySet.add(feedEntryRef);
 
         for (org.apache.abdera.model.Category abderaCat : abderaCategories) {
-            entryCategories.add(new Category(abderaCat.getTerm()));
+            entryCategories.add(new PersistedCategory(abderaCat.getTerm()));
         }
 
         return entryCategories;

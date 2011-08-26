@@ -5,8 +5,8 @@
 package org.atomhopper.hibernate;
 
 import java.util.Collections;
-import org.atomhopper.adapter.jpa.Feed;
-import org.atomhopper.adapter.jpa.FeedEntry;
+import org.atomhopper.adapter.jpa.PersistedFeed;
+import org.atomhopper.adapter.jpa.PersistedEntry;
 import org.atomhopper.hibernate.actions.SimpleSessionAction;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -20,13 +20,13 @@ public class HibernateFeedRepositoryTest {
     public static void main(String[] args) {
         final HibernateFeedRepository feedRepository = new HibernateFeedRepository(Collections.EMPTY_MAP);
 
-        feedRepository.saveFeed("testing");
-        Feed f = feedRepository.getFeed("testing");
+        feedRepository.saveFeed(new PersistedFeed("testing", "uuid:not-really"));
+        PersistedFeed f = feedRepository.getFeed("testing");
 
         System.out.println(f != null ? f.getName() : "null");
 
-        FeedEntry entry = new FeedEntry("some-random-uuid");
-        entry.setFeed(new Feed("testing"));
+        PersistedEntry entry = new PersistedEntry("some-random-uuid");
+        entry.setFeed(new PersistedFeed("testing", "uuid:not-really"));
 
         feedRepository.saveEntry(entry);
 
@@ -34,7 +34,7 @@ public class HibernateFeedRepositoryTest {
 
             @Override
             public void perform(Session liveSession) {
-                Feed f = (Feed) liveSession.createCriteria(Feed.class).add(Restrictions.idEq("testing")).list().get(0);
+                PersistedFeed f = (PersistedFeed) liveSession.createCriteria(PersistedFeed.class).add(Restrictions.idEq("testing")).list().get(0);
 
                 System.out.println("Entries: " + (f != null ? f.getEntries().size() : 0));
             }

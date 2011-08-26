@@ -3,6 +3,7 @@ package org.atomhopper.adapter.jpa;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,32 +12,44 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "feeds")
-public class Feed {
+@Table(name = "Feeds")
+public class PersistedFeed {
 
     @Id
-    @Column(name = "name")
+    @Column(name = "Name")
     private String name;
     
+    @Column(name = "FeedID")
+    private String feedId;
+    
     @OneToMany(mappedBy = "feed", fetch = FetchType.LAZY)
-    private Set<FeedEntry> entries;
+    private Set<PersistedEntry> entries;
 
-    public Feed() {
+    public PersistedFeed() {
         entries = Collections.EMPTY_SET;
     }
 
-    public Feed(String name) {
-        entries = new HashSet<FeedEntry>();
+    public PersistedFeed(String name, String feedId) {
+        entries = new HashSet<PersistedEntry>();
         
+        this.feedId = feedId;
         this.name = name;
     }
     
-    public Set<FeedEntry> getEntries() {
+    public Set<PersistedEntry> getEntries() {
         return entries;
     }
 
-    public void setEntries(Set<FeedEntry> entries) {
+    public void setEntries(Set<PersistedEntry> entries) {
         this.entries = entries;
+    }
+
+    public String getFeedId() {
+        return feedId;
+    }
+
+    public void setFeedId(String feedId) {
+        this.feedId = feedId;
     }
 
     public String getName() {

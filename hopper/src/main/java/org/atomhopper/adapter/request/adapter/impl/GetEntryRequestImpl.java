@@ -13,7 +13,7 @@ public class GetEntryRequestImpl extends AbstractEntryRequest implements GetEntr
     
     @Override
     public Entry newEntry() {
-        return getRequestContext().getAbdera().newEntry();
+        return getAbdera().newEntry();
     }
 
 }

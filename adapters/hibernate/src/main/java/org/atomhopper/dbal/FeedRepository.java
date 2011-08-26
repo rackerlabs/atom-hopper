@@ -1,18 +1,21 @@
 package org.atomhopper.dbal;
 
 import java.util.Collection;
-import org.atomhopper.adapter.jpa.Feed;
-import org.atomhopper.adapter.jpa.FeedEntry;
+import java.util.List;
+import org.atomhopper.adapter.jpa.PersistedFeed;
+import org.atomhopper.adapter.jpa.PersistedEntry;
 
 public interface FeedRepository {
 
-    Collection<Feed> getAllFeeds();
+    Collection<PersistedFeed> getAllFeeds();
 
-    Feed getFeed(String resourceName);
+    PersistedFeed getFeed(String resourceName);
     
-    void saveFeed(String feedName);
+    void saveFeed(PersistedFeed feed);
 
-    FeedEntry getEntry(String entryId);
+    List<PersistedEntry> getFeedPage(String feedName, String marker, int pageSize, PageDirection direction);
+    
+    PersistedEntry getEntry(String entryId);
 
-    void saveEntry(FeedEntry entry);
+    void saveEntry(PersistedEntry entry);
 }

@@ -1,7 +1,8 @@
 package org.atomhopper.adapter.request;
 
+import java.util.List;
+import org.apache.abdera.Abdera;
 import org.atomhopper.util.uri.template.TemplateParameters;
-import org.apache.abdera.protocol.server.RequestContext;
 
 /**
  * A client request contains only the bare minimum needed to express the request
@@ -9,7 +10,13 @@ import org.apache.abdera.protocol.server.RequestContext;
  */
 public interface ClientRequest {
 
-    String urlFor(TemplateParameters param);
+    String getTargetParameter(String parameter);
+    
+    String getRequestParameter(String parameter);
 
-    RequestContext getRequestContext();
+    List<String> getRequestParameters(String parameter);
+
+    String urlFor(TemplateParameters param);
+    
+    Abdera getAbdera();
 }

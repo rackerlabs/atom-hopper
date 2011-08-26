@@ -11,39 +11,40 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "categories")
-public class Category {
+@Table(name = "Categories")
+public class PersistedCategory {
 
     @Id
-    @Column(name = "name")
-    private String name;
+    @Column(name = "Term")
+    private String term;
+    
     @ManyToMany(mappedBy = "categories", fetch = FetchType.LAZY)
-    private Set<FeedEntry> feedEntries;
+    private Set<PersistedEntry> feedEntries;
 
-    public Category() {
+    public PersistedCategory() {
         feedEntries = Collections.EMPTY_SET;
     }
 
-    public Category(String name) {
-        feedEntries = new HashSet<FeedEntry>();
+    public PersistedCategory(String term) {
+        feedEntries = new HashSet<PersistedEntry>();
         
-        this.name = name;
+        this.term = term;
     }
 
-    public Set<FeedEntry> getFeedEntries() {
+    public Set<PersistedEntry> getFeedEntries() {
         return feedEntries;
     }
 
-    public void setFeedEntries(Set<FeedEntry> feedEntries) {
+    public void setFeedEntries(Set<PersistedEntry> feedEntries) {
         this.feedEntries = feedEntries;
     }
 
-    public String getName() {
-        return name;
+    public String getTerm() {
+        return term;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTerm(String term) {
+        this.term = term;
     }
 
     @Override
@@ -54,8 +55,8 @@ public class Category {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Category other = (Category) obj;
-        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
+        final PersistedCategory other = (PersistedCategory) obj;
+        if ((this.term == null) ? (other.term != null) : !this.term.equals(other.term)) {
             return false;
         }
         return true;
@@ -64,7 +65,7 @@ public class Category {
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 53 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 53 * hash + (this.term != null ? this.term.hashCode() : 0);
         return hash;
     }
 }

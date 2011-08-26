@@ -16,6 +16,10 @@ public final class ResponseBuilder {
     private ResponseBuilder() {
     }
 
+    public static <T> AdapterResponse<T> badRequest(String message) {
+        return new FeedSourceAdapterResponse<T>(null, HttpStatus.BAD_REQUEST, message);
+    }
+    
     public static <T> AdapterResponse<T> notFound() {
         return notFound("");
     }

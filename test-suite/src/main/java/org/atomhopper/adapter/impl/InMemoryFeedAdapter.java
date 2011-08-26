@@ -51,7 +51,7 @@ public class InMemoryFeedAdapter implements FeedSource, FeedPublisher {
 
     @Override
     public AdapterResponse<Feed> getFeed(GetFeedRequest getFeedRequest) {
-        final Feed feed = getFeedRequest.getRequestContext().getAbdera().newFeed();
+        final Feed feed = getFeedRequest.getAbdera().newFeed();
 
         feed.setTitle("A Feed");
         feed.addLink(getFeedRequest.urlFor(
