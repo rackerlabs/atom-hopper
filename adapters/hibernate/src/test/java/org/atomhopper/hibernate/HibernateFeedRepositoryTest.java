@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.atomhopper.hibernate;
 
 import java.util.Collections;
@@ -11,10 +7,6 @@ import org.atomhopper.hibernate.actions.SimpleSessionAction;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
-/**
- *
- * @author zinic
- */
 public class HibernateFeedRepositoryTest {
 
     public static void main(String[] args) {

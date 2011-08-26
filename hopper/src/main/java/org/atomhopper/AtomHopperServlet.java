@@ -24,6 +24,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
+import org.atomhopper.servlet.DefaultEmptyContext;
+import org.atomhopper.util.config.resource.file.FileConfigurationResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,15 +40,16 @@ import org.slf4j.LoggerFactory;
 public final class AtomHopperServlet extends AbderaServlet {
 
     private static final Logger LOG = LoggerFactory.getLogger(AtomHopperServlet.class);
+    
     public static final String DEFAULT_CONFIGURATION_LOCATION = "/etc/atom-server/atom-server.cfg.xml";
-
+    
     private final ConfigurationParser<Configuration> configurationParser;
-
     private ApplicationContextAdapter applicationContextAdapter;
     private Abdera abderaReference;
     private Configuration configuration;
 
     public AtomHopperServlet() {
+        //TODO: One day I'm going to integrate Power API's configuration framework into this but until this, this'll do
         configurationParser = new JAXBConfigurationParser<Configuration>(Configuration.class, org.atomhopper.config.v1_0.ObjectFactory.class);
     }
 
@@ -67,14 +70,13 @@ public final class AtomHopperServlet extends AbderaServlet {
             try {
                 configurationParser.setConfigurationResource(new URIConfigurationResource(new URI(configLocation)));
             } catch (URISyntaxException ex) {
-                //TODO: Should this be an error? Maybe we could have a fall back reader that tries file path by default
-                throw new ServletInitException("Configuration location must be a URI. Consider using file:/absolute/path/to/file", ex);
+                configurationParser.setConfigurationResource(new FileConfigurationResource(configLocation));
             }
 
             configuration = configurationParser.read();
         } catch (ConfigurationParserException cpe) {
             LOG.error("Failed to read configuration file: " + configLocation, cpe);
-            
+
             throw new ServletInitException(cpe.getMessage(), cpe);
         }
 
@@ -85,11 +87,11 @@ public final class AtomHopperServlet extends AbderaServlet {
     }
 
     protected ApplicationContextAdapter getContextAdapter() throws ContextAdapterResolutionException {
-        final String adapterClass = getInitParameter(ServletInitParameter.CONTEXT_ADAPTER_CLASS.toString());
+        String adapterClass = getInitParameter(ServletInitParameter.CONTEXT_ADAPTER_CLASS.toString());
 
-        //TODO: Make this optional - use dummy adapter class for the cfg proc that returns null maybe
+        // If no adapter class is set then use the default empty one
         if (StringUtils.isBlank(adapterClass)) {
-            throw new ContextAdapterResolutionException("Missing context adapter init-parameter for servlet: " + ServletInitParameter.CONTEXT_ADAPTER_CLASS.toString());
+            adapterClass = DefaultEmptyContext.class.getName();
         }
 
         try {
@@ -100,7 +102,7 @@ public final class AtomHopperServlet extends AbderaServlet {
             }
         } catch (Exception ex) {
             LOG.error(ex.getMessage(), ex);
-            
+
             throw new ContextAdapterResolutionException(ex.getMessage(), ex);
         }
 
@@ -143,10 +145,8 @@ public final class AtomHopperServlet extends AbderaServlet {
     private Map<String, String> parseDefaults(ConfigurationDefaults defaults) {
         final Map<String, String> parameterMap = new HashMap<String, String>();
 
-        if (defaults != null) {
-            if (defaults.getAuthor() != null && !StringUtils.isBlank(defaults.getAuthor().getName())) {
-                parameterMap.put("author", defaults.getAuthor().getName());
-            }
+        if (defaults != null && defaults.getAuthor() != null && !StringUtils.isBlank(defaults.getAuthor().getName())) {
+            parameterMap.put("author", defaults.getAuthor().getName());
         }
 
         return parameterMap;
