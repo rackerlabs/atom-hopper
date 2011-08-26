@@ -46,7 +46,7 @@
             
             <dependency>
                 <groupId>org.atomhopper.adapter</groupId>
-                <artifactId>hibernate</artifactId>
+                <artifactId>hibernate-adapter</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

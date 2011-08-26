@@ -10,7 +10,7 @@
     </parent>
 
     <groupId>org.atomhopper.adapter</groupId>
-    <artifactId>hibernate</artifactId>
+    <artifactId>hibernate-adapter</artifactId>
     <packaging>jar</packaging>
 
     <name>ATOM Hopper - Hibernate Adapter</name>
