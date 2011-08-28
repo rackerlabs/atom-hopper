@@ -13,7 +13,9 @@ public interface FeedRepository {
     
     void saveFeed(PersistedFeed feed);
 
-    List<PersistedEntry> getFeedPage(String feedName, String marker, int pageSize, PageDirection direction);
+    List<PersistedEntry> getFeedHead(String feedName, int pageSize);
+    
+    List<PersistedEntry> getFeedPage(String feedName, PersistedEntry markerEntry, int pageSize, PageDirection direction);
     
     PersistedEntry getEntry(String entryId);
 

@@ -22,6 +22,11 @@ public class GetFeedRequestImpl extends AbstractFeedRequest implements GetFeedRe
     }
 
     @Override
+    public String getPageSize() {
+        return getRequestParameter(RequestQueryParameter.PAGE_LIMIT.toString());
+    }
+
+    @Override
     public String getPageMarker() {
         return getRequestParameter(RequestQueryParameter.MARKER.toString());
     }

@@ -74,9 +74,26 @@ public class HibernateFeedRepository implements FeedRepository {
     }
 
     @Override
-    public List<PersistedEntry> getFeedPage(final String feedName, final String marker, final int pageSize, final PageDirection direction) {
-        final PersistedEntry markerEntry = getEntry(marker);
+    public List<PersistedEntry> getFeedHead(final String feedName, final int pageSize) {
+        return performComplexAction(new ComplexSessionAction<List<PersistedEntry>>() {
 
+            @Override
+            public List<PersistedEntry> perform(Session liveSession) {
+                final List<PersistedEntry> feedHead = new LinkedList<PersistedEntry>();
+
+                final Criteria criteria = liveSession.createCriteria(PersistedEntry.class);
+                criteria.setMaxResults(pageSize);
+                criteria.addOrder(Order.asc("creationDate"));
+
+                feedHead.addAll(criteria.list());
+                
+                return feedHead;
+            }
+        });
+    }
+
+    @Override
+    public List<PersistedEntry> getFeedPage(final String feedName, final PersistedEntry markerEntry, final int pageSize, final PageDirection direction) {
         return performComplexAction(new ComplexSessionAction<List<PersistedEntry>>() {
 
             @Override
@@ -85,17 +102,17 @@ public class HibernateFeedRepository implements FeedRepository {
 
                 final Criteria criteria = liveSession.createCriteria(PersistedEntry.class);
                 criteria.setMaxResults(pageSize);
-                criteria.addOrder(Order.asc("created"));
+                criteria.addOrder(Order.asc("creationDate"));
 
                 switch (direction) {
                     case FORWARD:
-                        criteria.add(Restrictions.gt("created", markerEntry.getCreationDate()));
+                        criteria.add(Restrictions.gt("creationDate", markerEntry.getCreationDate()));
                         feedPage.add(markerEntry);
                         feedPage.addAll(criteria.list());
                         break;
 
                     case BACKWARD:
-                        criteria.add(Restrictions.lt("created", markerEntry.getCreationDate()));
+                        criteria.add(Restrictions.lt("creationDate", markerEntry.getCreationDate()));
                         feedPage.addAll(criteria.list());
                         break;
                 }

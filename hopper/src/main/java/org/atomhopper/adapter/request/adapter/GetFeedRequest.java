@@ -15,4 +15,6 @@ public interface GetFeedRequest extends FeedRequest {
     List<String> getCategories();
 
     String getPageMarker();
+    
+    String getPageSize();
 }

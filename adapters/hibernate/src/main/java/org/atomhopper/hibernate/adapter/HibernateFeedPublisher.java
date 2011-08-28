@@ -42,19 +42,22 @@ public class HibernateFeedPublisher implements FeedPublisher {
     @Override
     public AdapterResponse<Entry> postEntry(PostEntryRequest postEntryRequest) {
         final Entry abderaParsedEntry = postEntryRequest.getEntry();
-        final PersistedEntry domainFeedEntry = new PersistedEntry();
+        final PersistedEntry persistedEntry = new PersistedEntry();
 
-        domainFeedEntry.setCategories(processCategories(abderaParsedEntry.getCategories(), domainFeedEntry));
-        domainFeedEntry.setEntryId(UUID_URI_SCHEME + UUID.randomUUID().toString());
+        persistedEntry.setCategories(processCategories(abderaParsedEntry.getCategories(), persistedEntry));
+        persistedEntry.setEntryId(UUID_URI_SCHEME + UUID.randomUUID().toString());
+        
+        // Make sure the persisted xml has the right id
+        abderaParsedEntry.setId(persistedEntry.getEntryId());
 
         final PersistedFeed feedRef = new PersistedFeed(postEntryRequest.getFeedName(), UUID_URI_SCHEME + UUID.randomUUID().toString());
 
-        domainFeedEntry.setFeed(feedRef);
-        domainFeedEntry.setEntryBody(entryToString(abderaParsedEntry));
+        persistedEntry.setFeed(feedRef);
+        persistedEntry.setEntryBody(entryToString(abderaParsedEntry));
 
-        abderaParsedEntry.setId(domainFeedEntry.getEntryId());
+        abderaParsedEntry.setId(persistedEntry.getEntryId());
 
-        feedRepository.saveEntry(domainFeedEntry);
+        feedRepository.saveEntry(persistedEntry);
 
         return ResponseBuilder.created(abderaParsedEntry);
     }

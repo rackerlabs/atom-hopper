@@ -2,19 +2,19 @@ package org.atomhopper.adapter.jpa;
 
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.TimeZone;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -45,37 +45,44 @@ public class PersistedEntry {
     
     @Basic(optional = false)
     @Column(name = "CreationDate")
-    @Temporal(TemporalType.DATE)
-    private Calendar creationDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date creationDate;
     
     @Basic(optional = false)
     @Column(name = "DateLastUpdated")
-    @Temporal(TemporalType.DATE)
-    private Calendar dateLastUpdated;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateLastUpdated;
 
     public PersistedEntry() {
         categories = Collections.EMPTY_SET;
+        
+        final Calendar localNow = Calendar.getInstance(TimeZone.getDefault());
+        localNow.setTimeInMillis(System.currentTimeMillis());
+        
+        creationDate = localNow.getTime();
+        dateLastUpdated = localNow.getTime();
     }
 
     public PersistedEntry(String entryId) {
         this();
 
+        categories = new HashSet<PersistedCategory>();
         this.entryId = entryId;
     }
 
-    public Calendar getCreationDate() {
+    public Date getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Calendar creationDate) {
+    public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
 
-    public Calendar getDateLastUpdated() {
+    public Date getDateLastUpdated() {
         return dateLastUpdated;
     }
 
-    public void setDateLastUpdated(Calendar dateLastUpdated) {
+    public void setDateLastUpdated(Date dateLastUpdated) {
         this.dateLastUpdated = dateLastUpdated;
     }
 

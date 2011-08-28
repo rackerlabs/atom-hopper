@@ -32,6 +32,9 @@ public class FeedResponseHandler extends AbstractResponseHandler<Feed> {
             case METHOD_NOT_ALLOWED:
                 return ProviderHelper.notallowed(rc, adapterResponse.getMessage(), getAllowedHttpMethods());
 
+            case BAD_REQUEST:
+                return ProviderHelper.badrequest(rc, adapterResponse.getMessage());
+                
             default:
                 return ProviderHelper.notfound(rc);
         }

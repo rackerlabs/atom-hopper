@@ -1,7 +1,7 @@
 package org.atomhopper.hibernate.adapter;
 
 import java.io.StringReader;
-import java.util.Calendar;
+import java.util.List;
 import java.util.Map;
 import org.apache.abdera.Abdera;
 import org.atomhopper.adapter.FeedInformation;
@@ -13,7 +13,6 @@ import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.commons.lang.StringUtils;
-import org.atomhopper.adapter.NotImplemented;
 import org.atomhopper.adapter.ResponseBuilder;
 import org.atomhopper.adapter.jpa.PersistedEntry;
 import org.atomhopper.adapter.jpa.PersistedFeed;
@@ -37,11 +36,31 @@ public class HibernateFeedSource implements FeedSource {
     @Override
     public void setParameters(Map<String, String> params) {
     }
-    
-    private Entry hydrateFeedEntry(PersistedEntry entry, Abdera abderaReference) {
-        final Document<Entry> hydratedEntry = abderaReference.getParser().parse(new StringReader(entry.getEntryBody()));
 
-        return hydratedEntry != null ? hydratedEntry.getRoot() : null;
+    private Feed hydrateFeed(Abdera abdera, PersistedFeed persistedFeed, List<PersistedEntry> persistedEntries) {
+        final Feed hyrdatedFeed = abdera.newFeed();
+
+        hyrdatedFeed.setId(persistedFeed.getFeedId());
+        hyrdatedFeed.setTitle(persistedFeed.getName());
+
+        for (PersistedEntry persistedFeedEntry : persistedEntries) {
+            hyrdatedFeed.addEntry(hydrateEntry(persistedFeedEntry, abdera));
+        }
+
+        return hyrdatedFeed;
+    }
+
+    private Entry hydrateEntry(PersistedEntry persistedEntry, Abdera abderaReference) {
+        final Document<Entry> hydratedEntryDocument = abderaReference.getParser().parse(new StringReader(persistedEntry.getEntryBody()));
+        Entry entry = null;
+
+        if (hydratedEntryDocument != null) {
+            entry = hydratedEntryDocument.getRoot();
+
+            entry.setUpdated(persistedEntry.getDateLastUpdated());
+        }
+
+        return entry;
     }
 
     @Override
@@ -50,43 +69,74 @@ public class HibernateFeedSource implements FeedSource {
         AdapterResponse<Entry> response = ResponseBuilder.notFound();
 
         if (entry != null) {
-            response = ResponseBuilder.found(hydrateFeedEntry(entry, getEntryRequest.getAbdera()));
+            response = ResponseBuilder.found(hydrateEntry(entry, getEntryRequest.getAbdera()));
         }
 
         return response;
     }
 
-    //TODO: decompose 
     @Override
     public AdapterResponse<Feed> getFeed(GetFeedRequest getFeedRequest) {
-        PageDirection pageDirection = null;
-        String marker = null;
+        AdapterResponse<Feed> response = ResponseBuilder.notFound();
 
-        if (StringUtils.isNotBlank(getFeedRequest.getPageMarker())) {
-            final String pageDirectionValue = getFeedRequest.getRequestParameter(RequestQueryParameter.PAGE_DIRECTION.toString());
+        int pageSize = 25;
 
-            try {
-                pageDirection = PageDirection.valueOf(pageDirectionValue);
-            } catch (IllegalArgumentException iae) {
-                return ResponseBuilder.badRequest("Marker must have a page direction specified as either \"forward\" or \"backward\"");
+        try {
+            final String pageSizeString = getFeedRequest.getPageSize();
+
+            if (StringUtils.isNotBlank(pageSizeString)) {
+                pageSize = Integer.parseInt(pageSizeString);
             }
+        } catch (NumberFormatException nfe) {
+            return ResponseBuilder.badRequest("Page size parameter not valid");
+        }
+
+        final String marker = getFeedRequest.getPageMarker();
+
+        if (StringUtils.isNotBlank(marker)) {
+            response = getFeedPage(getFeedRequest, marker, pageSize);
+        } else {
+            response = getFeedHead(getFeedRequest.getAbdera(), getFeedRequest.getFeedName(), pageSize);
+        }
+
+        return response;
+    }
+
+    private AdapterResponse<Feed> getFeedHead(Abdera abdera, String feedName, int pageSize) {
+        final PersistedFeed persistedFeed = feedRepository.getFeed(feedName);
+        AdapterResponse<Feed> response = ResponseBuilder.notFound();
+
+        if (persistedFeed != null) {
+            final List<PersistedEntry> persistedEntries = feedRepository.getFeedHead(feedName, pageSize);
+
+            response = ResponseBuilder.found(hydrateFeed(abdera, persistedFeed, persistedEntries));
+        }
+
+        return response;
+    }
+
+    private AdapterResponse<Feed> getFeedPage(GetFeedRequest getFeedRequest, String marker, int pageSize) {
+        AdapterResponse<Feed> response = ResponseBuilder.notFound();
+        PageDirection pageDirection = null;
+
+        try {
+            final String pageDirectionValue = getFeedRequest.getRequestParameter(RequestQueryParameter.PAGE_DIRECTION.toString());
+            pageDirection = PageDirection.valueOf(pageDirectionValue.toUpperCase());
+        } catch (Exception iae) {
+            return ResponseBuilder.badRequest("Marker must have a page direction specified as either \"forward\" or \"backward\"");
         }
 
         final PersistedFeed persistedFeed = feedRepository.getFeed(getFeedRequest.getFeedName());
+        final PersistedEntry markerEntry = feedRepository.getEntry(marker);
 
-        if (persistedFeed != null) {
-            final Feed hydratedFeed = getFeedRequest.newFeed();
+        if (markerEntry != null) {
+            final Feed feed = hydrateFeed(getFeedRequest.getAbdera(), persistedFeed, feedRepository.getFeedPage(getFeedRequest.getFeedName(), markerEntry, pageSize, pageDirection));
 
-            hydratedFeed.setId(persistedFeed.getFeedId());
-            hydratedFeed.setTitle(persistedFeed.getName());
-
-            for (PersistedEntry persistedFeedEntry : feedRepository.getFeedPage(getFeedRequest.getFeedName(), marker, 25, pageDirection)) {
-                hydratedFeed.addEntry(hydrateFeedEntry(persistedFeedEntry, getFeedRequest.getAbdera()));
-            }
-
-            return ResponseBuilder.found(hydratedFeed);
+            response = ResponseBuilder.found(feed);
+        } else {
+            response = ResponseBuilder.notFound("No entry with specified marker found");
         }
 
-        return ResponseBuilder.notFound();
+        return response;
     }
 }

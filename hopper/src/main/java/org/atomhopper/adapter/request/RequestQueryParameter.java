@@ -4,7 +4,8 @@ public enum RequestQueryParameter {
 
     CATEGORIES("categories"),
     PAGE_DIRECTION("direction"),
-    MARKER("marker");
+    MARKER("marker"),
+    PAGE_LIMIT("limit");
 
     //Class contents
     private final String stringValue;

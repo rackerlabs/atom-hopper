@@ -26,16 +26,16 @@ public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
     public void process(RequestContext rc, AdapterResponse<Feed> adapterResponse) {
         final Feed f = adapterResponse.getBody();
 
+        // If there are no entries in the feed
+        if (f == null || f.getEntries() == null || f.getEntries().isEmpty()) {
+            return;
+        }
+        
         // Build the URL and PATH without the parameters
         final String self = StringUtils.split(rc.getResolvedUri().toString(), '?')[0];
 
         // Get a map of the url parameters
-        Map<String,String> parameters = getParameterMap(rc);
-
-        // If there are no entries in the feed
-        if (f.getEntries().size() == 0) {
-            return;
-        }
+        final Map<String,String> parameters = getParameterMap(rc);
 
         // Add current link
         if (linkNotSet(f, CURRENT_LINK)) {
@@ -52,7 +52,7 @@ public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
     }
 
     private boolean linkNotSet(Feed feed, String link) {
-        return (feed.getLinks(link).size() == 0);
+        return feed.getLinks(link).isEmpty();
     }
 
     public Map<String,String> getParameterMap( RequestContext rc ) {

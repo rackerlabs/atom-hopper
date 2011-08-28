@@ -21,14 +21,11 @@ public class HibernateSessionManager {
         final Configuration hibernateConfiguration = new Configuration()
                 .addAnnotatedClass(PersistedFeed.class)
                 .addAnnotatedClass(PersistedEntry.class)
-                .addAnnotatedClass(PersistedCategory.class)
-                .setProperty("hibernate.connection.driver_class", "org.h2.Driver")
-                .setProperty("hibernate.connection.url", "jdbc:h2:~/atom-hopper-db")
-                .setProperty("hibernate.connection.username", "sa")
-                .setProperty("hibernate.connection.password", "")
-                .setProperty("hibernate.hbm2ddl.auto", "create")
-                .setProperty("hibernate.show_sql", "true")
-                .setProperty("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
+                .addAnnotatedClass(PersistedCategory.class);
+        
+        for (Map.Entry<String, String> userParameter : parameters.entrySet()) {
+            hibernateConfiguration.setProperty(userParameter.getKey(), userParameter.getValue());
+        }
 
         return hibernateConfiguration.buildSessionFactory();
     }
