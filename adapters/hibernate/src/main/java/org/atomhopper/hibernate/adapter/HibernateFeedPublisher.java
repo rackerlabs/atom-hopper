@@ -2,6 +2,7 @@ package org.atomhopper.hibernate.adapter;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Map;
 import org.atomhopper.dbal.FeedRepository;
 import java.util.HashSet;
 import java.util.List;
@@ -33,6 +34,11 @@ public class HibernateFeedPublisher implements FeedPublisher {
         this.feedRepository = feedRepository;
     }
 
+    @Override
+    public void setParameters(Map<String, String> params) {
+        
+    }
+    
     @Override
     public AdapterResponse<Entry> postEntry(PostEntryRequest postEntryRequest) {
         final Entry abderaParsedEntry = postEntryRequest.getEntry();

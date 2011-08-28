@@ -2,14 +2,13 @@ package org.atomhopper.hibernate.adapter;
 
 import java.io.StringReader;
 import java.util.Calendar;
-import java.util.List;
+import java.util.Map;
 import org.apache.abdera.Abdera;
+import org.atomhopper.adapter.FeedInformation;
 import org.atomhopper.adapter.FeedSource;
-import org.atomhopper.adapter.request.adapter.GetCategoriesRequest;
 import org.atomhopper.adapter.request.adapter.GetEntryRequest;
 import org.atomhopper.adapter.request.adapter.GetFeedRequest;
 import org.atomhopper.response.AdapterResponse;
-import org.apache.abdera.model.Categories;
 import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
@@ -30,15 +29,19 @@ public class HibernateFeedSource implements FeedSource {
         this.feedRepository = feedRepository;
     }
 
+    @Override
+    public FeedInformation getFeedInformation() {
+        return new HibernateFeedInformation(feedRepository);
+    }
+
+    @Override
+    public void setParameters(Map<String, String> params) {
+    }
+    
     private Entry hydrateFeedEntry(PersistedEntry entry, Abdera abderaReference) {
         final Document<Entry> hydratedEntry = abderaReference.getParser().parse(new StringReader(entry.getEntryBody()));
 
         return hydratedEntry != null ? hydratedEntry.getRoot() : null;
-    }
-
-    @Override
-    public AdapterResponse<Categories> getCategories(GetCategoriesRequest getCategoriesRequest) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -85,11 +88,5 @@ public class HibernateFeedSource implements FeedSource {
         }
 
         return ResponseBuilder.notFound();
-    }
-
-    @Override
-    @NotImplemented
-    public Feed getFeedByDateRange(Calendar startingEntryDate, Calendar lastEntryDate) {
-        throw new UnsupportedOperationException("Not supported.");
     }
 }

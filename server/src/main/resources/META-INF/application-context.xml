@@ -12,6 +12,10 @@
         </constructor-arg>
     </bean>
     
+    <bean name="hibernate-feed-source" class="org.atomhopper.hibernate.adapter.HibernateFeedPublisher">
+        <property name="feedRepository" ref="feed-repository-bean" />
+    </bean>
+    
     <bean name="hibernate-feed-publisher" class="org.atomhopper.hibernate.adapter.HibernateFeedPublisher">
         <property name="feedRepository" ref="feed-repository-bean" />
     </bean>

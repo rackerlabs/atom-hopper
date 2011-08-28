@@ -61,9 +61,8 @@
 
         <xs:sequence>
             <xs:element name="defaults" type="hopcfg:ConfigurationDefaults" minOccurs="0" maxOccurs="1" />
-            <xs:element name="feed-source" type="hopcfg:AdapterDescriptor" minOccurs="0" maxOccurs="1" />
-            <xs:element name="feed-publisher" type="hopcfg:AdapterDescriptor" minOccurs="0" maxOccurs="1" />
-
+            <xs:element name="categories-descriptor" type="hopcfg:AdapterDescriptor" minOccurs="0" maxOccurs="1" />
+            
             <xs:element name="feed" type="hopcfg:FeedConfiguration" minOccurs="1" maxOccurs="unbounded" />
         </xs:sequence>
 
@@ -90,9 +89,10 @@
 
     <xs:complexType name="FeedConfiguration">
         <xs:sequence>
-            <xs:element name="feed-source" type="hopcfg:AdapterDescriptor" minOccurs="0" maxOccurs="1" />
-            <xs:element name="feed-publisher" type="hopcfg:AdapterDescriptor" minOccurs="0" maxOccurs="1" />
             <xs:element name="author" type="hopcfg:Author" minOccurs="0" maxOccurs="1" />
+            
+            <xs:element name="feed-source" type="hopcfg:AdapterDescriptor" minOccurs="0" maxOccurs="1" />
+            <xs:element name="publisher" type="hopcfg:AdapterDescriptor" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
 
         <xs:attribute name="title" type="xs:string" use="required">
@@ -110,9 +110,21 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
+
+        <xs:attribute name="archived" type="xs:boolean" use="optional" default="false">
+            <xs:annotation>
+                <xs:documentation>
+                    <xhtml:p></xhtml:p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
 
     <xs:complexType name="AdapterDescriptor">
+        <xs:sequence>
+            <xs:element name="parameter" type="hopcfg:AdapterParameter" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+        
         <xs:attribute name="reference" type="xs:string" use="optional">
             <xs:annotation>
                 <xs:documentation>
@@ -130,19 +142,16 @@
         </xs:attribute>
     </xs:complexType>
 
-    <xs:complexType name="ArchivalConfiguration">
-        <xs:annotation>
-            <xs:documentation>
-                <xhtml:p></xhtml:p>
-            </xs:documentation>
-        </xs:annotation>
+    <xs:complexType name="AdapterParameter">
+        <xs:attribute name="name" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>
+                    <xhtml:p></xhtml:p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
 
-        <xs:sequence>
-            <xs:element name="feed-archive-source" type="hopcfg:AdapterDescriptor" minOccurs="0" maxOccurs="1" />
-            <xs:element name="feed-archiver" type="hopcfg:AdapterDescriptor" minOccurs="0" maxOccurs="1" />
-        </xs:sequence>
-
-        <xs:attribute name="interval-spec" type="xs:string" use="optional">
+        <xs:attribute name="value" type="xs:string" use="required">
             <xs:annotation>
                 <xs:documentation>
                     <xhtml:p></xhtml:p>

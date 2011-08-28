@@ -7,15 +7,33 @@
 
     <host domain="domain.com" />
 
-    <!-- http://localhost:8080/namespace_a/ -->
-    <workspace title="A Testing Namespace" resource="/namespace_a/">
-        <!-- Set some defaults -->
-        <feed-source reference="default-feed-ref" />
-        <feed-publisher reference="default-feed-publisher-ref" />
-
-        <!-- http://localhost:8080/namespace_a/feed_1 -->
-        <feed title="feed_1" resource="/feed_1">
-            <author name="John Doe"/>
+    <workspace title="Testing Namespce" resource="/test/">
+        <defaults>
+            <author name="Atom Hopper in Workspace" />
+        </defaults>
+        
+        <categories-descriptor reference="workspace-categories-descriptor" />
+        
+        <feed title="Testing Feed" resource="/feed" archived="false">
+            <feed-source reference="feed-source-adapter" />
+            
+            <publisher reference="net.jps.atom.adapter.InMemoryPublisher">
+                <parameter name="net.jps.atom.adapter.db.show_sql" value="true" /> 
+            </publisher>
+        </feed>
+        
+        <feed title="Testing Feed Archive" resource="/archive/" archived="true">
+            <feed-source reference="feed-archive-adapter" />
+        </feed>
+    </workspace>
+    
+    <workspace title="Testing Namespce Part Two" resource="/test_2/">
+        <defaults>
+            <author name="Atom Hopper in Workspace" />
+        </defaults>
+        
+        <feed title="Testing Feed Archive Part Two" resource="/archive/feed" archived="true">
+            <feed-source reference="feed-archive-adapter" />
         </feed>
     </workspace>
 </atom-hopper-config>

@@ -1,5 +1,7 @@
 package org.atomhopper.adapter.impl;
 
+import java.util.Map;
+import org.atomhopper.adapter.FeedInformation;
 import org.atomhopper.adapter.request.adapter.GetEntryRequest;
 import org.atomhopper.adapter.request.adapter.GetCategoriesRequest;
 import org.atomhopper.adapter.request.adapter.PutEntryRequest;
@@ -9,7 +11,6 @@ import org.atomhopper.adapter.request.adapter.PostEntryRequest;
 import org.atomhopper.adapter.FeedPublisher;
 import org.atomhopper.adapter.FeedSource;
 import org.atomhopper.adapter.ResponseBuilder;
-import org.atomhopper.adapter.request.*;
 import org.atomhopper.response.AdapterResponse;
 import org.atomhopper.response.EmptyBody;
 import org.atomhopper.util.uri.template.EnumKeyedTemplateParameters;
@@ -37,6 +38,15 @@ public class InMemoryFeedAdapter implements FeedSource, FeedPublisher {
     }
 
     @Override
+    public FeedInformation getFeedInformation() {
+        return DisabledFeedInformation.getInstance();
+    }
+
+    @Override
+    public void setParameters(Map<String, String> params) {
+    }
+    
+    @Override
     public AdapterResponse<Entry> getEntry(GetEntryRequest getEntryRequest) {
         if (!StringUtils.isBlank(getEntryRequest.getEntryId())) {
             final AtomEntry entry = liveFeed.get(getEntryRequest.getEntryId());
@@ -62,16 +72,6 @@ public class InMemoryFeedAdapter implements FeedSource, FeedPublisher {
         }
 
         return ResponseBuilder.found(feed);
-    }
-
-    @Override
-    public AdapterResponse<Categories> getCategories(GetCategoriesRequest getCategoriesRequest) {
-        return ResponseBuilder.found(getCategoriesRequest.newCategories());
-    }
-
-    @Override
-    public Feed getFeedByDateRange(Calendar startingEntryDate, Calendar lastEntryDate) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

@@ -13,7 +13,7 @@ import org.apache.abdera.model.Entry;
  * 
  * Note: this interface is required for ATOMpub functionality
  */
-public interface FeedPublisher {
+public interface FeedPublisher extends AtomHopperAdapter {
 
     /**
      * Requests a single entry be added to the feed.

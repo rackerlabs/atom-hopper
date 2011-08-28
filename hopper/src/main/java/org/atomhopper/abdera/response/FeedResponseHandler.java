@@ -1,30 +1,26 @@
 package org.atomhopper.abdera.response;
 
+import org.atomhopper.abdera.filter.AdapterResponseInterceptor;
 import org.atomhopper.response.AdapterResponse;
-import org.apache.abdera.model.Entry;
+import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.ProviderHelper;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.ResponseContext;
 
 import java.util.Date;
 
-/**
- *
- * 
- */
-public class StaticEntryResponseHandler extends AbstractResponseHandler<Entry> {
+public class FeedResponseHandler extends AbstractResponseHandler<Feed> {
 
-    public StaticEntryResponseHandler() {
-        super();
+    public FeedResponseHandler(String[] allowedMethods, AdapterResponseInterceptor<Feed>... interceptors) {
+        super(allowedMethods, interceptors);
     }
 
     @Override
-    public ResponseContext handleAdapterResponse(RequestContext rc, AdapterResponse<Entry> adapterResponse) {
+    protected ResponseContext handleAdapterResponse(RequestContext rc, AdapterResponse<Feed> adapterResponse) {
         final Date lastUpdated = adapterResponse.getBody() != null ? adapterResponse.getBody().getUpdated() : null;
 
         switch (adapterResponse.getResponseStatus()) {
             case OK:
-            case CREATED:
                 return ProviderHelper.returnBase(adapterResponse.getBody(), adapterResponse.getResponseStatus().value(), lastUpdated);
 
             case NOT_FOUND:
@@ -32,6 +28,9 @@ public class StaticEntryResponseHandler extends AbstractResponseHandler<Entry> {
 
             case INTERNAL_SERVER_ERROR:
                 return ProviderHelper.servererror(rc, adapterResponse.getMessage(), new InternalServerException());
+
+            case METHOD_NOT_ALLOWED:
+                return ProviderHelper.notallowed(rc, adapterResponse.getMessage(), getAllowedHttpMethods());
 
             default:
                 return ProviderHelper.notfound(rc);

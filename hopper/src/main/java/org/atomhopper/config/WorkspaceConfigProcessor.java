@@ -1,5 +1,6 @@
 package org.atomhopper.config;
 
+import java.util.HashMap;
 import org.atomhopper.abdera.FeedAdapter;
 import org.atomhopper.abdera.TargetAwareAbstractCollectionAdapter;
 import org.atomhopper.abdera.WorkspaceHandler;
@@ -17,6 +18,7 @@ import org.apache.commons.lang.StringUtils;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,6 +54,7 @@ public class WorkspaceConfigProcessor {
         for (TargetAwareAbstractCollectionAdapter collectionAdapter : assembleFeeds(config.getFeed())) {
             final WorkspaceHandler workspace = new WorkspaceHandler(config);
             workspace.addCollectionAdapter(collectionAdapter.getTarget(), collectionAdapter);
+            
             LOG.info("Loading Workspace: " + collectionAdapter.getTarget());
             workspaces.add(workspace);
         }
@@ -97,8 +100,14 @@ public class WorkspaceConfigProcessor {
 
         return resolvedReference;
     }
-
+//
+//    private Map<String, String> adapterParametersToMap(List<AdapterParameter> paramters) {
+//        final Map<String, String> paramterMap = new HashMap<String, String>();
+//    }
+    
     public <T> T getAdapter(AdapterDescriptor descriptor, Class<T> expectedClass) {
+//        final Map<String, String> parameters = descriptorParametersToMap(descriptor.getParameter());
+        
         final T adapter = descriptor != null
                 ? getFromApplicationContext(descriptor.getReference(), descriptor.getClazz(), expectedClass)
                 : null;
@@ -111,7 +120,9 @@ public class WorkspaceConfigProcessor {
 
         for (FeedConfiguration feed : feeds) {
             final FeedSource feedSource = getAdapter(feed.getFeedSource(), FeedSource.class);
-            final FeedPublisher feedPublisher = getAdapter(feed.getFeedPublisher(), FeedPublisher.class);
+//            feed.get
+            
+            final FeedPublisher feedPublisher = getAdapter(feed.getPublisher(), FeedPublisher.class);
 
             final TargetRegexBuilder feedTargetRegexBuilder = new TargetRegexBuilder(workspaceTarget);
             feedTargetRegexBuilder.setFeed(feed.getResource());

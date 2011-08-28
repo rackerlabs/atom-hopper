@@ -17,7 +17,7 @@ import static java.net.URLEncoder.encode;
  *
  *
  */
-public class FeedPagingProcessor implements AdapterResponseProcessor<Feed> {
+public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
 
     private static final String NEXT_LINK = "next";
     private static final String CURRENT_LINK = "current";

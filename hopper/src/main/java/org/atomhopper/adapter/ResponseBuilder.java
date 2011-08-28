@@ -16,6 +16,10 @@ public final class ResponseBuilder {
     private ResponseBuilder() {
     }
 
+    public static <T> AdapterResponse<T> notImplemented(String message) {
+        return new FeedSourceAdapterResponse<T>(null, HttpStatus.METHOD_NOT_ALLOWED, message);
+    }
+    
     public static <T> AdapterResponse<T> badRequest(String message) {
         return new FeedSourceAdapterResponse<T>(null, HttpStatus.BAD_REQUEST, message);
     }

@@ -6,7 +6,7 @@ import org.atomhopper.response.AdapterResponse;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.RequestContext;
 
-public class FeedConfigurationResponseProcessor implements AdapterResponseProcessor<Feed> {
+public class FeedConfigurationResponseProcessor implements AdapterResponseInterceptor<Feed> {
     private FeedConfiguration feedConfiguration;
 
     public FeedConfigurationResponseProcessor(FeedConfiguration feedConfiguration) {

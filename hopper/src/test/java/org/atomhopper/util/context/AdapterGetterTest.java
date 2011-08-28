@@ -1,10 +1,7 @@
 package org.atomhopper.util.context;
 
-import org.atomhopper.util.context.AdapterNotFoundException;
-import org.atomhopper.util.context.AdapterConstructionException;
-import org.atomhopper.util.context.AdapterGetter;
 import org.atomhopper.adapter.FeedSource;
-import org.atomhopper.adapter.impl.UnimplementedFeedSource;
+import org.atomhopper.adapter.impl.DisabledFeedSource;
 import org.atomhopper.servlet.ApplicationContextAdapter;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -47,8 +44,8 @@ public class AdapterGetterTest {
 
             when(contextAdapterMock.fromContext(eq(BAD_REFERENCE), any(Class.class))).thenReturn(new InstanceableClass());
             when(contextAdapterMock.fromContext(eq(NULL_REFERENCE), any(Class.class))).thenReturn(null);
-            when(contextAdapterMock.fromContext(eq(UnimplementedFeedSource.class))).thenReturn(new UnimplementedFeedSource());
-            when(contextAdapterMock.fromContext(eq(FEED_SOURCE_REFERENCE), any(Class.class))).thenReturn(new UnimplementedFeedSource());
+            when(contextAdapterMock.fromContext(eq(DisabledFeedSource.class))).thenReturn((DisabledFeedSource.getInstance()));
+            when(contextAdapterMock.fromContext(eq(FEED_SOURCE_REFERENCE), any(Class.class))).thenReturn(DisabledFeedSource.getInstance());
 
             adapterGetter = new AdapterGetter(contextAdapterMock);
         }
@@ -58,7 +55,7 @@ public class AdapterGetterTest {
 
         @Test
         public void shouldGetFromContext() {
-            assertNotNull(adapterGetter.getByClassDefinition(UnimplementedFeedSource.class, FeedSource.class));
+            assertNotNull(adapterGetter.getByClassDefinition(DisabledFeedSource.class, FeedSource.class));
             assertNotNull(adapterGetter.getByName(FEED_SOURCE_REFERENCE, FeedSource.class));
         }
 
