@@ -87,31 +87,43 @@
         </dependency>
     </dependencies>
   
-    <build>
-<!--        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
+    <profiles>
+        <!--
+            By default we turn off this plugin to make builds faster - however,
+            if you want to build the executable server jar simply run maven with
+            the following option, '-P pack-server-jar'
+            
+            Example: mvn -P pack-server-jar clean install
+        -->
+        <profile>
+            <id>pack-server-jar</id>
+            
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-shade-plugin</artifactId>
 
-                <executions>
-                    <execution>
-                        <phase>package</phase>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
 
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
+                                <goals>
+                                    <goal>shade</goal>
+                                </goals>
 
-                        <configuration>
-                            <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>org.atomhopper.server.AtomHopperServer</mainClass>
-                                </transformer>
-                            </transformers>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>-->
-    </build>
-    
+                                <configuration>
+                                    <transformers>
+                                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                            <mainClass>org.atomhopper.server.AtomHopperServer</mainClass>
+                                        </transformer>
+                                    </transformers>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile> 
+    </profiles>
 </project>

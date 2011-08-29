@@ -1,9 +1,9 @@
 package org.atomhopper.adapter.jpa;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,7 +13,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "Feeds")
-public class PersistedFeed {
+public class PersistedFeed implements Serializable {
 
     @Id
     @Column(name = "Name")

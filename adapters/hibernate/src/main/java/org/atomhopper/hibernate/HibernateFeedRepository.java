@@ -4,17 +4,21 @@ import java.util.List;
 import org.atomhopper.dbal.FeedRepository;
 import org.atomhopper.hibernate.actions.SimpleSessionAction;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 import org.atomhopper.adapter.jpa.PersistedCategory;
 import org.atomhopper.adapter.jpa.PersistedFeed;
 import org.atomhopper.adapter.jpa.PersistedEntry;
 import org.atomhopper.dbal.AtomDatabaseException;
 import org.atomhopper.dbal.PageDirection;
 import org.atomhopper.hibernate.actions.ComplexSessionAction;
+import org.atomhopper.hibernate.query.CategoryCriteriaGenerator;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
@@ -74,7 +78,27 @@ public class HibernateFeedRepository implements FeedRepository {
     }
 
     @Override
-    public List<PersistedEntry> getFeedHead(final String feedName, final int pageSize) {
+    public Set<PersistedCategory> getCategoriesForFeeed(final String feedName) {
+        return performComplexAction(new ComplexSessionAction<Set<PersistedCategory>>() {
+
+            @Override
+            public Set<PersistedCategory> perform(Session liveSession) {
+                final PersistedFeed persistedFeed = (PersistedFeed) liveSession.createCriteria(PersistedFeed.class).add(Restrictions.idEq(feedName)).uniqueResult();
+                final Set<PersistedCategory> categories = new HashSet<PersistedCategory>();
+
+                if (persistedFeed != null) {
+                    for (PersistedEntry entry : persistedFeed.getEntries()) {
+                        categories.addAll(entry.getCategories());
+                    }
+                }
+
+                return categories;
+            }
+        });
+    }
+
+    @Override
+    public List<PersistedEntry> getFeedHead(final String feedName, final CategoryCriteriaGenerator criteriaGenerator, final int pageSize) {
         return performComplexAction(new ComplexSessionAction<List<PersistedEntry>>() {
 
             @Override
@@ -82,18 +106,20 @@ public class HibernateFeedRepository implements FeedRepository {
                 final List<PersistedEntry> feedHead = new LinkedList<PersistedEntry>();
 
                 final Criteria criteria = liveSession.createCriteria(PersistedEntry.class);
+                criteriaGenerator.enhanceCriteria(criteria);
+                
                 criteria.setMaxResults(pageSize);
                 criteria.addOrder(Order.asc("creationDate"));
 
                 feedHead.addAll(criteria.list());
-                
+
                 return feedHead;
             }
         });
     }
 
     @Override
-    public List<PersistedEntry> getFeedPage(final String feedName, final PersistedEntry markerEntry, final int pageSize, final PageDirection direction) {
+    public List<PersistedEntry> getFeedPage(final String feedName, final PersistedEntry markerEntry, final PageDirection direction, final CategoryCriteriaGenerator criteriaGenerator, final int pageSize) {
         return performComplexAction(new ComplexSessionAction<List<PersistedEntry>>() {
 
             @Override
@@ -101,6 +127,8 @@ public class HibernateFeedRepository implements FeedRepository {
                 final LinkedList<PersistedEntry> feedPage = new LinkedList<PersistedEntry>();
 
                 final Criteria criteria = liveSession.createCriteria(PersistedEntry.class);
+                criteriaGenerator.enhanceCriteria(criteria);
+                
                 criteria.setMaxResults(pageSize);
                 criteria.addOrder(Order.asc("creationDate"));
 

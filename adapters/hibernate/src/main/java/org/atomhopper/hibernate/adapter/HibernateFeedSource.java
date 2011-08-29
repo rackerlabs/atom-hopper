@@ -19,6 +19,7 @@ import org.atomhopper.adapter.jpa.PersistedFeed;
 import org.atomhopper.adapter.request.RequestQueryParameter;
 import org.atomhopper.dbal.FeedRepository;
 import org.atomhopper.dbal.PageDirection;
+import org.atomhopper.hibernate.query.SimpleCategoryCriteriaGenerator;
 
 public class HibernateFeedSource implements FeedSource {
 
@@ -96,18 +97,20 @@ public class HibernateFeedSource implements FeedSource {
         if (StringUtils.isNotBlank(marker)) {
             response = getFeedPage(getFeedRequest, marker, pageSize);
         } else {
-            response = getFeedHead(getFeedRequest.getAbdera(), getFeedRequest.getFeedName(), pageSize);
+            response = getFeedHead(getFeedRequest, getFeedRequest.getFeedName(), pageSize);
         }
 
         return response;
     }
 
-    private AdapterResponse<Feed> getFeedHead(Abdera abdera, String feedName, int pageSize) {
+    private AdapterResponse<Feed> getFeedHead(GetFeedRequest getFeedRequest, String feedName, int pageSize) {
+        final Abdera abdera = getFeedRequest.getAbdera();
         final PersistedFeed persistedFeed = feedRepository.getFeed(feedName);
         AdapterResponse<Feed> response = ResponseBuilder.notFound();
 
         if (persistedFeed != null) {
-            final List<PersistedEntry> persistedEntries = feedRepository.getFeedHead(feedName, pageSize);
+            final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
+            final List<PersistedEntry> persistedEntries = feedRepository.getFeedHead(feedName, new SimpleCategoryCriteriaGenerator(searchString), pageSize);
 
             response = ResponseBuilder.found(hydrateFeed(abdera, persistedFeed, persistedEntries));
         }
@@ -130,7 +133,11 @@ public class HibernateFeedSource implements FeedSource {
         final PersistedEntry markerEntry = feedRepository.getEntry(marker);
 
         if (markerEntry != null) {
-            final Feed feed = hydrateFeed(getFeedRequest.getAbdera(), persistedFeed, feedRepository.getFeedPage(getFeedRequest.getFeedName(), markerEntry, pageSize, pageDirection));
+            final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
+            final Feed feed = hydrateFeed(
+                    getFeedRequest.getAbdera(), persistedFeed, 
+                    feedRepository.getFeedPage(
+                        getFeedRequest.getFeedName(), markerEntry, pageDirection, new SimpleCategoryCriteriaGenerator(searchString), pageSize));
 
             response = ResponseBuilder.found(feed);
         } else {

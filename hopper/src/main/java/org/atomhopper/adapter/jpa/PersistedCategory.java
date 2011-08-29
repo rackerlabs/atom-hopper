@@ -1,5 +1,6 @@
 package org.atomhopper.adapter.jpa;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,7 +13,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "Categories")
-public class PersistedCategory {
+public class PersistedCategory implements Serializable {
 
     @Id
     @Column(name = "Term")

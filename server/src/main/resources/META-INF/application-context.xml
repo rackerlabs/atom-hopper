@@ -13,7 +13,7 @@
                 <entry key="hibernate.dialect" value="org.hibernate.dialect.H2Dialect" />
                 <entry key="hibernate.connection.username" value="sa" />
                 <entry key="hibernate.connection.password" value="" />
-                <entry key="hibernate.hbm2ddl.auto" value="create" />
+<!--                <entry key="hibernate.hbm2ddl.auto" value="create" />-->
 <!--                <entry key="hibernate.show_sql" value="true" />-->
             </map>
         </constructor-arg>

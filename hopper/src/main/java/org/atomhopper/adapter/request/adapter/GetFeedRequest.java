@@ -13,6 +13,8 @@ public interface GetFeedRequest extends FeedRequest {
     Feed newFeed();
 
     List<String> getCategories();
+    
+    String getSearchQuery();
 
     String getPageMarker();
     

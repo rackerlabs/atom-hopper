@@ -1,5 +1,6 @@
 package org.atomhopper.adapter.jpa;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -21,7 +22,7 @@ import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "Entries")
-public class PersistedEntry {
+public class PersistedEntry implements Serializable {
 
     @Id
     @Column(name = "EntryID")
