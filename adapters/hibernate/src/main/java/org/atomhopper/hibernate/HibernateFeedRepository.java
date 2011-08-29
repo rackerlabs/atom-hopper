@@ -18,7 +18,6 @@ import org.atomhopper.hibernate.query.CategoryCriteriaGenerator;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
