@@ -14,6 +14,8 @@ import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.springframework.http.HttpStatus;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -21,6 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
+import static org.mockito.Matchers.contains;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -97,23 +100,48 @@ public class FeedPagingProcessorTest {
 
         @Test
         public void testMapToString() {
-          final FeedPagingProcessor target = feedPagingProcessor();
+            final FeedPagingProcessor target = feedPagingProcessor();
 
-          Map<String,String> test = new TreeMap<String,String>();
-          // Empty map returns blank string
-          assertThat(target.mapToParameters(test),equalTo(""));
-          test.put("key1", "value1");
-          test.put("key2", "value2");
-          assertThat(target.mapToParameters(test),equalTo("?key1=value1&key2=value2"));
+            Map<String, List<String>> test = new TreeMap<String, List<String>>();
+            // Empty map returns blank string
+            assertThat(target.mapToParameters(test), equalTo(""));
+            List<String> value1 = new LinkedList<String>();
+            value1.add("value1");
+            List<String> value2 = new LinkedList<String>();
+            value2.add("value2");
+            test.put("key1", value1);
+            test.put("key2", value2);
+            assertThat(target.mapToParameters(test), equalTo("?key1=value1&key2=value2"));
         }
 
         @Test
         public void testGetParameterMap() {
-          final FeedPagingProcessor target = feedPagingProcessor();
+            final FeedPagingProcessor target = feedPagingProcessor();
 
-          Map<String,String> map = new TreeMap<String,String>();
-          map.put("marker", "1");
-          assertThat("Should return", target.getParameterMap( requestContext() ), equalTo( map ) );
+            Map<String, List<String>> map = new TreeMap<String, List<String>>();
+            List<String> values = new LinkedList<String>();
+            values.add("1");
+            map.put("marker", values);
+            Map<String, List<String>> returnedMap = target.getParameterMap(requestContext());
+            assertThat("should return the expected values", returnedMap, equalTo(map));
+        }
+
+        @Test
+        public void testGetMultipleParametersMap() {
+            final FeedPagingProcessor target = feedPagingProcessor();
+
+            Map<String, List<String>> map = new TreeMap<String, List<String>>();
+            List<String> values = new LinkedList<String>();
+            values.add("1");
+            map.put("marker", values);
+            List<String> foobar = new LinkedList<String>();
+            foobar.add("foo");
+            foobar.add("bar");
+
+            Map<String, List<String>> returnedMap = target.getParameterMap(multiParamRequestContext());
+            assertThat("should return the expected keys", returnedMap.keySet(), equalTo(map.keySet()));
+            for(String key : map.keySet()) {
+            }
 
         }
 
@@ -200,8 +228,29 @@ public class FeedPagingProcessorTest {
             when(target.getBaseUri()).thenReturn(new IRI(BASE_URI));
             when(target.getTargetPath()).thenReturn(TARGET_PATH + TARGET_PARAMS);
             when(target.getParameterNames()).thenReturn(new String[]{"marker"});
-            when(target.getParameter("marker")).thenReturn("1");
+            //when(target.getParameter("marker")).thenReturn("1");
+            List<String> mockedValues = new LinkedList<String>();
+            mockedValues.add("1");
+            when(target.getParameters("marker")).thenReturn(mockedValues);
 
+
+            return target;
+        }
+
+        public RequestContext multiParamRequestContext() {
+            RequestContext target = mock(RequestContext.class);
+            when(target.getResolvedUri()).thenReturn(new IRI(SELF_URL));
+            when(target.getBaseUri()).thenReturn(new IRI(BASE_URI));
+            when(target.getTargetPath()).thenReturn(TARGET_PATH + TARGET_PARAMS);
+            when(target.getParameterNames()).thenReturn(new String[]{"marker"});
+            //when(target.getParameter("marker")).thenReturn("1");
+            List<String> mockedValues = new LinkedList<String>();
+            mockedValues.add("1");
+            when(target.getParameters("marker")).thenReturn(mockedValues);
+            List<String> foobar = new LinkedList<String>();
+            foobar.add("foo");
+            foobar.add("bar");
+            when(target.getParameters("foobar")).thenReturn(foobar);
             return target;
         }
     }

@@ -35,7 +35,7 @@ public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
         final String self = StringUtils.split(rc.getResolvedUri().toString(), '?')[0];
 
         // Get a map of the url parameters
-        final Map<String,String> parameters = getParameterMap(rc);
+        final Map<String, List<String>> parameters = getParameterMap(rc);
 
         // Add current link
         if (linkNotSet(f, CURRENT_LINK)) {
@@ -46,7 +46,9 @@ public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
         if (linkNotSet(f, NEXT_LINK)) {
             // Get the id of the last entry on this page
             String id = f.getEntries().get(f.getEntries().size() - 1).getId().toString();
-            parameters.put("marker", id);
+            List<String> markerList = new ArrayList<String>();
+            markerList.add(id);
+            parameters.put("marker", markerList);
             f.addLink(StringUtils.join(new String[]{self, mapToParameters(parameters)}), NEXT_LINK);
         }
     }
@@ -55,34 +57,40 @@ public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
         return feed.getLinks(link).isEmpty();
     }
 
-    public Map<String,String> getParameterMap( RequestContext rc ) {
-      Map<String,String> parameters = new HashMap<String,String>();
-      for( String parameter: rc.getParameterNames()) {
-        parameters.put( parameter, rc.getParameter( parameter ) );
-      }
+    public Map<String, List<String>> getParameterMap(RequestContext rc) {
+        Map<String, List<String>> parameters = new HashMap<String, List<String>>();
+        for (String parameter : rc.getParameterNames()) {
+            ArrayList<String> values = new ArrayList<String>();
+            for (String value : rc.getParameters(parameter)) {
+                values.add(value);
+            }
+            parameters.put(parameter, values);
+        }
 
-      return parameters;
+        return parameters;
     }
 
-    public static String mapToParameters(Map<String,String> parameters) {
-      try {
-          List<String> result = new ArrayList<String>();
+    public static String mapToParameters(Map<String, List<String>> parameters) {
+        try {
+            List<String> result = new ArrayList<String>();
 
-          // Combine the keys into a key=value list
-          for( String key : parameters.keySet() ) {
-            result.add(encode(key, "UTF-8") + '=' + encode(parameters.get(key), "UTF-8"));
-          }
+            // Combine the keys into a key=value list
+            for (String key : parameters.keySet()) {
+                //The key isn't unique, and we might end up with an array of multiple parameters
+                for (String value : parameters.get(key)) {
+                    result.add(encode(key, "UTF-8") + '=' + encode(value, "UTF-8"));
+                }
+            }
 
-          if(result.isEmpty()){
-              return "";
-          }
+            if (result.isEmpty()) {
+                return "";
+            }
 
-          // Join the list into a string separated by '&' and prefix with '?'
-          return StringUtils.join(new String[]{ "?", StringUtils.join(result.toArray(),"&")});
-      }
-      catch (UnsupportedEncodingException e) {
-          throw new IllegalArgumentException(e);
-      }
+            // Join the list into a string separated by '&' and prefix with '?'
+            return StringUtils.join(new String[]{"?", StringUtils.join(result.toArray(), "&")});
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
 }

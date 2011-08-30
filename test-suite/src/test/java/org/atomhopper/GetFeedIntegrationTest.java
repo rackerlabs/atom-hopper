@@ -44,14 +44,14 @@ public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
         public void shouldReturnEmptyFeed() throws Exception {
             final HttpMethod getFeedMethod = newGetFeedMethod();
             assertEquals("Getting a feed should return a 200", HttpStatus.SC_OK, httpClient.executeMethod(getFeedMethod));
-            
+
             System.out.println(new String(getFeedMethod.getResponseBody()));
         }
     }
 
     public static class WhenGettingFeedsWithMarker {
 
-      @Test
+        @Test
       public void shouldHaveCorrectLinkUrls() throws Exception {                    
           final HttpMethod getFeedMethod = new GetMethod(urlAndPort + "/namespace/feed");          
           assertEquals("Getting a feed should return a 200", HttpStatus.SC_OK, httpClient.executeMethod(getFeedMethod));
@@ -61,19 +61,36 @@ public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
           assertNotNull("The returned XML should not be null", doc);
           xml.assertHasValue(doc,"/feed/link[@rel='current']/@href", urlAndPort + "/namespace/feed");          
           xml.assertHasValue(doc,"/feed/link[@rel='next']/@href", urlAndPort + "/namespace/feed?marker=" + entryId);          
-      }
+        }
       
-      @Test
-      public void shouldPreserveLinkParameters() throws Exception {
+        @Test
+        public void shouldPreserveLinkParameters() throws Exception {
           final HttpMethod getFeedMethod = new GetMethod(urlAndPort + "/namespace/feed?marker=" + entryId + "&foo=bar");
           assertEquals("Getting a feed should return a 200", HttpStatus.SC_OK, httpClient.executeMethod(getFeedMethod));
           
           Document doc = xml.toDOM(getFeedMethod.getResponseBodyAsString());
+            System.out.println("=================================================");
+            System.out.println(new String(getFeedMethod.getResponseBody()));
 
           assertNotNull("The returned XML should not be null", doc);
           xml.assertHasValue(doc,"/feed/link[@rel='current']/@href", urlAndPort + "/namespace/feed?marker=" + entryId + "&foo=bar");
           xml.assertHasValue(doc,"/feed/link[@rel='next']/@href", urlAndPort + "/namespace/feed?marker=" + entryId + "&foo=bar");
-      }
+        }
+
+        @Test
+        public void shouldPreserveAllLinkParameters() throws Exception {
+            final HttpMethod getFeedMethod = new GetMethod("http://localhost:24156/namespace/feed?marker=1&awesome=bar&awesome=foo");
+
+            assertEquals("Getting a feed should return a 200", HttpStatus.SC_OK, httpClient.executeMethod(getFeedMethod));
+
+            Document doc = xml.toDOM(getFeedMethod.getResponseBodyAsString());
+            System.out.println("=================================================");
+
+            xml.assertHasValue(doc, "/feed/link[@rel='current']/@href", "http://localhost:24156/namespace/feed?marker=1&awesome=bar&awesome=foo");
+            xml.assertHasValue(doc, "/feed/link[@rel='next']/@href", "http://localhost:24156/namespace/feed?marker=1&awesome=bar&awesome=foo");
+
+        }
+
     }
 
     public static class WhenPublishingToFeeds {
