@@ -106,7 +106,7 @@ public class HibernateFeedSource implements FeedSource {
     private AdapterResponse<Feed> getFeedHead(GetFeedRequest getFeedRequest, String feedName, int pageSize) {
         final Abdera abdera = getFeedRequest.getAbdera();
         final PersistedFeed persistedFeed = feedRepository.getFeed(feedName);
-        AdapterResponse<Feed> response = ResponseBuilder.notFound();
+        AdapterResponse<Feed> response = null;
 
         if (persistedFeed != null) {
             final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
@@ -115,7 +115,7 @@ public class HibernateFeedSource implements FeedSource {
             response = ResponseBuilder.found(hydrateFeed(abdera, persistedFeed, persistedEntries));
         }
 
-        return response;
+        return response != null ? response : ResponseBuilder.found(abdera.newFeed());
     }
 
     private AdapterResponse<Feed> getFeedPage(GetFeedRequest getFeedRequest, String marker, int pageSize) {

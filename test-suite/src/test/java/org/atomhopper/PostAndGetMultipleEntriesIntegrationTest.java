@@ -39,19 +39,20 @@ public class PostAndGetMultipleEntriesIntegrationTest extends JettyIntegrationTe
         post.setRequestBody("<?xml version=\"1.0\" ?><entry xmlns=\"http://www.w3.org/2005/Atom\"><author><name>Chad</name></author><content>" + content + "</content></entry>");
 
         return post;
-    }
+    }    
 
     public static class WhenPublishingMultipleEntries {
 
         @Test
-        public void shouldReturnPartialFeed() throws Exception {
+        public void shouldCreateAndGetMultipleEntries() throws Exception {
+            final HttpMethod getFeedMethod = getFeedMethod();
+            assertEquals("Hitting Atom Hopper with an empty datastore should return a 200", HttpStatus.SC_OK, httpClient.executeMethod(getFeedMethod));            
             // Create 15 new entries
             for(int i = 200; i < 216; i++) {
                 final HttpMethod postMethod = newPostEntryMethod("<blah><a1>a1</a1><b1>" + Integer.toString(i) + "</b1></blah>");
                 assertEquals("Creating a new entry should return a 201", HttpStatus.SC_CREATED, httpClient.executeMethod(postMethod));
             }
             
-            final HttpMethod getFeedMethod = getFeedMethod();
             assertEquals("Getting a feed should return a 200", HttpStatus.SC_OK, httpClient.executeMethod(getFeedMethod));
             //System.out.println(new String(getFeedMethod.getResponseBody()));
             
