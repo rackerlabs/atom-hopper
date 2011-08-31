@@ -19,3 +19,4 @@ target
 /server/nbactions.xml
 /test-suite/nbactions.xml
 /hopper/nbactions.xml
+/server/nbactions-pack-server-jar.xml

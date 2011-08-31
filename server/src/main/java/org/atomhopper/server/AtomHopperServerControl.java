@@ -26,7 +26,11 @@ public class AtomHopperServerControl {
    public void startAtomHopper() {
 
         try {
-            serverInstance = new AtomHopperJettyServerBuilder(getPort()).newServer();
+            if(commandLineArgs.configFile.length() <= 0) {
+                serverInstance = new AtomHopperJettyServerBuilder(getPort()).newServer();
+            } else {
+                serverInstance = new AtomHopperJettyServerBuilder(getPort(), commandLineArgs.configFile).newServer();
+            }
             serverInstance.setStopAtShutdown(true);
             serverInstance.start();
             Thread monitor = new MonitorThread(serverInstance, getStopPort(), LOCALHOST_IP);
