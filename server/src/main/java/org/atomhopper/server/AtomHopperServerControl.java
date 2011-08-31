@@ -26,7 +26,7 @@ public class AtomHopperServerControl {
    public void startAtomHopper() {
 
         try {
-            if(commandLineArgs.configFile.length() <= 0) {
+            if(commandLineArgs.configFile == null) {
                 serverInstance = new AtomHopperJettyServerBuilder(getPort()).newServer();
             } else {
                 serverInstance = new AtomHopperJettyServerBuilder(getPort(), commandLineArgs.configFile).newServer();
