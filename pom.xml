@@ -28,6 +28,7 @@
         <module>hopper</module>
         <module>test-suite</module>
         <module>server</module>
+        <module>ah-war</module>
         
         <module>adapters/hibernate</module>
     </modules>
@@ -160,6 +161,12 @@
                 <version>1.7</version>
                 <scope>test</scope>
             </dependency>
+            
+            <dependency>
+                <groupId>javax</groupId>
+                <artifactId>javaee-endorsed-api</artifactId>
+                <version>6.0</version>
+            </dependency>            
 
             <dependency>
                 <groupId>org.mockito</groupId>

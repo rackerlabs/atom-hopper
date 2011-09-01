@@ -23,8 +23,7 @@ public class AtomHopperJettyServerBuilder {
     
     public AtomHopperJettyServerBuilder(int portNumber, String configurationPathAndFile) {
         this.portNumber = portNumber;
-        this.configurationPathAndFile = configurationPathAndFile;
-        System.out.println("configurationPathAndFile: " + configurationPathAndFile);        
+        this.configurationPathAndFile = configurationPathAndFile;    
     }    
 
     private Server buildNewInstance() {
