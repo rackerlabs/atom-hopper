@@ -92,13 +92,7 @@
                             <directory>/etc/atomhopper</directory>
                             <username>tomcat</username>
                             <groupname>tomcat</groupname>
-                            <filemode>755</filemode>       
-                        </mapping>                        
-                        <mapping>
-                            <directory>/etc/atomhopper</directory>
-                            <username>tomcat</username>
-                            <groupname>tomcat</groupname>
-                            <filemode>644</filemode>
+                            <filemode>755</filemode>
                             <sources>
                                 <source>
                                     <location>src/main/resources/META-INF/atom-server.cfg.xml</location>
