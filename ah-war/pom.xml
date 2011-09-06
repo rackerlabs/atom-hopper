@@ -20,7 +20,7 @@
     </properties>
 
     <dependencies>
-        
+       
         <dependency>
             <groupId>org.atomhopper</groupId>
             <artifactId>core</artifactId>
@@ -30,22 +30,25 @@
             <groupId>org.atomhopper.adapter</groupId>
             <artifactId>hibernate-adapter</artifactId>
         </dependency>
-        
+
     </dependencies>
 
     <build>
         <plugins>
+           
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
             </plugin>
+           
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
-                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                    <failOnMissingWebXml>true</failOnMissingWebXml>
                 </configuration>
             </plugin>
+           
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -69,6 +72,50 @@
                     </execution>
                 </executions>
             </plugin>
+           
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>rpm-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>rpm</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <copyright>N/A</copyright>
+                    <group>Rackspace - Cloud Integration Team</group>
+                    <description>ATOM Hopper - The ATOMPub Java Server</description>
+                    <mappings>
+                        <mapping>
+                            <directory>/etc/atomhopper</directory>
+                            <username>tomcat</username>
+                            <filemode>644</filemode>
+                            <sources>
+                                <source>
+                                    <location>src/main/resources/META-INF/atom-server.cfg.xml</location>
+                                </source>
+                            </sources>                         
+                        </mapping>
+                        <mapping>
+                            <directory>/var/lib/tomcat6/webapps/atomhopper</directory>
+                            <username>tomcat</username>
+                            <filemode>755</filemode>                            
+                            <sources>
+                                <source>
+                                    <location>target/ah-war-${version}.war</location>
+                                </source>
+                            </sources>                         
+                        </mapping>                       
+                    </mappings>        
+                    <requires>
+                        <require>tomcat6</require>
+                        <require>java-1.6.0-openjdk</require>
+                    </requires>                   
+                </configuration>
+            </plugin>           
+           
         </plugins>
     </build>
 

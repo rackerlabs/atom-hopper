@@ -20,7 +20,7 @@
 
         <init-param>
             <param-name>config-location</param-name>
-            <param-value>classpath:/META-INF/atom-server.cfg.xml</param-value>
+            <param-value>/etc/atomhopper/atom-server.cfg.xml</param-value>
         </init-param>
 
         <init-param>
