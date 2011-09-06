@@ -99,7 +99,7 @@
                             </sources>                         
                         </mapping>
                         <mapping>
-                            <directory>/var/lib/tomcat6/webapps/atomhopper</directory>
+                            <directory>/var/lib/tomcat5/webapps/atomhopper</directory>
                             <username>tomcat</username>
                             <filemode>755</filemode>                            
                             <sources>
