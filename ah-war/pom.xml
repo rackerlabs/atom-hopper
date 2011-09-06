@@ -92,6 +92,12 @@
                             <directory>/etc/atomhopper</directory>
                             <username>tomcat</username>
                             <groupname>tomcat</groupname>
+                            <filemode>755</filemode>       
+                        </mapping>                        
+                        <mapping>
+                            <directory>/etc/atomhopper</directory>
+                            <username>tomcat</username>
+                            <groupname>tomcat</groupname>
                             <filemode>644</filemode>
                             <sources>
                                 <source>
@@ -100,7 +106,7 @@
                             </sources>                         
                         </mapping>
                         <mapping>
-                            <directory>/var/lib/tomcat5/webapps/atomhopper</directory>
+                            <directory>/var/lib/tomcat6/webapps/</directory>
                             <username>tomcat</username>
                             <groupname>tomcat</groupname>
                             <filemode>755</filemode>                            
@@ -112,7 +118,7 @@
                         </mapping>                       
                     </mappings>        
                     <requires>
-                        <require>tomcat5</require>
+                        <require>tomcat6</require>
                         <require>java-1.6.0-openjdk</require>
                     </requires>                   
                 </configuration>

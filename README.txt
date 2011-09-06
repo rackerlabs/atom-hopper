@@ -4,7 +4,7 @@ The AtomHopperServer.jar (this is the Jetty embedded version) currently takes th
 
 The first two arguments are not optional and must be set to either 'start' or 'stop' Atom Hopper: start | stop
 
-Example: java Ðjar AtomHopperServer.jar start
+Example: java -jar AtomHopperServer.jar start
 
 -p (alias --port)
 This specifies the port number that Atom Hopper will listen to for incoming requests, if not set it will use a default port of 8080
