@@ -110,7 +110,7 @@
                         </mapping>                       
                     </mappings>        
                     <requires>
-                        <require>tomcat6</require>
+                        <require>tomcat5</require>
                         <require>java-1.6.0-openjdk</require>
                     </requires>                   
                 </configuration>
