@@ -1,6 +1,8 @@
 package org.atomhopper.response;
 
+import org.apache.abdera.util.EntityTag;
 import org.springframework.http.HttpStatus;
+
 
 public interface AdapterResponse<T> {
 
@@ -38,4 +40,7 @@ public interface AdapterResponse<T> {
      * @return 
      */
     HttpStatus getResponseStatus();
+
+    void setEntityTag(EntityTag entityTag);
+    EntityTag getEntityTag();
 }

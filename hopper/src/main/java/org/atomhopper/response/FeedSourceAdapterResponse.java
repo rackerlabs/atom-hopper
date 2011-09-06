@@ -1,5 +1,6 @@
 package org.atomhopper.response;
 
+import org.apache.abdera.util.EntityTag;
 import org.springframework.http.HttpStatus;
 
 import java.util.EnumMap;
@@ -12,6 +13,7 @@ public class FeedSourceAdapterResponse<T> implements AdapterResponse<T> {
     private final T responseBody;
     private final HttpStatus statusCode;
     private final String message;
+    private EntityTag etag;
     
     private Map<ResponseParameter, String> parameters;
 
@@ -64,5 +66,15 @@ public class FeedSourceAdapterResponse<T> implements AdapterResponse<T> {
     @Override
     public HttpStatus getResponseStatus() {
         return statusCode;
+    }
+
+    @Override
+    public EntityTag getEntityTag() {
+        return etag;
+    }
+
+    @Override
+    public void setEntityTag(EntityTag etag) {
+        this.etag = etag;
     }
 }

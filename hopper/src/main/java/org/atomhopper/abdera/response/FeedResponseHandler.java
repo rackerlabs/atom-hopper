@@ -2,12 +2,16 @@ package org.atomhopper.abdera.response;
 
 import org.atomhopper.abdera.filter.AdapterResponseInterceptor;
 import org.atomhopper.response.AdapterResponse;
+import org.atomhopper.abdera.filter.FeedEntityTagProcessor;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.ProviderHelper;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.ResponseContext;
+import org.apache.abdera.util.EntityTag;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 public class FeedResponseHandler extends AbstractResponseHandler<Feed> {
 
@@ -21,8 +25,12 @@ public class FeedResponseHandler extends AbstractResponseHandler<Feed> {
 
         switch (adapterResponse.getResponseStatus()) {
             case OK:
-                return ProviderHelper.returnBase(adapterResponse.getBody(), adapterResponse.getResponseStatus().value(), lastUpdated);
-
+                if (entityTagMatches(rc.getIfNoneMatch(), adapterResponse.getEntityTag())) {
+                    return ProviderHelper.notmodified(rc);
+                }
+                ResponseContext responseContext = ProviderHelper.returnBase(adapterResponse.getBody(), adapterResponse.getResponseStatus().value(), lastUpdated);
+                responseContext.setEntityTag(adapterResponse.getEntityTag());
+                return responseContext;
             case NOT_FOUND:
                 return ProviderHelper.notfound(rc, adapterResponse.getMessage());
 
@@ -38,5 +46,19 @@ public class FeedResponseHandler extends AbstractResponseHandler<Feed> {
             default:
                 return ProviderHelper.notfound(rc);
         }
+    }
+
+    private boolean entityTagMatches(EntityTag[] ifNoneMatch, EntityTag entityTag) {
+        if (ifNoneMatch == null || entityTag == null) {
+            return false;
+        }
+        List<EntityTag> ifNoneMatchList = Arrays.asList(ifNoneMatch);
+        if (ifNoneMatchList.size() != 1) {
+            return false;
+        }
+        if (ifNoneMatchList.get(0).getTag().equals(entityTag.getTag())) {
+            return true;
+        }
+        return false;
     }
 }
