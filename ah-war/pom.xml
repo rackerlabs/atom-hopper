@@ -91,6 +91,7 @@
                         <mapping>
                             <directory>/etc/atomhopper</directory>
                             <username>tomcat</username>
+                            <groupname>tomcat</groupname>
                             <filemode>644</filemode>
                             <sources>
                                 <source>
@@ -101,6 +102,7 @@
                         <mapping>
                             <directory>/var/lib/tomcat5/webapps/atomhopper</directory>
                             <username>tomcat</username>
+                            <groupname>tomcat</groupname>
                             <filemode>755</filemode>                            
                             <sources>
                                 <source>
