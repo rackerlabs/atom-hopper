@@ -32,93 +32,106 @@
         </dependency>
 
     </dependencies>
+    
+    <profiles>
+        <!--
+            By default we turn off this plugin to make builds faster - however,
+            if you want to build the executable server jar simply run maven with
+            the following option, '-P build-rpm'
+            
+            Example: mvn -P build-rpm clean install
+        -->
+        <profile>
+            <id>build-rpm</id>    
 
-    <build>
-        <plugins>
-           
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
-           
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <configuration>
-                    <failOnMissingWebXml>true</failOnMissingWebXml>
-                </configuration>
-            </plugin>
-           
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
+            <build>
+                <plugins>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-war-plugin</artifactId>
                         <configuration>
-                            <outputDirectory>${endorsed.dir}</outputDirectory>
-                            <silent>true</silent>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>javax</groupId>
-                                    <artifactId>javaee-endorsed-api</artifactId>
-                                    <type>jar</type>
-                                </artifactItem>
-                            </artifactItems>
+                            <failOnMissingWebXml>true</failOnMissingWebXml>
                         </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-           
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>rpm-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>rpm</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <copyright>N/A</copyright>
-                    <group>Rackspace - Cloud Integration Team</group>
-                    <description>ATOM Hopper - The ATOMPub Java Server</description>
-                    <mappings>
-                        <mapping>
-                            <directory>/etc/atomhopper</directory>
-                            <username>tomcat</username>
-                            <groupname>tomcat</groupname>
-                            <filemode>755</filemode>
-                            <sources>
-                                <source>
-                                    <location>src/main/resources/META-INF/atom-server.cfg.xml</location>
-                                </source>
-                            </sources>                         
-                        </mapping>
-                        <mapping>
-                            <directory>/var/lib/tomcat6/webapps/</directory>
-                            <username>tomcat</username>
-                            <groupname>tomcat</groupname>
-                            <filemode>755</filemode>                            
-                            <sources>
-                                <source>
-                                    <location>target/ah-war-${version}.war</location>
-                                </source>
-                            </sources>                         
-                        </mapping>                       
-                    </mappings>        
-                    <requires>
-                        <require>tomcat6</require>
-                        <require>java-1.6.0-openjdk</require>
-                    </requires>                   
-                </configuration>
-            </plugin>           
-           
-        </plugins>
-    </build>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${endorsed.dir}</outputDirectory>
+                                    <silent>true</silent>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>javax</groupId>
+                                            <artifactId>javaee-endorsed-api</artifactId>
+                                            <type>jar</type>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>rpm-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>rpm</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <copyright>N/A</copyright>
+                            <group>Rackspace - Cloud Integration Team</group>
+                            <description>ATOM Hopper - The ATOMPub Java Server</description>
+                            <mappings>
+                                <mapping>
+                                    <directory>/etc/atomhopper</directory>
+                                    <username>tomcat</username>
+                                    <groupname>tomcat</groupname>
+                                    <filemode>755</filemode>
+                                    <sources>
+                                        <source>
+                                            <location>src/main/resources/META-INF/atom-server.cfg.xml</location>
+                                        </source>
+                                    </sources>                         
+                                </mapping>
+                                <mapping>
+                                    <directory>/var/lib/tomcat6/webapps/</directory>
+                                    <username>tomcat</username>
+                                    <groupname>tomcat</groupname>
+                                    <filemode>755</filemode>                            
+                                    <sources>
+                                        <source>
+                                            <location>target/ah-war-${version}.war</location>
+                                        </source>
+                                    </sources>                         
+                                </mapping>                       
+                            </mappings>        
+                            <requires>
+                                <require>tomcat6</require>
+                                <require>java-1.6.0-openjdk</require>
+                            </requires>                   
+                        </configuration>
+                    </plugin>           
+
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
