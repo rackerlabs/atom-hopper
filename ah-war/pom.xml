@@ -121,7 +121,10 @@
                                         </source>
                                     </sources>                         
                                 </mapping>                       
-                            </mappings>        
+                            </mappings>
+                            <postinstallScriptlet>
+                                <script>mkdir "/opt/atom-hopper/ &amp;&amp; chown tomcat "/opt/atom-hopper/"</script>
+                            </postinstallScriptlet>
                             <requires>
                                 <require>tomcat6</require>
                                 <require>java-1.6.0-openjdk</require>

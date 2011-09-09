@@ -20,3 +20,4 @@ target
 /test-suite/nbactions.xml
 /hopper/nbactions.xml
 /server/nbactions-pack-server-jar.xml
+/ah-war/catalog.xml
