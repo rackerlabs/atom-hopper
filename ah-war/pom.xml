@@ -117,7 +117,7 @@
                                     <filemode>755</filemode>                            
                                     <sources>
                                         <source>
-                                            <location>target/ah-war-${version}.war</location>
+                                            <location>target/ah-war-${project.version}.war</location>
                                         </source>
                                     </sources>                         
                                 </mapping>                       
