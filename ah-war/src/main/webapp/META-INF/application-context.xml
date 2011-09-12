@@ -7,14 +7,37 @@
     <!-- <3 Hibernate -->
     <bean name="feed-repository-bean" class="org.atomhopper.hibernate.HibernateFeedRepository">
         <constructor-arg>
-            <map>
+            <map>                
+                <!-- Start H2 Config -->
+                <entry key="hibernate.connection.url" value="jdbc:h2:~/atom-hopper-db" />
                 <entry key="hibernate.connection.driver_class" value="org.h2.Driver" />
-                <entry key="hibernate.connection.url" value="jdbc:h2:/opt/atomhopper/atom-hopper-db" />
                 <entry key="hibernate.dialect" value="org.hibernate.dialect.H2Dialect" />
                 <entry key="hibernate.connection.username" value="sa" />
-                <entry key="hibernate.connection.password" value="" />
+                <entry key="hibernate.connection.password" value="" />                
+                <!-- End H2 Config -->
+                
+                <!-- Start MySQL Config -->
+                <!--
+                <entry key="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver" />
+                <entry key="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect" />
+                <entry key="hibernate.connection.url" value="jdbc:mysql://localhost:8889/atomhopper?createDatabaseIfNotExist=true" />
+                <entry key="hibernate.connection.username" value="root" />
+                <entry key="hibernate.connection.password" value="root" />
+                -->
+                <!-- End MySQL Config -->
+                
+                <!-- Start PostgreSQL Config -->
+                <!--                
+                <entry key="hibernate.connection.driver_class" value="org.postgresql.Driver" />
+                <entry key="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
+                <entry key="hibernate.connection.url" value="jdbc:postgresql://10.6.61.110:5432/atomhopper" />
+                <entry key="hibernate.connection.username" value="postgres" />
+                <entry key="hibernate.connection.password" value="password" />
+                -->                
+                <!-- End PostgreSQL Config -->                
+                
                 <entry key="hibernate.hbm2ddl.auto" value="create" />
-<!--                <entry key="hibernate.show_sql" value="true" />-->
+                <!--<entry key="hibernate.show_sql" value="true" />-->
             </map>
         </constructor-arg>
     </bean>
