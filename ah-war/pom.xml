@@ -123,7 +123,7 @@
                                 </mapping>                       
                             </mappings>
                             <postinstallScriptlet>
-                                <script>mkdir "/opt/atomhopper/ &amp;&amp; chown tomcat "/opt/atomhopper/"</script>
+                                <script>mkdir "/opt/atomhopper/" &amp;&amp; chown tomcat "/opt/atomhopper/"</script>
                             </postinstallScriptlet>
                             <requires>
                                 <require>tomcat6</require>
