@@ -36,7 +36,7 @@
                 -->                
                 <!-- End PostgreSQL Config -->                
                 
-                <entry key="hibernate.hbm2ddl.auto" value="create" />
+                <entry key="hibernate.hbm2ddl.auto" value="update" />
                 <!--<entry key="hibernate.show_sql" value="true" />-->
             </map>
         </constructor-arg>
