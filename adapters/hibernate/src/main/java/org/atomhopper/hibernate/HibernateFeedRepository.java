@@ -108,7 +108,7 @@ public class HibernateFeedRepository implements FeedRepository {
                 criteriaGenerator.enhanceCriteria(criteria);
                 
                 criteria.setMaxResults(pageSize);
-                criteria.addOrder(Order.asc("creationDate"));
+                criteria.addOrder(Order.desc("dateLastUpdated"));
 
                 feedHead.addAll(criteria.list());
 
@@ -129,17 +129,17 @@ public class HibernateFeedRepository implements FeedRepository {
                 criteriaGenerator.enhanceCriteria(criteria);
                 
                 criteria.setMaxResults(pageSize);
-                criteria.addOrder(Order.asc("creationDate"));
+                criteria.addOrder(Order.desc("dateLastUpdated"));
 
                 switch (direction) {
                     case FORWARD:
-                        criteria.add(Restrictions.gt("creationDate", markerEntry.getCreationDate()));
+                        criteria.add(Restrictions.gt("dateLastUpdated", markerEntry.getCreationDate()));
                         feedPage.add(markerEntry);
                         feedPage.addAll(criteria.list());
                         break;
 
                     case BACKWARD:
-                        criteria.add(Restrictions.lt("creationDate", markerEntry.getCreationDate()));
+                        criteria.add(Restrictions.lt("dateLastUpdated", markerEntry.getCreationDate()));
                         feedPage.addAll(criteria.list());
                         break;
                 }
