@@ -29,7 +29,7 @@
         <module>test-suite</module>
         <module>server</module>
         <module>ah-war</module>
-        
+
         <module>adapters/hibernate</module>
     </modules>
 
@@ -44,7 +44,7 @@
                 <artifactId>core</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.atomhopper.adapter</groupId>
                 <artifactId>hibernate-adapter</artifactId>
@@ -56,31 +56,31 @@
                 <artifactId>hibernate-core</artifactId>
                 <version>3.6.6.Final</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.javassist</groupId>
                 <artifactId>javassist</artifactId>
                 <version>3.15.0-GA</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
                 <version>1.3.158</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
                 <version>5.1.17</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>postgresql</groupId>
                 <artifactId>postgresql</artifactId>
                 <version>9.0-801.jdbc3</version>
-            </dependency>            
-            
+            </dependency>
+
             <dependency>
                 <groupId>javax</groupId>
                 <artifactId>javaee-web-api</artifactId>
@@ -93,18 +93,18 @@
                 <artifactId>commons-lang</artifactId>
                 <version>2.6</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>rpm-maven-plugin</artifactId>
                 <version>2.0.1</version>
-            </dependency>            
+            </dependency>
 
             <dependency>
                 <groupId>args4j</groupId>
                 <artifactId>args4j</artifactId>
                 <version>2.0.16</version>
-            </dependency>            
+            </dependency>
 
             <dependency>
                 <groupId>org.apache.abdera</groupId>
@@ -116,6 +116,12 @@
                 <groupId>org.apache.abdera</groupId>
                 <artifactId>abdera-server</artifactId>
                 <version>1.1.2</version>
+            </dependency>
+
+            <dependency>
+              <groupId>org.apache.abdera</groupId>
+              <artifactId>abdera-extensions-json</artifactId>
+              <version>1.1.2</version>
             </dependency>
 
             <dependency>
@@ -165,7 +171,7 @@
                 <artifactId>slf4j-jdk14</artifactId>
                 <version>1.6.2</version>
             </dependency>
-                         
+
             <dependency>
                 <groupId>commons-httpclient</groupId>
                 <artifactId>commons-httpclient</artifactId>
@@ -179,12 +185,12 @@
                 <version>1.7</version>
                 <scope>test</scope>
             </dependency>
-            
+
             <dependency>
                 <groupId>javax</groupId>
                 <artifactId>javaee-endorsed-api</artifactId>
                 <version>6.0</version>
-            </dependency>            
+            </dependency>
 
             <dependency>
                 <groupId>org.mockito</groupId>
@@ -212,7 +218,7 @@
     <repositories>
         <repository>
             <id>public.maven.research.rackspace.com</id>
-            
+
             <name>Rackspace Research</name>
             <url>http://maven.research.rackspacecloud.com/content/groups/all/</url>
         </repository>
@@ -221,11 +227,11 @@
     <distributionManagement>
         <repository>
             <id>releases.maven.research.rackspace.com</id>
- 
+
             <name>Rackspace Research Releases</name>
             <url>http://maven.research.rackspacecloud.com/content/repositories/releases</url>
         </repository>
-        
+
         <snapshotRepository>
             <id>snapshots.maven.research.rackspace.com</id>
 
@@ -265,12 +271,12 @@
                     <artifactId>maven-jaxb-plugin</artifactId>
                     <version>1.1.1</version>
                 </plugin>
-                
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-shade-plugin</artifactId>
                     <version>1.4</version>
-                </plugin>                    
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>

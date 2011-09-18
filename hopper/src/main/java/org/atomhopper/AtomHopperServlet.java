@@ -18,6 +18,7 @@ import org.apache.abdera.Abdera;
 import org.apache.abdera.protocol.server.Provider;
 import org.apache.abdera.protocol.server.servlet.AbderaServlet;
 import org.apache.commons.lang.StringUtils;
+import org.apache.abdera.ext.json.JSONFilter;
 
 import javax.servlet.ServletException;
 import java.net.URI;
@@ -40,9 +41,9 @@ import org.slf4j.LoggerFactory;
 public final class AtomHopperServlet extends AbderaServlet {
 
     private static final Logger LOG = LoggerFactory.getLogger(AtomHopperServlet.class);
-    
+
     public static final String DEFAULT_CONFIGURATION_LOCATION = "/etc/atomhopper/atom-server.cfg.xml";
-    
+
     private final ConfigurationParser<Configuration> configurationParser;
     private ApplicationContextAdapter applicationContextAdapter;
     private Abdera abderaReference;
@@ -127,6 +128,8 @@ public final class AtomHopperServlet extends AbderaServlet {
 
             workspaceProvider.getWorkspaceManager().addWorkspaces(cfgProcessor.toHandler());
         }
+
+        workspaceProvider.addFilter(new JSONFilter());
 
         return workspaceProvider;
     }
