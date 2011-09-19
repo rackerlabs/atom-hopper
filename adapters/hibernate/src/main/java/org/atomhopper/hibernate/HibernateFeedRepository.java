@@ -97,7 +97,7 @@ public class HibernateFeedRepository implements FeedRepository {
     }
 
     @Override
-    public List<PersistedEntry> getFeedHead(final String feedName, final CategoryCriteriaGenerator criteriaGenerator, final int pageSize) {
+    public List<PersistedEntry> getFeedHead(final String feedName, final CategoryCriteriaGenerator criteriaGenerator, final int pageSize, final String feedOrder) {
         return performComplexAction(new ComplexSessionAction<List<PersistedEntry>>() {
 
             @Override
@@ -108,7 +108,10 @@ public class HibernateFeedRepository implements FeedRepository {
                 criteriaGenerator.enhanceCriteria(criteria);
                 
                 criteria.setMaxResults(pageSize);
-                criteria.addOrder(Order.desc("dateLastUpdated"));
+                if(feedOrder.equalsIgnoreCase("asc"))
+                    criteria.addOrder(Order.asc("dateLastUpdated"));
+                else
+                    criteria.addOrder(Order.desc("dateLastUpdated"));
 
                 feedHead.addAll(criteria.list());
 
@@ -118,7 +121,7 @@ public class HibernateFeedRepository implements FeedRepository {
     }
 
     @Override
-    public List<PersistedEntry> getFeedPage(final String feedName, final PersistedEntry markerEntry, final PageDirection direction, final CategoryCriteriaGenerator criteriaGenerator, final int pageSize) {
+    public List<PersistedEntry> getFeedPage(final String feedName, final PersistedEntry markerEntry, final PageDirection direction, final CategoryCriteriaGenerator criteriaGenerator, final int pageSize, final String feedOrder) {
         return performComplexAction(new ComplexSessionAction<List<PersistedEntry>>() {
 
             @Override
@@ -129,7 +132,10 @@ public class HibernateFeedRepository implements FeedRepository {
                 criteriaGenerator.enhanceCriteria(criteria);
                 
                 criteria.setMaxResults(pageSize);
-                criteria.addOrder(Order.desc("dateLastUpdated"));
+                if(feedOrder.equalsIgnoreCase("asc"))
+                    criteria.addOrder(Order.asc("dateLastUpdated"));
+                else
+                    criteria.addOrder(Order.desc("dateLastUpdated"));
 
                 switch (direction) {
                     case FORWARD:

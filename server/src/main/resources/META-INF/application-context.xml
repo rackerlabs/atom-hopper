@@ -44,6 +44,8 @@
                 
     <bean name="hibernate-feed-source" class="org.atomhopper.hibernate.adapter.HibernateFeedSource">
         <property name="feedRepository" ref="feed-repository-bean" />
+        <!-- FeedOrder Values: asc|desc -->
+        <property name="feedOrder" value="asc"/>
     </bean>
     
     <bean name="hibernate-feed-publisher" class="org.atomhopper.hibernate.adapter.HibernateFeedPublisher">

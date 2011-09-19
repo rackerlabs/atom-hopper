@@ -24,10 +24,16 @@ import org.atomhopper.hibernate.query.SimpleCategoryCriteriaGenerator;
 public class HibernateFeedSource implements FeedSource {
 
     private FeedRepository feedRepository;
+    private String feedOrder;
 
     public void setFeedRepository(FeedRepository feedRepository) {
         this.feedRepository = feedRepository;
     }
+    
+    public void setFeedOrder(String feedOrder) {
+        this.feedOrder = feedOrder;
+        System.out.println("feedOrder: " + feedOrder);
+    }    
 
     @Override
     public FeedInformation getFeedInformation() {
@@ -110,7 +116,7 @@ public class HibernateFeedSource implements FeedSource {
 
         if (persistedFeed != null) {
             final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
-            final List<PersistedEntry> persistedEntries = feedRepository.getFeedHead(feedName, new SimpleCategoryCriteriaGenerator(searchString), pageSize);
+            final List<PersistedEntry> persistedEntries = feedRepository.getFeedHead(feedName, new SimpleCategoryCriteriaGenerator(searchString), pageSize, this.feedOrder);
 
             response = ResponseBuilder.found(hydrateFeed(abdera, persistedFeed, persistedEntries));
         }
@@ -137,7 +143,7 @@ public class HibernateFeedSource implements FeedSource {
             final Feed feed = hydrateFeed(
                     getFeedRequest.getAbdera(), persistedFeed, 
                     feedRepository.getFeedPage(
-                        getFeedRequest.getFeedName(), markerEntry, pageDirection, new SimpleCategoryCriteriaGenerator(searchString), pageSize));
+                        getFeedRequest.getFeedName(), markerEntry, pageDirection, new SimpleCategoryCriteriaGenerator(searchString), pageSize, this.feedOrder));
 
             response = ResponseBuilder.found(feed);
         } else {
