@@ -21,6 +21,8 @@ import org.atomhopper.adapter.request.adapter.PostEntryRequest;
 import org.atomhopper.adapter.request.adapter.PutEntryRequest;
 import org.atomhopper.response.AdapterResponse;
 import org.atomhopper.response.EmptyBody;
+import org.atomhopper.util.uri.template.EnumKeyedTemplateParameters;
+import org.atomhopper.util.uri.template.URITemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +51,9 @@ public class HibernateFeedPublisher implements FeedPublisher {
         
         // Make sure the persisted xml has the right id
         abderaParsedEntry.setId(persistedEntry.getEntryId());
+        
+        abderaParsedEntry.addLink(postEntryRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED))
+                + "entries/" + persistedEntry.getEntryId()).setRel("self");
 
         final PersistedFeed feedRef = new PersistedFeed(postEntryRequest.getFeedName(), UUID_URI_SCHEME + UUID.randomUUID().toString());
 
