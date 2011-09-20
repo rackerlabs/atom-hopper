@@ -1,4 +1,3 @@
-
 package org.atomhopper.server;
 
 
@@ -6,6 +5,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.io.OutputStream;
+
 import org.atomhopper.jetty.AtomHopperJettyServerBuilder;
 import org.eclipse.jetty.server.Server;
 import org.slf4j.Logger;
@@ -13,20 +13,20 @@ import org.slf4j.LoggerFactory;
 
 
 public class AtomHopperServerControl {
-    private static final Logger LOG = LoggerFactory.getLogger(AtomHopperServer.class);
-    
+    private static final Logger LOG = LoggerFactory.getLogger(AtomHopperServerControl.class);
+
     private Server serverInstance;
     private CommandLineArguments commandLineArgs;
-    private final String LOCALHOST_IP = "127.0.0.1";
-    
+    private static final String LOCALHOST_IP = "127.0.0.1";
+
     public AtomHopperServerControl(CommandLineArguments commandLineArgs) {
         this.commandLineArgs = commandLineArgs;
     }
-    
-   public void startAtomHopper() {
+
+    public void startAtomHopper() {
 
         try {
-            if(commandLineArgs.configFile == null) {
+            if (commandLineArgs.configFile == null) {
                 serverInstance = new AtomHopperJettyServerBuilder(getPort()).newServer();
             } else {
                 serverInstance = new AtomHopperJettyServerBuilder(getPort(), commandLineArgs.configFile).newServer();
@@ -45,7 +45,7 @@ public class AtomHopperServerControl {
         try {
             Socket s = new Socket(InetAddress.getByName(LOCALHOST_IP), commandLineArgs.stopport);
             OutputStream out = s.getOutputStream();
-            System.out.println("Sending Atom Hopper stop request");
+            LOG.info("Sending Atom Hopper stop request");
             out.write(("\r\n").getBytes());
             out.flush();
             s.close();

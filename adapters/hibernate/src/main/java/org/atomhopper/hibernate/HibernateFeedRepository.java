@@ -24,6 +24,7 @@ import org.hibernate.criterion.Restrictions;
 public class HibernateFeedRepository implements FeedRepository {
 
     private final HibernateSessionManager sessionManager;
+    private static final String DATE_LAST_UPDATED = "dateLastUpdated";
 
     public HibernateFeedRepository(Map<String, String> parameters) {
         sessionManager = new HibernateSessionManager(parameters);
@@ -108,10 +109,11 @@ public class HibernateFeedRepository implements FeedRepository {
                 criteriaGenerator.enhanceCriteria(criteria);
                 
                 criteria.setMaxResults(pageSize);
-                if(feedOrder.equalsIgnoreCase("asc"))
-                    criteria.addOrder(Order.asc("dateLastUpdated"));
-                else
-                    criteria.addOrder(Order.desc("dateLastUpdated"));
+                if(feedOrder.equalsIgnoreCase("asc")) {
+                    criteria.addOrder(Order.asc(DATE_LAST_UPDATED));
+                } else {
+                    criteria.addOrder(Order.desc(DATE_LAST_UPDATED));
+                }
 
                 feedHead.addAll(criteria.list());
 
@@ -130,22 +132,23 @@ public class HibernateFeedRepository implements FeedRepository {
 
                 final Criteria criteria = liveSession.createCriteria(PersistedEntry.class);
                 criteriaGenerator.enhanceCriteria(criteria);
-                
+
                 criteria.setMaxResults(pageSize);
-                if(feedOrder.equalsIgnoreCase("asc"))
-                    criteria.addOrder(Order.asc("dateLastUpdated"));
-                else
-                    criteria.addOrder(Order.desc("dateLastUpdated"));
+                if (feedOrder.equalsIgnoreCase("asc")) {
+                    criteria.addOrder(Order.asc(DATE_LAST_UPDATED));
+                } else {
+                    criteria.addOrder(Order.desc(DATE_LAST_UPDATED));
+                }
 
                 switch (direction) {
                     case FORWARD:
-                        criteria.add(Restrictions.gt("dateLastUpdated", markerEntry.getCreationDate()));
+                        criteria.add(Restrictions.gt(DATE_LAST_UPDATED, markerEntry.getCreationDate()));
                         feedPage.add(markerEntry);
                         feedPage.addAll(criteria.list());
                         break;
 
                     case BACKWARD:
-                        criteria.add(Restrictions.lt("dateLastUpdated", markerEntry.getCreationDate()));
+                        criteria.add(Restrictions.lt(DATE_LAST_UPDATED, markerEntry.getCreationDate()));
                         feedPage.addAll(criteria.list());
                         break;
                 }

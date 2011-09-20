@@ -16,7 +16,7 @@ public class MonitorThread extends Thread {
     
     private ServerSocket socket;
     private Server serverInstance;
-    private final String MONITOR_NAME = "StopMonitor";
+    private static final String MONITOR_NAME = "StopMonitor";
 
     public MonitorThread(Server serverInstance, final int stopPort, final String ipAddress) {
         this.serverInstance = serverInstance;
