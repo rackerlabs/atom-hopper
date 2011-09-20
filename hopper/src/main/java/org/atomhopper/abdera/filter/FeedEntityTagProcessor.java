@@ -15,14 +15,19 @@ public class FeedEntityTagProcessor implements AdapterResponseInterceptor<Feed> 
     public void process(RequestContext rc, AdapterResponse<Feed> adapterResponse) {
         final Feed f = adapterResponse.getBody();
 
+        final int totalEntries = f.getEntries().size();
+
         // If there are no entries in the feed
-        if (f.getEntries().size() == 0) {
+        if (totalEntries == 0) {
             return;
         }
 
         // Get the id of the first entry on this page
         String id = f.getEntries().get(0).getId().toString();
-        EntityTag feedEtag = new EntityTag(id, true);
+        // Get the id of the last entry on this page
+        String lastId = f.getEntries().get(totalEntries-1).getId().toString();
+
+        EntityTag feedEtag = new EntityTag(id + ":" + lastId, true);
         adapterResponse.setEntityTag(feedEtag);
     }
 

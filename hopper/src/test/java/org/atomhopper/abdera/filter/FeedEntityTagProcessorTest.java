@@ -24,7 +24,7 @@ public class FeedEntityTagProcessorTest {
     public static class WhenProcessingFeedWithZeroEntries extends TestParent {
 
         @Test
-        public void shouldSetEtagHeaderToFirstEntry() {
+        public void shouldNotSetEtag() {
             FeedEntityTagProcessor target = etagHeaderProcessor();
             final AdapterResponse<Feed> feedResponse = adapterResponse(0);
             final RequestContext rc = requestContext();
@@ -48,11 +48,32 @@ public class FeedEntityTagProcessorTest {
 
             target.process(rc, feedResponse);
 
+            String expectedEtag = feedResponse.getBody().getEntries().get(0).getId().toString() + ":" + feedResponse.getBody().getEntries().get(4).getId().toString();
+
             assertThat("Should set etag", feedResponse.getEntityTag(), notNullValue());
-            assertThat("Should set etag value to first entry id", feedResponse.getEntityTag().getTag(), equalTo(feedResponse.getBody().getEntries().get(0).getId().toString()));
+            assertThat("Should set etag value to first entry id : last entry id", feedResponse.getEntityTag().getTag(), equalTo(expectedEtag));
             assertThat("Should set weak etag", feedResponse.getEntityTag().isWeak(), equalTo(true));
         }
+    }
 
+    public static class WhenProcessingFeedWithOneEntry extends TestParent {
+
+        int TOTAL_FEED_ENTRIES = 1;
+
+        @Test
+        public void shouldSetEtagHeaderToFirstEntry() {
+            FeedEntityTagProcessor target = etagHeaderProcessor();
+            final AdapterResponse<Feed> feedResponse = adapterResponse(TOTAL_FEED_ENTRIES);
+            final RequestContext rc = requestContext();
+
+            target.process(rc, feedResponse);
+
+            String expectedEtag = feedResponse.getBody().getEntries().get(0).getId().toString() + ":" + feedResponse.getBody().getEntries().get(0).getId().toString();
+
+            assertThat("Should set etag", feedResponse.getEntityTag(), notNullValue());
+            assertThat("Should set etag value to first entry id : first entry id", feedResponse.getEntityTag().getTag(), equalTo(expectedEtag));
+            assertThat("Should set weak etag", feedResponse.getEntityTag().isWeak(), equalTo(true));
+        }
     }
 
 

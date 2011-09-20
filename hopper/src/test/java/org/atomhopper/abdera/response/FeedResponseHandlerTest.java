@@ -41,10 +41,12 @@ public class FeedResponseHandlerTest {
 
             AdapterResponse<Feed> adapterResponse = adapterResponseForFeed(2);
 
-            EntityTag requestEntityTag = new EntityTag(adapterResponse.getBody().getEntries().get(0).getId().toString(), true);
+            String entityTagValue = adapterResponse.getBody().getEntries().get(0).getId().toString() + ":" + adapterResponse.getBody().getEntries().get(1).getId().toString();
+
+            EntityTag requestEntityTag = new EntityTag(entityTagValue, true);
             when(requestContext.getIfNoneMatch()).thenReturn(new EntityTag[] {requestEntityTag});
 
-            ResponseContext responseContext = responseHandler.handleAdapterResponse(requestContext, adapterResponse);
+            ResponseContext responseContext = responseHandler.handleResponse(requestContext, adapterResponse);
             assertEquals("Should respond with 304", 304, responseContext.getStatus());
         }
     }
