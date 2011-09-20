@@ -1,8 +1,5 @@
-package net.jps.atom.hopper.abdera.response;
+package org.atomhopper.abdera.response;
 
-import net.jps.atom.hopper.config.v1_0.FeedConfiguration;
-import net.jps.atom.hopper.response.AdapterResponse;
-import net.jps.atom.hopper.response.FeedSourceAdapterResponse;
 import org.apache.abdera.i18n.iri.IRI;
 import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Entry;
@@ -13,6 +10,10 @@ import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.ResponseContext;
 import org.apache.abdera.protocol.server.Target;
 import org.apache.abdera.util.EntityTag;
+import org.atomhopper.abdera.filter.FeedEntityTagProcessor;
+import org.atomhopper.abdera.filter.FeedPagingProcessor;
+import org.atomhopper.response.AdapterResponse;
+import org.atomhopper.response.FeedSourceAdapterResponse;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
@@ -28,14 +29,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(Enclosed.class)
-public class StaticFeedResponseHandlerTest {
+public class FeedResponseHandlerTest {
 
     public static class WhenHandlingAdapterResponse extends TestParent {
 
         @Test
         public void shouldReturnWith304Response() {
 
-            StaticFeedResponseHandler responseHandler = responseHandler();
+            FeedResponseHandler responseHandler = responseHandler();
             RequestContext requestContext = requestContext();
 
             AdapterResponse<Feed> adapterResponse = adapterResponseForFeed(2);
@@ -52,15 +53,12 @@ public class StaticFeedResponseHandlerTest {
     @Ignore
     public static class TestParent {
 
-        FeedConfiguration feedConfiguration;
-
         static final String BASE_URI = "http://localhost:8080/atom/";
         static final String TARGET_PATH = "/foo/bar";
         static final String SELF = "http://localhost:8080/atom/foo/bar";
 
-        public StaticFeedResponseHandler responseHandler() {
-            feedConfiguration = mock(FeedConfiguration.class);
-            final StaticFeedResponseHandler target = new StaticFeedResponseHandler(feedConfiguration);
+        public FeedResponseHandler responseHandler() {
+            final FeedResponseHandler target = new FeedResponseHandler(new String[] {"GET"}, new FeedEntityTagProcessor(), new FeedPagingProcessor());
             return target;
         }
 

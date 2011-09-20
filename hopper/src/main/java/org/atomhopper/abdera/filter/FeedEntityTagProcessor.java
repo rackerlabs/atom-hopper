@@ -1,15 +1,15 @@
-package net.jps.atom.hopper.abdera.filter;
+package org.atomhopper.abdera.filter;
 
-import net.jps.atom.hopper.response.AdapterResponse;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.util.EntityTag;
+import org.atomhopper.response.AdapterResponse;
 
 /**
  * AdapterResponseProcessor for a Feed that adds a weak entity tag to the feed using
  * the entry id of the first entry in the feed.
  */
-public class FeedEntityTagProcessor implements AdapterResponseProcessor<Feed> {
+public class FeedEntityTagProcessor implements AdapterResponseInterceptor<Feed> {
 
     @Override
     public void process(RequestContext rc, AdapterResponse<Feed> adapterResponse) {
