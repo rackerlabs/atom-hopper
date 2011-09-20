@@ -32,7 +32,6 @@ public class HibernateFeedSource implements FeedSource {
     
     public void setFeedOrder(String feedOrder) {
         this.feedOrder = feedOrder;
-        System.out.println("feedOrder: " + feedOrder);
     }    
 
     @Override
