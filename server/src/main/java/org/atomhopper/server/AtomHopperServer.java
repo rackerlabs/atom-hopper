@@ -24,15 +24,18 @@ public class AtomHopperServer {
         }
 
         if (commandLineArgs != null) {
-            if( (!(portIsInRange(commandLineArgs.port))) || (!(portIsInRange(commandLineArgs.stopport))) ) {
+            if ((!(portIsInRange(commandLineArgs.port))) || (!(portIsInRange(commandLineArgs.stopport)))) {
                 LOG.info("Invalid Atom Hopper port setting, use a value between 1024 and 49150");
                 return;
             }
-            
-            if (commandLineArgs.action.equalsIgnoreCase(commandLineArgs.ACTION_START))
+
+            if (commandLineArgs.action.equalsIgnoreCase(commandLineArgs.ACTION_START)) {
                 serverControl.startAtomHopper();
-            if (commandLineArgs.action.equalsIgnoreCase(commandLineArgs.ACTION_STOP))
+            }
+            
+            if (commandLineArgs.action.equalsIgnoreCase(commandLineArgs.ACTION_STOP)) {
                 serverControl.stopAtomHopper();
+            }
         }
     }
 
