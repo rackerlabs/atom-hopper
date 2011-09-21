@@ -23,16 +23,17 @@ import org.atomhopper.hibernate.query.SimpleCategoryCriteriaGenerator;
 
 public class HibernateFeedSource implements FeedSource {
 
+    private static final int PAGE_SIZE = 25;
     private FeedRepository feedRepository;
     private String feedOrder;
 
     public void setFeedRepository(FeedRepository feedRepository) {
         this.feedRepository = feedRepository;
     }
-    
+
     public void setFeedOrder(String feedOrder) {
         this.feedOrder = feedOrder;
-    }    
+    }
 
     @Override
     public FeedInformation getFeedInformation() {
@@ -85,7 +86,7 @@ public class HibernateFeedSource implements FeedSource {
     public AdapterResponse<Feed> getFeed(GetFeedRequest getFeedRequest) {
         AdapterResponse<Feed> response = ResponseBuilder.notFound();
 
-        int pageSize = 25;
+        int pageSize = PAGE_SIZE;
 
         try {
             final String pageSizeString = getFeedRequest.getPageSize();

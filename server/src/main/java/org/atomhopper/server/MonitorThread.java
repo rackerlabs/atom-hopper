@@ -27,7 +27,7 @@ public class MonitorThread extends Thread {
         try {
             socket = new ServerSocket(stopPort, 1, InetAddress.getByName(ipAddress));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            LOG.error("Fatal error while monitoring or trying to stop: " + e.getMessage(), e);
         }
     }
 

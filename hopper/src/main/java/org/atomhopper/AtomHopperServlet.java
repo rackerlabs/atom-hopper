@@ -54,7 +54,6 @@ public final class AtomHopperServlet extends AbderaServlet {
         configurationParser = new JAXBConfigurationParser<Configuration>(Configuration.class, org.atomhopper.config.v1_0.ObjectFactory.class);
     }
 
-    @Override
     public void destroy() {
         super.destroy();
     }

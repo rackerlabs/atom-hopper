@@ -24,6 +24,8 @@ import org.slf4j.LoggerFactory;
 public class WorkspaceProvider implements Provider {
 
     private static final Logger LOG = LoggerFactory.getLogger(WorkspaceProvider.class);
+    private static final int MIN_ERROR_CODE = 400;
+    private static final int MAX_ERROR_CODE = 500;
     private final Map<TargetType, RequestProcessor> requestProcessors;
     private final List<Filter> filters;
     private final WorkspaceManager workspaceManager;
@@ -169,7 +171,7 @@ public class WorkspaceProvider implements Provider {
         if (ex instanceof ResponseContextException) {
             final ResponseContextException rce = (ResponseContextException) ex;
 
-            if (rce.getStatusCode() >= 400 && rce.getStatusCode() < 500) {
+            if (rce.getStatusCode() >= MIN_ERROR_CODE && rce.getStatusCode() < MAX_ERROR_CODE) {
                 // don't report routine 4xx HTTP errors
                 LOG.info(ex.getMessage(), ex);
             } else {
