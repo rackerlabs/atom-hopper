@@ -1,6 +1,8 @@
 package org.atomhopper.config;
 
-import java.util.HashMap;
+import org.apache.abdera.protocol.server.TargetType;
+import org.apache.abdera.protocol.server.impl.RegexTargetResolver;
+import org.apache.commons.lang.StringUtils;
 import org.atomhopper.abdera.FeedAdapter;
 import org.atomhopper.abdera.TargetAwareAbstractCollectionAdapter;
 import org.atomhopper.abdera.WorkspaceHandler;
@@ -12,15 +14,11 @@ import org.atomhopper.config.v1_0.WorkspaceConfiguration;
 import org.atomhopper.servlet.ApplicationContextAdapter;
 import org.atomhopper.util.TargetRegexBuilder;
 import org.atomhopper.util.context.AdapterGetter;
-import org.apache.abdera.protocol.server.TargetType;
-import org.apache.abdera.protocol.server.impl.RegexTargetResolver;
-import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * I eat configurations.

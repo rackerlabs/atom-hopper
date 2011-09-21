@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 
 public class AtomHopperServer {
     private static final Logger LOG = LoggerFactory.getLogger(AtomHopperServer.class);
-    private static final int MAX_PORT_NUMBER = 49150;
-    private static final int MIN_PORT_NUMBER = 1024;
+    private static final int MAX_PORT_NUMBER = 65535;
+    private static final int MIN_PORT_NUMBER = 1;
 
     public static void main(String[] args) {
         CommandLineArguments commandLineArgs = new CommandLineArguments();
@@ -27,7 +27,7 @@ public class AtomHopperServer {
 
         if (commandLineArgs != null) {
             if ((!(portIsInRange(commandLineArgs.port))) || (!(portIsInRange(commandLineArgs.stopport)))) {
-                LOG.info("Invalid Atom Hopper port setting, use a value greater than 1024 and less than 49150");
+                LOG.info("Invalid Atom Hopper port setting, use a value between 1 and 65535");
                 return;
             }
 
@@ -48,6 +48,6 @@ public class AtomHopperServer {
     }
 
     private static boolean portIsInRange(int portNum) {
-        return (portNum < MAX_PORT_NUMBER) && (portNum > MIN_PORT_NUMBER);
+        return (portNum <= MAX_PORT_NUMBER) && (portNum >= MIN_PORT_NUMBER);
     }
 }

@@ -4,18 +4,18 @@ import org.kohsuke.args4j.*;
 
 class CommandLineArguments {
 
-    private final static String defaultPortInfo = "(Default is port 8080, range is 1024 to 49150)";
+    private static final String DEFAULT_PORT_INFO = "(Default is port 8080, range is 1024 to 49150)";
     static final String ACTION_START = "start";
     static final String ACTION_STOP = "stop";
     private static final int PORT = 8080;
     private static final int STOPPORT = 8818;
 
     @Option(name = "-p", aliases = {"--port"},
-            usage = "Atom Hopper port number " + defaultPortInfo)
+            usage = "Atom Hopper port number " + DEFAULT_PORT_INFO)
     public Integer port = PORT;
 
     @Option(name = "-s", aliases = {"--shutdown-port"},
-            usage = "The port used to communicate a shutdown to Atom Hopper " + defaultPortInfo)
+            usage = "The port used to communicate a shutdown to Atom Hopper " + DEFAULT_PORT_INFO)
     public Integer stopport = STOPPORT;
 
     @Option(name = "-c", aliases = {"--config-file"},

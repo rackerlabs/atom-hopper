@@ -1,28 +1,25 @@
 package org.atomhopper.adapter.impl;
 
-import java.util.Map;
+import org.apache.abdera.model.Entry;
+import org.apache.abdera.model.Feed;
+import org.apache.commons.lang.StringUtils;
 import org.atomhopper.adapter.FeedInformation;
-import org.atomhopper.adapter.request.adapter.GetEntryRequest;
-import org.atomhopper.adapter.request.adapter.GetCategoriesRequest;
-import org.atomhopper.adapter.request.adapter.PutEntryRequest;
-import org.atomhopper.adapter.request.adapter.GetFeedRequest;
-import org.atomhopper.adapter.request.adapter.DeleteEntryRequest;
-import org.atomhopper.adapter.request.adapter.PostEntryRequest;
 import org.atomhopper.adapter.FeedPublisher;
 import org.atomhopper.adapter.FeedSource;
 import org.atomhopper.adapter.ResponseBuilder;
+import org.atomhopper.adapter.request.adapter.DeleteEntryRequest;
+import org.atomhopper.adapter.request.adapter.GetEntryRequest;
+import org.atomhopper.adapter.request.adapter.GetFeedRequest;
+import org.atomhopper.adapter.request.adapter.PostEntryRequest;
+import org.atomhopper.adapter.request.adapter.PutEntryRequest;
 import org.atomhopper.response.AdapterResponse;
 import org.atomhopper.response.EmptyBody;
 import org.atomhopper.util.uri.template.EnumKeyedTemplateParameters;
 import org.atomhopper.util.uri.template.URITemplate;
-import org.apache.abdera.model.Categories;
-import org.apache.abdera.model.Entry;
-import org.apache.abdera.model.Feed;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.http.HttpStatus;
 
-import java.util.Calendar;
 import java.util.Collections;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
