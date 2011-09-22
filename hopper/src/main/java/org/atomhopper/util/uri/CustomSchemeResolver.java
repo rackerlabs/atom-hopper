@@ -21,7 +21,7 @@ public class CustomSchemeResolver implements UriToUrlResolver {
     }
 
     
-    private Set<URISchemeMapper> schemeMapperSet;
+    private final Set<URISchemeMapper> schemeMapperSet;
 
     public CustomSchemeResolver() {
         schemeMapperSet = new HashSet<URISchemeMapper>();

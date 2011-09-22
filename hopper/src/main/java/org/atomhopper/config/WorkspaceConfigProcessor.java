@@ -79,7 +79,7 @@ public class WorkspaceConfigProcessor {
         return collections;
     }
 
-    public <T> T getFromApplicationContext(String referenceName, String className, Class<T> expectedClass) {
+    <T> T getFromApplicationContext(String referenceName, String className, Class<T> expectedClass) {
         T resolvedReference = null;
 
         if (!StringUtils.isBlank(referenceName)) {
@@ -103,14 +103,12 @@ public class WorkspaceConfigProcessor {
 //        final Map<String, String> paramterMap = new HashMap<String, String>();
 //    }
     
-    public <T> T getAdapter(AdapterDescriptor descriptor, Class<T> expectedClass) {
+    <T> T getAdapter(AdapterDescriptor descriptor, Class<T> expectedClass) {
 //        final Map<String, String> parameters = descriptorParametersToMap(descriptor.getParameter());
-        
-        final T adapter = descriptor != null
+
+        return descriptor != null
                 ? getFromApplicationContext(descriptor.getReference(), descriptor.getClazz(), expectedClass)
                 : null;
-
-        return adapter;
     }
 
     private List<TargetAwareAbstractCollectionAdapter> assembleFeedAdapters(TargetRegexBuilder workspaceTarget, List<FeedConfiguration> feeds) {

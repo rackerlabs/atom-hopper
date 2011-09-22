@@ -17,8 +17,8 @@ import static junit.framework.Assert.assertNotNull;
 @RunWith(Enclosed.class)
 public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
 
-    public static final HttpClient httpClient = new HttpClient();
-    public static final XmlUtil xml = new XmlUtil();
+    private static final HttpClient httpClient = new HttpClient();
+    private static final XmlUtil xml = new XmlUtil();
     private static final String urlAndPort = "http://localhost:" + getPort();
     private static final String entryId  = Integer.toString(1 + (int)(Math.random() * ((100 - 1) + 1)));
 

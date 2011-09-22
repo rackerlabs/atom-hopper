@@ -46,7 +46,7 @@ public class AdapterGetter {
 
             return instance != null
                     ? instance
-                    : (T) ReflectionTools.construct(configuredAdapterClass, new Object[0]);
+                    : (T) ReflectionTools.construct(configuredAdapterClass);
         } catch (Exception ex) {
             throw new AdapterConstructionException("Failed to get and or construct class: "
                     + configuredAdapterClass.getCanonicalName(), ex);

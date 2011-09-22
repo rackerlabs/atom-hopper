@@ -19,7 +19,7 @@ import static org.junit.Assert.*;
 @RunWith(Enclosed.class)
 public class SchemaTest {
 
-    public static final SchemaFactory SCHEMA_FACTORY = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+    private static final SchemaFactory SCHEMA_FACTORY = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 
     public static class WhenValidating {
 

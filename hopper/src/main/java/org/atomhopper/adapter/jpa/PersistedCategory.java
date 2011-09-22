@@ -1,15 +1,15 @@
 package org.atomhopper.adapter.jpa;
 
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "Categories")
@@ -57,10 +57,7 @@ public class PersistedCategory implements Serializable {
             return false;
         }
         final PersistedCategory other = (PersistedCategory) obj;
-        if ((this.term == null) ? (other.term != null) : !this.term.equals(other.term)) {
-            return false;
-        }
-        return true;
+        return !((this.term == null) ? (other.term != null) : !this.term.equals(other.term));
     }
 
     @Override

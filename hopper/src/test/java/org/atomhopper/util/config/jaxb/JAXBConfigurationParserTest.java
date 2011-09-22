@@ -59,6 +59,6 @@ public class JAXBConfigurationParserTest {
     }
 
     @Ignore
-    public static class WhenReadingConfigurations {
+    private static class WhenReadingConfigurations {
     }
 }

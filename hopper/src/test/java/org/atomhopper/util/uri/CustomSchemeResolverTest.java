@@ -1,22 +1,20 @@
 package org.atomhopper.util.uri;
 
-import org.atomhopper.util.uri.CustomSchemeResolver;
-import org.atomhopper.util.uri.URISchemeMapper;
-import org.atomhopper.util.uri.UriToUrlResolver;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.*;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(Enclosed.class)
 public class CustomSchemeResolverTest {
 
-    public static final String TESTING_URI_SCHEME = "testing";
+    private static final String TESTING_URI_SCHEME = "testing";
 
     public static class WhenResolvingCustomURLSchemeMappings {
 

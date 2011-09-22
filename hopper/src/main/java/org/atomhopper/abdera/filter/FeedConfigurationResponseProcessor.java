@@ -7,7 +7,7 @@ import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.RequestContext;
 
 public class FeedConfigurationResponseProcessor implements AdapterResponseInterceptor<Feed> {
-    private FeedConfiguration feedConfiguration;
+    private final FeedConfiguration feedConfiguration;
 
     public FeedConfigurationResponseProcessor(FeedConfiguration feedConfiguration) {
         this.feedConfiguration = feedConfiguration;

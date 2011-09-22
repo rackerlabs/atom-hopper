@@ -11,9 +11,7 @@ public class ClasspathSchemeMapper implements URISchemeMapper {
     public boolean canMap(URI uriToMatch) {
         final String uriScheme = uriToMatch.getScheme();
 
-        return !StringUtils.isBlank(uriScheme)
-                ? uriScheme.startsWith("classpath")
-                : false;
+        return !StringUtils.isBlank(uriScheme) && uriScheme.startsWith("classpath");
     }
 
     @Override

@@ -100,7 +100,7 @@ public class FeedAdapterTest {
         @Test
         public void shouldReturnEntryResponse() throws IOException {
             FeedAdapter feedAdapter = feedAdapter(true);
-            when(feedPublisher.deleteEntry(any(DeleteEntryRequest.class))).thenReturn(adapterResponseForEmptyBody(HttpStatus.OK));
+            when(feedPublisher.deleteEntry(any(DeleteEntryRequest.class))).thenReturn(adapterResponseForEmptyBody());
             ResponseContext responseContext = feedAdapter.deleteEntry(REQUEST_CONTEXT);
             assertEquals("Should respond with 204", 204, responseContext.getStatus());
         }
@@ -172,9 +172,7 @@ public class FeedAdapterTest {
                 feedPublisher = null;
             }
 
-            final FeedAdapter target = new FeedAdapter("foo", feedConfiguration, feedSource, feedPublisher);
-
-            return target;
+            return new FeedAdapter("foo", feedConfiguration, feedSource, feedPublisher);
         }
 
         public Entry entry() {
@@ -200,8 +198,8 @@ public class FeedAdapterTest {
             return new FeedSourceAdapterResponse<Feed>(feed());
         }
 
-        public AdapterResponse<EmptyBody> adapterResponseForEmptyBody(HttpStatus status) {
-            return new FeedSourceAdapterResponse<EmptyBody>(EmptyBody.getInstance(), status, null);
+        public AdapterResponse<EmptyBody> adapterResponseForEmptyBody() {
+            return new FeedSourceAdapterResponse<EmptyBody>(EmptyBody.getInstance(), HttpStatus.OK, null);
         }
 
         public RequestContext requestContext() {

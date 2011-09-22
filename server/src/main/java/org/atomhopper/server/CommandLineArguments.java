@@ -12,11 +12,11 @@ class CommandLineArguments {
 
     @Option(name = "-p", aliases = {"--port"},
             usage = "Atom Hopper port number " + DEFAULT_PORT_INFO)
-    public Integer port = PORT;
+    public final Integer port = PORT;
 
     @Option(name = "-s", aliases = {"--shutdown-port"},
             usage = "The port used to communicate a shutdown to Atom Hopper " + DEFAULT_PORT_INFO)
-    public Integer stopport = STOPPORT;
+    public final Integer stopport = STOPPORT;
 
     @Option(name = "-c", aliases = {"--config-file"},
             usage = "The location and name of the Atom Hopper configuration file")
@@ -24,5 +24,5 @@ class CommandLineArguments {
 
     //Note: I recommend keeping this an argument to stay inline with what people expect from a daemon script
     @Argument(usage = "Action to take - start | stop", required = true)
-    public String action = ACTION_START;
+    public final String action = ACTION_START;
 }

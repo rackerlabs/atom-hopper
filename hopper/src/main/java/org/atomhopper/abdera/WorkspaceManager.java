@@ -1,12 +1,12 @@
 package org.atomhopper.abdera;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.apache.abdera.protocol.server.CollectionAdapter;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.WorkspaceInfo;
+
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 public class WorkspaceManager implements org.apache.abdera.protocol.server.WorkspaceManager {
 

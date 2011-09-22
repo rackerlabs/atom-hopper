@@ -12,6 +12,7 @@ import org.atomhopper.response.AdapterResponse;
 public final class DisabledFeedSource extends AbstractDisabledAdapter implements FeedSource {
 
     private static final DisabledFeedSource INSTANCE = new DisabledFeedSource();
+    private static final String OP_NOT_SUPPORTED_MESSAGE = "Operation not supported";
 
     public static DisabledFeedSource getInstance() {
         return INSTANCE;
@@ -27,11 +28,11 @@ public final class DisabledFeedSource extends AbstractDisabledAdapter implements
 
     @Override
     public AdapterResponse<Entry> getEntry(GetEntryRequest getEntryRequest) {
-        return ResponseBuilder.notImplemented("Operation not supported");
+        return ResponseBuilder.notImplemented(OP_NOT_SUPPORTED_MESSAGE);
     }
 
     @Override
     public AdapterResponse<Feed> getFeed(GetFeedRequest getFeedRequest) {
-        return ResponseBuilder.notImplemented("Operation not supported");
+        return ResponseBuilder.notImplemented(OP_NOT_SUPPORTED_MESSAGE);
     }
 }

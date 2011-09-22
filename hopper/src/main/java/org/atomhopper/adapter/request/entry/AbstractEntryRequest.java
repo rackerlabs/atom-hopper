@@ -8,7 +8,7 @@ public class AbstractEntryRequest extends AbstractFeedRequest implements EntryRe
 
     private final String entryId;
 
-    public AbstractEntryRequest(RequestContext abderaRequestContext) {
+    protected AbstractEntryRequest(RequestContext abderaRequestContext) {
         super(abderaRequestContext);
 
         entryId = abderaRequestContext.getTarget().getParameter(TargetResolverField.ENTRY.name());

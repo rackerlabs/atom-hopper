@@ -5,5 +5,5 @@ public enum TemplateTarget {
     FEED,
     FEED_CATEGORIES,
     FEED_ARCHIVES,
-    ENTRY;
+    ENTRY
 }
