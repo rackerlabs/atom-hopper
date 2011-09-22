@@ -82,7 +82,7 @@ public final class AtomHopperServlet extends AbderaServlet {
         super.init();
     }
 
-    ApplicationContextAdapter getContextAdapter() throws ContextAdapterResolutionException {
+    protected ApplicationContextAdapter getContextAdapter() throws ContextAdapterResolutionException {
         String adapterClass = getInitParameter(ServletInitParameter.CONTEXT_ADAPTER_CLASS.toString());
 
         // If no adapter class is set then use the default empty one
@@ -105,7 +105,7 @@ public final class AtomHopperServlet extends AbderaServlet {
         throw new ContextAdapterResolutionException("Unknown application context adapter class: " + adapterClass);
     }
 
-    String getConfigurationLocation() {
+    protected String getConfigurationLocation() {
         final String configLocation = getInitParameter(ServletInitParameter.CONFIGURATION_LOCATION.toString());
 
         return !StringUtils.isBlank(configLocation) ? configLocation : DEFAULT_CONFIGURATION_LOCATION;

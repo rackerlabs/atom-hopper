@@ -35,9 +35,9 @@ public class AdapterGetterTest {
     @Ignore
     public static class TestParent {
 
-        AdapterGetter adapterGetter;
-        ApplicationContextAdapter contextAdapterMock;
-
+        protected AdapterGetter adapterGetter;
+        protected ApplicationContextAdapter contextAdapterMock;
+        
         @Before
         public void standUp() {
             contextAdapterMock = mock(ApplicationContextAdapter.class);

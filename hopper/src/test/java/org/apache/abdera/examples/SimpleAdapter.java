@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @SuppressWarnings("unchecked")
-class SimpleAdapter extends AbstractCollectionAdapter {
+public class SimpleAdapter extends AbstractCollectionAdapter {
 
     @Override
     public String getAuthor(RequestContext request) throws ResponseContextException {

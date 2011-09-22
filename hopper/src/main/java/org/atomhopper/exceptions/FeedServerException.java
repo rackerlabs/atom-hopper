@@ -1,6 +1,6 @@
 package org.atomhopper.exceptions;
 
-class FeedServerException extends RuntimeException {
+public  class FeedServerException extends RuntimeException {
 
     public FeedServerException(String message, Throwable cause) {
         super(message, cause);

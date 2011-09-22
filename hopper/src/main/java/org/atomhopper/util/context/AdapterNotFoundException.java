@@ -4,7 +4,7 @@ package org.atomhopper.util.context;
  *
  * 
  */
-class AdapterNotFoundException extends RuntimeException {
+public class AdapterNotFoundException extends RuntimeException {
 
     public AdapterNotFoundException(String string, Throwable thrwbl) {
         super(string, thrwbl);

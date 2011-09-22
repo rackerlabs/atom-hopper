@@ -55,16 +55,16 @@ class TestParent {
         return author;
     }
 
-    FeedConfigurationResponseProcessor feedDefaultsProcessor(FeedConfiguration feedConfiguration) {
+    public FeedConfigurationResponseProcessor feedDefaultsProcessor(FeedConfiguration feedConfiguration) {
         return new FeedConfigurationResponseProcessor(feedConfiguration);
     }
 
-    AdapterResponse<Feed> adapterResponse() {
+    public AdapterResponse<Feed> adapterResponse() {
         final Feed feed = Abdera.getInstance().newFeed();
         return new FeedSourceAdapterResponse<Feed>(feed, HttpStatus.OK, "");
     }
 
-    RequestContext requestContext() {
+    public RequestContext requestContext() {
         RequestContext target = mock(RequestContext.class);
 
         when(target.getBaseUri()).thenReturn(new IRI(BASE_URI));

@@ -28,7 +28,7 @@ public class JettyIntegrationTestHarness {
         }
     }
 
-    static int getPort() {
+    public static int getPort() {
         return 24156;
     }
 }
