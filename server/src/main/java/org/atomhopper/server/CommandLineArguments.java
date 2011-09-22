@@ -24,5 +24,5 @@ class CommandLineArguments {
 
     //Note: I recommend keeping this an argument to stay inline with what people expect from a daemon script
     @Argument(usage = "Action to take - start | stop", required = true)
-    public final String action = ACTION_START;
+    public String action = ACTION_START;
 }
