@@ -23,6 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.atomhopper.abdera.filter.FeedEntityTagProcessor;
 import org.atomhopper.abdera.filter.FeedPagingProcessor;
 import org.atomhopper.adapter.impl.DisabledFeedSource;
 import org.atomhopper.adapter.impl.DisabledPublisher;
@@ -70,7 +71,7 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
 
         final String[] allowedMethods = allowedMethodsList.toArray(new String[allowedMethodsList.size()]);
         
-        feedResponseHandler = new FeedResponseHandler(allowedMethods, new FeedPagingProcessor());
+        feedResponseHandler = new FeedResponseHandler(allowedMethods, new FeedPagingProcessor(), new FeedEntityTagProcessor());
         entryResponseHandler = new EntryResponseHandler(allowedMethods);
         emptyBodyResponseHandler = new EmptyBodyResponseHandler(allowedMethods);
     }
