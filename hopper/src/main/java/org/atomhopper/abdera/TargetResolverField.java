@@ -12,5 +12,5 @@ public enum TargetResolverField {
     ARCHIVE_YEAR,
     ARCHIVE_MONTH,
     ARCHIVE_DAY,
-    ARCHIVE_TIME;
+    ARCHIVE_TIME
 }

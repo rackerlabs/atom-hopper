@@ -6,7 +6,7 @@ import org.atomhopper.adapter.request.AbstractClientRequest;
 
 public abstract class AbstractFeedRequest extends AbstractClientRequest implements FeedRequest {
 
-    public AbstractFeedRequest(RequestContext abderaRequestContext) {
+    protected AbstractFeedRequest(RequestContext abderaRequestContext) {
         super(abderaRequestContext);
     }
 

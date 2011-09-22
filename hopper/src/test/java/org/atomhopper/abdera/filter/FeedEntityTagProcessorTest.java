@@ -38,7 +38,7 @@ public class FeedEntityTagProcessorTest {
 
     public static class WhenProcessingFeedWithMoreThanOneEntry extends TestParent {
 
-        int TOTAL_FEED_ENTRIES = 5;
+        final int TOTAL_FEED_ENTRIES = 5;
 
         @Test
         public void shouldSetEtagHeaderToFirstEntry() {
@@ -58,7 +58,7 @@ public class FeedEntityTagProcessorTest {
 
     public static class WhenProcessingFeedWithOneEntry extends TestParent {
 
-        int TOTAL_FEED_ENTRIES = 1;
+        final int TOTAL_FEED_ENTRIES = 1;
 
         @Test
         public void shouldSetEtagHeaderToFirstEntry() {
@@ -81,8 +81,7 @@ public class FeedEntityTagProcessorTest {
     public static class TestParent {
 
         public FeedEntityTagProcessor etagHeaderProcessor() {
-            final FeedEntityTagProcessor target = new FeedEntityTagProcessor();
-            return target;
+            return new FeedEntityTagProcessor();
         }
 
         public AdapterResponse<Feed> adapterResponse(int entriesOnFeed) {
@@ -98,8 +97,7 @@ public class FeedEntityTagProcessorTest {
         }
 
         public RequestContext requestContext() {
-            RequestContext target = mock(RequestContext.class);
-            return target;
+            return mock(RequestContext.class);
         }
     }
 }

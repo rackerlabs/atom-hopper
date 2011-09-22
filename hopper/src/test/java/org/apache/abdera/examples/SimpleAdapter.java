@@ -1,10 +1,5 @@
 package org.apache.abdera.examples;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.abdera.Abdera;
 import org.apache.abdera.i18n.text.UrlEncoding;
 import org.apache.abdera.model.Document;
@@ -13,9 +8,9 @@ import org.apache.abdera.model.Feed;
 import org.apache.abdera.parser.ParseException;
 import org.apache.abdera.protocol.server.ProviderHelper;
 import org.apache.abdera.protocol.server.RequestContext;
+import org.apache.abdera.protocol.server.RequestContext.Scope;
 import org.apache.abdera.protocol.server.ResponseContext;
 import org.apache.abdera.protocol.server.TargetType;
-import org.apache.abdera.protocol.server.RequestContext.Scope;
 import org.apache.abdera.protocol.server.context.BaseResponseContext;
 import org.apache.abdera.protocol.server.context.ResponseContextException;
 import org.apache.abdera.protocol.server.context.StreamWriterResponseContext;
@@ -23,8 +18,13 @@ import org.apache.abdera.protocol.server.impl.AbstractCollectionAdapter;
 import org.apache.abdera.util.Constants;
 import org.apache.abdera.writer.StreamWriter;
 
+import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 @SuppressWarnings("unchecked")
-public class SimpleAdapter extends AbstractCollectionAdapter {
+class SimpleAdapter extends AbstractCollectionAdapter {
 
     @Override
     public String getAuthor(RequestContext request) throws ResponseContextException {
@@ -80,7 +80,7 @@ public class SimpleAdapter extends AbstractCollectionAdapter {
     }
 
     public ResponseContext getEntry(RequestContext request) {
-        Entry entry = (Entry) getAbderaEntry(request);
+        Entry entry = getAbderaEntry(request);
         if (entry != null) {
             Feed feed = entry.getParentElement();
             entry = (Entry) entry.clone();
@@ -172,7 +172,7 @@ public class SimpleAdapter extends AbstractCollectionAdapter {
     private Entry getAbderaEntry(RequestContext request) {
         try {
             return getFeedDocument(request).getRoot().getEntry(getResourceName(request));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return null;
     }

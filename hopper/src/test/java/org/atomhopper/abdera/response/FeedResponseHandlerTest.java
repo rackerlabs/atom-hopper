@@ -60,8 +60,7 @@ public class FeedResponseHandlerTest {
         static final String SELF = "http://localhost:8080/atom/foo/bar";
 
         public FeedResponseHandler responseHandler() {
-            final FeedResponseHandler target = new FeedResponseHandler(new String[] {"GET"}, new FeedEntityTagProcessor(), new FeedPagingProcessor());
-            return target;
+            return new FeedResponseHandler(new String[] {"GET"}, new FeedEntityTagProcessor(), new FeedPagingProcessor());
         }
 
         public AdapterResponse<Feed> adapterResponseForFeed(int entriesOnFeed) {

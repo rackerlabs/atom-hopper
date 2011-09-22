@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class FeedSourceAdapterResponse<T> implements AdapterResponse<T> {
 
-    public static final HttpStatus DEFAULT_HTTP_STATUS_CODE = HttpStatus.OK;
+    private static final HttpStatus DEFAULT_HTTP_STATUS_CODE = HttpStatus.OK;
 
     private final T responseBody;
     private final HttpStatus statusCode;
@@ -33,7 +33,7 @@ public class FeedSourceAdapterResponse<T> implements AdapterResponse<T> {
      * 
      * @return
      */
-    public synchronized Map<ResponseParameter, String> getParameters() {
+    synchronized Map<ResponseParameter, String> getParameters() {
         if (parameters == null) {
             parameters = new EnumMap<ResponseParameter, String>(ResponseParameter.class);
         }

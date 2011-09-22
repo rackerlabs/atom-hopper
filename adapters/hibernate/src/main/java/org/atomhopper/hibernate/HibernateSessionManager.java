@@ -1,14 +1,15 @@
 package org.atomhopper.hibernate;
 
-import java.util.Map;
 import org.atomhopper.adapter.jpa.PersistedCategory;
-import org.atomhopper.adapter.jpa.PersistedFeed;
 import org.atomhopper.adapter.jpa.PersistedEntry;
+import org.atomhopper.adapter.jpa.PersistedFeed;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
-public class HibernateSessionManager {
+import java.util.Map;
+
+class HibernateSessionManager {
 
     private final Map<String, String> parameters;
     private SessionFactory sessionFactory;

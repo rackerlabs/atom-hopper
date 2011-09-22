@@ -16,7 +16,7 @@ public class EnumKeyedTemplateParameters<T extends Enum> implements TemplatePara
         this.parameterMap = new HashMap<String, Object>();
     }
 
-    public EnumKeyedTemplateParameters(T temlpateTargetKey, Map<String, Object> parameterMap) {
+    private EnumKeyedTemplateParameters(T temlpateTargetKey, Map<String, Object> parameterMap) {
         this(temlpateTargetKey);
 
         this.parameterMap.putAll(parameterMap);

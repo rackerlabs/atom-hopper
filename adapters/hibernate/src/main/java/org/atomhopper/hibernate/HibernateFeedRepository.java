@@ -1,25 +1,26 @@
 package org.atomhopper.hibernate;
 
-import java.util.List;
-import org.atomhopper.dbal.FeedRepository;
-import org.atomhopper.hibernate.actions.SimpleSessionAction;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Set;
 import org.atomhopper.adapter.jpa.PersistedCategory;
-import org.atomhopper.adapter.jpa.PersistedFeed;
 import org.atomhopper.adapter.jpa.PersistedEntry;
+import org.atomhopper.adapter.jpa.PersistedFeed;
 import org.atomhopper.dbal.AtomDatabaseException;
+import org.atomhopper.dbal.FeedRepository;
 import org.atomhopper.dbal.PageDirection;
 import org.atomhopper.hibernate.actions.ComplexSessionAction;
+import org.atomhopper.hibernate.actions.SimpleSessionAction;
 import org.atomhopper.hibernate.query.CategoryCriteriaGenerator;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class HibernateFeedRepository implements FeedRepository {
 
@@ -52,7 +53,7 @@ public class HibernateFeedRepository implements FeedRepository {
         }
     }
 
-    public <T> T performComplexAction(ComplexSessionAction<T> action) {
+    <T> T performComplexAction(ComplexSessionAction<T> action) {
         final Session session = sessionManager.getSession();
 
         T returnable = null;

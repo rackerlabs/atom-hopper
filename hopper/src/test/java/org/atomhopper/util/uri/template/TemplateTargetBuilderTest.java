@@ -1,12 +1,5 @@
 package org.atomhopper.util.uri.template;
 
-import org.atomhopper.util.uri.template.URITemplateParameter;
-import org.atomhopper.util.uri.template.EnumKeyedTemplateParameters;
-import org.atomhopper.util.uri.template.URITemplate;
-import org.atomhopper.util.uri.template.TemplateTargetKey;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.HashMap;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.impl.TemplateTargetBuilder;
 import org.junit.Before;
@@ -15,13 +8,19 @@ import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(Enclosed.class)
 public class TemplateTargetBuilderTest {
 
-    public static final Object ARCHIVE = new Object(), COLLECTION = new Object();
+    private static final Object ARCHIVE = new Object();
+    public static final Object COLLECTION = new Object();
 
     public static class WhenGeneratingURLsFromFeedTemplates extends TestParent {
 
@@ -109,7 +108,7 @@ public class TemplateTargetBuilderTest {
         @Test
         public void shouldGenerateExpectedURLWithCategories() {
             final Map<String, Object> parameterMap = new HashMap<String, Object>();
-            parameterMap.put("categories", Arrays.asList(new String[]{"cata", "catb", "catc"}));
+            parameterMap.put("categories", Arrays.asList("cata", "catb", "catc"));
             parameterMap.put("workspace", "a");
             parameterMap.put("feed", "b");
             parameterMap.put("marker", "12345");
@@ -125,8 +124,8 @@ public class TemplateTargetBuilderTest {
     @Ignore
     public static class TestParent {
 
-        protected TemplateTargetBuilder targetBuilder;
-        protected RequestContext requestContext;
+        TemplateTargetBuilder targetBuilder;
+        RequestContext requestContext;
 
         @Before
         public void standUp() {

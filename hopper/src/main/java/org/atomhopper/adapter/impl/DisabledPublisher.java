@@ -12,6 +12,7 @@ import org.atomhopper.response.EmptyBody;
 public final class DisabledPublisher extends AbstractDisabledAdapter implements FeedPublisher {
 
     private static final DisabledPublisher INSTANCE = new DisabledPublisher();
+    private static final String OP_NOT_SUPPORTED_MESSAGE = "Operation not supported";
 
     public static DisabledPublisher getInstance() {
         return INSTANCE;
@@ -22,16 +23,16 @@ public final class DisabledPublisher extends AbstractDisabledAdapter implements 
 
     @Override
     public AdapterResponse<EmptyBody> deleteEntry(DeleteEntryRequest deleteEntryRequest) {
-        return ResponseBuilder.notImplemented("Operation not supported");
+        return ResponseBuilder.notImplemented(OP_NOT_SUPPORTED_MESSAGE);
     }
 
     @Override
     public AdapterResponse<Entry> postEntry(PostEntryRequest postEntryRequest) {
-        return ResponseBuilder.notImplemented("Operation not supported");
+        return ResponseBuilder.notImplemented(OP_NOT_SUPPORTED_MESSAGE);
     }
 
     @Override
     public AdapterResponse<Entry> putEntry(PutEntryRequest putEntryRequest) {
-        return ResponseBuilder.notImplemented("Operation not supported");
+        return ResponseBuilder.notImplemented(OP_NOT_SUPPORTED_MESSAGE);
     }
 }

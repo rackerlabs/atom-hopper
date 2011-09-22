@@ -1,20 +1,21 @@
 package org.atomhopper.util.config.resource.uri;
 
-import org.atomhopper.util.config.resource.uri.URIConfigurationResource;
-import java.io.InputStream;
-import java.net.URI;
 import org.atomhopper.util.uri.CustomSchemeResolver;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.*;
+import java.io.InputStream;
+import java.net.URI;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(Enclosed.class)
 public class URIConfigurationResourceTest {
 
-    public static final String VALID_CLASSPATH_URI = "classpath:/META-INF/schema/config/bindings.xjb";
+    private static final String VALID_CLASSPATH_URI = "classpath:/META-INF/schema/config/bindings.xjb";
 
     public static class WhenGettingInputStreamsFromURILocations {
 

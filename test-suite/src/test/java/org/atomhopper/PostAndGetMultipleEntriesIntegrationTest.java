@@ -17,7 +17,7 @@ import static junit.framework.Assert.assertTrue;
 @RunWith(Enclosed.class)
 public class PostAndGetMultipleEntriesIntegrationTest extends JettyIntegrationTestHarness {
 
-    public static final HttpClient httpClient = new HttpClient();
+    private static final HttpClient httpClient = new HttpClient();
     public static final XmlUtil xml = new XmlUtil();
     private static final String urlAndPort = "http://localhost:" + getPort();
 

@@ -42,7 +42,7 @@ public final class AtomHopperServlet extends AbderaServlet {
 
     private static final Logger LOG = LoggerFactory.getLogger(AtomHopperServlet.class);
 
-    public static final String DEFAULT_CONFIGURATION_LOCATION = "/etc/atomhopper/atom-server.cfg.xml";
+    private static final String DEFAULT_CONFIGURATION_LOCATION = "/etc/atomhopper/atom-server.cfg.xml";
 
     private final ConfigurationParser<Configuration> configurationParser;
     private ApplicationContextAdapter applicationContextAdapter;
@@ -82,7 +82,7 @@ public final class AtomHopperServlet extends AbderaServlet {
         super.init();
     }
 
-    protected ApplicationContextAdapter getContextAdapter() throws ContextAdapterResolutionException {
+    ApplicationContextAdapter getContextAdapter() throws ContextAdapterResolutionException {
         String adapterClass = getInitParameter(ServletInitParameter.CONTEXT_ADAPTER_CLASS.toString());
 
         // If no adapter class is set then use the default empty one
@@ -105,7 +105,7 @@ public final class AtomHopperServlet extends AbderaServlet {
         throw new ContextAdapterResolutionException("Unknown application context adapter class: " + adapterClass);
     }
 
-    protected String getConfigurationLocation() {
+    String getConfigurationLocation() {
         final String configLocation = getInitParameter(ServletInitParameter.CONFIGURATION_LOCATION.toString());
 
         return !StringUtils.isBlank(configLocation) ? configLocation : DEFAULT_CONFIGURATION_LOCATION;

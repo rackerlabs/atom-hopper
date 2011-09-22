@@ -1,7 +1,18 @@
 package org.atomhopper;
 
-import static junit.framework.Assert.fail;
+import com.meterware.httpunit.HttpUnitUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
 import java.io.StringReader;
 import java.text.MessageFormat;
@@ -10,25 +21,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-
-import com.meterware.httpunit.HttpUnitUtils;
-import org.xml.sax.SAXException;
+import static junit.framework.Assert.fail;
 
 public class XmlUtil {
     private JAXBContext context;
-    private XPath xPath;
+    private final XPath xPath;
 
     public XmlUtil() {
         xPath = XPathFactory.newInstance().newXPath();

@@ -1,13 +1,12 @@
 package org.atomhopper.abdera.filter;
 
-import org.atomhopper.abdera.filter.FeedPagingProcessor;
-import org.atomhopper.response.AdapterResponse;
-import org.atomhopper.response.FeedSourceAdapterResponse;
 import org.apache.abdera.Abdera;
 import org.apache.abdera.i18n.iri.IRI;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.RequestContext;
+import org.atomhopper.response.AdapterResponse;
+import org.atomhopper.response.FeedSourceAdapterResponse;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
@@ -23,7 +22,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.hamcrest.core.IsNull.nullValue;
-import static org.mockito.Matchers.contains;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -32,7 +30,7 @@ public class FeedPagingProcessorTest {
 
     public static class WhenProcessingFeedWithMoreThanOneEntry extends TestParent {
 
-        int TOTAL_FEED_ENTRIES = 5;
+        final int TOTAL_FEED_ENTRIES = 5;
 
         @Test
         public void shouldAddCurrentLink() {
@@ -67,7 +65,7 @@ public class FeedPagingProcessorTest {
 
 
     public static class WhenProcessingFeedWithOneEntry extends TestParent {
-        int TOTAL_FEED_ENTRIES = 1;
+        final int TOTAL_FEED_ENTRIES = 1;
 
         @Test
         public void shouldAddCurrentLink() {
@@ -100,18 +98,17 @@ public class FeedPagingProcessorTest {
 
         @Test
         public void testMapToString() {
-            final FeedPagingProcessor target = feedPagingProcessor();
 
             Map<String, List<String>> test = new TreeMap<String, List<String>>();
             // Empty map returns blank string
-            assertThat(target.mapToParameters(test), equalTo(""));
+            assertThat(FeedPagingProcessor.mapToParameters(test), equalTo(""));
             List<String> value1 = new LinkedList<String>();
             value1.add("value1");
             List<String> value2 = new LinkedList<String>();
             value2.add("value2");
             test.put("key1", value1);
             test.put("key2", value2);
-            assertThat(target.mapToParameters(test), equalTo("?key1=value1&key2=value2"));
+            assertThat(FeedPagingProcessor.mapToParameters(test), equalTo("?key1=value1&key2=value2"));
         }
 
         @Test
@@ -149,7 +146,7 @@ public class FeedPagingProcessorTest {
     }
 
     public static class WhenProcessingEmptyFeed extends TestParent {
-        int TOTAL_FEED_ENTRIES = 0;
+        final int TOTAL_FEED_ENTRIES = 0;
 
         @Test
         public void shouldNotAddMarkers() {
@@ -197,8 +194,7 @@ public class FeedPagingProcessorTest {
 
 
         public FeedPagingProcessor feedPagingProcessor() {
-            final FeedPagingProcessor target = new FeedPagingProcessor();
-            return target;
+            return new FeedPagingProcessor();
         }
 
         public AdapterResponse<Feed> adapterResponse(int entriesOnFeed) {

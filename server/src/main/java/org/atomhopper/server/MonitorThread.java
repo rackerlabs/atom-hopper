@@ -1,21 +1,22 @@
 package org.atomhopper.server;
 
 
+import org.eclipse.jetty.server.Server;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import org.eclipse.jetty.server.Server;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
-public class MonitorThread extends Thread {
+class MonitorThread extends Thread {
     private static final Logger LOG = LoggerFactory.getLogger(AtomHopperServer.class);
     
     private ServerSocket socket;
-    private Server serverInstance;
+    private final Server serverInstance;
     private static final String MONITOR_NAME = "StopMonitor";
 
     public MonitorThread(Server serverInstance, final int stopPort, final String ipAddress) {

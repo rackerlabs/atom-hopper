@@ -1,9 +1,10 @@
 package org.atomhopper.adapter.request;
 
-import java.util.List;
 import org.apache.abdera.Abdera;
-import org.atomhopper.util.uri.template.TemplateParameters;
 import org.apache.abdera.protocol.server.RequestContext;
+import org.atomhopper.util.uri.template.TemplateParameters;
+
+import java.util.List;
 
 /**
  * Base class that contains the wrapped RequestContext from Abdera. All domain
@@ -13,7 +14,7 @@ public abstract class AbstractClientRequest implements ClientRequest {
 
     private final RequestContext abderaRequestContext;
 
-    public AbstractClientRequest(RequestContext abderaRequestContext) {
+    protected AbstractClientRequest(RequestContext abderaRequestContext) {
         this.abderaRequestContext = abderaRequestContext;
     }
 

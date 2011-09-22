@@ -1,6 +1,5 @@
 package org.atomhopper.util;
 
-import org.atomhopper.util.TargetRegexBuilder;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
@@ -100,11 +99,10 @@ public class TargetRegexBuilderArchiveTest {
         }
     }
 
-    public static final String
-            ARCHIVE_YEAR = "/workspace/feed/archives/2011",
-            ARCHIVE_MONTH = "/workspace/feed/archives/2011/01",
-            ARCHIVE_DAY = "/workspace/feed/archives/2011/01/01",
-            ARCHIVE_HOUR = "/workspace/feed/archives/2011/01/01/01:00",
-            ARCHIVE_MINUTE = "/workspace/feed/archives/2011/01/01/01:35";
+    private static final String ARCHIVE_YEAR = "/workspace/feed/archives/2011";
+    private static final String ARCHIVE_MONTH = "/workspace/feed/archives/2011/01";
+    private static final String ARCHIVE_DAY = "/workspace/feed/archives/2011/01/01";
+    private static final String ARCHIVE_HOUR = "/workspace/feed/archives/2011/01/01/01:00";
+    private static final String ARCHIVE_MINUTE = "/workspace/feed/archives/2011/01/01/01:35";
 
 }

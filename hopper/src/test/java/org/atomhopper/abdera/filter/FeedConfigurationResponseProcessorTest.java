@@ -43,11 +43,11 @@ public class FeedConfigurationResponseProcessorTest extends TestParent {
 @Ignore
 class TestParent {
 
-    static final String BASE_URI = "http://localhost:8080/atom";
-    static final String TARGET_PATH = "/foo/bar";
+    private static final String BASE_URI = "http://localhost:8080/atom";
+    private static final String TARGET_PATH = "/foo/bar";
     static final String feedAuthorName = "Feed Author";
     static final Author feedAuthor = newAuthor(feedAuthorName);
-    FeedConfiguration feedConfiguration = new FeedConfiguration();
+    final FeedConfiguration feedConfiguration = new FeedConfiguration();
 
     private static Author newAuthor(String authorName) {
         Author author = new Author();
@@ -55,17 +55,16 @@ class TestParent {
         return author;
     }
 
-    public FeedConfigurationResponseProcessor feedDefaultsProcessor(FeedConfiguration feedConfiguration) {
-        final FeedConfigurationResponseProcessor target = new FeedConfigurationResponseProcessor(feedConfiguration);
-        return target;
+    FeedConfigurationResponseProcessor feedDefaultsProcessor(FeedConfiguration feedConfiguration) {
+        return new FeedConfigurationResponseProcessor(feedConfiguration);
     }
 
-    public AdapterResponse<Feed> adapterResponse() {
+    AdapterResponse<Feed> adapterResponse() {
         final Feed feed = Abdera.getInstance().newFeed();
         return new FeedSourceAdapterResponse<Feed>(feed, HttpStatus.OK, "");
     }
 
-    public RequestContext requestContext() {
+    RequestContext requestContext() {
         RequestContext target = mock(RequestContext.class);
 
         when(target.getBaseUri()).thenReturn(new IRI(BASE_URI));
