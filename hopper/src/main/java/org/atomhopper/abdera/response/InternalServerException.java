@@ -4,6 +4,6 @@ package org.atomhopper.abdera.response;
  *
  * 
  */
-class InternalServerException extends Exception {
+public class InternalServerException extends Exception {
 
 }

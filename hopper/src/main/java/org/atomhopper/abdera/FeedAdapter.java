@@ -76,7 +76,7 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
         emptyBodyResponseHandler = new EmptyBodyResponseHandler(allowedMethods);
     }
 
-    FeedConfiguration getFeedConfiguration() {
+    public FeedConfiguration getFeedConfiguration() {
         return feedConfiguration;
     }
 

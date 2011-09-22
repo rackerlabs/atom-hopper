@@ -9,7 +9,7 @@ import org.hibernate.cfg.Configuration;
 
 import java.util.Map;
 
-class HibernateSessionManager {
+public class HibernateSessionManager {
 
     private final Map<String, String> parameters;
     private SessionFactory sessionFactory;
@@ -23,7 +23,7 @@ class HibernateSessionManager {
                 .addAnnotatedClass(PersistedFeed.class)
                 .addAnnotatedClass(PersistedEntry.class)
                 .addAnnotatedClass(PersistedCategory.class);
-        
+
         for (Map.Entry<String, String> userParameter : parameters.entrySet()) {
             hibernateConfiguration.setProperty(userParameter.getKey(), userParameter.getValue());
         }

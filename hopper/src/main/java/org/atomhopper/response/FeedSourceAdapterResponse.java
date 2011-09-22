@@ -33,7 +33,7 @@ public class FeedSourceAdapterResponse<T> implements AdapterResponse<T> {
      * 
      * @return
      */
-    synchronized Map<ResponseParameter, String> getParameters() {
+    public synchronized Map<ResponseParameter, String> getParameters() {
         if (parameters == null) {
             parameters = new EnumMap<ResponseParameter, String>(ResponseParameter.class);
         }

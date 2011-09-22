@@ -12,7 +12,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 
-class MonitorThread extends Thread {
+public class MonitorThread extends Thread {
     private static final Logger LOG = LoggerFactory.getLogger(AtomHopperServer.class);
     
     private ServerSocket socket;

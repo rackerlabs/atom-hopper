@@ -124,8 +124,8 @@ public class TemplateTargetBuilderTest {
     @Ignore
     public static class TestParent {
 
-        TemplateTargetBuilder targetBuilder;
-        RequestContext requestContext;
+        protected TemplateTargetBuilder targetBuilder;
+        protected RequestContext requestContext;
 
         @Before
         public void standUp() {

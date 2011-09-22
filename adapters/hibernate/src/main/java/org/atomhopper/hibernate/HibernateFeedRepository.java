@@ -53,7 +53,7 @@ public class HibernateFeedRepository implements FeedRepository {
         }
     }
 
-    <T> T performComplexAction(ComplexSessionAction<T> action) {
+    public <T> T performComplexAction(ComplexSessionAction<T> action) {
         final Session session = sessionManager.getSession();
 
         T returnable = null;
