@@ -12,7 +12,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 
-class AtomHopperServerControl {
+public class AtomHopperServerControl {
     private static final Logger LOG = LoggerFactory.getLogger(AtomHopperServerControl.class);
 
     private final CommandLineArguments commandLineArgs;

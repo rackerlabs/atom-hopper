@@ -8,7 +8,7 @@ import java.util.Calendar;
  *
 
  */
-class AtomEntry implements Comparable<AtomEntry> {
+public class AtomEntry implements Comparable<AtomEntry> {
 
     private final Entry entry;
     private final Calendar updated;
@@ -23,7 +23,7 @@ class AtomEntry implements Comparable<AtomEntry> {
         return entry;
     }
 
-    Calendar getUpdated() {
+    public Calendar getUpdated() {
         return updated;
     }
 

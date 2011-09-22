@@ -14,7 +14,7 @@ public abstract class AbstractResponseHandler<T> implements ResponseHandler<T> {
     private final List<AdapterResponseInterceptor<T>> responseInterceptors;
     private final String[] allowedMethods;
 
-    AbstractResponseHandler(String[] allowedMethods, AdapterResponseInterceptor<T>... interceptors) {
+    public AbstractResponseHandler(String[] allowedMethods, AdapterResponseInterceptor<T>... interceptors) {
         this.allowedMethods = Arrays.copyOf(allowedMethods, allowedMethods.length);
         responseInterceptors = new LinkedList<AdapterResponseInterceptor<T>>(Arrays.asList(interceptors));
     }
@@ -38,7 +38,7 @@ public abstract class AbstractResponseHandler<T> implements ResponseHandler<T> {
 
     protected abstract ResponseContext handleAdapterResponse(RequestContext rc, AdapterResponse<T> adapterResponse);
 
-    String[] getAllowedHttpMethods() {
+    protected String[] getAllowedHttpMethods() {
         return allowedMethods;
     }
 
