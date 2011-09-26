@@ -71,7 +71,6 @@ public class AtomEntryTest {
         }
     }
 
-
     public static class WhenComparingAtomEntries {
 
         private AtomEntry atomEntry;
