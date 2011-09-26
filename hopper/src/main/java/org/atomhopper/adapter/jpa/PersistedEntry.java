@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.TimeZone;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -34,7 +35,7 @@ public class PersistedEntry implements Serializable {
     @JoinColumn(name = "Feed")
     private PersistedFeed feed;
     
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
     @JoinTable(name = "CategoryEntryReferences",
     joinColumns = {
         @JoinColumn(name = "entryId", referencedColumnName = "EntryID")},
