@@ -24,7 +24,7 @@ public class PersistActionTest {
         private PersistAction persistAction;
 
         @Before
-        public void standUp() {
+        public void setUp() {
             session = mock(Session.class);
             persistMe = mock(Object.class);
             persistAction = new PersistAction(persistMe);
