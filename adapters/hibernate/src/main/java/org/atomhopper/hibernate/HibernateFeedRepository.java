@@ -183,21 +183,18 @@ public class HibernateFeedRepository implements FeedRepository {
                 }
 
                 feed.getEntries().add(entry);
-
                 liveSession.saveOrUpdate(feed);
-                liveSession.persist(entry);
 
                 // Make sure to update our category objects
                 for (PersistedCategory cat : entry.getCategories()) {
                     PersistedCategory category = (PersistedCategory) liveSession.createCriteria(PersistedCategory.class).add(Restrictions.idEq(cat.getTerm())).uniqueResult();
 
                     if (category == null) {
-                        category = cat;
+                        cat.getFeedEntries().add(entry);
+                        liveSession.save(cat);
                     }
-
-                    category.getFeedEntries().add(entry);
-                    liveSession.saveOrUpdate(category);
                 }
+                liveSession.persist(entry);
             }
         });
     }
