@@ -22,8 +22,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class HibernateFeedRepository implements FeedRepository {
 
+    private static final Logger LOG = LoggerFactory.getLogger(HibernateFeedRepository.class);
     private final HibernateSessionManager sessionManager;
     private static final String DATE_LAST_UPDATED = "dateLastUpdated";
 
@@ -115,7 +119,7 @@ public class HibernateFeedRepository implements FeedRepository {
                 } else {
                     criteria.addOrder(Order.desc(DATE_LAST_UPDATED));
                 }
-
+                
                 feedHead.addAll(criteria.list());
 
                 return feedHead;
@@ -184,16 +188,22 @@ public class HibernateFeedRepository implements FeedRepository {
 
                 feed.getEntries().add(entry);
                 liveSession.saveOrUpdate(feed);
+                
+                // Categories that actually don't exist in the DB yet
+                Set<PersistedCategory> newCategories = new HashSet<PersistedCategory>();
 
                 // Make sure to update our category objects
                 for (PersistedCategory cat : entry.getCategories()) {
-                    PersistedCategory category = (PersistedCategory) liveSession.createCriteria(PersistedCategory.class).add(Restrictions.idEq(cat.getTerm())).uniqueResult();
+                    PersistedCategory category = (PersistedCategory) liveSession.createCriteria(PersistedCategory.class).add(Restrictions.idEq(cat.getTerm().toLowerCase())).uniqueResult();
 
                     if (category == null) {
+                        cat.setTerm(cat.getTerm().toLowerCase());
                         cat.getFeedEntries().add(entry);
                         liveSession.save(cat);
+                        newCategories.add(cat);
                     }
                 }
+                entry.setCategories(newCategories);                
                 liveSession.persist(entry);
             }
         });

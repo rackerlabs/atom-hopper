@@ -5,8 +5,12 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class SimpleCategoryCriteriaGenerator implements CategoryCriteriaGenerator {
 
+    private static final Logger LOG = LoggerFactory.getLogger(SimpleCategoryCriteriaGenerator.class);
     private static final char INCLUSIVE_OPERATOR = '+', EXCLUSIVE_OPERATOR = '-', ESCAPE_OPERATOR = '\\';
     private static final char[] OPERATORS = {INCLUSIVE_OPERATOR, EXCLUSIVE_OPERATOR, ESCAPE_OPERATOR};
     private final List<String> inclusionTerms, exclusionTerms;
@@ -22,7 +26,7 @@ public class SimpleCategoryCriteriaGenerator implements CategoryCriteriaGenerato
         
         this.hasTerms = false;
 
-        parse(searchString.trim());
+        parse(searchString.trim().toLowerCase());
     }
 
     private void parse(String searchString) {
@@ -43,14 +47,13 @@ public class SimpleCategoryCriteriaGenerator implements CategoryCriteriaGenerato
                     exclusionTerms.add(searchTermBuilder.toString());
                     break;
             }
-        }
+        }       
     }
 
     @Override
     public void enhanceCriteria(Criteria ongoingCriteria) {
         if (hasTerms) {
             final Criteria newSearchCriteria = ongoingCriteria.createCriteria("categories");
-
 
             if (!inclusionTerms.isEmpty()) {
                 newSearchCriteria.add(Restrictions.in("term", inclusionTerms));
