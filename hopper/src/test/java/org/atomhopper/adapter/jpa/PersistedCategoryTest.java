@@ -23,7 +23,7 @@ public class PersistedCategoryTest {
 
     public static class WhenCreatingPersistedCategories {
 
-        PersistedCategory persistedCategory;
+        private PersistedCategory persistedCategory;
 
         @Before
         public void setUp() {
@@ -50,14 +50,14 @@ public class PersistedCategoryTest {
 
     public static class WhenAccessingPersistedCategories {
 
-        PersistedCategory persistedCategory;
-        PersistedCategory persistedCategoryNull;
-        PersistedEntry persistedEntry0;
-        PersistedEntry persistedEntry1;
-        Set<PersistedEntry> persistedEntries;
-        Object rightTypeObject;
-        Object nullObject;
-        Object wrongTypeObject;
+        private PersistedCategory persistedCategory;
+        private PersistedCategory persistedCategoryNull;
+        private PersistedEntry persistedEntry0;
+        private PersistedEntry persistedEntry1;
+        private Set<PersistedEntry> persistedEntries;
+        private Object rightTypeObject;
+        private Object nullObject;
+        private Object wrongTypeObject;
 
         @Before
         public void setUp() throws Exception {
