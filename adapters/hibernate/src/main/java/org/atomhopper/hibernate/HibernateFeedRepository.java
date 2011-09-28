@@ -110,7 +110,7 @@ public class HibernateFeedRepository implements FeedRepository {
             public List<PersistedEntry> perform(Session liveSession) {
                 final List<PersistedEntry> feedHead = new LinkedList<PersistedEntry>();
 
-                final Criteria criteria = liveSession.createCriteria(PersistedEntry.class);
+                final Criteria criteria = liveSession.createCriteria(PersistedEntry.class).add(Restrictions.eq("feed.name", feedName));
                 criteriaGenerator.enhanceCriteria(criteria);
                 
                 criteria.setMaxResults(pageSize);
