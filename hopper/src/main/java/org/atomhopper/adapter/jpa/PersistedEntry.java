@@ -35,7 +35,7 @@ public class PersistedEntry implements Serializable {
     @JoinColumn(name = "Feed")
     private PersistedFeed feed;
     
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade={CascadeType.ALL})
     @JoinTable(name = "CategoryEntryReferences",
     joinColumns = {
         @JoinColumn(name = "entryId", referencedColumnName = "EntryID")},

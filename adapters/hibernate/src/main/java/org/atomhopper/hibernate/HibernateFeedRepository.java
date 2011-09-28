@@ -149,15 +149,15 @@ public class HibernateFeedRepository implements FeedRepository {
                     case FORWARD:
                         criteria.add(Restrictions.gt(DATE_LAST_UPDATED, markerEntry.getCreationDate()));
                         feedPage.add(markerEntry);
-                        feedPage.addAll(criteria.list());
                         break;
 
                     case BACKWARD:
                         criteria.add(Restrictions.lt(DATE_LAST_UPDATED, markerEntry.getCreationDate()));
-                        feedPage.addAll(criteria.list());
                         break;
                 }
 
+                feedPage.addAll(criteria.list());
+                
                 return feedPage;
             }
         });
@@ -189,8 +189,7 @@ public class HibernateFeedRepository implements FeedRepository {
                 feed.getEntries().add(entry);
                 liveSession.saveOrUpdate(feed);
                 
-                // Categories that actually don't exist in the DB yet
-                Set<PersistedCategory> newCategories = new HashSet<PersistedCategory>();
+                Set<PersistedCategory> categoriesForEntry = new HashSet<PersistedCategory>();
 
                 // Make sure to update our category objects
                 for (PersistedCategory cat : entry.getCategories()) {
@@ -200,11 +199,14 @@ public class HibernateFeedRepository implements FeedRepository {
                         cat.setTerm(cat.getTerm().toLowerCase());
                         cat.getFeedEntries().add(entry);
                         liveSession.save(cat);
-                        newCategories.add(cat);
+                        categoriesForEntry.add(cat);
+                    } else {
+                        category.setTerm(category.getTerm().toLowerCase());
+                        categoriesForEntry.add(category);
                     }
                 }
-                entry.setCategories(newCategories);                
-                liveSession.persist(entry);
+                entry.setCategories(categoriesForEntry);                
+                liveSession.save(entry);
             }
         });
     }

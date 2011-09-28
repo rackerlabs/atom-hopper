@@ -15,4 +15,13 @@
             <publisher reference="hibernate-feed-publisher" />
         </feed>
     </workspace>
+    
+    <workspace title="Second Namespace" resource="/namespace/">
+        <categories-descriptor reference="workspace-categories-descriptor" />
+        
+        <feed title="Testing Feed 2" resource="/feed2">
+            <feed-source reference="hibernate-feed-source" />            
+            <publisher reference="hibernate-feed-publisher" />
+        </feed>
+    </workspace>    
 </atom-hopper-config>
