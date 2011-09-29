@@ -1,2 +1,4 @@
-*
 !.gitignore
+target
+*/target
+*/*/target

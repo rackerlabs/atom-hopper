@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book [
+<!-- product name is likely to change; parameterize full name and abbreviation -->
+<!ENTITY PRODNAME "Atom Hopper">
+<!ENTITY PRODABBREV "AH">
+<!ENTITY PRODEXPAND "Atom Hopper">
+]>
+<section xmlns="http://docbook.org/ns/docbook"
+    xmlns:xi="http://www.w3.org/2001/XInclude"
+    xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0"
+    xml:id="Available_Doc-d1e140">
+    <title>Available Documentation</title>
+    <para>The following &PRODNAME; documentation is available as of v0.9:</para>
+    <itemizedlist>
+        <listitem>
+            <para>
+                <emphasis role="bold">Getting Started</emphasis>: This high-level introduction
+                provides an architectural overview and summarizes several deployment methods. </para>
+        </listitem>
+    </itemizedlist> 
+    <para>
+        &PRODNAME; is an open-source project. Visit <link xlink:href="http://www.atomhopper.org/">http://www.atomhopper.org/</link> and our GitHub repository at <link xlink:href="https://github.com/rackspace/atom-hopper/">https://github.com/rackspace/atom-hopper/</link>
+        for access to our source code and documentation.
+    </para>
+</section>
