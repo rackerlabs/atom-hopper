@@ -5,24 +5,19 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class SimpleCategoryCriteriaGenerator implements CategoryCriteriaGenerator {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SimpleCategoryCriteriaGenerator.class);
-    private static final char INCLUSIVE_OPERATOR = '+', EXCLUSIVE_OPERATOR = '-', ESCAPE_OPERATOR = '\\';
-    private static final char[] OPERATORS = {INCLUSIVE_OPERATOR, EXCLUSIVE_OPERATOR, ESCAPE_OPERATOR};
-    private final List<String> inclusionTerms, exclusionTerms;
+    private static final char INCLUSIVE_OPERATOR = '+', ESCAPE_OPERATOR = '\\';
+    private static final char[] OPERATORS = {INCLUSIVE_OPERATOR, ESCAPE_OPERATOR};
+    private final List<String> inclusionTerms;
     private boolean hasTerms;
 
     public SimpleCategoryCriteriaGenerator(String searchString) {
-        this(searchString, new LinkedList<String>(), new LinkedList<String>());
+        this(searchString, new LinkedList<String>());
     }
 
-    SimpleCategoryCriteriaGenerator(String searchString, List<String> inclusionTerms, List<String> exclusionTerms) {
+    SimpleCategoryCriteriaGenerator(String searchString, List<String> inclusionTerms) {
         this.inclusionTerms = inclusionTerms;
-        this.exclusionTerms = exclusionTerms;
         
         this.hasTerms = false;
 
@@ -41,11 +36,6 @@ public class SimpleCategoryCriteriaGenerator implements CategoryCriteriaGenerato
                     hasTerms = true;
                     inclusionTerms.add(searchTermBuilder.toString());
                     break;
-
-                case EXCLUSIVE_OPERATOR:
-                    hasTerms = true;
-                    exclusionTerms.add(searchTermBuilder.toString());
-                    break;
             }
         }       
     }
@@ -57,10 +47,6 @@ public class SimpleCategoryCriteriaGenerator implements CategoryCriteriaGenerato
 
             if (!inclusionTerms.isEmpty()) {
                 newSearchCriteria.add(Restrictions.in("term", inclusionTerms));
-            }
-
-            if (!exclusionTerms.isEmpty()) {
-                newSearchCriteria.add(Restrictions.not(Restrictions.in("term", exclusionTerms)));
             }
         }
     }
