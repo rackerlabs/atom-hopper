@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import org.apache.abdera.model.Categories;
 import org.apache.abdera.model.Entry;
 import org.atomhopper.adapter.FeedPublisher;
 import org.atomhopper.adapter.NotImplemented;
@@ -46,7 +47,11 @@ public class HibernateFeedPublisher implements FeedPublisher {
         final Entry abderaParsedEntry = postEntryRequest.getEntry();
         final PersistedEntry persistedEntry = new PersistedEntry();
 
-        persistedEntry.setCategories(processCategories(abderaParsedEntry.getCategories(), persistedEntry));
+        // Update our category indicies
+        final Set<PersistedCategory> entryCategories = feedRepository.updateCategories(processCategories(abderaParsedEntry.getCategories()));
+        persistedEntry.setCategories(entryCategories);
+        
+        // Generate an ID for this entry
         persistedEntry.setEntryId(UUID_URI_SCHEME + UUID.randomUUID().toString());
         
         // Make sure the persisted xml has the right id
@@ -67,10 +72,8 @@ public class HibernateFeedPublisher implements FeedPublisher {
         return ResponseBuilder.created(abderaParsedEntry);
     }
 
-    private Set<PersistedCategory> processCategories(List<org.apache.abdera.model.Category> abderaCategories, PersistedEntry feedEntryRef) {
+    private Set<PersistedCategory> processCategories(List<org.apache.abdera.model.Category> abderaCategories) {
         final Set<PersistedCategory> entryCategories = new HashSet<PersistedCategory>();
-        final Set<PersistedEntry> entrySet = new HashSet<PersistedEntry>();
-        entrySet.add(feedEntryRef);
 
         for (org.apache.abdera.model.Category abderaCat : abderaCategories) {
             entryCategories.add(new PersistedCategory(abderaCat.getTerm()));

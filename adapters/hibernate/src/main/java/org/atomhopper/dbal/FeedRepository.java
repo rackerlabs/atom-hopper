@@ -25,4 +25,6 @@ public interface FeedRepository {
     PersistedEntry getEntry(String entryId);
 
     void saveEntry(PersistedEntry entry);
+    
+    Set<PersistedCategory> updateCategories(Set<PersistedCategory> categories);
 }

@@ -112,14 +112,14 @@ public class HibernateFeedRepository implements FeedRepository {
 
                 final Criteria criteria = liveSession.createCriteria(PersistedEntry.class).add(Restrictions.eq("feed.name", feedName));
                 criteriaGenerator.enhanceCriteria(criteria);
-                
+
                 criteria.setMaxResults(pageSize);
-                if(feedOrder.equalsIgnoreCase("asc")) {
+                if (feedOrder.equalsIgnoreCase("asc")) {
                     criteria.addOrder(Order.asc(DATE_LAST_UPDATED));
                 } else {
                     criteria.addOrder(Order.desc(DATE_LAST_UPDATED));
                 }
-                
+
                 feedHead.addAll(criteria.list());
 
                 return feedHead;
@@ -157,7 +157,7 @@ public class HibernateFeedRepository implements FeedRepository {
                 }
 
                 feedPage.addAll(criteria.list());
-                
+
                 return feedPage;
             }
         });
@@ -175,6 +175,30 @@ public class HibernateFeedRepository implements FeedRepository {
     }
 
     @Override
+    public Set<PersistedCategory> updateCategories(final Set<PersistedCategory> categories) {
+        return performComplexAction(new ComplexSessionAction<Set<PersistedCategory>>() {
+
+            @Override
+            public Set<PersistedCategory> perform(Session liveSession) {
+                final Set<PersistedCategory> updatedCategories = new HashSet<PersistedCategory>();
+
+                for (PersistedCategory entryCategory : categories) {
+                    PersistedCategory liveCategory = (PersistedCategory) liveSession.createCriteria(PersistedCategory.class).add(Restrictions.idEq(entryCategory.getTerm())).uniqueResult();
+                    
+                    if (liveCategory == null) {
+                        liveCategory = new PersistedCategory(entryCategory.getTerm());
+                        liveSession.save(liveCategory);
+                    }
+                    
+                    updatedCategories.add(liveCategory);
+                }
+
+                return updatedCategories;
+            }
+        });
+    }
+
+    @Override
     public void saveEntry(final PersistedEntry entry) {
         performSimpleAction(new SimpleSessionAction() {
 
@@ -187,25 +211,8 @@ public class HibernateFeedRepository implements FeedRepository {
                 }
 
                 feed.getEntries().add(entry);
-                liveSession.saveOrUpdate(feed);
                 
-                Set<PersistedCategory> categoriesForEntry = new HashSet<PersistedCategory>();
-
-                // Make sure to update our category objects
-                for (PersistedCategory cat : entry.getCategories()) {
-                    PersistedCategory category = (PersistedCategory) liveSession.createCriteria(PersistedCategory.class).add(Restrictions.idEq(cat.getTerm().toLowerCase())).uniqueResult();
-
-                    if (category == null) {
-                        cat.setTerm(cat.getTerm().toLowerCase());
-                        cat.getFeedEntries().add(entry);
-                        liveSession.save(cat);
-                        categoriesForEntry.add(cat);
-                    } else {
-                        category.setTerm(category.getTerm().toLowerCase());
-                        categoriesForEntry.add(category);
-                    }
-                }
-                entry.setCategories(categoriesForEntry);                
+                liveSession.saveOrUpdate(feed);
                 liveSession.save(entry);
             }
         });
