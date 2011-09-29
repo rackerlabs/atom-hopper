@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -26,25 +27,25 @@ public class PersistedCategoryTest {
         private PersistedCategory persistedCategory;
 
         @Before
-        public void setUp() {
+        public void setUp() throws Exception {
             persistedCategory = new PersistedCategory();
         }
 
         @Test
-        public void shouldNotBeNull() {
-            assertNotNull(persistedCategory);
+        public void shouldNotBeNull() throws Exception {
+            assertNotNull("This should not be a null object.", persistedCategory);
         }
 
         @Test
-        public void shouldContainEmptySet() {
+        public void shouldContainEmptySet() throws Exception {
             assertTrue(persistedCategory.getFeedEntries().isEmpty());
         }
 
         @Test
-        public void shouldContainTerm() {
-            assertNull(persistedCategory.getTerm());
+        public void shouldContainTerm() throws Exception {
+            assertNull("This should be a null object.", persistedCategory.getTerm());
             persistedCategory = new PersistedCategory("term");
-            assertNotNull(persistedCategory.getTerm());
+            assertNotNull("This should not be a null object.", persistedCategory.getTerm());
         }
     }
 
@@ -73,29 +74,28 @@ public class PersistedCategoryTest {
         }
 
         @Test
-        public void shouldReturnEntries() {
-            assertFalse(persistedCategory.getFeedEntries().size() > 0);
+        public void shouldReturnEntries() throws Exception {
+            assertFalse("Getting feed entries should not return anything.", persistedCategory.getFeedEntries().size() > 0);
             persistedCategory.setFeedEntries(persistedEntries);
-            assertTrue(persistedCategory.getFeedEntries().size() > 0);
+            assertTrue("Now getting feed entries should return at least one.", persistedCategory.getFeedEntries().size() > 0);
         }
 
         @Test
-        public void shouldReturnTerm() {
-            assertNull(persistedCategory.getTerm());
+        public void shouldReturnTerm() throws Exception {
+            assertNull("Getting terms should return null.", persistedCategory.getTerm());
             persistedCategory.setTerm("term");
-            assertNotNull(persistedCategory.getTerm());
+            assertNotNull("Getting terms should not return a null object.", persistedCategory.getTerm());
         }
 
         @Test
-        public void shouldCompareObjects() {
-            assertFalse(persistedCategory.equals(nullObject));
-            assertTrue(persistedCategory.equals(rightTypeObject));
-            assertFalse(persistedCategory.equals(wrongTypeObject));
+        public void shouldCompareObjects() throws Exception {
+            assertEquals("Comparison should return true with same type of object.", persistedCategory, rightTypeObject);
+            assertFalse("Comparison should return false with different type of object.", persistedCategory.equals(wrongTypeObject)); //TODO: use assertNotEquals when available.
         }
 
         @Test
-        public void shouldReturnHash() {
-            assertFalse(persistedCategory.hashCode() == 0);
+        public void shouldReturnHash() throws Exception {
+            assertFalse(persistedCategory.hashCode() == 0); //TODO: use assertNotEquals when available.
         }
     }
 }

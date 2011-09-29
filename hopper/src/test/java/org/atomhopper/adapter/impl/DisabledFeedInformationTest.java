@@ -24,7 +24,7 @@ public class DisabledFeedInformationTest {
         private String noId;
 
         @Before
-        public void setUp() {
+        public void setUp() throws Exception {
             disabledFeedInformation = DisabledFeedInformation.getInstance();
             feedRequest = mock(FeedRequest.class);
             noId = "atomhopper:no-id";
@@ -32,7 +32,7 @@ public class DisabledFeedInformationTest {
 
         @Test
         public void shouldNotReturnId() throws Exception {
-            assertEquals(disabledFeedInformation.getId(feedRequest), noId);
+            assertEquals("Get Id should return " + noId, disabledFeedInformation.getId(feedRequest), noId);
         }
     }
 }

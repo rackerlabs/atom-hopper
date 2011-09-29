@@ -7,11 +7,12 @@ import org.junit.runner.RunWith;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Set;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  * User: sbrayman
@@ -27,17 +28,16 @@ public class PersistedEntryTest {
         private PersistedEntry persistedEntry;
 
         @Test
-        public void shouldCreatePersistedEntry() {
-            assertNull(persistedEntry);
+        public void shouldCreatePersistedEntry() throws Exception {
+            assertNull("Object should be null.", persistedEntry);
             persistedEntry = new PersistedEntry();
-            assertNotNull(persistedEntry);
+            assertNotNull("Object should no longer be null.", persistedEntry);
         }
 
         @Test
-        public void shouldCreatePersistedEntryWithEntryId() {
-            assertNull(persistedEntryWithEntryId);
+        public void shouldCreatePersistedEntryWithEntryId() throws Exception {
             persistedEntryWithEntryId = new PersistedEntry("entryId");
-            assertTrue(persistedEntryWithEntryId.getEntryId().length() > 0);
+            assertNotNull("Getting entry ID should return the object.", persistedEntryWithEntryId.getEntryId());
         }
     }
 
@@ -45,56 +45,58 @@ public class PersistedEntryTest {
 
         private PersistedEntry persistedEntry;
         private Date date;
+        private Set<PersistedCategory> persistedCategories;
 
         @Before
-        public void setUp() {
+        public void setUp() throws Exception {
             persistedEntry = new PersistedEntry();
         }
 
         @Test
-        public void shouldReturnCreationDate() {
-            assertNotNull(persistedEntry.getCreationDate());
+        public void shouldReturnCreationDate() throws Exception {
+            assertNotNull("Getting creation date should not return null.", persistedEntry.getCreationDate());
             date = persistedEntry.getCreationDate();
-            assertTrue(persistedEntry.getCreationDate() == date);
+            assertEquals("Getting creation date should return a Date object.", persistedEntry.getCreationDate(), date);
             persistedEntry.setCreationDate(new Date());
-            assertFalse(persistedEntry.getCreationDate() == date);
+            assertNotSame("Setting the creation date should update the object.", persistedEntry.getCreationDate().equals(date)); //TODO: use assertNotEquals when available.
         }
 
         @Test
-        public void shouldReturnDateLastUpdated() {
-            assertNotNull(persistedEntry.getDateLastUpdated());
+        public void shouldReturnDateLastUpdated() throws Exception {
+            assertNotNull("Getting the date last updated should not return null.", persistedEntry.getDateLastUpdated());
             date = persistedEntry.getDateLastUpdated();
-            assertTrue(persistedEntry.getDateLastUpdated() == date);
+            assertEquals("Getting the date last updated should return a date object.", persistedEntry.getDateLastUpdated(), date);
             persistedEntry.setDateLastUpdated(new Date());
-            assertFalse(persistedEntry.getDateLastUpdated() == date);
+            assertNotSame("Setting the date last updated should change last updated date.", persistedEntry.getDateLastUpdated().equals(date));
         }
 
         @Test
-        public void shouldReturnCategories() {
-            assertNotNull(persistedEntry.getCategories());
+        public void shouldReturnCategories() throws Exception {
+            assertNotNull("Getting categories should not return null.", persistedEntry.getCategories());
+            persistedCategories = persistedEntry.getCategories();
             persistedEntry.setCategories(new HashSet<PersistedCategory>());
-            assertNotNull(persistedEntry.getCategories());
+            assertNotSame("Setting categories should update categories Set.", persistedEntry.getCategories(), persistedCategories);  //TODO: use assertNotEquals when available.
         }
 
         @Test
-        public void shouldReturnEntryBody() {
-            assertNull(persistedEntry.getEntryBody());
+        public void shouldReturnEntryBody() throws Exception {
+            assertNull("Getting entry body should return null.", persistedEntry.getEntryBody());
             persistedEntry.setEntryBody("entryBody");
-            assertNotNull(persistedEntry.getEntryBody());
+            assertNotNull("Getting entry body should no longer return null.", persistedEntry.getEntryBody());
         }
 
         @Test
-        public void shouldReturnFeed() {
-            assertNull(persistedEntry.getFeed());
+        public void shouldReturnFeed() throws Exception {
+            assertNull("Getting feed should return null.", persistedEntry.getFeed());
             persistedEntry.setFeed(new PersistedFeed());
-            assertNotNull(persistedEntry.getFeed());
+            assertNotNull("Getting feed should no longer return null.", persistedEntry.getFeed());
         }
 
         @Test
-        public void shouldReturnEntryId() {
-            assertNull(persistedEntry.getEntryId());
+        public void shouldReturnEntryId() throws Exception {
+            assertNull("Getting entry ID should return null.", persistedEntry.getEntryId());
             persistedEntry.setEntryId("entryId");
-            assertNotNull(persistedEntry.getEntryId());
+            assertNotNull("Getting entry ID should no longer return null.", persistedEntry.getEntryId());
         }
     }
 }
