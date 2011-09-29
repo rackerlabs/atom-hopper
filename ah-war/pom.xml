@@ -5,12 +5,12 @@
     <parent>
         <groupId>org.atomhopper</groupId>
         <artifactId>parent</artifactId>
-        <version>0.9-SNAPSHOT</version>
+        <version>0.9.1-SNAPSHOT</version>
     </parent>
 
     <groupId>org.atomhopper</groupId>
     <artifactId>ah-war</artifactId>
-    <version>0.9-SNAPSHOT</version>
+    <version>0.9.1-SNAPSHOT</version>
     <packaging>war</packaging>
 
     <name>ATOM Hopper - War</name>
