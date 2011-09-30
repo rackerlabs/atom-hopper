@@ -12,6 +12,7 @@ import static java.lang.Thread.sleep;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
+import static org.atomhopper.TestHelper.assertNotEquals;
 import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.mock;
 
@@ -68,7 +69,7 @@ public class AtomEntryTest {
         public void shouldUpdateTimestamp() throws Exception {
             sleep(500);
             atomEntry.updateTimestamp();
-            assertTrue(calendar.getTime() != atomEntry.getUpdated().getTime()); //TODO: use assertNotEquals when available.
+            assertNotEquals("Times should not be equal.", calendar.getTime(), atomEntry.getUpdated().getTime());
         }
     }
 
