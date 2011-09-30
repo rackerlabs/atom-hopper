@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book [
+    <!-- product name is likely to change; parameterize full name and abbreviation -->
+    <!ENTITY PRODNAME "Atom Hopper">
+    <!ENTITY PRODABBREV "AH">
+    <!ENTITY PRODEXPAND "Atom Hopper">
+    <!-- Some useful entities borrowed from HTML -->
+    <!ENTITY ndash  "&#x2013;">
+    <!ENTITY mdash  "&#x2014;">
+    <!ENTITY hellip "&#x2026;">
+
+    <!-- Useful for describing APIs -->
+    <!ENTITY GET    '<command xmlns="http://docbook.org/ns/docbook">GET</command>'>
+    <!ENTITY PUT    '<command xmlns="http://docbook.org/ns/docbook">PUT</command>'>
+    <!ENTITY POST   '<command xmlns="http://docbook.org/ns/docbook">POST</command>'>
+    <!ENTITY DELETE '<command xmlns="http://docbook.org/ns/docbook">DELETE</command>'>
+
+    <!ENTITY CHECK  '<inlinemediaobject xmlns="http://docbook.org/ns/docbook">
+        <imageobject>
+        <imagedata fileref="img/Check_mark_23x20_02.svg"
+        format="SVG" scale="60"/>
+        </imageobject>
+        </inlinemediaobject>'>
+
+    <!ENTITY ARROW  '<inlinemediaobject xmlns="http://docbook.org/ns/docbook">
+        <imageobject>
+        <imagedata fileref="img/Arrow_east.svg"
+        format="SVG" scale="60"/>
+        </imageobject>
+        </inlinemediaobject>'>
+]>
+<!-- in BOOK below, add status="draft" to set watermark on cover and left margin -->
+<book version="5.0" xmlns="http://docbook.org/ns/docbook"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:svg="http://www.w3.org/2000/svg"
+      xmlns:m="http://www.w3.org/1998/Math/MathML"
+      xmlns:html="http://www.w3.org/1999/xhtml"
+      xmlns:db="http://docbook.org/ns/docbook" >
+    <?rax pdf.url="../../papi-intro.pdf"?>
+    <title>&PRODNAME; Getting Started</title>
+    <!-- set watermark on cover and left margin 
+        <?rax status.bar.text="CONFIDENTIAL"?>
+    -->
+    <?rax title.font.size="35px" subtitle.font.size="24px"?>
+    <titleabbrev>&PRODABBREV; Getting Started</titleabbrev>
+    <info>
+        <author>
+            <personname>
+                <firstname/>
+                <surname/>
+            </personname>
+            <affiliation>
+                <orgname>Rackspace Cloud</orgname>
+            </affiliation>
+        </author>
+        <copyright>
+            <year>2011</year>
+            <holder>Rackspace US, Inc.</holder>
+        </copyright>
+        <releaseinfo>v0.9</releaseinfo>
+        <productname>&PRODNAME;</productname>
+        <pubdate>2011-09-28</pubdate>
+        <legalnotice role="apache2">
+            <annotation>
+                <remark>Copyright details are filled in by the template.</remark>
+            </annotation>
+        </legalnotice>
+        <abstract>
+            <para>This document is intended for anyone seeking basic information about &PRODNAME;. </para>
+        </abstract>
+    </info>
+    <chapter xml:id="Overview-d1e85">
+        <title>Overview</title>
+        <section xml:id="Purpose-d1e90">
+            <title>Purpose of This Document</title>
+            <para> The purpose of this introductory Getting Started document is to answer several basic questions about
+                &PRODNAME;: </para>
+            <itemizedlist spacing="normal">
+                <listitem>
+                    <para>
+                        <link linkend="Define-d1e365">What is &PRODNAME;?</link>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <link linkend="Design-d1e665">How does &PRODNAME; work?</link>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <link linkend="Try-d1e731">How can I try &PRODNAME;?</link>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <link linkend="Available_Doc-d1e140">Where can I learn more about &PRODNAME;?</link>
+                    </para>
+                </listitem>
+            </itemizedlist>   
+        </section>
+        <section xml:id="Document_Change_History-d1e102">
+            <title>Document Change History</title>
+            <para>This version of Getting Started replaces and obsoletes all previous versions. The
+                most recent changes are described in the table below: </para>
+            <informaltable rules="all">
+                <thead>
+                    <tr align="center">
+                        <td colspan="1">Revision Date</td>
+                        <td colspan="4">Summary of Changes</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr align="left">
+                        <td colspan="1" align="center">Sep 28, 2011</td>
+                        <td colspan="4" align="left">
+                            <itemizedlist spacing="compact">
+                                <listitem>
+                                    <para>Initial release.</para>
+                                </listitem>
+                            </itemizedlist>
+                        </td>
+                    </tr>
+                </tbody>
+            </informaltable>
+        </section>
+        <xi:include href="chapters/available-doc.xml"/>
+    </chapter>
+    <chapter xml:id="Define-d1e365">
+        <title>What is &PRODNAME;?</title>
+        <annotation>
+            <remark>
+                Source for this chapter is https://wiki.mosso.com/display/CT/Atom+Hopper and orientation handout from Chad Lung.
+            </remark>
+        </annotation>
+        <para> 
+            &PRODNAME; is a backend server that sends out XML feeds to internal teams. 
+            Essentially, it accepts data and sends data back out when requested. 
+            The idea is that there will be many of these throughout the company.
+        </para>
+        <para> 
+            The purpose of &PRODNAME; is to serve Atom feeds as well as to be a repository for those feeds.
+        </para>
+        <para>
+            You can install &PRODNAME; on any server that meets the minimal configuration requirements:
+            <itemizedlist>
+                <listitem>
+                    <para><emphasis role="bold">Operating System:</emphasis> Windows, OS X, Linux</para>
+                </listitem>
+                <listitem>
+                    <para><emphasis role="bold">Java Virtual Machine:</emphasis> Oracle Java v1.6 or OpenJDK 1.6</para>
+                </listitem>
+            </itemizedlist>
+        </para>
+        <para> 
+            &PRODNAME; can be deployed in several ways:
+        </para>
+        <itemizedlist>
+            <listitem>
+                <para>
+                    from an embedded Jetty server
+                </para>
+                <para>
+                    <emphasis>This is the easiest way to get &PRODNAME; up and running. It requires little knowledge or configuration.</emphasis>
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    from a WAR file which can be dropped into a container such as Tomcat or Jetty
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    from the source code or a generated JAR
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    from an RPM Package Manager (RPM)
+                </para>
+            </listitem>
+        </itemizedlist>
+    </chapter>
+    <chapter xml:id="Design-d1e665">
+        <title>How Does &PRODNAME; Work?</title>
+        <annotation>
+            <remark>
+                Source for this chapter is https://wiki.mosso.com/pages/viewpage.action?pageId=40828966 (title is Why Choose Atom Hopper?; question mark prevents saving as a named page
+            </remark>
+        </annotation>
+        <annotation>
+            <remark>
+                Source for this chapter is https://wiki.mosso.com/display/CT/PAPI+Components+and+Enterprise+Integration+Patterns
+            </remark>
+        </annotation>
+        <para> &PRODNAME; is an AtomPub server based upon the Apache Abdera project. 
+        It functions as a framework for accessing, processing, aggregating, and indexing Atom-formatted events.
+        </para>
+        <para>
+            &PRODNAME; was designed to make it easy to build both generalized and specialized persistence mechanisms for Atom XML data, 
+            based on the Atom Syndication Format and the Atom Publishing Protocol.
+        </para>
+        <para>
+            &PRODNAME; can use several relational databases, including H2, PostgreSQL, Microsoft SQL Server, and HSQLDB. 
+            It fully supports &POST; (creating new Atom entries) and &GET; (retrieving a feed or a single Atom entry); 
+            it has stubs to support &DELETE; and &PUT; if needed.
+        </para>
+    </chapter>
+    <chapter xml:id="Try-d1e731">
+        <title>How Can I Try &PRODNAME;?</title>
+        <annotation>
+            <remark> Source for this chapter is https://wiki.mosso.com/display/CT/Deployment+Options and
+                https://wiki.mosso.com/display/CT/Installing+Atom+Hopper</remark>
+        </annotation>
+        <para>
+            &PRODNAME;'s components may be deployed in several ways, including:
+        </para> 
+        <itemizedlist spacing="compact">
+            <listitem>
+                <para>
+                    <link linkend="Executable_JAR-d1e111">Executable JAR</link>
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <link linkend="Hibernate-d1e222">Hibernate Config File</link>
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <link linkend="Source_JAR-d1e333">Source Code (JAR)</link>
+                    Valve
+                </para>
+            </listitem>
+            <listitem>
+                <para>
+                    <link linkend="RPM-d1e444">RPM Package Manager (RPM)</link>
+                </para>
+            </listitem>
+        </itemizedlist>   
+        <section xml:id="Executable_JAR-d1e111">
+            <title>Deployment Method: Executable JAR</title>
+            <para>
+                details to follow
+            </para>
+        </section>
+        <section xml:id="Hibernate-d1e222">
+            <title>Deployment Method: Hibernate Config File</title>
+            <para>
+                details to follow
+            </para>
+        </section>
+        <section xml:id="Source_JAR-d1e333">
+            <title>Deployment Method: Source Code (JAR)</title>
+            <para>
+                details to follow
+            </para>
+        </section>    
+        <section xml:id="RPM-d1e444">
+            <title>Deployment Method: RPM Package Manager (RPM)</title>
+            <para>
+                details to follow
+            </para>
+        </section>
+    </chapter>
+    <xi:include href="chapters/afterword.xml"/>
+</book>

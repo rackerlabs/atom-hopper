@@ -29,9 +29,10 @@
         <module>test-suite</module>
         <module>server</module>
         <module>ah-war</module>
-
+        <module>documentation</module>
         <module>adapters/hibernate</module>
-    </modules>
+        <module>util</module>
+  </modules>
 
     <scm>
         <connection>scm:git:ssh://git@github.com/rackspace/atom-hopper.git</connection>
@@ -151,13 +152,13 @@
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-server</artifactId>
-                <version>8.0.0.M3</version>
+                <version>8.0.1.v20110908</version>
             </dependency>
 
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-servlet</artifactId>
-                <version>8.0.0.M3</version>
+                <version>8.0.1.v20110908</version>
             </dependency>
 
             <dependency>
@@ -218,11 +219,15 @@
     <repositories>
         <repository>
             <id>public.maven.research.rackspace.com</id>
-
             <name>Rackspace Research</name>
             <url>http://maven.research.rackspacecloud.com/content/groups/all/</url>
         </repository>
-    </repositories>
+        <repository>
+            <id>rackspace-research</id>
+            <name>Rackspace Research Repository</name>
+            <url>http://maven.research.rackspacecloud.com/content/groups/public/</url>
+        </repository>        
+    </repositories>   
 
     <distributionManagement>
         <repository>
@@ -281,4 +286,3 @@
         </pluginManagement>
     </build>
 </project>
-
