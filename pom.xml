@@ -30,9 +30,9 @@
         <module>server</module>
         <module>ah-war</module>
         <module>documentation</module>
-
         <module>adapters/hibernate</module>
-    </modules>
+        <module>util</module>
+  </modules>
 
     <scm>
         <connection>scm:git:ssh://git@github.com/rackspace/atom-hopper.git</connection>
@@ -286,4 +286,3 @@
         </pluginManagement>
     </build>
 </project>
-
