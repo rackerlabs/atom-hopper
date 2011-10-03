@@ -58,7 +58,7 @@ public class PersistedEntryTest {
             date = persistedEntry.getCreationDate();
             assertEquals("Getting creation date should return a Date object.", persistedEntry.getCreationDate(), date);
             persistedEntry.setCreationDate(new Date());
-            assertNotSame("Setting the creation date should update the object.", persistedEntry.getCreationDate().equals(date)); //TODO: use assertNotEquals when available.
+            assertNotSame("Setting the creation date should update the object.", persistedEntry.getCreationDate(), date);
         }
 
         @Test
@@ -75,7 +75,7 @@ public class PersistedEntryTest {
             assertNotNull("Getting categories should not return null.", persistedEntry.getCategories());
             persistedCategories = persistedEntry.getCategories();
             persistedEntry.setCategories(new HashSet<PersistedCategory>());
-            assertNotSame("Setting categories should update categories Set.", persistedEntry.getCategories(), persistedCategories);  //TODO: use assertNotEquals when available.
+            assertNotSame("Setting categories should update categories set with new object set.", persistedEntry.getCategories(), persistedCategories);
         }
 
         @Test

@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.atomhopper.util.TestHelper.assertNotEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -90,12 +91,12 @@ public class PersistedCategoryTest {
         @Test
         public void shouldCompareObjects() throws Exception {
             assertEquals("Comparison should return true with same type of object.", persistedCategory, rightTypeObject);
-            assertFalse("Comparison should return false with different type of object.", persistedCategory.equals(wrongTypeObject)); //TODO: use assertNotEquals when available.
+            assertNotEquals("Comparison should return false with different type of object.", persistedCategory, wrongTypeObject);
         }
 
         @Test
         public void shouldReturnHash() throws Exception {
-            assertFalse(persistedCategory.hashCode() == 0); //TODO: use assertNotEquals when available.
+            assertNotEquals("Hash code should something other than 0.", persistedCategory.hashCode(), 0);
         }
     }
 }
