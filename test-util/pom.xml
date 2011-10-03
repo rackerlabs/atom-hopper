@@ -10,10 +10,10 @@
     </parent>
     
     <groupId>org.atomhopper</groupId>
-    <artifactId>util</artifactId>
+    <artifactId>test-util</artifactId>
     <packaging>jar</packaging>
 
-    <name>ATOM Hopper - Utility</name>
+    <name>ATOM Hopper - Test Utility</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -23,6 +23,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>
