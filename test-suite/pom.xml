@@ -24,6 +24,11 @@
             <groupId>org.atomhopper</groupId>
             <artifactId>core</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.atomhopper</groupId>
+            <artifactId>test-util</artifactId>
+        </dependency>
         
         <dependency>
             <groupId>org.atomhopper.adapter</groupId>

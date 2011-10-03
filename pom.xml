@@ -31,7 +31,7 @@
         <module>ah-war</module>
         <module>documentation</module>
         <module>adapters/hibernate</module>
-        <module>util</module>
+        <module>test-util</module>
   </modules>
 
     <scm>
@@ -44,6 +44,13 @@
                 <groupId>org.atomhopper</groupId>
                 <artifactId>core</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.atomhopper</groupId>
+                <artifactId>test-util</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
             </dependency>
 
             <dependency>

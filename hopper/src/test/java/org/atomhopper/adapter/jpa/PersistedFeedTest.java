@@ -28,19 +28,19 @@ public class PersistedFeedTest {
         private PersistedFeed persistedFeedWithInput;
 
         @Test
-        public void shouldCreatePersistedFeed() {
-            assertNull(persistedFeed);
+        public void shouldCreatePersistedFeed() throws Exception {
+            assertNull("Should be null.", persistedFeed);
             persistedFeed = new PersistedFeed();
-            assertNotNull(persistedFeed);
+            assertNotNull("Should not be null.", persistedFeed);
         }
 
         @Test
-        public void shouldCreatePersistedFeedWithParameters() {
-            assertNull(persistedFeedWithInput);
+        public void shouldCreatePersistedFeedWithParameters() throws Exception {
+            assertNull("Should be null.", persistedFeedWithInput);
             persistedFeedWithInput = new PersistedFeed("name","feedId");
-            assertNotNull(persistedFeedWithInput);
-            assertNotNull(persistedFeedWithInput.getName());
-            assertNotNull(persistedFeedWithInput.getFeedId());
+            assertNotNull("Should not be null.", persistedFeedWithInput);
+            assertNotNull("Getting the name should not return null.", persistedFeedWithInput.getName());
+            assertNotNull("Getting the feed ID should not return null.", persistedFeedWithInput.getFeedId());
         }
     }
 
@@ -51,7 +51,7 @@ public class PersistedFeedTest {
         private Set<PersistedEntry> persistedEntrySet;
 
         @Before
-        public void setUp() {
+        public void setUp() throws Exception {
             persistedFeed = new PersistedFeed();
             persistedEntry = new PersistedEntry();
             persistedEntrySet = new HashSet();
@@ -59,21 +59,21 @@ public class PersistedFeedTest {
         }
 
         @Test
-        public void shouldSetEntries() {
-            assertTrue(persistedFeed.getEntries().isEmpty());
+        public void shouldSetEntries() throws Exception {
+            assertTrue("Getting entries should return empty.", persistedFeed.getEntries().isEmpty());
             persistedFeed.setEntries(persistedEntrySet);
-            assertFalse(persistedFeed.getEntries().isEmpty());
+            assertFalse("Now getting entries should not return empty.", persistedFeed.getEntries().isEmpty());
         }
 
         @Test
-        public void shouldSetFeedId() {
-            assertNull(persistedFeed.getFeedId());
+        public void shouldSetFeedId() throws Exception {
+            assertNull("Getting feed ID should return null.", persistedFeed.getFeedId());
             persistedFeed.setFeedId("feedId");
-            assertNotNull(persistedFeed.getFeedId());
+            assertNotNull("Now getting the feed ID should not return null.", persistedFeed.getFeedId());
         }
 
         @Test
-        public void shouldSetName() {
+        public void shouldSetName() throws Exception {
             assertNull(persistedFeed.getName());
             persistedFeed.setName("name");
             assertNotNull(persistedFeed.getName());

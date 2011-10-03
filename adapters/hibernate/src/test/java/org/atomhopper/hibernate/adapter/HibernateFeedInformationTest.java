@@ -29,7 +29,7 @@ public class HibernateFeedInformationTest {
         }
 
         @Test
-        public void shouldCreateHibernateFeedInformation() {
+        public void shouldCreateHibernateFeedInformation() throws Exception {
             assertNotNull(hibernateFeedInformation);
         }
     }

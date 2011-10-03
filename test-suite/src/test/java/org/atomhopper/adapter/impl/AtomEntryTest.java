@@ -12,6 +12,7 @@ import static java.lang.Thread.sleep;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
+import static org.atomhopper.util.TestHelper.assertNotEquals;
 import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.mock;
 
@@ -35,13 +36,13 @@ public class AtomEntryTest {
         }
 
         @Test
-        public void shouldNotCreateNullAtomEntry() {
-            assertNotNull(atomEntry);
+        public void shouldNotCreateNullAtomEntry() throws Exception {
+            assertNotNull("Atom entry should not be null.", atomEntry);
         }
 
         @Test
         public void shouldReturnEntry() throws Exception {
-            assertSame(entry, atomEntry.getEntry());
+            assertSame("Getting entry should return the entry object it was instantiated with.", entry, atomEntry.getEntry());
         }
     }
 
@@ -56,18 +57,19 @@ public class AtomEntryTest {
             entry = mock(Entry.class);
             atomEntry = new AtomEntry(entry);
             calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(atomEntry.getUpdated().getTimeInMillis());
+            calendar.setTime(atomEntry.getUpdated().getTime());
         }
 
         @Test
         public void shouldReturnSameDate() throws Exception {
-            assertEquals(calendar.getTimeInMillis(), atomEntry.getUpdated().getTimeInMillis());
+            assertEquals("Times should be equal.", calendar.getTime(), atomEntry.getUpdated().getTime());
         }
 
         @Test
         public void shouldUpdateTimestamp() throws Exception {
+            sleep(500);
             atomEntry.updateTimestamp();
-            assertTrue(calendar.getTime() != atomEntry.getUpdated().getTime());
+            assertNotEquals("Times should be different.", calendar.getTime(), atomEntry.getUpdated().getTime());
         }
     }
 
@@ -89,8 +91,8 @@ public class AtomEntryTest {
 
         @Test
         public void shouldShowOffset() throws Exception {
-            assertTrue(atomEntry.compareTo(atomEntry1) < 0);
-            assertTrue(atomEntry.compareTo(atomEntry) == 0);
+            assertTrue("Offset should be a negative value.", atomEntry.compareTo(atomEntry1) < 0);
+            assertEquals("Offset should be 0", atomEntry.compareTo(atomEntry), 0);
         }
     }
 }
