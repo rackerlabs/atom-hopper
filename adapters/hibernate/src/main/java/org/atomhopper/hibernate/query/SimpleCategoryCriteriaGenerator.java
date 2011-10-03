@@ -21,7 +21,7 @@ public class SimpleCategoryCriteriaGenerator implements CategoryCriteriaGenerato
         
         this.hasTerms = false;
 
-        parse(searchString.trim().toLowerCase());
+        parse(searchString.trim());
     }
 
     private void parse(String searchString) {
