@@ -40,9 +40,7 @@ public class VerifyFeedWeakETagsTest extends JettyIntegrationTestHarness {
 
             final HttpMethod getFeedMethod = new GetMethod(urlAndPort + "/namespace/feed/");
             httpClient.executeMethod(getFeedMethod);
-            
-            Header header = getFeedMethod.getResponseHeader("ETag");
-            assertTrue(getFeedMethod.getResponseHeader("ETag").getValue().contains("W/"));
+            assertTrue("The returned feed should set an etag in the header", getFeedMethod.getResponseHeader("ETag").getValue().contains("W/"));
         }
     }
 }

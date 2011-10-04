@@ -55,8 +55,8 @@ public class GetFeedCategoriesTest extends JettyIntegrationTestHarness {
                 for( int i = 0; i < nodeList.getLength(); i++ ) {
                   // For every category tag
                   Element categoryElement = (Element) nodeList.item(i);
-                  assertTrue(categoryElement.hasAttribute("term"));
-                  assertEquals(categoryElement.getAttribute("term"), term);
+                  assertTrue("The category element should have a term attribute", categoryElement.hasAttribute("term"));
+                  assertEquals("The category element's attribute term should equal the query criteria", categoryElement.getAttribute("term"), term);
                 }        
             }
         }
