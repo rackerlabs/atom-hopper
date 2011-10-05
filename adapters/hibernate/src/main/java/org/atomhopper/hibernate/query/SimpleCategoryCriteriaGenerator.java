@@ -20,6 +20,9 @@ public class SimpleCategoryCriteriaGenerator implements CategoryCriteriaGenerato
         this.inclusionTerms = inclusionTerms;
         
         this.hasTerms = false;
+        
+        if(searchString.trim().length() <= 1)
+            return;
 
         parse(searchString.trim());
     }
