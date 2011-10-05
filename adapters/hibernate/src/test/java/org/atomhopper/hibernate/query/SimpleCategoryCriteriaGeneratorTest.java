@@ -55,6 +55,13 @@ public class SimpleCategoryCriteriaGeneratorTest {
             assertEquals("Generated inclusion term should match '+term_1'", "+term_1", inclusionTerms.get(0));
             assertEquals("Generated inclusion term should match '+term_3'", "+term_2", inclusionTerms.get(1));
         }
+        
+        @Test
+        public void shouldHandleOperatorButNoCriteria() {
+            final SimpleCategoryCriteriaGenerator generator = new SimpleCategoryCriteriaGenerator("+", inclusionTerms);
+            
+            assertEquals(0, inclusionTerms.size());
+        }        
 
         @Test
         public void shouldTrim() {
