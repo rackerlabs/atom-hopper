@@ -1,4 +1,4 @@
-ATOM Hopper - The Java ATOMpub Server
+ATOM Hopper - The Java ATOMPub Server
 
 AtomHopper is a framework for accessing, processing, aggregating and indexing Atom formatted events. Atom Hopper was designed to make it easy to build both generalized and specialized persistence mechanisms for Atom XML data, based on the Atom Syndication Format and the Atom Publishing Protocol.
 
@@ -177,7 +177,7 @@ The entry category must be an exact match and is case sensitive. No wild cards a
 
  http://localhost:8080/namespace/feed/?search=%2BCAT1 
 
-Note: the %2B is the urlencoded value of the + operator.
+Note: The %2B is the urlencoded value of the + operator.
 
 Multiple categories:
 
@@ -191,7 +191,7 @@ You can receive a feed back in JSON format by doing the following:
 
 http://localhost:8080/namespace/feed/?format=json
 
-Note: f you do want to embed JSON into an ATOM XML entry then make sure to wrap the JSON content in an XML CDATA section.
+Note: If you do want to embed JSON into an ATOM XML entry then make sure to wrap the JSON content in an XML CDATA section.
 
 Weak eTag Support
 
