@@ -1,4 +1,27 @@
-ATOM Hopper - The Java ATOMpub Server Framework
+ATOM Hopper - The Java ATOMpub Server
+
+AtomHopper is a framework for accessing, processing, aggregating and indexing Atom formatted events. Atom Hopper was designed to make it easy to build both generalized and specialized persistence mechanisms for Atom XML data, based on the Atom Syndication Format and the Atom Publishing Protocol.
+
+Benefits:
+
+- Simple. Atom Hopper is easy to use. It can be used out-of-the-box as an executable JAR (running within an embedded Jetty Server). For more flexibility, it can be deployed as a WAR file into any Servlet container (ie: Tomcat, Jetty, etc.). Most applications can use Atom Hopper with minimal configuration to specify the Atom Workspaces and the Content storage.
+- Scalable. Atom Hopper is very scalable because it is designed to be stateless, allowing state to be distributed across the web.
+- Layered. Atom Hopper allows any number of intermediaries, such as proxies, gateways, and firewalls so one can easily layer aspects such as Security, Compression, etc. on an as needed basis.
+- Built on a strong foundation. It is built on top of several open source projects such as Apache Abdera (a Java-based Atom Publishing framework) and Hibernate.
+- Flexible. Atom Hopper currently supports the following relational databases: H2, PostgresSQL, and MySQL (plus others that work with Hibernate).
+- High performance. Atom Hopper can handle high loads with high accuracy.
+- Improving. Atom Hopper is under development and actively being worked on.
+
+You can install/run Atom Hopper by several methods:
+
+- Embedded version (for testing and evaluation purposes)
+- via a WAR file
+- via the source code (JAR)
+- via Resource Package Manager (RPM)
+
+Embedded Installation Method
+
+The embedded version of Atom Hopper is completely self-contained and requires nothing more than Oracle's JRE or the Open JDK version 1.6. Please keep in mind though that the embedded version is meant to be used to quickly get Atom Hopper up and running for testing and evaluation purposes, for production environments you should use the WAR or RPM version of Atom Hopper.
 
 The AtomHopperServer.jar (this is the Jetty embedded version) currently takes the following arguments:
 
@@ -23,10 +46,167 @@ This is the location and name of the Atom Hopper configuration file, if not set 
 
 Example: -c file:///Users/joeatom/atomhopper/atomhopper.cfg.xml
 
+WAR Installation Method
+
+You may take the Atom Hopper WAR file and deploy it to an HTTP server/servlet container such as Apache Tomcat, Eclipse Jetty, Glassfish, etc.  Atom Hopper has been tested on Apache Tomcat and Eclipse Jetty.  Follow the instructions of the HTTP server/servlet container and deploy the Atom Hopper WAR file just as your any other application.
+
+RPM Installation Method
+
+Note: To build the actual RPM file you need to be on a Fedora or CentOS system.
+
+With this method, a single yumcommand installs Atom Hopper.
+Required operating environment
+
+    A supported operating system:
+        CentOS 6.0 or higher
+        Fedora 15 or higher
+    Java OpenJDK 1.6** must be installed before running the RPM file
+    Apache Tomcat 6
+        must be installed before running the RPM file
+
+Run from the command prompt:
+
+$ yum install ah-war-VERSION-INFO-HERE.noarch.rpm
+
+After successfully completing the yum installation process, you will have these files in the following locations:
+
+Atom Hopper WAR: /var/lib/tomcat6/webapps
+Atom Hopper H2 database: /opt/atomhopper
+Config file for setting up namespaces and feeds: /etc/atomhopper
+
+Note: The Atom Hopper RPM is not signed, so you might need to override the warning that yum issues when attempting to install the RPM file.
+
+Adapter Configuration
+Order Entries (LIFO or FIFO)
+
+Ordering the ATOM feed (LIFO, FIFO) is configurable per Atom Hopper instance.  This configuration is not supported on the embedded version of Atom Hopper unless you specifically make the change in the source code and re-build the project.  Using the RPM version of Atom Hopper though you can make this change inside the application-context.xml file.  On a CentOS/Fedora system this file exists in: /etc/atomhopper/  If your using the WAR version to Atom Hopper then this file will be in the extracted folders where you placed the WAR file.  As an example, on Apache Tomcat you can look in the META-INF folder of the Atom Hopper folder inside the webapps folder.  Any changes to this file requires a restart of Tomcat/Jetty/etc.
+
+Inside the application-context.xml file look for the following:
+
+<!-- FeedOrder Values: asc|desc -->
+<property name="feedOrder" value="desc"/>
+
+By default the ordering is set to desc (LIFO). You can change it to asc (FIFO) by making the following change:
+
+<!-- FeedOrder Values: asc|desc -->
+<property name="feedOrder" value="asc"/>
+
+Query parameters
+
+Parameter Name 	Description 			Data Type/Acceptable Values 	Default
+
+marker 		The unique ID of an
+		Atom Entry 	  	  	 
+direction 	The direction from the		forward or backward 
+		current marker (or entry)
+		to start getting more
+		entries from 		  	 
+limit 	  	  								25
+format		Returns the feed in JSON	json
+		format
+
+An HTTP POST is used to insert new ATOM entries into Atom Hopper.
+
+Add Entry:
+
+The following is an example of a simple ATOM entry (with three categories):
+
+<entry xmlns="http://www.w3.org/2005/Atom">
+  <title type="text">This is the title</title>
+  <updated>2011-09-22T21:39:49.904Z</updated>
+  <author>
+    <name>John Doe</name>
+  </author>
+  <content type="text">Hello World</content>
+  <category term="MyCategory 1" />
+  <category term="MyCategory 2" />
+  <category term="MyCategory 3" />
+</entry>
+
+The ATOM XML is sent to Atom Hopper via an HTTP POST along with the following HTTP Header:
+
+Content-Type: application/atom+xml
+
+Add Category
+
+To add categories an ATOM entry needs to include the category element along with a term attribute:
+
+<category term="mycategory1" />
+
+Multiple categories:
+
+<category term="mycategory1" />
+<category term="mycategory2" />
+
+GET
+
+An HTTP GET is used to retrieve ATOM entries from Atom Hopper. The HTTP GET request supports asking for a specific entry, forward and backward paging, category search, and JSON feed returns.
+
+ http://localhost:8080/namespace/feed/ 
+
+Note: Entry order (LIFO or FIFO) is specified in the configuration file when Atom Hopper is installed.
+
+Select Entries by Marker
+
+The uuid keyword is the unique ID of the entry.
+The direction parameter is either forward or backward*. * If the marker is used then the direction must be specified as well.
+
+ http://localhost:8080/namespace/feed/?marker=urn:uuid:8439541b-b40e-4c23-b290-2820bd64257d&direction=forward 
+
+ http://localhost:8080/namespace/feed/?marker=urn:uuid:8439541b-b40e-4c23-b290-2820bd64257d&direction=backward 
+
+Forward and Backward Paging
+
+The limit parameter may be used to specify the number of entries to return.
+
+ http://localhost:8080/namespace/feed/?marker=urn:uuid:8439541b-b40e-4c23-b290-2820bd64257d&direction=forward&limit=2 
+
+ http://localhost:8080/namespace/feed/?marker=urn:uuid:8439541b-b40e-4c23-b290-2820bd64257d&direction=backward&limit=2 
+
+Using entries
+
+Entries return one ATOM XML entry, it can be used to return a specific entry by itself.  Mark will return one or more entries as per limit.
+
+ http://localhost:8080/namespace/feed/entries/urn:uuid:8439541b-b40e-4c23-b290-2820bd64257d 
+
+Filter Entries by Category
+
+Single category:
+
+The entry category must be an exact match and is case sensitive. No wild cards are currently supported.  The following is an example of searching on a category entered as CAT1.
+
+ http://localhost:8080/namespace/feed/?search=%2BCAT1 
+
+Note: the %2B is the urlencoded value of the + operator.
+
+Multiple categories:
+
+To perform a search on multiple categories simply append additional categories (CAT1 and CAT5) examine the following example:
+
+ http://localhost:8080/namespace/feed/?search=%2BCAT1%2BCAT5 
+
+JSON Feed Returns
+
+You can receive a feed back in JSON format by doing the following:
+
+http://localhost:8080/namespace/feed/?format=json
+
+Note: f you do want to embed JSON into an ATOM XML entry then make sure to wrap the JSON content in an XML CDATA section.
+
+Weak eTag Support
+
+Atom Hopper supports weak eTags.  Weak eTags are sent back in the HTTP header name of Etag.  An weak eTag for a feed containing more than one ATOM entry looks like this:
+
+ W/"urn:uuid:21d39ce9-940b-4277-baa3-7daa3f209e76:urn:uuid:def3ba91-799f-4347-833e-d9a97d3359dc" 
+
+An weak eTag for a feed only one ATOM entry looks like this:
+
+ W/"urn:uuid:21d39ce9-940b-4277-baa3-7daa3f209e76:urn:uuid:21d39ce9-940b-4277-baa3-7daa3f209e76" 
+
 
 Notes Regarding licensing
 
-All files contained with this distribution of ATOM Hopper are licenced 
+All files contained with this distribution of Atom Hopper are licenced 
 under the Apache License v2.0 (http://www.apache.org/licenses/LICENSE-2.0).
 You must agree to the terms of this license and abide by them before
 viewing, utilizing or distributing the source code contained within this distribution.
