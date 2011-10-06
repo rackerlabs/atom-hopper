@@ -54,7 +54,7 @@ RPM Installation Method
 
 Note: To build the actual RPM file you need to be on a Fedora or CentOS system.
 
-With this method, a single yumcommand installs Atom Hopper.
+With this method, a single yum command installs Atom Hopper.
 Required operating environment
 
     A supported operating system:
