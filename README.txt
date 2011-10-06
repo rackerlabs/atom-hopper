@@ -1,6 +1,6 @@
 ATOM Hopper - The Java ATOMPub Server
 
-AtomHopper is a framework for accessing, processing, aggregating and indexing Atom formatted events. Atom Hopper was designed to make it easy to build both generalized and specialized persistence mechanisms for Atom XML data, based on the Atom Syndication Format and the Atom Publishing Protocol.
+Atom Hopper is a framework for accessing, processing, aggregating and indexing Atom formatted events. Atom Hopper was designed to make it easy to build both generalized and specialized persistence mechanisms for Atom XML data, based on the Atom Syndication Format and the Atom Publishing Protocol.
 
 Benefits:
 
@@ -60,9 +60,8 @@ Required operating environment
     A supported operating system:
         CentOS 6.0 or higher
         Fedora 15 or higher
-    Java OpenJDK 1.6** must be installed before running the RPM file
-    Apache Tomcat 6
-        must be installed before running the RPM file
+    Java OpenJDK 1.6 must be installed before running the RPM file
+    Apache Tomcat 6 must be installed before running the RPM file
 
 Run from the command prompt:
 
@@ -149,7 +148,8 @@ Note: Entry order (LIFO or FIFO) is specified in the configuration file when Ato
 Select Entries by Marker
 
 The uuid keyword is the unique ID of the entry.
-The direction parameter is either forward or backward*. * If the marker is used then the direction must be specified as well.
+
+The direction parameter is either forward or backward.  If the marker is used then the direction must be specified as well.
 
  http://localhost:8080/namespace/feed/?marker=urn:uuid:8439541b-b40e-4c23-b290-2820bd64257d&direction=forward 
 
