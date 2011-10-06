@@ -30,6 +30,11 @@
             <groupId>org.atomhopper.adapter</groupId>
             <artifactId>hibernate-adapter</artifactId>
         </dependency>
+        
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-c3p0</artifactId>
+        </dependency>          
 
         <dependency>
             <groupId>org.eclipse.jetty</groupId>

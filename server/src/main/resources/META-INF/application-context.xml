@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
                             http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-    <!-- <3 Hibernate -->
+    <!-- Hibernate -->
     <bean name="feed-repository-bean" class="org.atomhopper.hibernate.HibernateFeedRepository">
         <constructor-arg>
             <map>                
@@ -38,6 +38,15 @@
                 
                 <entry key="hibernate.hbm2ddl.auto" value="update" />
                 <!--<entry key="hibernate.show_sql" value="true" />-->
+                
+                <!-- Start C3P0 Config -->
+                <entry key="hibernate.c3p0.min_size" value="5" />
+                <entry key="hibernate.c3p0.max_size" value="100" />
+                <entry key="hibernate.c3p0.initialPoolSize" value="5" />
+                <entry key="hibernate.c3p0.timeout" value="300" />
+                <entry key="hibernate.c3p0.max_statements" value="50" />
+                <entry key="hibernate.c3p0.idle_test_period" value="3000" />
+                <!-- End C3P0 Config -->                
             </map>
         </constructor-arg>
     </bean>
