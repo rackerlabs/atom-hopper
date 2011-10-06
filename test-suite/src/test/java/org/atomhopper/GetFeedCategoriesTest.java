@@ -35,7 +35,7 @@ public class GetFeedCategoriesTest extends JettyIntegrationTestHarness {
         return post;
     }
 
-    public static class WhenGettingFeedsWithCatrgories {
+    public static class WhenGettingFeedsWithCategories {
 
         @Test
         public void shouldCorrectlyInsertAndRetrieveEntriesWithCategories() throws Exception {        

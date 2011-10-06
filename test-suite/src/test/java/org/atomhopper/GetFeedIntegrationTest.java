@@ -10,6 +10,9 @@ import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+import java.io.IOException;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -30,10 +33,10 @@ public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
         return new GetMethod(urlAndPort + "/namespace/feed/entries/" + entryId);
     }
 
-    public static PostMethod newPostEntryMethod(String entryId) {
+    public static PostMethod newPostEntryMethod() {
         final PostMethod post = new PostMethod(urlAndPort + "/namespace/feed/");
         post.addRequestHeader(new Header("content-type", "application/atom+xml"));
-        post.setRequestBody("<?xml version=\"1.0\" ?><entry xmlns=\"http://www.w3.org/2005/Atom\"><id>" + entryId + "</id><content>test</content></entry>");
+        post.setRequestBody("<?xml version=\"1.0\" ?><entry xmlns=\"http://www.w3.org/2005/Atom\"><content>test</content></entry>");
 
         return post;
     }
@@ -52,22 +55,22 @@ public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
     public static class WhenGettingFeedsWithMarker {
 
         @Test
-      public void shouldHaveCorrectLinkUrls() throws Exception {                    
-          final HttpMethod getFeedMethod = new GetMethod(urlAndPort + "/namespace/feed");          
+      public void shouldHaveCorrectLinkUrls() throws Exception {
+          final HttpMethod getFeedMethod = new GetMethod(urlAndPort + "/namespace/feed");
           assertEquals("Getting a feed should return a 200", HttpStatus.SC_OK, httpClient.executeMethod(getFeedMethod));
-           
+
           Document doc = xml.toDOM(getFeedMethod.getResponseBodyAsString());
-          
+
           assertNotNull("The returned XML should not be null", doc);
-          xml.assertHasValue(doc,"/feed/link[@rel='current']/@href", urlAndPort + "/namespace/feed");          
-          xml.assertHasValue(doc,"/feed/link[@rel='next']/@href", urlAndPort + "/namespace/feed?marker=" + entryId);          
+          xml.assertHasValue(doc,"/feed/link[@rel='current']/@href", urlAndPort + "/namespace/feed");
+          xml.assertHasValue(doc,"/feed/link[@rel='next']/@href", urlAndPort + "/namespace/feed?marker=" + entryId);
         }
-      
+
         @Test
         public void shouldPreserveLinkParameters() throws Exception {
           final HttpMethod getFeedMethod = new GetMethod(urlAndPort + "/namespace/feed?marker=" + entryId + "&foo=bar");
           assertEquals("Getting a feed should return a 200", HttpStatus.SC_OK, httpClient.executeMethod(getFeedMethod));
-          
+
           Document doc = xml.toDOM(getFeedMethod.getResponseBodyAsString());
             System.out.println("=================================================");
             System.out.println(new String(getFeedMethod.getResponseBody()));
@@ -97,11 +100,19 @@ public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
 
         @Test
         public void shouldReturnFeedWithOneElementAfterPublishingAnEntry() throws Exception {
-            final HttpMethod postMethod = newPostEntryMethod(entryId);            
-            assertEquals("Getting a feed should return a 201", HttpStatus.SC_CREATED, httpClient.executeMethod(postMethod));            
-            
-            final HttpMethod getEntryMethod = newGetEntryMethod(entryId);
+            final HttpMethod postMethod = newPostEntryMethod();
+            assertEquals("Getting a feed should return a 201", HttpStatus.SC_CREATED, httpClient.executeMethod(postMethod));
+
+            Document doc = xml.toDOM(postMethod.getResponseBodyAsString());
+            String uuid = getUuidHelper(postMethod);
+            final HttpMethod getEntryMethod = newGetEntryMethod(uuid);
+
+            assertNotNull("The returned XML should not be null", doc);
             assertEquals("Getting a recently added entry should return a 200", HttpStatus.SC_OK, httpClient.executeMethod(getEntryMethod));
         }
+    }
+
+    private static String getUuidHelper(HttpMethod httpMethod) throws SAXException, IOException {
+        return xml.toDOM(httpMethod.getResponseBodyAsString()).getElementsByTagName("id").item(0).getTextContent();
     }
 }
