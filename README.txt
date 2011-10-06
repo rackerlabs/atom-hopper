@@ -21,59 +21,58 @@ You can install/run Atom Hopper by several methods:
 
 Embedded Installation Method
 
-The embedded version of Atom Hopper is completely self-contained and requires nothing more than Oracle's JRE or the Open JDK version 1.6. Please keep in mind though that the embedded version is meant to be used to quickly get Atom Hopper up and running for testing and evaluation purposes, for production environments you should use the WAR or RPM version of Atom Hopper.
+The embedded version of Atom Hopper is completely self-contained and requires nothing more than Oracle's JRE or the Open JDK version 1.6. Please keep in mind though that the embedded version is meant to be used to quickly get Atom Hopper up and running for testing and evaluation purposes.  For production environments you should use the WAR or RPM version of Atom Hopper.
 
 The AtomHopperServer.jar (this is the Jetty embedded version) currently takes the following arguments:
 
-The first two arguments are not optional and must be set to either 'start' or 'stop' Atom Hopper: start | stop
+The first two arguments are not optional and must be set to either: start | stop
 
 Example: java -jar AtomHopperServer.jar start
 
 -p (alias --port)
-This specifies the port number that Atom Hopper will listen to for incoming requests, if not set it will use a default port of 8080
+This specifies the port number that Atom Hopper will listen to for incoming requests, if its not set it will use the default port of 8080
 
 Example: -p 8088
 - this would specify that Atom Hopper listen to port 8088 for incoming requests
 
 -s (alias --shutdown-port)
-This is the port used to communicate a shutdown request to the Atom Hopper Server, if not set it will use a default port of 8818
+This is the port used to communicate a shutdown request to the Atom Hopper server, if its not set it will use a default port of 8818
 
 Example: -s 8090
 - this would specify that Atom Hopper should listen to port 8090 for the shutdown command
 
 -c (alias --config-file)
-This is the location and name of the Atom Hopper configuration file, if not set it will use default settings
+This is the location and name of the Atom Hopper configuration file, if not set it will use the default settings.
 
 Example: -c file:///Users/joeatom/atomhopper/atomhopper.cfg.xml
 
 WAR Installation Method
 
-You may take the Atom Hopper WAR file and deploy it to an HTTP server/servlet container such as Apache Tomcat, Eclipse Jetty, Glassfish, etc.  Atom Hopper has been tested on Apache Tomcat and Eclipse Jetty.  Follow the instructions of the HTTP server/servlet container and deploy the Atom Hopper WAR file just as your any other application.
+You may take the Atom Hopper WAR file and deploy it to an HTTP server/servlet container such as Apache Tomcat, Eclipse Jetty, Glassfish, etc.  Atom Hopper has been tested on Apache Tomcat and Eclipse Jetty.  Follow the instructions of the HTTP server/servlet container and deploy the Atom Hopper WAR file just as you would any other application.
 
 RPM Installation Method
 
 Note: To build the actual RPM file you need to be on a Fedora or CentOS system.
 
 With this method, a single yum command installs Atom Hopper.
-Required operating environment
 
-    A supported operating system:
+Required operating environment:
+- A supported operating system:
         CentOS 6.0 or higher
         Fedora 15 or higher
-    Java OpenJDK 1.6 must be installed before running the RPM file
-    Apache Tomcat 6 must be installed before running the RPM file
+- Java OpenJDK 1.6 (or Oracle's JRE) must be installed before running the RPM file
+- Apache Tomcat 6 must be installed before running the RPM file
 
 Run from the command prompt:
-
 $ yum install ah-war-VERSION-INFO-HERE.noarch.rpm
 
-After successfully completing the yum installation process, you will have these files in the following locations:
+After successfully completing the yum installation process you will have these files in the following locations:
 
 Atom Hopper WAR: /var/lib/tomcat6/webapps
 Atom Hopper H2 database: /opt/atomhopper
 Config file for setting up namespaces and feeds: /etc/atomhopper
 
-Note: The Atom Hopper RPM is not signed, so you might need to override the warning that yum issues when attempting to install the RPM file.
+Note: The Atom Hopper RPM is not signed so you might need to override the warning that yum issues when attempting to install the RPM file.
 
 Adapter Configuration
 Order Entries (LIFO or FIFO)
@@ -106,7 +105,7 @@ format		Returns the feed in JSON	json
 
 An HTTP POST is used to insert new ATOM entries into Atom Hopper.
 
-Add Entry:
+Adding a New Entry
 
 The following is an example of a simple ATOM entry (with three categories):
 
@@ -126,9 +125,9 @@ The ATOM XML is sent to Atom Hopper via an HTTP POST along with the following HT
 
 Content-Type: application/atom+xml
 
-Add Category
+Adding One or More Categories
 
-To add categories an ATOM entry needs to include the category element along with a term attribute:
+To add categories to an ATOM entry you need to include the category element along with a term attribute:
 
 <category term="mycategory1" />
 
@@ -143,11 +142,11 @@ An HTTP GET is used to retrieve ATOM entries from Atom Hopper. The HTTP GET requ
 
  http://localhost:8080/namespace/feed/ 
 
-Note: Entry order (LIFO or FIFO) is specified in the configuration file when Atom Hopper is installed.
+Note: Entry order (LIFO or FIFO) is specified in the configuration file where Atom Hopper is installed.
 
 Select Entries by Marker
 
-The uuid keyword is the unique ID of the entry.
+Note: The uuid keyword is the unique ID of the entry.
 
 The direction parameter is either forward or backward.  If the marker is used then the direction must be specified as well.
 
@@ -157,15 +156,15 @@ The direction parameter is either forward or backward.  If the marker is used th
 
 Forward and Backward Paging
 
-The limit parameter may be used to specify the number of entries to return.
+The limit parameter may be used to specify the number of entries to return (by default this is set to 25).
 
- http://localhost:8080/namespace/feed/?marker=urn:uuid:8439541b-b40e-4c23-b290-2820bd64257d&direction=forward&limit=2 
+ http://localhost:8080/namespace/feed/?marker=urn:uuid:8439541b-b40e-4c23-b290-2820bd64257d&direction=forward&limit=50 
 
- http://localhost:8080/namespace/feed/?marker=urn:uuid:8439541b-b40e-4c23-b290-2820bd64257d&direction=backward&limit=2 
+ http://localhost:8080/namespace/feed/?marker=urn:uuid:8439541b-b40e-4c23-b290-2820bd64257d&direction=backward&limit=50 
 
-Using entries
+Using Entries
 
-Entries return one ATOM XML entry, it can be used to return a specific entry by itself.  Mark will return one or more entries as per limit.
+Entries return one ATOM XML entry, it can be used to return a specific entry by itself.
 
  http://localhost:8080/namespace/feed/entries/urn:uuid:8439541b-b40e-4c23-b290-2820bd64257d 
 
@@ -173,7 +172,7 @@ Filter Entries by Category
 
 Single category:
 
-The entry category must be an exact match and is case sensitive. No wild cards are currently supported.  The following is an example of searching on a category entered as CAT1.
+The entry category must be an exact match and is (currently) case sensitive. No wild cards are currently supported.  The following is an example of searching on a category entered as CAT1.
 
  http://localhost:8080/namespace/feed/?search=%2BCAT1 
 
@@ -181,7 +180,7 @@ Note: The %2B is the urlencoded value of the + operator.
 
 Multiple categories:
 
-To perform a search on multiple categories simply append additional categories (CAT1 and CAT5) examine the following example:
+To perform a search on multiple categories simply append additional categories examine the following example that search for two categories (CAT1 and CAT5):
 
  http://localhost:8080/namespace/feed/?search=%2BCAT1%2BCAT5 
 
@@ -195,11 +194,11 @@ Note: If you do want to embed JSON into an ATOM XML entry then make sure to wrap
 
 Weak eTag Support
 
-Atom Hopper supports weak eTags.  Weak eTags are sent back in the HTTP header name of Etag.  An weak eTag for a feed containing more than one ATOM entry looks like this:
+Atom Hopper supports weak eTags.  Weak eTags are sent back in the HTTP header with a name of Etag.  A weak eTag for a feed containing more than one ATOM entry looks like this:
 
  W/"urn:uuid:21d39ce9-940b-4277-baa3-7daa3f209e76:urn:uuid:def3ba91-799f-4347-833e-d9a97d3359dc" 
 
-An weak eTag for a feed only one ATOM entry looks like this:
+A weak eTag for a feed with only one ATOM entry looks like this:
 
  W/"urn:uuid:21d39ce9-940b-4277-baa3-7daa3f209e76:urn:uuid:21d39ce9-940b-4277-baa3-7daa3f209e76" 
 
