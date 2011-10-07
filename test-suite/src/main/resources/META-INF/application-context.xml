@@ -30,7 +30,7 @@
                 <!--                
                 <entry key="hibernate.connection.driver_class" value="org.postgresql.Driver" />
                 <entry key="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
-                <entry key="hibernate.connection.url" value="jdbc:postgresql://10.6.61.110:5432/atomhopper" />
+                <entry key="hibernate.connection.url" value="jdbc:postgresql://localhost:5432/atomhopper" />
                 <entry key="hibernate.connection.username" value="postgres" />
                 <entry key="hibernate.connection.password" value="password" />
                 -->                
