@@ -2,9 +2,6 @@ package org.atomhopper.util;
 
 import org.junit.Assert;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
 /**
  * User: sbrayman
  * Date: Sep 29, 2011
@@ -38,6 +35,3 @@ public final class TestHelper {
         Assert.fail(formatted + "expected:<" + shouldNotBe + "> equaled:<" + actual + ">");
     }
 }
-
-    
-
