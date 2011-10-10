@@ -12,6 +12,8 @@ import org.junit.runner.RunWith;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
 
 import static junit.framework.Assert.assertEquals;
@@ -23,7 +25,7 @@ public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
     private static final HttpClient httpClient = new HttpClient();
     private static final XmlUtil xml = new XmlUtil();
     private static final String urlAndPort = "http://localhost:" + getPort();
-    private static final String entryId  = Integer.toString(1 + (int)(Math.random() * ((100 - 1) + 1)));
+    private static final String entryId = Integer.toString(1 + (int) (Math.random() * ((100 - 1) + 1)));
 
     public static GetMethod newGetFeedMethod() {
         return new GetMethod(urlAndPort + "/namespace/feed/");
@@ -33,8 +35,8 @@ public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
         return new GetMethod(urlAndPort + "/namespace/feed/entries/" + entryId);
     }
 
-    public static PostMethod newPostEntryMethod() {
-        final PostMethod post = new PostMethod(urlAndPort + "/namespace/feed/");
+    public static PostMethod newPostEntryMethod(String parameter) {
+        final PostMethod post = new PostMethod(urlAndPort + "/namespace/feed/" + parameter);
         post.addRequestHeader(new Header("content-type", "application/atom+xml"));
         post.setRequestBody("<?xml version=\"1.0\" ?><entry xmlns=\"http://www.w3.org/2005/Atom\"><content>test</content></entry>");
 
@@ -55,52 +57,40 @@ public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
     public static class WhenGettingFeedsWithMarker {
 
         @Test
-      public void shouldHaveCorrectLinkUrls() throws Exception {
-          final HttpMethod getFeedMethod = new GetMethod(urlAndPort + "/namespace/feed");
-          assertEquals("Getting a feed should return a 200", HttpStatus.SC_OK, httpClient.executeMethod(getFeedMethod));
+        public void shouldHaveCorrectLinkUrls() throws Exception {
+            final HttpMethod getFeedMethod = new GetMethod(urlAndPort + "/namespace/feed");
+            assertEquals("Getting a feed should return a 200", HttpStatus.SC_OK, httpClient.executeMethod(getFeedMethod));
 
-          Document doc = xml.toDOM(getFeedMethod.getResponseBodyAsString());
+            Document doc = xml.toDOM(getFeedMethod.getResponseBodyAsString());
+            XPath xPath = XPathFactory.newInstance().newXPath();
+            String linkUrl = xPath.evaluate("/feed/link[@rel='next']/@href", doc);
 
-          assertNotNull("The returned XML should not be null", doc);
-          xml.assertHasValue(doc,"/feed/link[@rel='current']/@href", urlAndPort + "/namespace/feed");
-          xml.assertHasValue(doc,"/feed/link[@rel='next']/@href", urlAndPort + "/namespace/feed?marker=" + entryId);
-        }
-
-        @Test
-        public void shouldPreserveLinkParameters() throws Exception {
-          final HttpMethod getFeedMethod = new GetMethod(urlAndPort + "/namespace/feed?marker=" + entryId + "&foo=bar");
-          assertEquals("Getting a feed should return a 200", HttpStatus.SC_OK, httpClient.executeMethod(getFeedMethod));
-
-          Document doc = xml.toDOM(getFeedMethod.getResponseBodyAsString());
-            System.out.println("=================================================");
-            System.out.println(new String(getFeedMethod.getResponseBody()));
-
-          assertNotNull("The returned XML should not be null", doc);
-          xml.assertHasValue(doc,"/feed/link[@rel='current']/@href", urlAndPort + "/namespace/feed?marker=" + entryId + "&foo=bar");
-          xml.assertHasValue(doc,"/feed/link[@rel='next']/@href", urlAndPort + "/namespace/feed?marker=" + entryId + "&foo=bar");
+            assertNotNull("The returned XML should not be null", doc);
+            xml.assertHasValue(doc, "/feed/link[@rel='current']/@href", urlAndPort + "/namespace/feed");
+            xml.assertHasValue(doc, "/feed/link[@rel='next']/@href", linkUrl);
         }
 
         @Test
         public void shouldPreserveAllLinkParameters() throws Exception {
-            final HttpMethod getFeedMethod = new GetMethod("http://localhost:24156/namespace/feed?marker=1&awesome=bar&awesome=foo");
+            final HttpMethod getFeedMethod = new GetMethod("http://localhost:24156/namespace/feed?awesome=bar&awesome=foo");
 
             assertEquals("Getting a feed should return a 200", HttpStatus.SC_OK, httpClient.executeMethod(getFeedMethod));
 
             Document doc = xml.toDOM(getFeedMethod.getResponseBodyAsString());
+            XPath xPath = XPathFactory.newInstance().newXPath();
+            String linkUrl = xPath.evaluate("/feed/link[@rel='next']/@href", doc);
             System.out.println("=================================================");
 
-            xml.assertHasValue(doc, "/feed/link[@rel='current']/@href", "http://localhost:24156/namespace/feed?marker=1&awesome=bar&awesome=foo");
-            xml.assertHasValue(doc, "/feed/link[@rel='next']/@href", "http://localhost:24156/namespace/feed?marker=1&awesome=bar&awesome=foo");
-
+            xml.assertHasValue(doc, "/feed/link[@rel='current']/@href", "http://localhost:24156/namespace/feed?awesome=bar&awesome=foo");
+            xml.assertHasValue(doc, "/feed/link[@rel='next']/@href", linkUrl);
         }
-
     }
 
     public static class WhenPublishingToFeeds {
 
         @Test
         public void shouldReturnFeedWithOneElementAfterPublishingAnEntry() throws Exception {
-            final HttpMethod postMethod = newPostEntryMethod();
+            final HttpMethod postMethod = newPostEntryMethod("");
             assertEquals("Getting a feed should return a 201", HttpStatus.SC_CREATED, httpClient.executeMethod(postMethod));
 
             Document doc = xml.toDOM(postMethod.getResponseBodyAsString());
