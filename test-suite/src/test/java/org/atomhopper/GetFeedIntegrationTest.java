@@ -25,7 +25,6 @@ public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
     private static final HttpClient httpClient = new HttpClient();
     private static final XmlUtil xml = new XmlUtil();
     private static final String urlAndPort = "http://localhost:" + getPort();
-    private static final String entryId = Integer.toString(1 + (int) (Math.random() * ((100 - 1) + 1)));
 
     public static GetMethod newGetFeedMethod() {
         return new GetMethod(urlAndPort + "/namespace/feed/");
@@ -83,6 +82,16 @@ public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
 
             xml.assertHasValue(doc, "/feed/link[@rel='current']/@href", "http://localhost:24156/namespace/feed?awesome=bar&awesome=foo");
             xml.assertHasValue(doc, "/feed/link[@rel='next']/@href", linkUrl);
+        }
+
+        @Test
+        public void shouldErrorWithoutMarker() throws Exception{
+
+            final HttpMethod getFeedMethod = new GetMethod("http://localhost:24156/namespace/feed?marker=NO_BUENO");
+
+            assertEquals("Getting a feed should return a 500 with bad marker id.", HttpStatus.SC_INTERNAL_SERVER_ERROR, httpClient.executeMethod(getFeedMethod));
+
+            //TODO: Should this be tested with a bad marker id, no marker id, no "marker=" query string or what?
         }
     }
 

@@ -1,9 +1,10 @@
 package org.atomhopper.hibernate.query;
 
-import java.util.LinkedList;
-import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class SimpleCategoryCriteriaGenerator implements CategoryCriteriaGenerator {
 
@@ -18,11 +19,12 @@ public class SimpleCategoryCriteriaGenerator implements CategoryCriteriaGenerato
 
     SimpleCategoryCriteriaGenerator(String searchString, List<String> inclusionTerms) {
         this.inclusionTerms = inclusionTerms;
-        
+
         this.hasTerms = false;
-        
-        if(searchString.trim().length() <= 1)
+
+        if (searchString.trim().length() <= 1) {
             return;
+        }
 
         parse(searchString.trim());
     }
@@ -40,7 +42,7 @@ public class SimpleCategoryCriteriaGenerator implements CategoryCriteriaGenerato
                     inclusionTerms.add(searchTermBuilder.toString());
                     break;
             }
-        }       
+        }
     }
 
     @Override
