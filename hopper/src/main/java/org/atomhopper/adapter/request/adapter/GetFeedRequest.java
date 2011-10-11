@@ -19,4 +19,6 @@ public interface GetFeedRequest extends FeedRequest {
     String getPageMarker();
     
     String getPageSize();
+
+    String getDirection();
 }
