@@ -18,6 +18,7 @@ import java.io.IOException;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(Enclosed.class)
 public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
@@ -25,7 +26,6 @@ public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
     private static final HttpClient httpClient = new HttpClient();
     private static final XmlUtil xml = new XmlUtil();
     private static final String urlAndPort = "http://localhost:" + getPort();
-    private static final String entryId = Integer.toString(1 + (int) (Math.random() * ((100 - 1) + 1)));
 
     public static GetMethod newGetFeedMethod() {
         return new GetMethod(urlAndPort + "/namespace/feed/");
@@ -33,6 +33,10 @@ public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
 
     public static GetMethod newGetEntryMethod(String entryId) {
         return new GetMethod(urlAndPort + "/namespace/feed/entries/" + entryId);
+    }
+
+    public static GetMethod newGetEntryWithMarkerMethod(String markerId) {
+        return new GetMethod(urlAndPort + "/namespace/feed?marker=" + markerId);
     }
 
     public static PostMethod newPostEntryMethod(String parameter) {
@@ -83,6 +87,24 @@ public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
 
             xml.assertHasValue(doc, "/feed/link[@rel='current']/@href", "http://localhost:24156/namespace/feed?awesome=bar&awesome=foo");
             xml.assertHasValue(doc, "/feed/link[@rel='next']/@href", linkUrl);
+        }
+
+        @Test
+        public void shouldErrorWithBadMarker() throws Exception {
+
+            final HttpMethod getFeedMethod = new GetMethod("http://localhost:24156/namespace/feed?marker=NO_BUENO");
+
+            assertEquals("Getting a feed should return a 500 with bad marker id.", HttpStatus.SC_INTERNAL_SERVER_ERROR, httpClient.executeMethod(getFeedMethod));
+        }
+
+        @Test
+        public void shouldDefaultToForward() throws Exception {
+            final HttpMethod postMethod = newPostEntryMethod("");
+            assertEquals("Posting a feed should return a 201", HttpStatus.SC_CREATED, httpClient.executeMethod(postMethod));
+            String uuid = getUuidHelper(postMethod);
+            final HttpMethod getEntryMethod = newGetEntryWithMarkerMethod(uuid);
+
+            assertEquals("Getting an entry with a marker, but missing the direction, should succeed.", HttpStatus.SC_OK, httpClient.executeMethod(getEntryMethod));
         }
     }
 

@@ -22,12 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class HibernateFeedRepository implements FeedRepository {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HibernateFeedRepository.class);
     private final HibernateSessionManager sessionManager;
     private static final String DATE_LAST_UPDATED = "dateLastUpdated";
 
