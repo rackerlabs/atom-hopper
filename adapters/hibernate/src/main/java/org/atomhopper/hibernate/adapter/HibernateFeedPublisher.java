@@ -76,7 +76,7 @@ public class HibernateFeedPublisher implements FeedPublisher {
         final Set<PersistedCategory> entryCategories = new HashSet<PersistedCategory>();
 
         for (org.apache.abdera.model.Category abderaCat : abderaCategories) {
-            entryCategories.add(new PersistedCategory(abderaCat.getTerm()));
+            entryCategories.add(new PersistedCategory(abderaCat.getTerm().toLowerCase()));
         }
 
         return entryCategories;
