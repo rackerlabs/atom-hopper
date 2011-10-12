@@ -18,6 +18,7 @@ import java.io.IOException;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(Enclosed.class)
 public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
@@ -32,6 +33,10 @@ public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
 
     public static GetMethod newGetEntryMethod(String entryId) {
         return new GetMethod(urlAndPort + "/namespace/feed/entries/" + entryId);
+    }
+
+    public static GetMethod newGetEntryWithMarkerMethod(String markerId) {
+        return new GetMethod(urlAndPort + "/namespace/feed?marker=" + markerId);
     }
 
     public static PostMethod newPostEntryMethod(String parameter) {
@@ -85,13 +90,21 @@ public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
         }
 
         @Test
-        public void shouldErrorWithoutMarker() throws Exception{
+        public void shouldErrorWithBadMarker() throws Exception {
 
             final HttpMethod getFeedMethod = new GetMethod("http://localhost:24156/namespace/feed?marker=NO_BUENO");
 
             assertEquals("Getting a feed should return a 500 with bad marker id.", HttpStatus.SC_INTERNAL_SERVER_ERROR, httpClient.executeMethod(getFeedMethod));
+        }
 
-            //TODO: Should this be tested with a bad marker id, no marker id, no "marker=" query string or what?
+        @Test
+        public void shouldDefaultToForward() throws Exception {
+            final HttpMethod postMethod = newPostEntryMethod("");
+            assertEquals("Posting a feed should return a 201", HttpStatus.SC_CREATED, httpClient.executeMethod(postMethod));
+            String uuid = getUuidHelper(postMethod);
+            final HttpMethod getEntryMethod = newGetEntryWithMarkerMethod(uuid);
+
+            assertEquals("Getting an entry with a marker, but missing the direction, should succeed.", HttpStatus.SC_OK, httpClient.executeMethod(getEntryMethod));
         }
     }
 
