@@ -1,12 +1,14 @@
 package org.atomhopper.adapter.request.adapter.impl;
 
-import java.util.Collections;
-import java.util.List;
-import org.atomhopper.adapter.request.adapter.GetFeedRequest;
-import org.atomhopper.adapter.request.RequestQueryParameter;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.RequestContext;
+import org.atomhopper.adapter.request.RequestQueryParameter;
+import org.atomhopper.adapter.request.adapter.GetFeedRequest;
 import org.atomhopper.adapter.request.feed.AbstractFeedRequest;
+import org.h2.util.StringUtils;
+
+import java.util.Collections;
+import java.util.List;
 
 public class GetFeedRequestImpl extends AbstractFeedRequest implements GetFeedRequest {
 
@@ -39,5 +41,10 @@ public class GetFeedRequestImpl extends AbstractFeedRequest implements GetFeedRe
     @Override
     public Feed newFeed() {
         return getAbdera().newFeed();
+    }
+
+    public String getDirection() {
+        final String direction = this.getRequestParameter(RequestQueryParameter.PAGE_DIRECTION.toString());
+        return !StringUtils.isNullOrEmpty(direction) ? direction : "forward";
     }
 }

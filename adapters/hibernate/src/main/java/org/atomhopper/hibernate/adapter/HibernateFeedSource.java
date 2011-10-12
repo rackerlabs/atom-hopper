@@ -130,7 +130,7 @@ public class HibernateFeedSource implements FeedSource {
         PageDirection pageDirection;
 
         try {
-            final String pageDirectionValue = getFeedRequest.getRequestParameter(RequestQueryParameter.PAGE_DIRECTION.toString());
+            final String pageDirectionValue = getFeedRequest.getDirection();
             pageDirection = PageDirection.valueOf(pageDirectionValue.toUpperCase());
         } catch (Exception iae) {
             return ResponseBuilder.badRequest("Marker must have a page direction specified as either \"forward\" or \"backward\"");
