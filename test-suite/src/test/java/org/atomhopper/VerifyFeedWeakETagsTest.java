@@ -12,7 +12,6 @@ import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
 
@@ -20,7 +19,6 @@ import static junit.framework.Assert.assertTrue;
 public class VerifyFeedWeakETagsTest extends JettyIntegrationTestHarness {
 
     private static final HttpClient httpClient = new HttpClient();
-    private static final XmlUtil xml = new XmlUtil();
     private static final String urlAndPort = "http://localhost:" + getPort();
 
     public static PostMethod newCategoryPostEntryMethod() {

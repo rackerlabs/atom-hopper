@@ -25,7 +25,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
-import java.io.File;
 import org.atomhopper.servlet.DefaultEmptyContext;
 import org.atomhopper.util.config.resource.file.FileConfigurationResource;
 import org.slf4j.Logger;
@@ -60,12 +59,7 @@ public final class AtomHopperServlet extends AbderaServlet {
         abderaReference = getAbdera();
 
         final String configLocation = getConfigurationLocation();
-        
-        if (!(new File(configLocation).isFile())) {
-            LOG.error("The atom-server.cfg.xml file doesn't exist");
-        } else {
-            LOG.info("Reading configuration: " + configLocation);
-        }
+        LOG.info("Reading configuration: " + configLocation);
 
         try {
             try {
