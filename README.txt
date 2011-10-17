@@ -18,6 +18,7 @@ You can install/run Atom Hopper by several methods:
 - via a WAR file
 - via the source code (JAR)
 - via Resource Package Manager (RPM)
+- via Debian Package (DEB)
 
 Embedded Installation Method
 
@@ -73,6 +74,25 @@ Atom Hopper H2 database: /opt/atomhopper
 Config file for setting up namespaces and feeds: /etc/atomhopper
 
 Note: The Atom Hopper RPM is not signed so you might need to override the warning that yum issues when attempting to install the RPM file.
+
+Debian Installation Method
+
+With this method, a single dpkg command installs Atom Hopper.
+
+Required operating environment:
+- A supported operating system:
+        Debian 6.0
+- Oracle's 1.6 JRE must be installed before running the DEB file
+- Apache Tomcat 6 must be installed before running the DEB file
+
+Run from the command prompt:
+$ dpkg -i install ah-war-VERSION-INFO-HERE.deb
+
+After successfully completing the Debian package installation process you will have these files in the following locations:
+
+Atom Hopper WAR: /var/lib/tomcat6/webapps
+Atom Hopper H2 database: /opt/atomhopper
+Config file for setting up namespaces and feeds: /etc/atomhopper
 
 Adapter Configuration
 Order Entries (LIFO or FIFO)
