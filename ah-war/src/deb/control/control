@@ -1,0 +1,9 @@
+Package: [[name]]
+Version: [[version]]
+Section: misc
+Priority: optional
+Architecture: all
+Depends: sun-java6-jre, tomcat6
+Maintainer: Atom Hopper Team
+Description: Atom Hopper
+Distribution: development

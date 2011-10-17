@@ -1,3 +1,4 @@
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -12,7 +13,7 @@
     <artifactId>ah-war</artifactId>
     <packaging>war</packaging>
 
-    <name>ATOM Hopper - War</name>
+    <name>AtomHopper-WAR</name>
 
     <properties>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
@@ -40,17 +41,15 @@
     <profiles>
         <!--
             By default we turn off this plugin to make builds faster - however,
-            if you want to build the executable server jar simply run maven with
+            if you want to build the RPM simply run maven with
             the following option, '-P build-rpm'
             
             Example: mvn -P build-rpm clean install
         -->
         <profile>
-            <id>build-rpm</id>    
-
+            <id>build-rpm</id> 
             <build>
                 <plugins>
-
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-compiler-plugin</artifactId>
@@ -139,6 +138,82 @@
                 </plugins>
             </build>
         </profile>
+        
+        <!--
+            By default we turn off this plugin to make builds faster - however,
+            if you want to build the DEB package simply run maven with
+            the following option, '-P build-deb'
+            
+            Example: mvn -P build-deb clean install
+        -->
+        <profile>
+            <id>build-deb</id>    
+
+            <build>
+                <plugins>
+
+                    <plugin>
+                        <groupId>org.vafer</groupId>
+                        <artifactId>jdeb</artifactId>
+                        <version>0.8</version>
+                
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                        
+                                <goals>
+                                    <goal>jdeb</goal>
+                                </goals>
+                        
+                                <configuration>
+                                    <dataSet>
+                                        <!-- The war file -->
+                                        <data>
+                                            <src>target/ah-war-${project.version}.war</src>
+                                            <type>file</type>
+                                            <mapper>
+                                                <type>perm</type>
+                                                <prefix>/var/lib/tomcat6/webapps</prefix>
+                                                <user>tomcat6</user>
+                                                <filemode>755</filemode>                                                
+                                            </mapper>
+                                        </data>
+
+                                        <!-- The config directory and files -->
+                                        <data>
+                                            <src>src/main/resources/META-INF</src>
+                                            <type>directory</type>
+                                            <includes>atom-server.cfg.xml</includes>
+
+                                            <mapper>
+                                                <type>perm</type>
+                                                <prefix>/etc/atomhopper</prefix>
+                                                <user>tomcat6</user>
+                                                <filemode>755</filemode>                                                 
+                                            </mapper>
+                                        </data>
+                                        
+                                        <data>
+                                            <src>src/main/resources/META-INF</src>
+                                            <type>directory</type>
+                                            <includes>placeholder-for-h2-db</includes>
+
+                                            <mapper>
+                                                <type>perm</type>
+                                                <prefix>/opt/atomhopper</prefix>
+                                                <user>tomcat6</user>
+                                                <filemode>755</filemode>                                                 
+                                            </mapper>
+                                        </data>
+                                    </dataSet>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin> 
+                </plugins>
+            </build>
+        </profile>
+    
     </profiles>
 
 </project>

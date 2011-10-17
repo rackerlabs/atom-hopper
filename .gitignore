@@ -23,3 +23,4 @@ target
 /ah-war/catalog.xml
 /server/catalog.xml
 /test-suite/catalog.xml
+/ah-war/nbactions.xml
