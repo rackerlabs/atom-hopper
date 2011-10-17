@@ -1,5 +1,7 @@
 package org.atomhopper.abdera;
 
+import org.apache.abdera.Abdera;
+import org.apache.abdera.parser.ParseException;
 import org.atomhopper.abdera.response.ResponseHandler;
 import org.atomhopper.abdera.response.EmptyBodyResponseHandler;
 import org.atomhopper.abdera.response.EntryResponseHandler;
@@ -110,6 +112,7 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
 //    public CategoriesInfo[] getCategoriesInfo(RequestContext request) {
 //        return super.getCategoriesInfo(request);
 //    }
+
     @Override
     public String getId(RequestContext request) {
         return feedSource.getFeedInformation().getId(new GetFeedRequestImpl(request));
@@ -133,8 +136,9 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
     public ResponseContext postEntry(RequestContext request) {
         try {
             final AdapterResponse<Entry> response = feedPublisher.postEntry(new PostEntryRequestImpl(request));
-
             return entryResponseHandler.handleResponse(request, response);
+        } catch (ParseException ex) {
+            return ProviderHelper.createErrorResponse(Abdera.getInstance(), 422, ex.getMessage(), ex);
         } catch (Exception ex) {
             return ProviderHelper.servererror(request, ex.getMessage(), ex);
         }
