@@ -1,25 +1,26 @@
 package org.atomhopper.abdera;
 
-import org.atomhopper.adapter.request.adapter.PutEntryRequest;
-import org.atomhopper.adapter.request.adapter.GetEntryRequest;
-import org.atomhopper.adapter.request.adapter.GetFeedRequest;
-import org.atomhopper.adapter.request.adapter.PostEntryRequest;
-import org.atomhopper.adapter.request.adapter.DeleteEntryRequest;
-import org.atomhopper.adapter.FeedPublisher;
-import org.atomhopper.adapter.FeedSource;
-import org.atomhopper.config.v1_0.FeedConfiguration;
-import org.atomhopper.response.AdapterResponse;
-import org.atomhopper.response.EmptyBody;
-import org.atomhopper.response.FeedSourceAdapterResponse;
 import org.apache.abdera.i18n.iri.IRI;
 import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
+import org.apache.abdera.parser.ParseException;
 import org.apache.abdera.parser.stax.FOMEntry;
 import org.apache.abdera.parser.stax.FOMFeed;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.ResponseContext;
 import org.apache.abdera.protocol.server.Target;
+import org.atomhopper.adapter.FeedPublisher;
+import org.atomhopper.adapter.FeedSource;
+import org.atomhopper.adapter.request.adapter.DeleteEntryRequest;
+import org.atomhopper.adapter.request.adapter.GetEntryRequest;
+import org.atomhopper.adapter.request.adapter.GetFeedRequest;
+import org.atomhopper.adapter.request.adapter.PostEntryRequest;
+import org.atomhopper.adapter.request.adapter.PutEntryRequest;
+import org.atomhopper.config.v1_0.FeedConfiguration;
+import org.atomhopper.response.AdapterResponse;
+import org.atomhopper.response.EmptyBody;
+import org.atomhopper.response.FeedSourceAdapterResponse;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
@@ -31,7 +32,10 @@ import java.util.UUID;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.fail;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(Enclosed.class)
 public class FeedAdapterTest {
@@ -43,6 +47,14 @@ public class FeedAdapterTest {
             FeedAdapter feedAdapter = feedAdapter(false);
             ResponseContext responseContext = feedAdapter.postEntry(REQUEST_CONTEXT);
             assertEquals("Should respond with " + STATUS_CODE_UNSUPPORTED_METHOD, STATUS_CODE_UNSUPPORTED_METHOD, responseContext.getStatus());
+        }
+
+        @Test
+        public void shouldReturnBadContentWhenParseException() throws Exception {
+            FeedAdapter feedAdapter = feedAdapter(true);
+            when(feedPublisher.postEntry(any(PostEntryRequest.class))).thenThrow(new ParseException());
+            ResponseContext responseContext = feedAdapter.postEntry(REQUEST_CONTEXT);
+            assertEquals("Should respond with 422", 422, responseContext.getStatus());
         }
 
         @Test
