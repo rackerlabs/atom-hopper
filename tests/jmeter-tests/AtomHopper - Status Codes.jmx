@@ -103,7 +103,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST Request - 400" enabled="false">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST Request - 422" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments">
                 <elementProp name="" elementType="HTTPArgument">
@@ -134,7 +134,7 @@
           <hashTree>
             <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response header" enabled="true">
               <collectionProp name="Asserion.test_strings">
-                <stringProp name="-954221496">400 Bad Request</stringProp>
+                <stringProp name="51572">422</stringProp>
               </collectionProp>
               <stringProp name="Assertion.test_field">Assertion.response_headers</stringProp>
               <boolProp name="Assertion.assume_success">true</boolProp>
