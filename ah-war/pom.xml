@@ -92,8 +92,11 @@
                         <artifactId>rpm-maven-plugin</artifactId>
                         <executions>
                             <execution>
+                                <phase>package</phase>
+
                                 <goals>
                                     <goal>rpm</goal>
+                                    <goal>attached-rpm</goal>
                                 </goals>
                             </execution>
                         </executions>
