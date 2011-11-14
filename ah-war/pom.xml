@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.atomhopper</groupId>
         <artifactId>parent</artifactId>
-        <version>0.9.3-SNAPSHOT</version>
+        <version>0.9.4-SNAPSHOT</version>
     </parent>
 
     <groupId>org.atomhopper</groupId>
@@ -92,8 +92,11 @@
                         <artifactId>rpm-maven-plugin</artifactId>
                         <executions>
                             <execution>
+                                <phase>package</phase>
+
                                 <goals>
                                     <goal>rpm</goal>
+                                    <goal>attached-rpm</goal>
                                 </goals>
                             </execution>
                         </executions>
