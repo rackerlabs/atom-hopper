@@ -6,20 +6,18 @@ import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Source;
 import org.apache.abdera.protocol.client.AbderaClient;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
-import org.w3c.dom.NodeList;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
 import java.util.Date;
 
+import static org.atomhopper.util.TestHelper.assertNotEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotSame;
 
 
 /**
@@ -125,7 +123,7 @@ public class FeedTagTest extends JettyIntegrationTestHarness {
 
             entry.setSummary("Entry summary.");
             entry.setTitle("Entry title - entryWithComplexAuthorAndContributor.");
-            entry.setUpdated(date);
+            //entry.setUpdated(date); //This needs to be auto-generated.
 
             report("The Entry to Post", entry.toString());
             String postResponse = abderaClient.post("http://localhost:" + getPort() + "/namespace/feed/", entry).getDocument().getRoot().toString();
@@ -201,7 +199,6 @@ public class FeedTagTest extends JettyIntegrationTestHarness {
         public void shouldReturnSource() throws Exception {
             String s = xPath.evaluate("/entry/source", doc);
             assertFalse("Source tag should not be empty.", s.isEmpty());
-
         }
 
         @Test
@@ -277,7 +274,6 @@ public class FeedTagTest extends JettyIntegrationTestHarness {
         public void shouldReturnSourceExtension() throws Exception {
         }
 
-
         @Test
         public void shouldReturnSummary() throws Exception {
             String s = xPath.evaluate("/entry/summary", doc);
@@ -288,14 +284,12 @@ public class FeedTagTest extends JettyIntegrationTestHarness {
         public void shouldReturnTitle() throws Exception {
             String s = xPath.evaluate("/entry/title", doc);
             assertEquals("Title should return:", "Entry title - entryWithComplexAuthorAndContributor.", s);
-
         }
 
         @Test
         public void shouldReturnUpdated() throws Exception {
             String s = xPath.evaluate("/entry/source/updated", doc);
-            assertFalse("Updated date should be present", s.isEmpty());
-
+            assertFalse("Updated date should be present.", s.isEmpty());
         }
     }
 
