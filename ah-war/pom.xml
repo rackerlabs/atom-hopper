@@ -95,7 +95,7 @@
                             <execution>
                                 <id>Build RPM</id>
                                 <goals>
-                                    <goal>rpm</goal>
+                                    <goal>attached-rpm</goal>
                                 </goals>
                             </execution>
                         </executions>
