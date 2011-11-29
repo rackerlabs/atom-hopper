@@ -96,13 +96,12 @@
                                 <id>Build RPM</id>
                                 <phase>package</phase>
                                 <goals>
-                                    <goal>rpm</goal>
                                     <goal>attached-rpm</goal>
                                 </goals>
                             </execution>
                         </executions>
                         <configuration>
-                            <copyright>N/A</copyright>
+                            <copyright>Apache License, Version 2.0</copyright>
                             <group>Rackspace - Cloud Integration Team</group>
                             <description>ATOM Hopper - The ATOMPub Java Server</description>
                             <mappings>
