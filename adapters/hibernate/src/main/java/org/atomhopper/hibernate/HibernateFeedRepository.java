@@ -63,7 +63,7 @@ public class HibernateFeedRepository implements FeedRepository {
 
     public <T> T performComplexAction(ComplexSessionAction<T> action) {
         final long begin = System.currentTimeMillis();
-        LOG.debug("~!$: Comples Action Session begin: " + begin);
+        LOG.debug("~!$: Complex Action Session begin: " + begin);
         
         final Session session = sessionManager.getSession();
 
