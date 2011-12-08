@@ -56,8 +56,8 @@
         </dependency>
 
         <dependency>
-          <groupId>org.apache.abdera</groupId>
-          <artifactId>abdera-extensions-json</artifactId>
+            <groupId>org.apache.abdera</groupId>
+            <artifactId>abdera-extensions-json</artifactId>
         </dependency>
 
         <dependency>
@@ -87,7 +87,7 @@
 
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-jdk14</artifactId>
+            <artifactId>slf4j-log4j12</artifactId>
         </dependency>
 
         <dependency>

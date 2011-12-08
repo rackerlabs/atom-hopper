@@ -29,7 +29,6 @@
         <module>test-suite</module>
         <module>server</module>
         <module>ah-war</module>
-        <module>documentation</module>
         <module>adapters/hibernate</module>
         <module>test-util</module>
   </modules>
@@ -62,13 +61,13 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-core</artifactId>
-                <version>3.6.7.Final</version>
+                <version>3.6.8.Final</version>
             </dependency>
             
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-c3p0</artifactId>
-                <version>3.6.7.Final</version>
+                <version>3.6.8.Final</version>
             </dependency>            
 
             <dependency>
@@ -182,7 +181,7 @@
 
             <dependency>
                 <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-jdk14</artifactId>
+                <artifactId>slf4j-log4j12</artifactId>
                 <version>1.6.2</version>
             </dependency>
 

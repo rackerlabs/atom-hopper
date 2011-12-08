@@ -21,9 +21,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HibernateFeedRepository implements FeedRepository {
 
+    private static final Logger LOG = LoggerFactory.getLogger(HibernateFeedRepository.class);
+    
     private final HibernateSessionManager sessionManager;
     private static final String DATE_LAST_UPDATED = "dateLastUpdated";
 
@@ -32,6 +36,9 @@ public class HibernateFeedRepository implements FeedRepository {
     }
 
     public void performSimpleAction(SimpleSessionAction action) {
+        final long begin = System.currentTimeMillis();
+        LOG.debug("~!$: Simple Action Session begin: " + begin);
+        
         final Session session = sessionManager.getSession();
 
         Transaction tx = null;
@@ -49,11 +56,15 @@ public class HibernateFeedRepository implements FeedRepository {
 
             throw new AtomDatabaseException("Failure performing hibernate action: " + action.toString(), ex);
         } finally {
+            LOG.debug("~!$: Closing session. Elapsed time: " + (System.currentTimeMillis() - begin));
             session.close();
         }
     }
 
     public <T> T performComplexAction(ComplexSessionAction<T> action) {
+        final long begin = System.currentTimeMillis();
+        LOG.debug("~!$: Comples Action Session begin: " + begin);
+        
         final Session session = sessionManager.getSession();
 
         T returnable = null;
@@ -74,6 +85,7 @@ public class HibernateFeedRepository implements FeedRepository {
 
             throw new AtomDatabaseException("Failure performing hibernate action: " + action.toString(), ex);
         } finally {
+            LOG.debug("~!$: Closing session. Elapsed time: " + (System.currentTimeMillis() - begin));
             session.close();
         }
     }
@@ -206,8 +218,6 @@ public class HibernateFeedRepository implements FeedRepository {
                     feed = entry.getFeed();
                 }
 
-                feed.getEntries().add(entry);
-                
                 liveSession.saveOrUpdate(feed);
                 liveSession.save(entry);
             }
