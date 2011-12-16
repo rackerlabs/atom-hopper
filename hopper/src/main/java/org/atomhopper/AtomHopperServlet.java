@@ -1,7 +1,6 @@
 package org.atomhopper;
 
 import org.atomhopper.abdera.WorkspaceProvider;
-import org.atomhopper.config.WorkspaceProviderConfigurationPreprocessor;
 import org.atomhopper.config.WorkspaceConfigProcessor;
 import org.atomhopper.config.v1_0.Configuration;
 import org.atomhopper.config.v1_0.ConfigurationDefaults;
@@ -117,7 +116,7 @@ public final class AtomHopperServlet extends AbderaServlet {
         final WorkspaceProvider workspaceProvider = new WorkspaceProvider(getHostConfiguration());
         
         final AtomHopperConfigurationPreprocessor preprocessor = new AtomHopperConfigurationPreprocessor(configuration);
-        configuration = preprocessor.applyDefaults().getConfig();
+        configuration = preprocessor.applyDefaults().getConfiguration();
         
         ConfigurationDefaults configurationDefaults = configuration.getDefaults();
         workspaceProvider.init(abderaReference, parseDefaults(configurationDefaults));
