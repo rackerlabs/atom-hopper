@@ -26,6 +26,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
+import org.atomhopper.config.AtomHopperConfigurationPreprocessor;
 import org.atomhopper.servlet.DefaultEmptyContext;
 import org.atomhopper.util.config.resource.file.FileConfigurationResource;
 import org.slf4j.Logger;
@@ -114,6 +115,10 @@ public final class AtomHopperServlet extends AbderaServlet {
     @Override
     protected Provider createProvider() {
         final WorkspaceProvider workspaceProvider = new WorkspaceProvider(getHostConfiguration());
+        
+        final AtomHopperConfigurationPreprocessor preprocessor = new AtomHopperConfigurationPreprocessor(configuration);
+        configuration = preprocessor.applyDefaults().getConfig();
+        
         ConfigurationDefaults configurationDefaults = configuration.getDefaults();
         workspaceProvider.init(abderaReference, parseDefaults(configurationDefaults));
 
@@ -127,7 +132,7 @@ public final class AtomHopperServlet extends AbderaServlet {
 
         workspaceProvider.addFilter(new JSONFilter());
 
-        WorkspaceProviderConfigurationPreprocessor.setDefaults(workspaceProvider, configurationDefaults);
+//        WorkspaceProviderConfigurationPreprocessor.setDefaults(workspaceProvider, configurationDefaults);
 
         return workspaceProvider;
     }
