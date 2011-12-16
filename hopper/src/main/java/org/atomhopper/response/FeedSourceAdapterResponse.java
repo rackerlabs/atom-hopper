@@ -13,10 +13,10 @@ public class FeedSourceAdapterResponse<T> implements AdapterResponse<T> {
     private final T responseBody;
     private final HttpStatus statusCode;
     private final String message;
+    private final Map<ResponseParameter, String> parameters;
+    
     private EntityTag etag;
     
-    private Map<ResponseParameter, String> parameters;
-
     public FeedSourceAdapterResponse(T responseBody) {
         this(responseBody, DEFAULT_HTTP_STATUS_CODE, "");
     }
@@ -25,19 +25,11 @@ public class FeedSourceAdapterResponse<T> implements AdapterResponse<T> {
         this.responseBody = responseBody;
         this.statusCode = statusCode;
         this.message = message;
+        
+        parameters = new EnumMap<ResponseParameter, String>(ResponseParameter.class);
     }
 
-    /**
-     * Performs a lazy get if the map has not been initialized yet since most
-     * responses will not include parameters
-     * 
-     * @return
-     */
-    public synchronized Map<ResponseParameter, String> getParameters() {
-        if (parameters == null) {
-            parameters = new EnumMap<ResponseParameter, String>(ResponseParameter.class);
-        }
-
+    public Map<ResponseParameter, String> getParameters() {
         return parameters;
     }
 

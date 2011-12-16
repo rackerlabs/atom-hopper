@@ -11,11 +11,10 @@ import java.util.Map;
 
 public class HibernateSessionManager {
 
-    private final Map<String, String> parameters;
-    private SessionFactory sessionFactory;
+    private final SessionFactory sessionFactory;
 
     public HibernateSessionManager(Map<String, String> parameters) {
-        this.parameters = parameters;
+        sessionFactory = buildSessionFactory(parameters);
     }
 
     private static SessionFactory buildSessionFactory(Map<String, String> parameters) {
@@ -31,11 +30,7 @@ public class HibernateSessionManager {
         return hibernateConfiguration.buildSessionFactory();
     }
 
-    public synchronized Session getSession() {
-        if (sessionFactory == null) {
-            sessionFactory = buildSessionFactory(parameters);
-        }
-        
+    public Session getSession() {
         return sessionFactory.openSession();
     }
 }

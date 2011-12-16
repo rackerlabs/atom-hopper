@@ -98,7 +98,8 @@
         
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-jdk14</artifactId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.6.4</version>
         </dependency>
     </dependencies>
   
@@ -112,6 +113,10 @@
         -->
         <profile>
             <id>pack-server-jar</id>
+            
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             
             <build>
                 <plugins>
