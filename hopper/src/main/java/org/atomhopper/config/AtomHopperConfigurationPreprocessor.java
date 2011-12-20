@@ -38,7 +38,7 @@ public class AtomHopperConfigurationPreprocessor {
             if (!isAuthorEmpty(authorToApply)) {
                 for (FeedConfiguration feed : workspaceConfiguration.getFeed()) {
                     if (isAuthorEmpty(feed.getAuthor())) {
-                        feed.setAuthor(globalAuthorDefault);
+                        feed.setAuthor(authorToApply);
                     }
                 }
             }
@@ -46,10 +46,6 @@ public class AtomHopperConfigurationPreprocessor {
     }
 
     private boolean isAuthorEmpty(Author author) {
-        if (author == null) {
-            return true;
-        } else {
-            return author.getName() == null || StringUtils.isBlank(author.getName());
-        }
+        return author == null || author.getName() == null || StringUtils.isBlank(author.getName());
     }
 }
