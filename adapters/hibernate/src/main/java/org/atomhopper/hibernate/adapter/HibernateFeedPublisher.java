@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import static org.apache.abdera.i18n.text.UrlEncoding.decode;
+
 
 public class HibernateFeedPublisher implements FeedPublisher {
     private static final Logger LOG = LoggerFactory.getLogger(HibernateFeedPublisher.class);
@@ -57,7 +59,7 @@ public class HibernateFeedPublisher implements FeedPublisher {
         // Make sure the persisted xml has the right id
         abderaParsedEntry.setId(persistedEntry.getEntryId());
 
-        abderaParsedEntry.addLink(postEntryRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED))
+        abderaParsedEntry.addLink(decode(postEntryRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)))
                                           + "entries/" + persistedEntry.getEntryId()).setRel("self");
 
         final PersistedFeed feedRef = new PersistedFeed(postEntryRequest.getFeedName(), UUID_URI_SCHEME + UUID.randomUUID().toString());

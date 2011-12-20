@@ -113,12 +113,15 @@ public final class AtomHopperServlet extends AbderaServlet {
     @Override
     protected Provider createProvider() {
         final WorkspaceProvider workspaceProvider = new WorkspaceProvider(getHostConfiguration());
+        final String atomhopperUrlPattern = (getServletConfig().getInitParameter("atomhopper-url-pattern") == null) ?
+                "/" : getServletConfig().getInitParameter("atomhopper-url-pattern"); 
+        
         workspaceProvider.init(abderaReference, parseDefaults(configuration.getDefaults()));
 
         for (WorkspaceConfiguration workspaceCfg : configuration.getWorkspace()) {
             final WorkspaceConfigProcessor cfgProcessor = new WorkspaceConfigProcessor(
                     workspaceCfg, applicationContextAdapter,
-                    workspaceProvider.getTargetResolver(), getServletContext().getContextPath());
+                    workspaceProvider.getTargetResolver(), atomhopperUrlPattern);
 
             workspaceProvider.getWorkspaceManager().addWorkspaces(cfgProcessor.toHandler());
         }
