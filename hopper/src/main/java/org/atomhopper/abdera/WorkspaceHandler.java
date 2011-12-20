@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 public class WorkspaceHandler implements WorkspaceInfo {
@@ -43,8 +44,16 @@ public class WorkspaceHandler implements WorkspaceInfo {
         return (Collection) Collections.unmodifiableCollection(collectionAdapterMap.values());
     }
 
+    public Collection getCollectionAdapterMapValues() {
+        return collectionAdapterMap.values();
+    }
+
     @Override
     public String getTitle(RequestContext rc) {
         return myConfig.getTitle();
+    }
+
+    public WorkspaceConfiguration getMyConfig() {
+        return myConfig;
     }
 }
