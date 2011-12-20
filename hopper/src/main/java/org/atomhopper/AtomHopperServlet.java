@@ -131,8 +131,6 @@ public final class AtomHopperServlet extends AbderaServlet {
 
         workspaceProvider.addFilter(new JSONFilter());
 
-//        WorkspaceProviderConfigurationPreprocessor.setDefaults(workspaceProvider, configurationDefaults);
-
         return workspaceProvider;
     }
 
