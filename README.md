@@ -138,7 +138,7 @@ By default the ordering is set to desc (LIFO). You can change it to asc (FIFO) b
     <td>limit</td><td></td><td></td><td>25</td>  
   </tr>
   <tr>
-      <td>format</td><td>Returns the feed in JSON format</td><td></td><td></td>
+      <td>format</td><td>Returns the feed in JSON format</td><td>json</td><td></td>
   </tr>
 </table>
 
