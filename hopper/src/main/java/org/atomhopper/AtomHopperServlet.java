@@ -114,10 +114,10 @@ public final class AtomHopperServlet extends AbderaServlet {
     @Override
     protected Provider createProvider() {
         final WorkspaceProvider workspaceProvider = new WorkspaceProvider(getHostConfiguration());
-        
+
         final AtomHopperConfigurationPreprocessor preprocessor = new AtomHopperConfigurationPreprocessor(configuration);
         configuration = preprocessor.applyDefaults().getConfiguration();
-        
+
         ConfigurationDefaults configurationDefaults = configuration.getDefaults();
         workspaceProvider.init(abderaReference, parseDefaults(configurationDefaults));
 

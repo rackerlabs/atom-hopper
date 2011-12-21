@@ -38,6 +38,9 @@ public class AtomHopperJettyServerBuilder {
             atomHopServer.setInitParameter(ServletInitParameter.CONFIGURATION_LOCATION.toString(), configurationPathAndFile);
         }
 
+        // If you want to use a different url pattern, try the following
+        //atomHopServer.setInitParameter("atomhopper-url-pattern", "/mapping-example/");
+        //rootContext.addServlet(atomHopServer, "/mapping-example/*");
         rootContext.addServlet(atomHopServer, "/*");
 
         return jettyServerReference;
