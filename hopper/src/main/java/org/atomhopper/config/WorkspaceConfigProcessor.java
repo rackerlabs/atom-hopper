@@ -116,8 +116,7 @@ public class WorkspaceConfigProcessor {
 
         for (FeedConfiguration feed : feeds) {
             final FeedSource feedSource = getAdapter(feed.getFeedSource(), FeedSource.class);
-//            feed.get
-            
+
             final FeedPublisher feedPublisher = getAdapter(feed.getPublisher(), FeedPublisher.class);
 
             final TargetRegexBuilder feedTargetRegexBuilder = new TargetRegexBuilder(workspaceTarget);
