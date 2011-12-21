@@ -14,8 +14,8 @@ Benefits:
 
 You can install/run Atom Hopper by several methods:
 
-- Embedded version (for testing and evaluation purposes)
-- via a WAR file
+- Embedded version (for testing and evaluation purposes only)
+- via a WAR file (recommended)
 - via the source code (JAR)
 - via Resource Package Manager (RPM)
 - via Debian Package (DEB)
@@ -222,6 +222,47 @@ A weak eTag for a feed with only one ATOM entry looks like this:
 
  W/"urn:uuid:21d39ce9-940b-4277-baa3-7daa3f209e76:urn:uuid:21d39ce9-940b-4277-baa3-7daa3f209e76" 
 
+Web.xml Configuration
+
+This section pertains to you only if Atom Hopper will NOT be the only WAR managed by Apache Tomcat 6 or 7. If Atom Hopper is the only WAR then you do not need to do anything.
+
+Assuming Atom Hopper needs to have it's own url-pattern mapping you will also need to set the atomhopper-url-pattern value to ensure your ATOM entry self links are correct. Below is an example of using atom as a url-pattern and corresponding setting for atomhopper-url-pattern.
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+    <display-name>Atom Hopper Server</display-name>
+    <description>ATOM</description>
+
+... stuff omitted for brevity ...
+
+        <!--
+            Use the atomhopper-url-pattern to match the url-pattern so ATOM entries
+            use valid self URLs.
+
+            Ex: <url-pattern>/atom/*</url-pattern>
+
+            Map the above as:
+            <param-name>atomhopper-url-pattern</param-name>
+            <param-value></atom/param-value>
+
+            Note: There is not need for the asterix on the
+            atomhopper-url-pattern param-value
+
+        -->
+        <init-param>
+            <param-name>atomhopper-url-pattern</param-name>
+            <param-value>/atom/</param-value>
+        </init-param>
+    </servlet>
+
+    <servlet-mapping id="atom-hopper-mapping">
+        <servlet-name>Atom-Hopper</servlet-name>
+        <url-pattern>/atom/*</url-pattern>
+    </servlet-mapping>
+</web-app>
 
 Notes Regarding licensing
 
