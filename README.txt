@@ -226,7 +226,7 @@ Web.xml Configuration
 
 This section pertains to you only if Atom Hopper will NOT be the only WAR managed by Apache Tomcat 6 or 7. If Atom Hopper is the only WAR then you do not need to do anything.
 
-Assuming Atom Hopper needs to have it's own url-pattern mapping you will also need to set the atomhopper-url-pattern value to ensure your ATOM entry self links are correct. Below is an example of using atom as a url-pattern and corresponding setting for atomhopper-url-pattern.
+Assuming Atom Hopper needs to have it's own url-pattern mapping you will also need to set the atomhopper-url-pattern value to ensure your ATOM entry self links are correct. Below is an example of using "atom" as a url-pattern and corresponding setting for atomhopper-url-pattern.
 
 <?xml version="1.0" encoding="UTF-8"?>
 
