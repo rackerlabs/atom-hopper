@@ -129,16 +129,16 @@ By default the ordering is set to desc (LIFO). You can change it to asc (FIFO) b
     <th>Paramter Name</th><th>Description</th><th>Data Type/Acceptable Values</th><th>Default</th>
   </tr>
   <tr>
-    <td>marker</td><td>The unique id of an ATOM entry</td><td></td><td></td>
+    <td>marker</td><td>The unique id of an ATOM entry</td><td>Valid ID</td><td>(none)</td>
   </tr>
   <tr>
     <td>direction</td><td>The direction from the current marker (or entry) to start getting more entries from</td><td>forward | backward</td><td></td>
   </tr>
   <tr>
-    <td>limit</td><td></td><td></td><td>25</td>  
+    <td>limit</td><td>How many entries are returned. If the entered limit is greater than the actual number of entries, the actual number of entries will be used.</td><td>0 to n</td><td>25</td>  
   </tr>
   <tr>
-      <td>format</td><td>Returns the feed in JSON format</td><td>json</td><td></td>
+      <td>format</td><td>Returns the feed in JSON format</td><td>json</td><td>(none)</td>
   </tr>
 </table>
 
