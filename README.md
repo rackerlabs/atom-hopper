@@ -132,7 +132,7 @@ By default the ordering is set to desc (LIFO). You can change it to asc (FIFO) b
     <td>marker</td><td>The unique id of an ATOM entry</td><td>Valid ID</td><td>(none)</td>
   </tr>
   <tr>
-    <td>direction</td><td>The direction from the current marker (or entry) to start getting more entries from</td><td>forward | backward</td><td></td>
+    <td>direction</td><td>The direction from the current marker (or entry) to start getting more entries from</td><td>forward | backward</td><td>forward</td>
   </tr>
   <tr>
     <td>limit</td><td>How many entries are returned. If the entered limit is greater than the actual number of entries, the actual number of entries will be used.</td><td>0 to n</td><td>25</td>  
