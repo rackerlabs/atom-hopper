@@ -101,13 +101,17 @@ Ordering the ATOM feed (LIFO, FIFO) is configurable per Atom Hopper instance.  T
 
 Inside the application-context.xml file look for the following:
 
+<pre>
 <!-- FeedOrder Values: asc|desc -->
 <property name="feedOrder" value="desc"/>
+</pre>
 
 By default the ordering is set to desc (LIFO). You can change it to asc (FIFO) by making the following change:
 
+<pre>
 <!-- FeedOrder Values: asc|desc -->
 <property name="feedOrder" value="asc"/>
+</pre>
 
 Query parameters
 
@@ -129,6 +133,7 @@ Adding a New Entry
 
 The following is an example of a simple ATOM entry (with three categories):
 
+<pre>
 <entry xmlns="http://www.w3.org/2005/Atom">
   <title type="text">This is the title</title>
   <updated>2011-09-22T21:39:49.904Z</updated>
@@ -140,6 +145,7 @@ The following is an example of a simple ATOM entry (with three categories):
   <category term="MyCategory 2" />
   <category term="MyCategory 3" />
 </entry>
+</pre>
 
 The ATOM XML is sent to Atom Hopper via an HTTP POST along with the following HTTP Header:
 
@@ -153,8 +159,10 @@ To add categories to an ATOM entry you need to include the category element alon
 
 Multiple categories:
 
+<pre>
 <category term="mycategory1" />
 <category term="mycategory2" />
+</pre>
 
 GET
 
@@ -228,6 +236,7 @@ This section pertains to you only if Atom Hopper will NOT be the only WAR manage
 
 Assuming Atom Hopper needs to have it's own url-pattern mapping you will also need to set the atomhopper-url-pattern value to ensure your ATOM entry self links are correct. Below is an example of using "atom" as a url-pattern and corresponding setting for atomhopper-url-pattern.
 
+<pre>
 <?xml version="1.0" encoding="UTF-8"?>
 
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
@@ -263,6 +272,7 @@ Assuming Atom Hopper needs to have it's own url-pattern mapping you will also ne
         <url-pattern>/atom/*</url-pattern>
     </servlet-mapping>
 </web-app>
+</pre>
 
 Notes Regarding licensing
 
