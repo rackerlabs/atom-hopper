@@ -228,7 +228,7 @@ This section pertains to you only if Atom Hopper will NOT be the only WAR manage
 
 Assuming Atom Hopper needs to have it's own url-pattern mapping you will also need to set the atomhopper-url-pattern value to ensure your ATOM entry self links are correct. Below is an example of using "atom" as a url-pattern and corresponding setting for atomhopper-url-pattern.
 
-''''
+''''xml
 <?xml version="1.0" encoding="UTF-8"?>
 
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
@@ -237,7 +237,7 @@ Assuming Atom Hopper needs to have it's own url-pattern mapping you will also ne
     <display-name>Atom Hopper Server</display-name>
     <description>ATOM</description>
 
-... stuff omitted for brevity ...
+<!-- stuff omitted for brevity -->
 
         <!--
             Use the atomhopper-url-pattern to match the url-pattern so ATOM entries
