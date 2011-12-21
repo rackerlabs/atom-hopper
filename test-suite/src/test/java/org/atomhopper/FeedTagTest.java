@@ -125,10 +125,10 @@ public class FeedTagTest extends JettyIntegrationTestHarness {
             entry.setTitle("Entry title - entryWithComplexAuthorAndContributor.");
             //entry.setUpdated(date); //This needs to be auto-generated.
 
-            report("The Entry to Post", entry.toString());
+            //report("The Entry to Post", entry.toString());  //Commented out to reduced build logs.
             String postResponse = abderaClient.post("http://localhost:" + getPort() + "/namespace/feed/", entry).getDocument().getRoot().toString();
             doc = xml.toDOM(postResponse);
-            report("The Created Entry", postResponse);
+            //report("The Created Entry", postResponse);  //Commented out to reduced build logs.
         }
 
         @Test
