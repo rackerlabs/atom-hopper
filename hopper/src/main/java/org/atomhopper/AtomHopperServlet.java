@@ -25,6 +25,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
+import org.atomhopper.config.AtomHopperConfigurationPreprocessor;
 import org.atomhopper.servlet.DefaultEmptyContext;
 import org.atomhopper.util.config.resource.file.FileConfigurationResource;
 import org.slf4j.Logger;
@@ -117,6 +118,12 @@ public final class AtomHopperServlet extends AbderaServlet {
                 "/" : getServletConfig().getInitParameter("atomhopper-url-pattern"); 
         
         workspaceProvider.init(abderaReference, parseDefaults(configuration.getDefaults()));
+
+        final AtomHopperConfigurationPreprocessor preprocessor = new AtomHopperConfigurationPreprocessor(configuration);
+        configuration = preprocessor.applyDefaults().getConfiguration();
+
+        ConfigurationDefaults configurationDefaults = configuration.getDefaults();
+        workspaceProvider.init(abderaReference, parseDefaults(configurationDefaults));
 
         for (WorkspaceConfiguration workspaceCfg : configuration.getWorkspace()) {
             final WorkspaceConfigProcessor cfgProcessor = new WorkspaceConfigProcessor(
