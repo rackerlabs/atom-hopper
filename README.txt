@@ -1,4 +1,4 @@
-#ATOM Hopper - The Java ATOMPub Server#
+ATOM Hopper - The Java ATOMPub Server
 
 Atom Hopper is a framework for accessing, processing, aggregating and indexing Atom formatted events. Atom Hopper was designed to make it easy to build both generalized and specialized persistence mechanisms for Atom XML data, based on the Atom Syndication Format and the Atom Publishing Protocol.
 
@@ -228,7 +228,6 @@ This section pertains to you only if Atom Hopper will NOT be the only WAR manage
 
 Assuming Atom Hopper needs to have it's own url-pattern mapping you will also need to set the atomhopper-url-pattern value to ensure your ATOM entry self links are correct. Below is an example of using "atom" as a url-pattern and corresponding setting for atomhopper-url-pattern.
 
-```xml
 <?xml version="1.0" encoding="UTF-8"?>
 
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
@@ -264,7 +263,6 @@ Assuming Atom Hopper needs to have it's own url-pattern mapping you will also ne
         <url-pattern>/atom/*</url-pattern>
     </servlet-mapping>
 </web-app>
-```
 
 Notes Regarding licensing
 
