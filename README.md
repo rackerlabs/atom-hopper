@@ -1,3 +1,12 @@
+<pre>
+    ___   __                     __  __                            
+   /   | / /_____  ____ ___     / / / /____  ____  ____  ___  _____
+  / /| |/ __/ __ \/ __ `__ \   / /_/ // __ \/ __ \/ __ \/ _ \/ ___/
+ / ___ / /_/ /_/ / / / / / /  / __  // /_/ / /_/ / /_/ /  __/ /    
+/_/  |_\__/\____/_/ /_/ /_/  /_/ /_/ \____/ .___/ .___/\___/_/     
+                                         /_/   /_/                 
+</pre>
+
 #ATOM Hopper - The Java ATOMPub Server#
 
 Atom Hopper is a framework for accessing, processing, aggregating and indexing Atom formatted events. Atom Hopper was designed to make it easy to build both generalized and specialized persistence mechanisms for Atom XML data, based on the Atom Syndication Format and the Atom Publishing Protocol.
