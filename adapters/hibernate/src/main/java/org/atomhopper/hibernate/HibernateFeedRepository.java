@@ -111,7 +111,7 @@ public class HibernateFeedRepository implements FeedRepository {
     }
 
     @Override
-    public List<PersistedEntry> getFeedHead(final String feedName, final CategoryCriteriaGenerator criteriaGenerator, final int pageSize, final String feedOrder) {
+    public List<PersistedEntry> getFeedHead(final String feedName, final CategoryCriteriaGenerator criteriaGenerator, final int pageSize) {
         return performComplexAction(new ComplexSessionAction<List<PersistedEntry>>() {
 
             @Override
@@ -121,12 +121,7 @@ public class HibernateFeedRepository implements FeedRepository {
                 final Criteria criteria = liveSession.createCriteria(PersistedEntry.class).add(Restrictions.eq("feed.name", feedName));
                 criteriaGenerator.enhanceCriteria(criteria);
 
-                criteria.setMaxResults(pageSize);
-                if (feedOrder.equalsIgnoreCase("asc")) {
-                    criteria.addOrder(Order.asc(DATE_LAST_UPDATED));
-                } else {
-                    criteria.addOrder(Order.desc(DATE_LAST_UPDATED));
-                }
+                criteria.setMaxResults(pageSize).addOrder(Order.desc(DATE_LAST_UPDATED));
 
                 feedHead.addAll(criteria.list());
 
@@ -136,7 +131,7 @@ public class HibernateFeedRepository implements FeedRepository {
     }
 
     @Override
-    public List<PersistedEntry> getFeedPage(final String feedName, final PersistedEntry markerEntry, final PageDirection direction, final CategoryCriteriaGenerator criteriaGenerator, final int pageSize, final String feedOrder) {
+    public List<PersistedEntry> getFeedPage(final String feedName, final PersistedEntry markerEntry, final PageDirection direction, final CategoryCriteriaGenerator criteriaGenerator, final int pageSize) {
         return performComplexAction(new ComplexSessionAction<List<PersistedEntry>>() {
 
             @Override
@@ -146,12 +141,7 @@ public class HibernateFeedRepository implements FeedRepository {
                 final Criteria criteria = liveSession.createCriteria(PersistedEntry.class).add(Restrictions.eq("feed.name", feedName));
                 criteriaGenerator.enhanceCriteria(criteria);
 
-                criteria.setMaxResults(pageSize);
-                if (feedOrder.equalsIgnoreCase("asc")) {
-                    criteria.addOrder(Order.asc(DATE_LAST_UPDATED));
-                } else {
-                    criteria.addOrder(Order.desc(DATE_LAST_UPDATED));
-                }
+                criteria.setMaxResults(pageSize).addOrder(Order.desc(DATE_LAST_UPDATED));
 
                 switch (direction) {
                     case FORWARD:
