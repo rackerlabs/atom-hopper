@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.atomhopper</groupId>
         <artifactId>parent</artifactId>
-        <version>0.9.6-SNAPSHOT</version>
+        <version>0.9.7-SNAPSHOT</version>
     </parent>
 
     <groupId>org.atomhopper</groupId>
@@ -95,7 +95,7 @@
                             <execution>
                                 <id>Build RPM</id>
                                 <goals>
-                                    <goal>rpm</goal>
+                                    <goal>attached-rpm</goal>
                                 </goals>
                             </execution>
                         </executions>

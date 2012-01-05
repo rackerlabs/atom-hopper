@@ -10,7 +10,6 @@ import org.atomhopper.adapter.FeedSource;
 import org.atomhopper.adapter.ResponseBuilder;
 import org.atomhopper.adapter.jpa.PersistedEntry;
 import org.atomhopper.adapter.jpa.PersistedFeed;
-import org.atomhopper.adapter.request.RequestQueryParameter;
 import org.atomhopper.adapter.request.adapter.GetEntryRequest;
 import org.atomhopper.adapter.request.adapter.GetFeedRequest;
 import org.atomhopper.dbal.FeedRepository;
@@ -26,14 +25,9 @@ public class HibernateFeedSource implements FeedSource {
 
     private static final int PAGE_SIZE = 25;
     private FeedRepository feedRepository;
-    private String feedOrder;
 
     public void setFeedRepository(FeedRepository feedRepository) {
         this.feedRepository = feedRepository;
-    }
-
-    public void setFeedOrder(String feedOrder) {
-        this.feedOrder = feedOrder;
     }
 
     @Override
@@ -117,7 +111,7 @@ public class HibernateFeedSource implements FeedSource {
 
         if (persistedFeed != null) {
             final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
-            final List<PersistedEntry> persistedEntries = feedRepository.getFeedHead(feedName, new SimpleCategoryCriteriaGenerator(searchString), pageSize, this.feedOrder);
+            final List<PersistedEntry> persistedEntries = feedRepository.getFeedHead(feedName, new SimpleCategoryCriteriaGenerator(searchString), pageSize);
 
             response = ResponseBuilder.found(hydrateFeed(abdera, persistedFeed, persistedEntries));
         }
@@ -144,7 +138,7 @@ public class HibernateFeedSource implements FeedSource {
             final Feed feed = hydrateFeed(
                     getFeedRequest.getAbdera(), persistedFeed, 
                     feedRepository.getFeedPage(
-                        getFeedRequest.getFeedName(), markerEntry, pageDirection, new SimpleCategoryCriteriaGenerator(searchString), pageSize, this.feedOrder));
+                        getFeedRequest.getFeedName(), markerEntry, pageDirection, new SimpleCategoryCriteriaGenerator(searchString), pageSize));
 
             response = ResponseBuilder.found(feed);
         } else {

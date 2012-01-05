@@ -27,7 +27,20 @@
             <param-name>context-adapter-class</param-name>
             <param-value>org.atomhopper.servlet.context.impl.ServletSpringContext</param-value>
         </init-param>
-        
+        <!--
+            Use the atomhopper-url-pattern to match the url-pattern so ATOM entries
+            use valid self URLs.
+            
+            Ex: <url-pattern>/atom/*</url-pattern>
+            
+            Map the above as:
+            <param-name>atomhopper-url-pattern</param-name>
+            <param-value></atom/param-value>
+            
+            Note: There is not need for the asterix on the
+            atomhopper-url-pattern param-value
+            
+        -->        
         <init-param>
             <param-name>atomhopper-url-pattern</param-name>
             <param-value></param-value>
