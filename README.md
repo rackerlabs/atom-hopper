@@ -112,25 +112,6 @@ Atom Hopper H2 database: **/opt/atomhopper**
 
 Config file for setting up namespaces and feeds: **/etc/atomhopper**
 
-###Adapter Configuration###
-Order Entries (LIFO or FIFO)
-
-Ordering the ATOM feed (LIFO, FIFO) is configurable per Atom Hopper instance.  This configuration is not supported on the embedded version of Atom Hopper unless you specifically make the change in the source code and re-build the project.  Using the RPM version of Atom Hopper though you can make this change inside the application-context.xml file.  On a CentOS/Fedora system this file exists in: /etc/atomhopper/  If your using the WAR version to Atom Hopper then this file will be in the extracted folders where you placed the WAR file.  As an example, on Apache Tomcat you can look in the META-INF folder of the Atom Hopper folder inside the webapps folder.  Any changes to this file requires a restart of Tomcat/Jetty/etc.
-
-Inside the **application-context.xml** file look for the following:
-
-```xml
-<!-- FeedOrder Values: asc|desc -->
-<property name="feedOrder" value="desc"/>
-```
-
-By default the ordering is set to desc (LIFO). You can change it to asc (FIFO) by making the following change:
-
-```xml
-<!-- FeedOrder Values: asc|desc -->
-<property name="feedOrder" value="asc"/>
-```
-
 ###Query parameters###
 
 <table>
@@ -196,8 +177,6 @@ An HTTP GET is used to retrieve ATOM entries from Atom Hopper. The HTTP GET requ
 <pre><code>
  http://localhost:8080/namespace/feed/ 
 </code></pre>
-
-**Note:** Entry order (LIFO or FIFO) is specified in the configuration file where Atom Hopper is installed.
 
 ###Select Entries by Marker###
 
