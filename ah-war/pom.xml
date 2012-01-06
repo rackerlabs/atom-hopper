@@ -108,6 +108,7 @@
                                     <directory>/etc/atomhopper</directory>
                                     <username>tomcat</username>
                                     <groupname>tomcat</groupname>
+                                    <!-- Modify file permissions as needed -->
                                     <filemode>755</filemode>
                                     <sources>
                                         <source>
@@ -116,9 +117,18 @@
                                     </sources>                         
                                 </mapping>
                                 <mapping>
-                                    <directory>/var/lib/tomcat6/webapps/</directory>
+                                    <!--
+                                        Use this path for Tomcat6
+                                        <directory>/var/lib/tomcat6/webapps/</directory>
+                                    -->
+                                    <!--
+                                        This path is for our custom Tomcat7 RPM since
+                                        an official Tomcat7 RPM doesn't exist yet for CentOS
+                                    -->
+                                    <directory>/opt/apache-tomcat/webapps</directory>
                                     <username>tomcat</username>
                                     <groupname>tomcat</groupname>
+                                    <!-- Modify file permissions as needed -->
                                     <filemode>755</filemode>                            
                                     <sources>
                                         <source>
@@ -131,7 +141,19 @@
                                 <script>mkdir "/opt/atomhopper/" &amp;&amp; chown tomcat "/opt/atomhopper/"</script>
                             </postinstallScriptlet>
                             <requires>
-                                <require>tomcat6</require>
+                                <!--
+                                    Use this for Tomcat6
+                                    <require>tomcat6</require>
+                                -->
+                                <!--
+                                    This path is for our custom Tomcat7 RPM since
+                                    an official Tomcat7 RPM doesn't exist yet for CentOS
+                                -->
+                                <require>apache-tomcat</require>
+                                <!--
+                                    You can modify this to use the Oracle Java JDK 1.6
+                                    if you want
+                                 -->
                                 <require>java-1.6.0-openjdk</require>
                             </requires>                   
                         </configuration>
@@ -191,6 +213,7 @@
                                                 <type>perm</type>
                                                 <prefix>/etc/atomhopper</prefix>
                                                 <user>tomcat6</user>
+                                                <!-- Modify file permissions as needed -->
                                                 <filemode>755</filemode>                                                 
                                             </mapper>
                                         </data>
@@ -204,6 +227,7 @@
                                                 <type>perm</type>
                                                 <prefix>/opt/atomhopper</prefix>
                                                 <user>tomcat6</user>
+                                                <!-- Modify file permissions as needed -->
                                                 <filemode>755</filemode>                                                 
                                             </mapper>
                                         </data>
