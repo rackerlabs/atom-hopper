@@ -46,9 +46,19 @@
             <param-value></param-value>
         </init-param>        
     </servlet>
+    
+    <servlet id="atom-hopper-version">
+        <servlet-name>Atom-Hopper-Version</servlet-name>
+        <servlet-class>org.atomhopper.AtomHopperVersionServlet</servlet-class>       
+    </servlet>    
 
     <servlet-mapping id="atom-hopper-mapping">
         <servlet-name>Atom-Hopper</servlet-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/*</url-pattern>    
     </servlet-mapping>
+    
+    <servlet-mapping id="atom-hopper-version-mapping">
+        <servlet-name>Atom-Hopper-Version</servlet-name>
+        <url-pattern>/version</url-pattern>        
+    </servlet-mapping>    
 </web-app>
