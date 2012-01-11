@@ -9,7 +9,7 @@
     </parent>
 
     <groupId>org.atomhopper</groupId>
-    <artifactId>Atom-Hopper</artifactId>
+    <artifactId>ah-war</artifactId>
     <packaging>war</packaging>
 
     <name>AtomHopper-WAR</name>
