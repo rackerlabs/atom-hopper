@@ -31,6 +31,7 @@
         <module>ah-war</module>
         <module>adapters/hibernate</module>
         <module>test-util</module>
+        <module>documentation</module>
   </modules>
 
     <scm>
