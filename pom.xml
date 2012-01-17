@@ -6,7 +6,7 @@
     <artifactId>parent</artifactId>
     <packaging>pom</packaging>
 
-    <version>0.9.10</version>
+    <version>0.9.11-SNAPSHOT</version>
     <name>ATOM Hopper - ATOMpub Server Collection</name>
 
     <url>http://atomhopper.org/</url>
