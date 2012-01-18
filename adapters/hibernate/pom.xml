@@ -66,5 +66,16 @@
             <artifactId>junit</artifactId>
         </dependency>
     </dependencies>
+    
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources/ddl</directory>
+                <excludes>
+                    <exclude>**/*.sql</exclude>
+                </excludes>
+            </resource>
+        </resources>
+    </build>   
 </project>
 
