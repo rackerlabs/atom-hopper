@@ -16,6 +16,8 @@ import org.apache.abdera.protocol.server.processors.CollectionRequestProcessor;
 import org.apache.abdera.protocol.server.processors.EntryRequestProcessor;
 import org.apache.abdera.protocol.server.processors.ServiceRequestProcessor;
 
+import org.apache.abdera.protocol.server.servlet.ServletRequestContext;
+
 import javax.security.auth.Subject;
 import java.util.*;
 import org.slf4j.Logger;
@@ -100,13 +102,17 @@ public class WorkspaceProvider implements Provider {
     @Override
     public String urlFor(RequestContext request, Object key, Object param) {
         final Target resolvedTarget = request.getTarget();
-
+        
         if (param == null || param instanceof TemplateParameters) {
             final TemplateParameters templateParameters = param != null
                     ? (TemplateParameters) param
                     : new EnumKeyedTemplateParameters((Enum) key);
 
             templateParameters.set(URITemplateParameter.HOST_DOMAIN, hostConfiguration.getDomain());
+            
+            if (request instanceof ServletRequestContext) {
+                templateParameters.set(URITemplateParameter.HOST_SCHEME, ((ServletRequestContext)request).getRequest().getScheme());
+            }            
 
             //This is what happens when you don't use enumerations :p
             if (resolvedTarget.getType() == TargetType.TYPE_SERVICE) {
