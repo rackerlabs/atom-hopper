@@ -87,7 +87,9 @@ Atom Hopper WAR: **/var/lib/tomcat6/webapps**
 
 Atom Hopper H2 database: **/opt/atomhopper**
 
-Config file for setting up namespaces and feeds: **/etc/atomhopper**
+Config file for setting up namespaces and feeds: **/etc/atomhopper/atom-server.cfg.xml**
+
+Config file for setting up the default data adapter: **/etc/atomhopper/application-context.xml**
 
 **Note:** The Atom Hopper RPM is not signed so you might need to override the warning that yum issues when attempting to install the RPM file.
 
@@ -110,7 +112,7 @@ Atom Hopper WAR: **/var/lib/tomcat6/webapps**
 
 Atom Hopper H2 database: **/opt/atomhopper**
 
-Config file for setting up namespaces and feeds: **/etc/atomhopper**
+Config file for setting up namespaces and feeds: **/etc/atomhopper/atom-server.cfg.xml**
 
 ###Query parameters###
 
@@ -132,7 +134,7 @@ Config file for setting up namespaces and feeds: **/etc/atomhopper**
   </tr>
 </table>
 
-An HTTP POST is used to insert new ATOM entries into Atom Hopper.
+An HTTP/HTTPS POST is used to insert new ATOM entries into Atom Hopper.
 
 ###Adding a New Entry###
 
@@ -155,6 +157,20 @@ The following is an example of a simple ATOM entry (with three categories):
 The ATOM XML is sent to Atom Hopper via an HTTP POST along with the following HTTP Header:
 
 </code></pre>Content-Type: application/atom+xml</code></pre>
+
+###HTTP/HTTPS###
+
+Depending on whether you use HTTP or HTTPS will determine how your self referencing ATOM entry links will appear.
+
+With HTTPS POST:
+```
+<link href="https://domain.com/namespace/feed/entries/urn:uuid:9b850562-d357-4cf8-8811-048a6730e869" rel="self" />
+```
+
+With HTTP POST:
+```
+<link href="http://domain.com/namespace/feed/entries/urn:uuid:9b850562-d357-4cf8-8811-048a6730e869" rel="self" />
+```
 
 **Adding One or More Categories**
 
