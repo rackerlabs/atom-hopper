@@ -163,12 +163,14 @@ The ATOM XML is sent to Atom Hopper via an HTTP POST along with the following HT
 Depending on whether you use HTTP or HTTPS will determine how your self referencing ATOM entry links will appear.
 
 With HTTPS POST:
-```
+
+```xml
 <link href="https://domain.com/namespace/feed/entries/urn:uuid:9b850562-d357-4cf8-8811-048a6730e869" rel="self" />
 ```
 
 With HTTP POST:
-```
+
+```xml
 <link href="http://domain.com/namespace/feed/entries/urn:uuid:9b850562-d357-4cf8-8811-048a6730e869" rel="self" />
 ```
 
