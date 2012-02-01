@@ -101,7 +101,7 @@ Config file for setting up namespaces and feeds: **/etc/atomhopper/atom-server.c
 
 Config file for setting up the default data adapter: **/etc/atomhopper/application-context.xml**
 
-**Note:** The Atom Hopper RPM is not signed so you might need to override the warning that yum issues when attempting to install the RPM file.
+**Note:** The Atom Hopper RPM is not signed so you might need to override the warning that yum issues when attempting to install the RPM file.  Also, we rename the actual file as **ROOT.war** to simplify our deployment, you most likely want to change this in the Maven POM file to whatever suits you better.
 
 ###Debian Installation Method###
 
