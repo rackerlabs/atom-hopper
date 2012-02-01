@@ -83,6 +83,8 @@ Required operating environment:
 * Java OpenJDK 1.6 (or Oracle's JRE) must be installed before running the RPM file
 * Apache Tomcat 6 must be installed before running the RPM file
 
+**Note:** Make sure to first examine the Maven POM file in the **ah-war** project, in the section where the RPM is built there are several comments you will want to read over and settings you will most likely want to change to suit your dependencies, etc.
+
 Run from the command prompt:
 <pre><code>$ yum install ah-war-VERSION-INFO-HERE.noarch.rpm</code></pre>
 
