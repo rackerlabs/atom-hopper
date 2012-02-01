@@ -55,14 +55,19 @@ This is the port used to communicate a shutdown request to the Atom Hopper serve
 <pre><code>Example: -s 8090</code></pre>
 This would specify that Atom Hopper should listen to port 8090 for the shutdown command
 
-<pre><code>-c (alias --config-file)</code></pre>
-This is the location and name of the Atom Hopper configuration file, if not set it will use the default settings.
-
-<pre><code>Example: -c file:///Users/joeatom/atomhopper/atomhopper.cfg.xml</code></pre>
-
 ###WAR Installation Method###
 
 You may take the Atom Hopper WAR file and deploy it to an HTTP server/servlet container such as Apache Tomcat, Eclipse Jetty, Glassfish, etc.  Atom Hopper has been tested on Apache Tomcat and Eclipse Jetty.  Follow the instructions of the HTTP server/servlet container and deploy the Atom Hopper WAR file just as you would any other application.
+
+If you wish to use H2 as your database then ensure the following path exists with permissions to read and write with the account you are using to run Apache Tomcat.
+
+Atom Hopper H2 database: **/opt/atomhopper**
+
+The following two paths also need to exist with permissions to read with the account you are using to run Apache Tomcat
+
+Config file for setting up namespaces and feeds: **/etc/atomhopper/atom-server.cfg.xml**
+
+Config file for setting up the default data adapter: **/etc/atomhopper/application-context.xml**
 
 ###RPM Installation Method###
 
