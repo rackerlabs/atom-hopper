@@ -69,6 +69,8 @@ Config file for setting up namespaces and feeds: **/etc/atomhopper/atom-server.c
 
 Config file for setting up the default data adapter: **/etc/atomhopper/application-context.xml**
 
+**Note:*** If you are not going to use H2 as your database then ensure you copy the appropriate JDBC driver into the Apache Tomcat ***lib*** folder.  Then you can make your changes to the **application-context.xml** and point to a different database.  You will need to re-start Tomcat for the changes to take effect if Atom Hopper is already running.
+
 ###RPM Installation Method###
 
 **Note:** To build the actual RPM file you need to be on a Fedora or CentOS system.
@@ -82,6 +84,7 @@ Required operating environment:
         Fedora 15 or higher
 * Java OpenJDK 1.6 (or Oracle's JRE) must be installed before running the RPM file
 * Apache Tomcat 6 must be installed before running the RPM file
+* If you are not using the H2 database then you need to ensure the appropriate JDBC driver is in Tomcat's **lib** folder
 
 **Note:** Make sure to first examine the Maven POM file in the **ah-war** project, in the section where the RPM is built there are several comments you will want to read over and settings you will most likely want to change to suit your dependencies, etc.
 
@@ -109,6 +112,7 @@ Required operating environment:
         Debian 6.0
 * Oracle's 1.6 JRE must be installed before running the DEB file
 * Apache Tomcat 6 must be installed before running the DEB file
+* If you are not using the H2 database then you need to ensure the appropriate JDBC driver is in Tomcat's **lib** folder
 
 Run from the command prompt:
 <code><pre>$ dpkg -i install ah-war-VERSION-INFO-HERE.deb</code></pre>
