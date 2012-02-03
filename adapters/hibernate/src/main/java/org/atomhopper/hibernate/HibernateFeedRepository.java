@@ -14,6 +14,8 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -21,8 +23,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class HibernateFeedRepository implements FeedRepository {
 
@@ -91,7 +91,7 @@ public class HibernateFeedRepository implements FeedRepository {
     }
 
     @Override
-    public Set<PersistedCategory> getCategoriesForFeeed(final String feedName) {
+    public Set<PersistedCategory> getCategoriesForFeed(final String feedName) {
         return performComplexAction(new ComplexSessionAction<Set<PersistedCategory>>() {
 
             @Override

@@ -1,0 +1,5 @@
+DELETE FROM categoryentryreferences
+WHERE categoryentryreferences.entryid
+IN (SELECT entries.entryid FROM entries WHERE datelastupdated < (now() - '8 day'::interval));
+
+DELETE FROM entries WHERE datelastupdated < (now() - '8 day'::interval);
