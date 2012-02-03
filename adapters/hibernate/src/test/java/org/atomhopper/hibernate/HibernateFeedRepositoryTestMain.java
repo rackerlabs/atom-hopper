@@ -1,13 +1,14 @@
 package org.atomhopper.hibernate;
 
-import java.util.Collections;
-import org.atomhopper.adapter.jpa.PersistedFeed;
 import org.atomhopper.adapter.jpa.PersistedEntry;
+import org.atomhopper.adapter.jpa.PersistedFeed;
 import org.atomhopper.hibernate.actions.SimpleSessionAction;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
-public class HibernateFeedRepositoryTest {
+import java.util.Collections;
+
+public class HibernateFeedRepositoryTestMain {
 
     public static void main(String[] args) {
         final HibernateFeedRepository feedRepository = new HibernateFeedRepository(Collections.EMPTY_MAP);
