@@ -2,7 +2,8 @@ package org.atomhopper.util.uri.template;
 
 public enum URITemplateParameter {
 
-    HOST_DOMAIN("host"),
+    HOST_SCHEME("scheme"),
+    HOST_DOMAIN("host"),    
     HOST_PORT("port"),
     WORKSPACE_RESOURCE("workspace"),
     FEED_RESOURCE("feed"),

@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.atomhopper</groupId>
         <artifactId>parent</artifactId>
-        <version>0.9.12-SNAPSHOT</version>
+        <version>0.9.14-SNAPSHOT</version>
     </parent>
 
     <groupId>org.atomhopper</groupId>
@@ -113,6 +113,18 @@
                                         <source>
                                             <location>src/main/resources/META-INF/atom-server.cfg.xml</location>
                                         </source>
+                                    </sources> 
+                                </mapping>
+                                <mapping>
+                                    <directory>/etc/atomhopper</directory>
+                                    <username>tomcat</username>
+                                    <groupname>tomcat</groupname>
+                                    <!-- Modify file permissions as needed -->
+                                    <filemode>755</filemode>
+                                    <sources>
+                                        <source>
+                                            <location>src/main/webapp/META-INF/application-context.xml</location>
+                                        </source>
                                     </sources>                         
                                 </mapping>
                                 <mapping>
@@ -132,12 +144,18 @@
                                     <sources>
                                         <source>
                                             <location>target/ah-war-${project.version}.war</location>
+                                            <!--
+                                                If you already have a ROOT.war and wish to keeo it
+                                                then remove the following destination completely
+                                            -->   
+                                            <destination>ROOT.war</destination>
                                         </source>
                                     </sources>                         
                                 </mapping>                       
                             </mappings>
                             <postinstallScriptlet>
                                 <script>mkdir "/opt/atomhopper/" &amp;&amp; chown tomcat "/opt/atomhopper/"</script>
+                                <script>mkdir "/var/log/atomhopper/" &amp;&amp; chown tomcat "/var/log/atomhopper/"</script>
                             </postinstallScriptlet>
                             <requires>
                                 <!--

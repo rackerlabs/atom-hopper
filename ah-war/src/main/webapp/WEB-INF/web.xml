@@ -6,7 +6,12 @@
 
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>/META-INF/application-context.xml</param-value>
+        <!--
+            If you would rather this config file be read out of the META-INF
+            folder then use this setting:
+            <param-value>/META-INF/application-context.xml</param-value>
+        -->        
+        <param-value>file:///etc/atomhopper/application-context.xml</param-value>
     </context-param>
 
     <listener>

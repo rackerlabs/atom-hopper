@@ -25,10 +25,11 @@ public class TemplateTargetBuilderTest {
     public static class WhenGeneratingURLsFromFeedTemplates extends TestParent {
 
         @Test
-        public void shouldGenerateFeedURLWithDefaults() {
+        public void shouldGenerateHttpFeedURLWithDefaults() {
             targetBuilder.setTemplate(TemplateTargetKey.FEED, URITemplate.FEED.toString());
 
             final EnumKeyedTemplateParameters<TemplateTargetKey> params = new EnumKeyedTemplateParameters<TemplateTargetKey>(TemplateTargetKey.FEED);
+            params.set(URITemplateParameter.HOST_SCHEME, "http");
             params.set(URITemplateParameter.HOST_DOMAIN, "domain.com");
             params.set(URITemplateParameter.WORKSPACE_RESOURCE, "a");
             params.set(URITemplateParameter.FEED_RESOURCE, "b");
@@ -38,13 +39,30 @@ public class TemplateTargetBuilderTest {
             assertEquals("URL built from template should match expected feed URL",
                     expected, targetBuilder.urlFor(requestContext, TemplateTargetKey.FEED, params.toMap()));
         }
-
+        
         @Test
-        public void shouldGenerateFeedURLWithMarker() {
+        public void shouldGeneratehttpsFeedURLWithDefaults() {
             targetBuilder.setTemplate(TemplateTargetKey.FEED, URITemplate.FEED.toString());
 
             final EnumKeyedTemplateParameters<TemplateTargetKey> params = new EnumKeyedTemplateParameters<TemplateTargetKey>(TemplateTargetKey.FEED);
+            params.set(URITemplateParameter.HOST_SCHEME, "https");
             params.set(URITemplateParameter.HOST_DOMAIN, "domain.com");
+            params.set(URITemplateParameter.WORKSPACE_RESOURCE, "a");
+            params.set(URITemplateParameter.FEED_RESOURCE, "b");
+
+            final String expected = "https://domain.com/root/context/a/b/";
+
+            assertEquals("URL built from template should match expected feed URL",
+                    expected, targetBuilder.urlFor(requestContext, TemplateTargetKey.FEED, params.toMap()));
+        }        
+
+        @Test
+        public void shouldGenerateHttpFeedURLWithMarker() {
+            targetBuilder.setTemplate(TemplateTargetKey.FEED, URITemplate.FEED.toString());
+
+            final EnumKeyedTemplateParameters<TemplateTargetKey> params = new EnumKeyedTemplateParameters<TemplateTargetKey>(TemplateTargetKey.FEED);
+            params.set(URITemplateParameter.HOST_SCHEME, "http");
+            params.set(URITemplateParameter.HOST_DOMAIN, "domain.com");            
             params.set(URITemplateParameter.WORKSPACE_RESOURCE, "a");
             params.set(URITemplateParameter.FEED_RESOURCE, "b");
             params.set(URITemplateParameter.MARKER, "12345");
@@ -54,12 +72,30 @@ public class TemplateTargetBuilderTest {
             assertEquals("URL built from template should match expected feed URL",
                     expected, targetBuilder.urlFor(requestContext, params.getTargetTemplateKey(), params.toMap()));
         }
-
+        
         @Test
-        public void shouldGenerateFeedURLWithLimitAndMarker() {
+        public void shouldGenerateHttpsFeedURLWithMarker() {
             targetBuilder.setTemplate(TemplateTargetKey.FEED, URITemplate.FEED.toString());
 
             final EnumKeyedTemplateParameters<TemplateTargetKey> params = new EnumKeyedTemplateParameters<TemplateTargetKey>(TemplateTargetKey.FEED);
+            params.set(URITemplateParameter.HOST_SCHEME, "https");
+            params.set(URITemplateParameter.HOST_DOMAIN, "domain.com");            
+            params.set(URITemplateParameter.WORKSPACE_RESOURCE, "a");
+            params.set(URITemplateParameter.FEED_RESOURCE, "b");
+            params.set(URITemplateParameter.MARKER, "12345");
+
+            final String expected = "https://domain.com/root/context/a/b/?lochint=12345";
+
+            assertEquals("URL built from template should match expected feed URL",
+                    expected, targetBuilder.urlFor(requestContext, params.getTargetTemplateKey(), params.toMap()));
+        }        
+
+        @Test
+        public void shouldGeneratehttpFeedURLWithLimitAndMarker() {
+            targetBuilder.setTemplate(TemplateTargetKey.FEED, URITemplate.FEED.toString());
+
+            final EnumKeyedTemplateParameters<TemplateTargetKey> params = new EnumKeyedTemplateParameters<TemplateTargetKey>(TemplateTargetKey.FEED);
+            params.set(URITemplateParameter.HOST_SCHEME, "http");
             params.set(URITemplateParameter.HOST_DOMAIN, "domain.com");
             params.set(URITemplateParameter.WORKSPACE_RESOURCE, "a");
             params.set(URITemplateParameter.FEED_RESOURCE, "b");
@@ -71,7 +107,25 @@ public class TemplateTargetBuilderTest {
             assertEquals("URL built from template should match expected feed URL",
                     expected, targetBuilder.urlFor(requestContext, params.getTargetTemplateKey(), params.toMap()));
         }
-    }
+    
+        @Test
+        public void shouldGenerateHttpsFeedURLWithLimitAndMarker() {
+            targetBuilder.setTemplate(TemplateTargetKey.FEED, URITemplate.FEED.toString());
+
+            final EnumKeyedTemplateParameters<TemplateTargetKey> params = new EnumKeyedTemplateParameters<TemplateTargetKey>(TemplateTargetKey.FEED);
+            params.set(URITemplateParameter.HOST_SCHEME, "https");
+            params.set(URITemplateParameter.HOST_DOMAIN, "domain.com");
+            params.set(URITemplateParameter.WORKSPACE_RESOURCE, "a");
+            params.set(URITemplateParameter.FEED_RESOURCE, "b");
+            params.set(URITemplateParameter.MARKER, "12345");
+            params.set(URITemplateParameter.PAGE_LIMIT, "5");
+
+            final String expected = "https://domain.com/root/context/a/b/?lochint=12345&limit=5";
+
+            assertEquals("URL built from template should match expected feed URL",
+                    expected, targetBuilder.urlFor(requestContext, params.getTargetTemplateKey(), params.toMap()));
+        }
+    }    
 
     public static class WhenBuildingTemplatesManually extends TestParent {
 
