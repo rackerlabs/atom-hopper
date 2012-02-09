@@ -67,15 +67,18 @@
         <url-pattern>/version</url-pattern>
     </servlet-mapping>
 
+    <!--This servlet is used to change the config file location that log4j looks at when initializing.-->
     <servlet>
         <servlet-name>Log4jInit</servlet-name>
         <servlet-class>org.atomhopper.Log4jInit</servlet-class>
 
+        <!--Config file location.-->
         <init-param>
             <param-name>log4j-config-file</param-name>
             <param-value>/etc/atomhopper/log4j.properties</param-value>
         </init-param>
 
+        <!--Always load on startup.-->
         <load-on-startup>1</load-on-startup>
     </servlet>
 
