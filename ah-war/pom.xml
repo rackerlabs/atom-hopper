@@ -108,7 +108,7 @@
                                     <username>tomcat</username>
                                     <groupname>tomcat</groupname>
                                     <!-- Modify file permissions as needed -->
-                                    <filemode>755</filemode>
+                                    <filemode>644</filemode>
                                     <sources>
                                         <source>
                                             <location>src/main/resources/META-INF/atom-server.cfg.xml</location>
@@ -120,7 +120,7 @@
                                     <username>tomcat</username>
                                     <groupname>tomcat</groupname>
                                     <!-- Modify file permissions as needed -->
-                                    <filemode>755</filemode>
+                                    <filemode>644</filemode>
                                     <sources>
                                         <source>
                                             <location>src/main/webapp/META-INF/application-context.xml</location>
