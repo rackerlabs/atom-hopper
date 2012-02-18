@@ -85,10 +85,12 @@ public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
             Document doc = xml.toDOM(getFeedMethod.getResponseBodyAsString());
             XPath xPath = XPathFactory.newInstance().newXPath();
             String linkUrl = xPath.evaluate("/feed/link[@rel='next']/@href", doc);
+            String linkUrlOldestEntry = xPath.evaluate("/feed/link[@rel='oldest-entry']/@href", doc);
             System.out.println("=================================================");
 
             xml.assertHasValue(doc, "/feed/link[@rel='current']/@href", "http://localhost:24156/namespace/feed?awesome=bar&awesome=foo");
             xml.assertHasValue(doc, "/feed/link[@rel='next']/@href", linkUrl);
+            xml.assertHasValue(doc, "/feed/link[@rel='oldest-entry']/@href", linkUrlOldestEntry);
         }
 
         @Test
