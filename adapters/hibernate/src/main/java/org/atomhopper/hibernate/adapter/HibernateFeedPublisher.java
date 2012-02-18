@@ -32,6 +32,7 @@ import static org.apache.abdera.i18n.text.UrlEncoding.decode;
 public class HibernateFeedPublisher implements FeedPublisher {
     private static final Logger LOG = LoggerFactory.getLogger(HibernateFeedPublisher.class);
     private static final String UUID_URI_SCHEME = "urn:uuid:";
+    private static final String LINKREL_SELF = "self";
 
     private FeedRepository feedRepository;
 
@@ -60,7 +61,7 @@ public class HibernateFeedPublisher implements FeedPublisher {
         abderaParsedEntry.setId(persistedEntry.getEntryId());
 
         abderaParsedEntry.addLink(decode(postEntryRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)))
-                                          + "entries/" + persistedEntry.getEntryId()).setRel("self");
+                                          + "entries/" + persistedEntry.getEntryId()).setRel(LINKREL_SELF);
 
         final PersistedFeed feedRef = new PersistedFeed(postEntryRequest.getFeedName(), UUID_URI_SCHEME + UUID.randomUUID().toString());
 

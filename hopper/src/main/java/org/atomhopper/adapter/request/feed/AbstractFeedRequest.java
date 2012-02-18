@@ -12,6 +12,7 @@ public abstract class AbstractFeedRequest extends AbstractClientRequest implemen
 
     @Override
     public String getFeedName() {
-        return getTargetParameter(TargetResolverField.WORKSPACE.name()) + "/" + getTargetParameter(TargetResolverField.FEED.name());
+        return getTargetParameter(TargetResolverField.WORKSPACE.name()) + "/" +
+                getTargetParameter(TargetResolverField.FEED.name());
     }
 }
