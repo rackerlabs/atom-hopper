@@ -16,15 +16,21 @@ import org.atomhopper.dbal.FeedRepository;
 import org.atomhopper.dbal.PageDirection;
 import org.atomhopper.hibernate.query.SimpleCategoryCriteriaGenerator;
 import org.atomhopper.response.AdapterResponse;
+import org.atomhopper.util.uri.template.EnumKeyedTemplateParameters;
+import org.atomhopper.util.uri.template.URITemplate;
 
 import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
 
+import static org.apache.abdera.i18n.text.UrlEncoding.decode;
+
+
 public class HibernateFeedSource implements FeedSource {
 
     private static final int PAGE_SIZE = 25;
     private FeedRepository feedRepository;
+    private static final String LINKREL_OLDEST_ENTRY = "oldest-entry";
 
     public void setFeedRepository(FeedRepository feedRepository) {
         this.feedRepository = feedRepository;
@@ -39,11 +45,16 @@ public class HibernateFeedSource implements FeedSource {
     public void setParameters(Map<String, String> params) {
     }
 
-    private Feed hydrateFeed(Abdera abdera, PersistedFeed persistedFeed, List<PersistedEntry> persistedEntries) {
+    private Feed hydrateFeed(Abdera abdera, PersistedFeed persistedFeed, List<PersistedEntry> persistedEntries, GetFeedRequest getFeedRequest) {
         final Feed hyrdatedFeed = abdera.newFeed();
 
         hyrdatedFeed.setId(persistedFeed.getFeedId());
         hyrdatedFeed.setTitle(persistedFeed.getName());
+        
+        if(!(persistedEntries.isEmpty())) {
+            hyrdatedFeed.addLink(decode(getFeedRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)))
+                                            + "entries/" + feedRepository.getLastEntry(persistedFeed.getName()).getEntryId()).setRel(LINKREL_OLDEST_ENTRY);
+        }
 
         for (PersistedEntry persistedFeedEntry : persistedEntries) {
             hyrdatedFeed.addEntry(hydrateEntry(persistedFeedEntry, abdera));
@@ -80,7 +91,7 @@ public class HibernateFeedSource implements FeedSource {
     @Override
     public AdapterResponse<Feed> getFeed(GetFeedRequest getFeedRequest) {
         AdapterResponse<Feed> response;
-
+        
         int pageSize = PAGE_SIZE;
 
         try {
@@ -113,7 +124,7 @@ public class HibernateFeedSource implements FeedSource {
             final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
             final List<PersistedEntry> persistedEntries = feedRepository.getFeedHead(feedName, new SimpleCategoryCriteriaGenerator(searchString), pageSize);
 
-            response = ResponseBuilder.found(hydrateFeed(abdera, persistedFeed, persistedEntries));
+            response = ResponseBuilder.found(hydrateFeed(abdera, persistedFeed, persistedEntries, getFeedRequest));
         }
 
         return response != null ? response : ResponseBuilder.found(abdera.newFeed());
@@ -122,7 +133,6 @@ public class HibernateFeedSource implements FeedSource {
     private AdapterResponse<Feed> getFeedPage(GetFeedRequest getFeedRequest, String marker, int pageSize) {
         AdapterResponse<Feed> response;
         PageDirection pageDirection;
-
         try {
             final String pageDirectionValue = getFeedRequest.getDirection();
             pageDirection = PageDirection.valueOf(pageDirectionValue.toUpperCase());
@@ -138,7 +148,8 @@ public class HibernateFeedSource implements FeedSource {
             final Feed feed = hydrateFeed(
                     getFeedRequest.getAbdera(), persistedFeed, 
                     feedRepository.getFeedPage(
-                        getFeedRequest.getFeedName(), markerEntry, pageDirection, new SimpleCategoryCriteriaGenerator(searchString), pageSize));
+                        getFeedRequest.getFeedName(), markerEntry, pageDirection, new SimpleCategoryCriteriaGenerator(searchString), pageSize),
+                    getFeedRequest);
 
             response = ResponseBuilder.found(feed);
         } else {

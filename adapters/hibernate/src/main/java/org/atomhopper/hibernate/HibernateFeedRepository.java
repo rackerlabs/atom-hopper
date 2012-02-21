@@ -246,4 +246,18 @@ public class HibernateFeedRepository implements FeedRepository {
             }
         });
     }
+    
+    @Override
+    public PersistedEntry getLastEntry(final String feedName) {
+        return performComplexAction(new ComplexSessionAction<PersistedEntry>() {
+
+            @Override
+            public PersistedEntry perform(Session liveSession) {
+                return (PersistedEntry) liveSession.createCriteria(PersistedEntry.class)
+                        .add(Restrictions.eq("feed.name", feedName))
+                        .addOrder(Order.asc(DATE_LAST_UPDATED))
+                        .setMaxResults(1).uniqueResult();
+            }
+        });
+    }    
 }

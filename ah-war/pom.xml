@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.atomhopper</groupId>
         <artifactId>parent</artifactId>
-        <version>0.10.1-SNAPSHOT</version>
+        <version>0.10.2-SNAPSHOT</version>
     </parent>
 
     <groupId>org.atomhopper</groupId>
@@ -108,7 +108,8 @@
                                     <username>tomcat</username>
                                     <groupname>tomcat</groupname>
                                     <!-- Modify file permissions as needed -->
-                                    <filemode>755</filemode>
+                                    <filemode>644</filemode>
+                                    <configuration>true</configuration>
                                     <sources>
                                         <source>
                                             <location>src/main/resources/META-INF/atom-server.cfg.xml</location>
@@ -120,7 +121,8 @@
                                     <username>tomcat</username>
                                     <groupname>tomcat</groupname>
                                     <!-- Modify file permissions as needed -->
-                                    <filemode>755</filemode>
+                                    <filemode>644</filemode>
+                                    <configuration>true</configuration>
                                     <sources>
                                         <source>
                                             <location>src/main/webapp/META-INF/application-context.xml</location>
@@ -154,8 +156,8 @@
                                 </mapping>                       
                             </mappings>
                             <postinstallScriptlet>
-                                <script>mkdir "/opt/atomhopper/" &amp;&amp; chown tomcat "/opt/atomhopper/"</script>
-                                <script>mkdir "/var/log/atomhopper/" &amp;&amp; chown tomcat "/var/log/atomhopper/"</script>
+                                <script>mkdir -m 755 "/opt/atomhopper/" &amp;&amp; chown tomcat "/opt/atomhopper/"</script>
+                                <script>mkdir -m 755 "/var/log/atomhopper/" &amp;&amp; chown tomcat "/var/log/atomhopper/"</script>
                             </postinstallScriptlet>
                             <requires>
                                 <!--
