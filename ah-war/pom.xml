@@ -130,6 +130,21 @@
                                     </sources>                         
                                 </mapping>
                                 <mapping>
+                                <mapping>
+                                    <directory>/etc/atomhopper</directory>
+                                    <username>tomcat</username>
+                                    <groupname>tomcat</groupname>
+                                    <!-- Modify file permissions as needed -->
+                                    <filemode>644</filemode>
+                                    <configuration>true</configuration>
+                                    <sources>
+                                        <source>
+                                            <location>src/main/webapp/META-INF/template-log4j.properties</location>
+                                            <destination>log4j.properties</destination>
+                                        </source>
+                                    </sources>                         
+                                </mapping>
+                                <mapping>                                    
                                     <!--
                                         Use this path for Tomcat6
                                         <directory>/var/lib/tomcat6/webapps/</directory>
