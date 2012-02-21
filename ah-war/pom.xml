@@ -130,7 +130,6 @@
                                     </sources>                         
                                 </mapping>
                                 <mapping>
-                                <mapping>
                                     <directory>/etc/atomhopper</directory>
                                     <username>tomcat</username>
                                     <groupname>tomcat</groupname>
