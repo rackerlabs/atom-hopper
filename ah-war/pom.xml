@@ -182,12 +182,12 @@
                                     This path is for our custom Tomcat7 RPM since
                                     an official Tomcat7 RPM doesn't exist yet for CentOS
                                 -->
-                                <require>apache-tomcat</require>
+                                <require>tomcat7</require>
                                 <!--
-                                    You can modify this to use the Oracle Java JDK 1.6
+                                    You can modify this to use the Oracle Java JDK 1.6 or Open JDK
                                     if you want
                                  -->
-                                <require>java-1.6.0-openjdk</require>
+                                <require>jdk</require>
                             </requires>                   
                         </configuration>
                     </plugin>           
