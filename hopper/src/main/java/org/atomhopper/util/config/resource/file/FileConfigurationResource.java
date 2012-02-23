@@ -1,10 +1,11 @@
 package org.atomhopper.util.config.resource.file;
 
+import org.atomhopper.util.config.resource.ConfigurationResource;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import org.atomhopper.util.config.resource.ConfigurationResource;
 
 public class FileConfigurationResource implements ConfigurationResource {
 

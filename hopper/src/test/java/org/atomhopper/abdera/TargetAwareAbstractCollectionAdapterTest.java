@@ -1,6 +1,5 @@
 package org.atomhopper.abdera;
 
-import org.atomhopper.abdera.TargetAwareAbstractCollectionAdapter;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.ResponseContext;
 import org.apache.abdera.protocol.server.context.ResponseContextException;
@@ -8,8 +7,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
-
-import static junit.framework.Assert.assertEquals;
 
 @RunWith(Enclosed.class)
 public class TargetAwareAbstractCollectionAdapterTest {

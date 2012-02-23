@@ -1,15 +1,17 @@
 package org.atomhopper.adapter.request.impl;
 
+import org.apache.abdera.protocol.server.RequestContext;
 import org.atomhopper.adapter.request.adapter.impl.PostEntryRequestImpl;
 import org.atomhopper.adapter.request.adapter.impl.RequestParsingException;
-import java.io.IOException;
-import org.apache.abdera.protocol.server.RequestContext;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
-import static org.mockito.Mockito.*;
+import java.io.IOException;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(Enclosed.class)
 public class PostEntryRequestImplTest {

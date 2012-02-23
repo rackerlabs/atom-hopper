@@ -1,11 +1,11 @@
 package org.atomhopper.adapter;
 
+import org.apache.abdera.model.Entry;
 import org.atomhopper.adapter.request.adapter.DeleteEntryRequest;
 import org.atomhopper.adapter.request.adapter.PostEntryRequest;
 import org.atomhopper.adapter.request.adapter.PutEntryRequest;
 import org.atomhopper.response.AdapterResponse;
 import org.atomhopper.response.EmptyBody;
-import org.apache.abdera.model.Entry;
 
 /**
  * A feed publisher, as defined by this interface, is responsible for committing

@@ -16,16 +16,6 @@ public class EnumKeyedTemplateParameters<T extends Enum> implements TemplatePara
         this.parameterMap = new HashMap<String, Object>();
     }
 
-    private EnumKeyedTemplateParameters(T temlpateTargetKey, Map<String, Object> parameterMap) {
-        this(temlpateTargetKey);
-
-        this.parameterMap.putAll(parameterMap);
-    }
-
-    public EnumKeyedTemplateParameters(T temlpateTargetKey, TemplateParameters<T> parameters) {
-        this(temlpateTargetKey, parameters.toMap());
-    }
-
     @Override
     public void set(URITemplateParameter parameter, Object value) {
         parameterMap.put(parameter.toString(), value);

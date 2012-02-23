@@ -1,17 +1,16 @@
 package org.atomhopper.abdera;
 
-import org.atomhopper.config.v1_0.WorkspaceConfiguration;
 import org.apache.abdera.model.Workspace;
 import org.apache.abdera.parser.stax.FOMWorkspace;
 import org.apache.abdera.protocol.server.CollectionInfo;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.WorkspaceInfo;
 import org.apache.commons.lang.StringUtils;
+import org.atomhopper.config.v1_0.WorkspaceConfiguration;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 
 public class WorkspaceHandler implements WorkspaceInfo {
@@ -44,16 +43,8 @@ public class WorkspaceHandler implements WorkspaceInfo {
         return (Collection) Collections.unmodifiableCollection(collectionAdapterMap.values());
     }
 
-    public Collection getCollectionAdapterMapValues() {
-        return collectionAdapterMap.values();
-    }
-
     @Override
     public String getTitle(RequestContext rc) {
         return myConfig.getTitle();
-    }
-
-    public WorkspaceConfiguration getMyConfig() {
-        return myConfig;
     }
 }

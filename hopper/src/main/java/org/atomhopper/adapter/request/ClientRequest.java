@@ -1,8 +1,9 @@
 package org.atomhopper.adapter.request;
 
-import java.util.List;
 import org.apache.abdera.Abdera;
 import org.atomhopper.util.uri.template.TemplateParameters;
+
+import java.util.List;
 
 /**
  * A client request contains only the bare minimum needed to express the request

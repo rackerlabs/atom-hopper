@@ -1,7 +1,7 @@
 package org.atomhopper.abdera.filter;
 
-import org.atomhopper.response.AdapterResponse;
 import org.apache.abdera.protocol.server.RequestContext;
+import org.atomhopper.response.AdapterResponse;
 
 /**
  *

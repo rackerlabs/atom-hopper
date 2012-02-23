@@ -1,14 +1,14 @@
 package org.atomhopper.util.uri;
 
-import org.atomhopper.util.uri.ClasspathSchemeMapper;
-import org.atomhopper.util.uri.URISchemeMapper;
-import java.net.URI;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.*;
+import java.net.URI;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(Enclosed.class)
 public class ClasspathSchemeMapperTest {

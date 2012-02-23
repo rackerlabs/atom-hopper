@@ -1,17 +1,21 @@
 package org.atomhopper.hibernate.query;
 
-import java.util.LinkedList;
-import java.util.List;
 import org.atomhopper.adapter.jpa.PersistedCategory;
 import org.hibernate.Criteria;
-import org.junit.Before;
 import org.hibernate.Session;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
-import static org.mockito.Mockito.*;
-import static org.junit.Assert.*;
+import java.util.LinkedList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(Enclosed.class)
 public class SimpleCategoryCriteriaGeneratorTest {
