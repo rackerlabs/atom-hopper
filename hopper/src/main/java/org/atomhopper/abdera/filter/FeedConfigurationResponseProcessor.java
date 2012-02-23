@@ -1,10 +1,10 @@
 package org.atomhopper.abdera.filter;
 
+import org.apache.abdera.model.Feed;
+import org.apache.abdera.protocol.server.RequestContext;
 import org.atomhopper.config.v1_0.Author;
 import org.atomhopper.config.v1_0.FeedConfiguration;
 import org.atomhopper.response.AdapterResponse;
-import org.apache.abdera.model.Feed;
-import org.apache.abdera.protocol.server.RequestContext;
 
 public class FeedConfigurationResponseProcessor implements AdapterResponseInterceptor<Feed> {
     private final FeedConfiguration feedConfiguration;

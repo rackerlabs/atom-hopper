@@ -1,6 +1,7 @@
 package org.atomhopper.server;
 
-import org.kohsuke.args4j.*;
+import org.kohsuke.args4j.Argument;
+import org.kohsuke.args4j.Option;
 
 class CommandLineArguments {
 

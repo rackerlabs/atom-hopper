@@ -18,7 +18,6 @@ import java.io.IOException;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(Enclosed.class)
 public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {

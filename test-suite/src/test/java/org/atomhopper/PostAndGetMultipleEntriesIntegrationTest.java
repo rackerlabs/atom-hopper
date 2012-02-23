@@ -10,6 +10,7 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
+
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 

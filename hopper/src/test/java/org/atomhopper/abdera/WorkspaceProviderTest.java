@@ -1,10 +1,14 @@
 package org.atomhopper.abdera;
 
-import org.atomhopper.abdera.WorkspaceManager;
-import org.atomhopper.abdera.WorkspaceProvider;
-import org.apache.abdera.protocol.server.*;
+import org.apache.abdera.protocol.server.CollectionAdapter;
+import org.apache.abdera.protocol.server.RequestContext;
+import org.apache.abdera.protocol.server.RequestProcessor;
+import org.apache.abdera.protocol.server.ResponseContext;
+import org.apache.abdera.protocol.server.Target;
+import org.apache.abdera.protocol.server.TargetType;
 import org.apache.abdera.protocol.server.context.ResponseContextException;
 import org.apache.abdera.protocol.server.impl.AbstractCollectionAdapter;
+import org.atomhopper.config.v1_0.HostConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
@@ -12,10 +16,15 @@ import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 
 import java.util.HashMap;
-import org.atomhopper.config.v1_0.HostConfiguration;
 
 import static junit.framework.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(Enclosed.class)
 public class WorkspaceProviderTest {

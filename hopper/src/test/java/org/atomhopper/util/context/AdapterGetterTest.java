@@ -10,7 +10,10 @@ import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  *

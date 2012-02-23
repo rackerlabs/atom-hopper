@@ -1,6 +1,5 @@
 package org.atomhopper.util;
 
-import org.atomhopper.util.TargetRegexBuilder;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;

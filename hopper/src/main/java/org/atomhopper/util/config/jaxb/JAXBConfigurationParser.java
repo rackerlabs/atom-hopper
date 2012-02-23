@@ -2,17 +2,21 @@ package org.atomhopper.util.config.jaxb;
 
 import org.atomhopper.util.config.AbstractConfigurationParser;
 import org.atomhopper.util.config.ConfigurationParserException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import javax.xml.XMLConstants;
-import javax.xml.bind.*;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.UnmarshalException;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import java.io.IOException;
 import java.net.URL;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class JAXBConfigurationParser<T> extends AbstractConfigurationParser<T> {
 

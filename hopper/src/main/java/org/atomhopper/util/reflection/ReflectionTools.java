@@ -35,18 +35,6 @@ public final class ReflectionTools {
     private ReflectionTools() {
     }
 
-    public static Class<?> getCallerClassFromStackTrace(int depth) throws ClassNotFoundException {
-        final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-
-        if (stackTrace != null && stackTrace.length > depth) {
-            final String className = stackTrace[depth].getClassName();
-
-            return Class.forName(className);
-        }
-
-        return null;
-    }
-
     public static <T> T construct(Class<T> c, Object... parameters) {
         try {
             final Constructor<T> constructor = getConstructor(c, toClassArray(parameters));
@@ -59,32 +47,6 @@ public final class ReflectionTools {
         } catch (Exception instanciationException) {
             throw new ReflectionException("Failed to create new instance of class: " + c.getCanonicalName() + ". Pump cause for more detaisl.", instanciationException);
         }
-    }
-
-    public static Class<?>[] objectArrayToClassArray(Object[] o) {
-        final Class<?>[] classes = o != null ? new Class<?>[o.length] : DEFAULT_ANY;
-
-        if (o != null) {
-            for (int i = 0; i < o.length; i++) {
-                classes[i] = o[i] == null ? Any.class : o[i].getClass();
-            }
-        }
-
-        return classes;
-    }
-
-    public static boolean classArraysMatch(Class<?>[] a, Class<?>[] b) {
-        if (a.length != b.length) {
-            return false;
-        }
-
-        for (int i = 0; i < a.length; i++) {
-            if (a[i] != Any.class && b[i] != Any.class && !a[i].isAssignableFrom(b[i])) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     private static <T> Constructor<T> getConstructor(Class<T> c, Class<?>[] parameters) throws NoSuchMethodException {

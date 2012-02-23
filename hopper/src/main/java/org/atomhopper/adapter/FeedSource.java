@@ -1,10 +1,10 @@
 package org.atomhopper.adapter;
 
+import org.apache.abdera.model.Entry;
+import org.apache.abdera.model.Feed;
 import org.atomhopper.adapter.request.adapter.GetEntryRequest;
 import org.atomhopper.adapter.request.adapter.GetFeedRequest;
 import org.atomhopper.response.AdapterResponse;
-import org.apache.abdera.model.Entry;
-import org.apache.abdera.model.Feed;
 
 /**
  * A feed source, as defined by this interface, is responsible for retrieving the

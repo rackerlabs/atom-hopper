@@ -1,15 +1,14 @@
 package org.atomhopper.abdera.filter;
 
-import org.atomhopper.abdera.filter.FeedConfigurationResponseProcessor;
-import org.atomhopper.config.v1_0.Author;
-import org.atomhopper.config.v1_0.FeedConfiguration;
-import org.atomhopper.response.AdapterResponse;
-import org.atomhopper.response.FeedSourceAdapterResponse;
 import org.apache.abdera.Abdera;
 import org.apache.abdera.i18n.iri.IRI;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.model.Person;
 import org.apache.abdera.protocol.server.RequestContext;
+import org.atomhopper.config.v1_0.Author;
+import org.atomhopper.config.v1_0.FeedConfiguration;
+import org.atomhopper.response.AdapterResponse;
+import org.atomhopper.response.FeedSourceAdapterResponse;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
