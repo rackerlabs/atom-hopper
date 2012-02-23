@@ -130,6 +130,20 @@
                                     </sources>                         
                                 </mapping>
                                 <mapping>
+                                    <directory>/etc/atomhopper</directory>
+                                    <username>tomcat</username>
+                                    <groupname>tomcat</groupname>
+                                    <!-- Modify file permissions as needed -->
+                                    <filemode>644</filemode>
+                                    <configuration>true</configuration>
+                                    <sources>
+                                        <source>
+                                            <location>src/main/webapp/META-INF/template-log4j.properties</location>
+                                            <destination>log4j.properties</destination>
+                                        </source>
+                                    </sources>                         
+                                </mapping>
+                                <mapping>                                    
                                     <!--
                                         Use this path for Tomcat6
                                         <directory>/var/lib/tomcat6/webapps/</directory>
@@ -168,12 +182,12 @@
                                     This path is for our custom Tomcat7 RPM since
                                     an official Tomcat7 RPM doesn't exist yet for CentOS
                                 -->
-                                <require>apache-tomcat</require>
+                                <require>tomcat7</require>
                                 <!--
-                                    You can modify this to use the Oracle Java JDK 1.6
+                                    You can modify this to use the Oracle Java JDK 1.6 or Open JDK
                                     if you want
                                  -->
-                                <require>java-1.6.0-openjdk</require>
+                                <require>jdk</require>
                             </requires>                   
                         </configuration>
                     </plugin>           

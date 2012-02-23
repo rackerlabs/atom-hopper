@@ -1,6 +1,7 @@
 package org.atomhopper.jetty;
 
 import org.atomhopper.AtomHopperServlet;
+import org.atomhopper.AtomHopperVersionServlet;
 import org.atomhopper.servlet.ServletInitParameter;
 import org.atomhopper.servlet.ServletSpringContext;
 import org.eclipse.jetty.server.Server;
@@ -25,9 +26,11 @@ public class AtomHopperJettyServerBuilder {
         final ServletContextHandler rootContext = buildRootContext(jettyServerReference);
 
         final ServletHolder atomHopServer = new ServletHolder(AtomHopperServlet.class);
+        final ServletHolder versionServlet = new ServletHolder(AtomHopperVersionServlet.class);
         atomHopServer.setInitParameter(ServletInitParameter.CONTEXT_ADAPTER_CLASS.toString(), ServletSpringContext.class.getName());
         atomHopServer.setInitParameter(ServletInitParameter.CONFIGURATION_LOCATION.toString(), "classpath:/META-INF/atom-server.cfg.xml");
 
+        rootContext.addServlet(versionServlet, "/version");
         rootContext.addServlet(atomHopServer, "/*");
 
         return jettyServerReference;
