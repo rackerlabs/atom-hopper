@@ -1,9 +1,9 @@
 package org.atomhopper.adapter.request.adapter.impl;
 
-import org.atomhopper.adapter.request.feed.AbstractFeedRequest;
-import org.atomhopper.adapter.request.adapter.PostEntryRequest;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.protocol.server.RequestContext;
+import org.atomhopper.adapter.request.adapter.PostEntryRequest;
+import org.atomhopper.adapter.request.feed.AbstractFeedRequest;
 
 /**
  *

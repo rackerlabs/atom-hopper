@@ -1,7 +1,8 @@
 package org.atomhopper.adapter.request.adapter;
 
-import java.util.Calendar;
 import org.atomhopper.adapter.request.feed.FeedRequest;
+
+import java.util.Calendar;
 
 /**
  *

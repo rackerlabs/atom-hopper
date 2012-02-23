@@ -1,11 +1,11 @@
 package org.atomhopper.abdera.response;
 
-import org.atomhopper.abdera.filter.AdapterResponseInterceptor;
-import org.atomhopper.response.AdapterResponse;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.protocol.server.ProviderHelper;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.ResponseContext;
+import org.atomhopper.abdera.filter.AdapterResponseInterceptor;
+import org.atomhopper.response.AdapterResponse;
 
 import java.util.Date;
 

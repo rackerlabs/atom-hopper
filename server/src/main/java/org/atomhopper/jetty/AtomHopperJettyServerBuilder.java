@@ -4,11 +4,9 @@ package org.atomhopper.jetty;
 import org.atomhopper.AtomHopperServlet;
 import org.atomhopper.servlet.ServletInitParameter;
 import org.atomhopper.servlet.ServletSpringContext;
-
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-
 import org.springframework.web.context.ContextLoaderListener;
 
 
@@ -57,8 +55,4 @@ public class AtomHopperJettyServerBuilder {
     public Server newServer() {
         return buildNewInstance();
     }
-    
-    public Server newServer(String configurationPathAndFile) {
-        return buildNewInstance();
-    }    
 }

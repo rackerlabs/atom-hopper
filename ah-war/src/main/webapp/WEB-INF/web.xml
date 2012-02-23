@@ -16,7 +16,7 @@
     </context-param>
 
     <!--This section configures log4j properties-->
-    <context-param><!--Log4j properties file location "file:///" required.-->
+    <context-param><!--Log4j properties file location, "file:///" required.-->
         <param-name>log4jConfigLocation</param-name>
         <param-value>file:///etc/atomhopper/log4j.properties</param-value>
     </context-param>

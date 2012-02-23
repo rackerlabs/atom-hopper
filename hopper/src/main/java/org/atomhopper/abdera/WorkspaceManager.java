@@ -25,10 +25,6 @@ public class WorkspaceManager implements org.apache.abdera.protocol.server.Works
         return (Collection) handlers;
     }
 
-    public List<WorkspaceHandler> getHandlers() {
-        return handlers;
-    }
-
     @Override
     public CollectionAdapter getCollectionAdapter(RequestContext request) {
         for (WorkspaceHandler workspace : handlers) {

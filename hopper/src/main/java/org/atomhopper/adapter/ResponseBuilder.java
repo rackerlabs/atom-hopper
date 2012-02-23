@@ -1,11 +1,11 @@
 package org.atomhopper.adapter;
 
-import org.atomhopper.response.AdapterResponse;
-import org.atomhopper.response.EmptyBody;
-import org.atomhopper.response.FeedSourceAdapterResponse;
 import org.apache.abdera.model.Categories;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
+import org.atomhopper.response.AdapterResponse;
+import org.atomhopper.response.EmptyBody;
+import org.atomhopper.response.FeedSourceAdapterResponse;
 import org.springframework.http.HttpStatus;
 
 /**

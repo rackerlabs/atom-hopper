@@ -1,9 +1,13 @@
 package org.atomhopper.config;
 
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
-import org.atomhopper.config.v1_0.*;
+import org.atomhopper.config.v1_0.Author;
+import org.atomhopper.config.v1_0.Configuration;
+import org.atomhopper.config.v1_0.ConfigurationDefaults;
+import org.atomhopper.config.v1_0.FeedConfiguration;
+import org.atomhopper.config.v1_0.WorkspaceConfiguration;
+
+import java.util.List;
 
 /**
  * @author zinic

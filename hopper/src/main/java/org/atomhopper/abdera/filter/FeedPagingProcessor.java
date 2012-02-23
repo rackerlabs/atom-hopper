@@ -1,9 +1,9 @@
 package org.atomhopper.abdera.filter;
 
-import org.atomhopper.response.AdapterResponse;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.commons.lang.StringUtils;
+import org.atomhopper.response.AdapterResponse;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;

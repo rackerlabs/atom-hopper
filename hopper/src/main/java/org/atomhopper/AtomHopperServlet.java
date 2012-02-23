@@ -1,6 +1,12 @@
 package org.atomhopper;
 
+import org.apache.abdera.Abdera;
+import org.apache.abdera.ext.json.JSONFilter;
+import org.apache.abdera.protocol.server.Provider;
+import org.apache.abdera.protocol.server.servlet.AbderaServlet;
+import org.apache.commons.lang.StringUtils;
 import org.atomhopper.abdera.WorkspaceProvider;
+import org.atomhopper.config.AtomHopperConfigurationPreprocessor;
 import org.atomhopper.config.WorkspaceConfigProcessor;
 import org.atomhopper.config.v1_0.Configuration;
 import org.atomhopper.config.v1_0.ConfigurationDefaults;
@@ -9,27 +15,21 @@ import org.atomhopper.config.v1_0.WorkspaceConfiguration;
 import org.atomhopper.exceptions.ContextAdapterResolutionException;
 import org.atomhopper.exceptions.ServletInitException;
 import org.atomhopper.servlet.ApplicationContextAdapter;
+import org.atomhopper.servlet.DefaultEmptyContext;
 import org.atomhopper.servlet.ServletInitParameter;
 import org.atomhopper.util.config.ConfigurationParser;
 import org.atomhopper.util.config.ConfigurationParserException;
 import org.atomhopper.util.config.jaxb.JAXBConfigurationParser;
+import org.atomhopper.util.config.resource.file.FileConfigurationResource;
 import org.atomhopper.util.config.resource.uri.URIConfigurationResource;
-import org.apache.abdera.Abdera;
-import org.apache.abdera.protocol.server.Provider;
-import org.apache.abdera.protocol.server.servlet.AbderaServlet;
-import org.apache.commons.lang.StringUtils;
-import org.apache.abdera.ext.json.JSONFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
-import org.atomhopper.config.AtomHopperConfigurationPreprocessor;
-import org.atomhopper.servlet.DefaultEmptyContext;
-import org.atomhopper.util.config.resource.file.FileConfigurationResource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class is the entry point for the atom server application. This servlet is

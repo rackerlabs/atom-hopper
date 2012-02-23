@@ -1,32 +1,21 @@
 package org.atomhopper.abdera;
 
 import org.apache.abdera.Abdera;
-import org.apache.abdera.parser.ParseException;
-import org.atomhopper.abdera.response.ResponseHandler;
-import org.atomhopper.abdera.response.EmptyBodyResponseHandler;
-import org.atomhopper.abdera.response.EntryResponseHandler;
-import org.atomhopper.abdera.response.FeedResponseHandler;
-import org.atomhopper.adapter.FeedPublisher;
-import org.atomhopper.adapter.FeedSource;
-import org.atomhopper.config.v1_0.FeedConfiguration;
-import org.atomhopper.response.AdapterResponse;
-import org.atomhopper.response.EmptyBody;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
+import org.apache.abdera.parser.ParseException;
 import org.apache.abdera.protocol.server.ProviderHelper;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.ResponseContext;
 import org.apache.abdera.protocol.server.TargetType;
-import org.springframework.http.HttpStatus;
-
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import org.atomhopper.abdera.filter.FeedEntityTagProcessor;
 import org.atomhopper.abdera.filter.FeedPagingProcessor;
+import org.atomhopper.abdera.response.EmptyBodyResponseHandler;
+import org.atomhopper.abdera.response.EntryResponseHandler;
+import org.atomhopper.abdera.response.FeedResponseHandler;
+import org.atomhopper.abdera.response.ResponseHandler;
+import org.atomhopper.adapter.FeedPublisher;
+import org.atomhopper.adapter.FeedSource;
 import org.atomhopper.adapter.impl.DisabledFeedSource;
 import org.atomhopper.adapter.impl.DisabledPublisher;
 import org.atomhopper.adapter.request.adapter.GetCategoriesRequest;
@@ -36,6 +25,16 @@ import org.atomhopper.adapter.request.adapter.impl.GetEntryRequestImpl;
 import org.atomhopper.adapter.request.adapter.impl.GetFeedRequestImpl;
 import org.atomhopper.adapter.request.adapter.impl.PostEntryRequestImpl;
 import org.atomhopper.adapter.request.adapter.impl.PutEntryRequestImpl;
+import org.atomhopper.config.v1_0.FeedConfiguration;
+import org.atomhopper.response.AdapterResponse;
+import org.atomhopper.response.EmptyBody;
+import org.springframework.http.HttpStatus;
+
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
 

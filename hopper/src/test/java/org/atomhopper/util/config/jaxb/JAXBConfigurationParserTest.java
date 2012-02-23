@@ -4,19 +4,20 @@
  */
 package org.atomhopper.util.config.jaxb;
 
-import org.junit.Ignore;
-import java.net.URI;
 import org.atomhopper.config.v1_0.Configuration;
 import org.atomhopper.util.config.ConfigurationParserException;
 import org.atomhopper.util.config.resource.ConfigurationResource;
 import org.atomhopper.util.config.resource.uri.URIConfigurationResource;
 import org.atomhopper.util.uri.CustomSchemeResolver;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.*;
+import java.net.URI;
+
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(Enclosed.class)
 public class JAXBConfigurationParserTest {
