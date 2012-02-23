@@ -17,7 +17,7 @@ public class GetVersionPathTest extends JettyIntegrationTestHarness {
     private static final String urlAndPort = "http://localhost:" + getPort();
 
     public static GetMethod getVersionPathMethod() {
-        return new GetMethod(urlAndPort + "/version");
+        return new GetMethod(urlAndPort + "/buildinfo");
     }
 
     public static class WhenGettingVersionInfo {

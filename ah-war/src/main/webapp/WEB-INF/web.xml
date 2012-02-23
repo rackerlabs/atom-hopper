@@ -79,6 +79,6 @@
 
     <servlet-mapping id="atom-hopper-version-mapping">
         <servlet-name>Atom-Hopper-Version</servlet-name>
-        <url-pattern>/version</url-pattern>
+        <url-pattern>/buildinfo</url-pattern>
     </servlet-mapping>
 </web-app>

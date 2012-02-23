@@ -30,7 +30,7 @@ public class AtomHopperJettyServerBuilder {
         atomHopServer.setInitParameter(ServletInitParameter.CONTEXT_ADAPTER_CLASS.toString(), ServletSpringContext.class.getName());
         atomHopServer.setInitParameter(ServletInitParameter.CONFIGURATION_LOCATION.toString(), "classpath:/META-INF/atom-server.cfg.xml");
 
-        rootContext.addServlet(versionServlet, "/version");
+        rootContext.addServlet(versionServlet, "/buildinfo");
         rootContext.addServlet(atomHopServer, "/*");
 
         return jettyServerReference;
