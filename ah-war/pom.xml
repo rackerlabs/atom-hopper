@@ -187,7 +187,9 @@
                                     You can modify this to use the Oracle Java JDK 1.6 or Open JDK
                                     if you want
                                  -->
+                                <!--
                                 <require>jdk</require>
+                                -->
                             </requires>                   
                         </configuration>
                     </plugin>           
