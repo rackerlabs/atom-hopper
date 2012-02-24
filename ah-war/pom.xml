@@ -152,7 +152,7 @@
                                         This path is for our custom Tomcat7 RPM since
                                         an official Tomcat7 RPM doesn't exist yet for CentOS
                                     -->
-                                    <directory>/opt/apache-tomcat/webapps</directory>
+                                    <directory>/var/lib/tomcat7/webapps</directory>
                                     <username>tomcat</username>
                                     <groupname>tomcat</groupname>
                                     <!-- Modify file permissions as needed -->
@@ -182,9 +182,7 @@
                                     This path is for our custom Tomcat7 RPM since
                                     an official Tomcat7 RPM doesn't exist yet for CentOS
                                 -->
-                                <!--
                                 <require>tomcat7</require>
-                                -->
                                 <!--
                                     You can modify this to use the Oracle Java JDK 1.6 or Open JDK
                                     if you want
