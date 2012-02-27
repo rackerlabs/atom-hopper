@@ -9,6 +9,11 @@ NOTE: Place this file in the following folder: /etc/atomhopper/atom-server.cfg.x
         <author name="Atom Hopper" />
     </defaults>
 
+    <!--
+        Make sure to put in your actual domain or IP address and
+        the port number your using or the self referencing links
+        will be incorrect
+    -->
     <host domain="domain.com" />
 
     <workspace title="Testing Namespace" resource="/namespace/">
