@@ -173,6 +173,10 @@
                                 <script>mkdir -m 755 "/opt/atomhopper/" &amp;&amp; chown tomcat "/opt/atomhopper/"</script>
                                 <script>mkdir -m 755 "/var/log/atomhopper/" &amp;&amp; chown tomcat "/var/log/atomhopper/"</script>
                             </postinstallScriptlet>
+                            <postremoveScriptlet>
+                                <script>rm -rf "/opt/atomhopper/"</script>
+                                <script>rm -rf "/var/log/atomhopper/"</script>
+                            </postremoveScriptlet>                            
                             <requires>
                                 <!--
                                     Use this for Tomcat6
