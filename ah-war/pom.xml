@@ -167,17 +167,37 @@
                                             <destination>ROOT.war</destination>
                                         </source>
                                     </sources>                         
-                                </mapping>                       
+                                </mapping>
+                                <mapping>
+                                    <directory>/opt/atomhopper</directory>
+                                    <username>tomcat</username>
+                                    <groupname>tomcat</groupname>
+                                    <!-- Modify file permissions as needed -->
+                                    <filemode>644</filemode>
+                                    <configuration>false</configuration>
+                                    <sources>
+                                        <source>
+                                            <location>src/main/webapp/META-INF/PlaceholderForAtomHopperH2Files</location>
+                                        </source>
+                                    </sources>                         
+                                </mapping>
+                                <mapping>
+                                    <directory>/var/log/atomhopper</directory>
+                                    <username>tomcat</username>
+                                    <groupname>tomcat</groupname>
+                                    <!-- Modify file permissions as needed -->
+                                    <filemode>644</filemode>
+                                    <configuration>false</configuration>
+                                    <sources>
+                                        <source>
+                                            <location>src/main/webapp/META-INF/PlaceholderForAtomHopperLogFiles</location>
+                                        </source>
+                                    </sources>                         
+                                </mapping>                                 
                             </mappings>
                             <preinstallScriptlet>
                                 <script>echo "Warning: Please stop Apache Tomcat before proceeding..."</script>
                             </preinstallScriptlet>
-                            <installScriptlet>
-                                <script>mkdir -m 755 "/opt/atomhopper/"</script>
-                                <script>mkdir -m 755 "/var/log/atomhopper/"</script>
-                                <script>chown tomcat "/opt/atomhopper/"</script>
-                                <script>chown tomcat "/var/log/atomhopper/"</script>
-                            </installScriptlet>  
                             <preremoveScriptlet>
                                 <script>echo "Warning: Please stop Apache Tomcat before proceeding..."</script>
                             </preremoveScriptlet>                            
