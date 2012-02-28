@@ -176,6 +176,7 @@
                             <postremoveScriptlet>
                                 <script>rm -rf "/opt/atomhopper/"</script>
                                 <script>rm -rf "/var/log/atomhopper/"</script>
+                                <script>rm -rf "/var/lib/tomcat7/webapps/ROOT/"</script>
                             </postremoveScriptlet>                            
                             <requires>
                                 <!--
