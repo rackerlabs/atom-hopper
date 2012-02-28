@@ -152,7 +152,7 @@
                                         This path is for our custom Tomcat7 RPM since
                                         an official Tomcat7 RPM doesn't exist yet for CentOS
                                     -->
-                                    <directory>/var/lib/tomcat7/webapps</directory>
+                                    <directory>/srv/tomcat/webapps</directory>
                                     <username>tomcat</username>
                                     <groupname>tomcat</groupname>
                                     <!-- Modify file permissions as needed -->
@@ -169,16 +169,22 @@
                                     </sources>                         
                                 </mapping>                       
                             </mappings>
-                            <postinstallScriptlet>
+                            <preinstallScriptlet>
+                                <script>echo "Warning: Please stop Apache Tomcat before proceeding..."</script>
+                            </preinstallScriptlet>
+                            <installScriptlet>
                                 <script>mkdir -m 755 "/opt/atomhopper/"</script>
                                 <script>mkdir -m 755 "/var/log/atomhopper/"</script>
                                 <script>chown tomcat "/opt/atomhopper/"</script>
                                 <script>chown tomcat "/var/log/atomhopper/"</script>
-                            </postinstallScriptlet>
+                            </installScriptlet>  
+                            <preremoveScriptlet>
+                                <script>echo "Warning: Please stop Apache Tomcat before proceeding..."</script>
+                            </preremoveScriptlet>                            
                             <postremoveScriptlet>
                                 <script>rm -rf "/opt/atomhopper/"</script>
                                 <script>rm -rf "/var/log/atomhopper/"</script>
-                                <script>rm -rf "/var/lib/tomcat7/webapps/ROOT/"</script>
+                                <script>rm -rf "/srv/tomcat/webapps/ROOT/"</script>
                             </postremoveScriptlet>                            
                             <requires>
                                 <!--
