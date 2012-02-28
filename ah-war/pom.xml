@@ -110,6 +110,7 @@
                                     <!-- Modify file permissions as needed -->
                                     <filemode>644</filemode>
                                     <configuration>true</configuration>
+                                    <directoryIncluded>true</directoryIncluded>
                                     <sources>
                                         <source>
                                             <location>src/main/resources/META-INF/atom-server.cfg.xml</location>
@@ -123,6 +124,7 @@
                                     <!-- Modify file permissions as needed -->
                                     <filemode>644</filemode>
                                     <configuration>true</configuration>
+                                    <directoryIncluded>true</directoryIncluded>
                                     <sources>
                                         <source>
                                             <location>src/main/webapp/META-INF/application-context.xml</location>
@@ -136,6 +138,7 @@
                                     <!-- Modify file permissions as needed -->
                                     <filemode>644</filemode>
                                     <configuration>true</configuration>
+                                    <directoryIncluded>true</directoryIncluded>
                                     <sources>
                                         <source>
                                             <location>src/main/webapp/META-INF/template-log4j.properties</location>
@@ -175,6 +178,7 @@
                                     <!-- Modify file permissions as needed -->
                                     <filemode>644</filemode>
                                     <configuration>false</configuration>
+                                    <directoryIncluded>true</directoryIncluded>
                                     <sources>
                                         <source>
                                             <location>src/main/webapp/META-INF/PlaceholderForAtomHopperH2Files</location>
@@ -188,6 +192,7 @@
                                     <!-- Modify file permissions as needed -->
                                     <filemode>644</filemode>
                                     <configuration>false</configuration>
+                                    <directoryIncluded>true</directoryIncluded>
                                     <sources>
                                         <source>
                                             <location>src/main/webapp/META-INF/PlaceholderForAtomHopperLogFiles</location>
@@ -195,17 +200,14 @@
                                     </sources>                         
                                 </mapping>                                 
                             </mappings>
-                            <preinstallScriptlet>
+                            <prepareScriptlet>
                                 <script>echo "Warning: Please stop Apache Tomcat before proceeding..."</script>
-                            </preinstallScriptlet>
-                            <preremoveScriptlet>
-                                <script>echo "Warning: Please stop Apache Tomcat before proceeding..."</script>
-                            </preremoveScriptlet>                            
+                            </prepareScriptlet>                          
                             <postremoveScriptlet>
                                 <script>rm -rf "/opt/atomhopper/"</script>
                                 <script>rm -rf "/var/log/atomhopper/"</script>
                                 <script>rm -rf "/srv/tomcat/webapps/ROOT/"</script>
-                            </postremoveScriptlet>                            
+                            </postremoveScriptlet>
                             <requires>
                                 <!--
                                     Use this for Tomcat6
