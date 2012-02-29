@@ -199,10 +199,7 @@
                                         </source>
                                     </sources>                         
                                 </mapping>                                 
-                            </mappings>
-                            <prepareScriptlet>
-                                <script>echo "Warning: Please stop Apache Tomcat before proceeding..."</script>
-                            </prepareScriptlet>                          
+                            </mappings>                          
                             <postremoveScriptlet>
                                 <script>rm -rf "/opt/atomhopper/"</script>
                                 <script>rm -rf "/var/log/atomhopper/"</script>
