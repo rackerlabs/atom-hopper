@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -140,21 +141,23 @@ public class HibernateFeedRepository implements FeedRepository {
 
                 final Criteria criteria = liveSession.createCriteria(PersistedEntry.class).add(Restrictions.eq("feed.name", feedName));
                 criteriaGenerator.enhanceCriteria(criteria);
-
-                criteria.setMaxResults(pageSize).addOrder(Order.desc(DATE_LAST_UPDATED));
+                criteria.setMaxResults(pageSize);
 
                 switch (direction) {
                     case FORWARD:
-                        criteria.add(Restrictions.gt(DATE_LAST_UPDATED, markerEntry.getCreationDate()));
-                        feedPage.add(markerEntry);
+                        criteria.add(Restrictions.gt(DATE_LAST_UPDATED, markerEntry.getCreationDate()))
+                                .addOrder(Order.asc(DATE_LAST_UPDATED));
+                        feedPage.addAll(criteria.list());
+                        Collections.reverse(feedPage);
                         break;
 
                     case BACKWARD:
-                        criteria.add(Restrictions.lt(DATE_LAST_UPDATED, markerEntry.getCreationDate()));
+                        criteria.add(Restrictions.lt(DATE_LAST_UPDATED, markerEntry.getCreationDate()))
+                                .addOrder(Order.desc(DATE_LAST_UPDATED));
+                        feedPage.add(markerEntry);
+                        feedPage.addAll(criteria.list());
                         break;
                 }
-
-                feedPage.addAll(criteria.list());
 
                 return feedPage;
             }

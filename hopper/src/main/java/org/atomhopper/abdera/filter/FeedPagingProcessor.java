@@ -21,6 +21,7 @@ public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
 
     private static final String NEXT_LINK = "next";
     private static final String CURRENT_LINK = "current";
+    private static final String DIRECTION = "direction";
 
     @Override
     public void process(RequestContext rc, AdapterResponse<Feed> adapterResponse) {
@@ -30,7 +31,7 @@ public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
         if (f == null || f.getEntries() == null || f.getEntries().isEmpty()) {
             return;
         }
-        
+
         // Build the URL and PATH without the parameters
         final String self = StringUtils.split(rc.getResolvedUri().toString(), '?')[0];
 
@@ -44,8 +45,13 @@ public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
 
         // If the feed source hasn't already defined this link
         if (linkNotSet(f, NEXT_LINK)) {
-            // Get the id of the last entry on this page
             String id = f.getEntries().get(f.getEntries().size() - 1).getId().toString();
+            
+            if (parameters.containsKey(DIRECTION)) {
+                if(parameters.get(DIRECTION).get(0).equalsIgnoreCase("forward")) {
+                    id = f.getEntries().get(0).getId().toString();
+                }
+            }
             List<String> markerList = new ArrayList<String>();
             markerList.add(id);
             parameters.put("marker", markerList);
@@ -64,7 +70,7 @@ public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
             for (String value : rc.getParameters(parameter)) {
                 values.add(value);
             }
-            parameters.put(parameter, values);
+            parameters.put(parameter.toLowerCase(), values);
         }
 
         return parameters;
@@ -92,5 +98,4 @@ public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
             throw new IllegalArgumentException(e);
         }
     }
-
 }
