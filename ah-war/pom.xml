@@ -159,7 +159,8 @@
                                     <username>tomcat</username>
                                     <groupname>tomcat</groupname>
                                     <!-- Modify file permissions as needed -->
-                                    <filemode>644</filemode>                            
+                                    <filemode>644</filemode>   
+                                    <directoryIncluded>false</directoryIncluded>
                                     <sources>
                                         <source>
                                             <location>target/ah-war-${project.version}.war</location>
