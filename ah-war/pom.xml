@@ -100,7 +100,8 @@
                         </executions>
                         <configuration>
                             <copyright>Apache License, Version 2.0</copyright>
-                            <group>Rackspace - Cloud Integration Team</group>
+                            <group>Applications/Communications</group>
+                            <packager>Rackspace - Cloud Integration Team</packager>
                             <description>ATOM Hopper - The ATOMPub Java Server</description>
                             <mappings>
                                 <mapping>
