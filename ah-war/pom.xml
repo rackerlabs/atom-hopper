@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.atomhopper</groupId>
         <artifactId>parent</artifactId>
-        <version>0.10.2-SNAPSHOT</version>
+        <version>0.11.1-SNAPSHOT</version>
     </parent>
 
     <groupId>org.atomhopper</groupId>
@@ -100,7 +100,8 @@
                         </executions>
                         <configuration>
                             <copyright>Apache License, Version 2.0</copyright>
-                            <group>Rackspace - Cloud Integration Team</group>
+                            <group>Applications/Communications</group>
+                            <packager>Rackspace - Cloud Integration Team</packager>
                             <description>ATOM Hopper - The ATOMPub Java Server</description>
                             <mappings>
                                 <mapping>
@@ -109,7 +110,7 @@
                                     <groupname>tomcat</groupname>
                                     <!-- Modify file permissions as needed -->
                                     <filemode>644</filemode>
-                                    <configuration>true</configuration>
+                                    <configuration>noreplace</configuration>
                                     <directoryIncluded>true</directoryIncluded>
                                     <sources>
                                         <source>
@@ -123,7 +124,7 @@
                                     <groupname>tomcat</groupname>
                                     <!-- Modify file permissions as needed -->
                                     <filemode>644</filemode>
-                                    <configuration>true</configuration>
+                                    <configuration>noreplace</configuration>
                                     <directoryIncluded>true</directoryIncluded>
                                     <sources>
                                         <source>
@@ -137,7 +138,7 @@
                                     <groupname>tomcat</groupname>
                                     <!-- Modify file permissions as needed -->
                                     <filemode>644</filemode>
-                                    <configuration>true</configuration>
+                                    <configuration>noreplace</configuration>
                                     <directoryIncluded>true</directoryIncluded>
                                     <sources>
                                         <source>
@@ -159,7 +160,8 @@
                                     <username>tomcat</username>
                                     <groupname>tomcat</groupname>
                                     <!-- Modify file permissions as needed -->
-                                    <filemode>644</filemode>                            
+                                    <filemode>644</filemode>   
+                                    <directoryIncluded>false</directoryIncluded>
                                     <sources>
                                         <source>
                                             <location>target/ah-war-${project.version}.war</location>
@@ -199,10 +201,7 @@
                                         </source>
                                     </sources>                         
                                 </mapping>                                 
-                            </mappings>
-                            <prepareScriptlet>
-                                <script>echo "Warning: Please stop Apache Tomcat before proceeding..."</script>
-                            </prepareScriptlet>                          
+                            </mappings>                          
                             <postremoveScriptlet>
                                 <script>rm -rf "/opt/atomhopper/"</script>
                                 <script>rm -rf "/var/log/atomhopper/"</script>
@@ -217,9 +216,7 @@
                                     This path is for our custom Tomcat7 RPM since
                                     an official Tomcat7 RPM doesn't exist yet for CentOS
                                 -->
-                                <!--
                                 <require>tomcat7</require>
-                                -->
                                 <!--
                                     You can modify this to use the Oracle Java JDK 1.6 or Open JDK
                                     if you want
