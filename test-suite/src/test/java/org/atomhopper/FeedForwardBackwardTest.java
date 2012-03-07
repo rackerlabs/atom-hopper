@@ -53,12 +53,10 @@ public class FeedForwardBackwardTest extends JettyIntegrationTestHarness {
     }    
     
     public static String getFeedDirectionForwardMethod(String markerId) {
-        System.out.println(getURL() + "?marker=" + markerId + "&direction=forward&limit=10\n\n");
-        return getURL() + "?marker=" + markerId + "&direction=forward&limit=11";
+        return getURL() + "?marker=" + markerId + "&direction=forward&limit=10";
     }  
     
     public static String getFeedDirectionBackwardMethod(String markerId) {
-        System.out.println(getURL() + "?marker=" + markerId + "&direction=backward&limit=10\n\n");
         return getURL() + "?marker=" + markerId + "&direction=backward&limit=10";
     } 
     
@@ -85,14 +83,11 @@ public class FeedForwardBackwardTest extends JettyIntegrationTestHarness {
  
             // Get the IDs in their default order
             for (Entry entry : feed.getEntries()) {
-                System.out.println("ID: " + entry.getId());
                 idList.add(entry.getId().toString());
             }
             
             if(!(idList.isEmpty())) {
                 int idCount = 0;
-                
-                System.out.println("\n\n\n"); 
                 
                 // Check the feed backward with the first id as the marker
                 URL urlBackward = new URL(getFeedDirectionBackwardMethod(idList.get(0)));
@@ -104,14 +99,12 @@ public class FeedForwardBackwardTest extends JettyIntegrationTestHarness {
                     idCount++;
                 }
                 
-                System.out.println("\n\n\n");
-                
                 // Check the feed forward with the last id as the marker
                 URL urlForward = new URL(getFeedDirectionForwardMethod(idList.get(idList.size() - 1)));
                 Document<Feed> docForward = parser.parse(urlForward.openStream(), urlForward.toString());
                 Feed feedForward = docForward.getRoot();
                 // Adjust for the offset going forward
-                idCount = 8;
+                idCount = 9;
 
                 for (Entry entry : feedForward.getEntries()) {
                     assertEquals("The entries should be in forward order", entry.getId().toString(), idList.get(idCount));
