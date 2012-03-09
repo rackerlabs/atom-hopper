@@ -24,14 +24,6 @@ import java.lang.reflect.Constructor;
  */
 public final class ReflectionTools {
 
-    private static final Class<?>[] DEFAULT_ANY = new Class<?>[]{Any.class};
-
-    private static final class Any {
-
-        private Any() {
-        }
-    }
-
     private ReflectionTools() {
     }
 
