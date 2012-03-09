@@ -12,6 +12,8 @@ public class AtomHopperServer {
     private static final int MAX_PORT_NUMBER = 65535;
     private static final int MIN_PORT_NUMBER = 1;
 
+    private AtomHopperServer(){}
+
     public static void main(String[] args) {
         CommandLineArguments commandLineArgs = new CommandLineArguments();
         CmdLineParser cmdLineParser = new CmdLineParser(commandLineArgs);

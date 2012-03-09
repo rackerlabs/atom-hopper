@@ -1,10 +1,6 @@
 package org.atomhopper;
 
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import static junit.framework.Assert.assertEquals;
 import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Entry;
@@ -20,12 +16,17 @@ import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+import static junit.framework.Assert.assertEquals;
+
 
 @RunWith(Enclosed.class)
 public class FeedForwardBackwardTest extends JettyIntegrationTestHarness {
 
     private static final HttpClient httpClient = new HttpClient();
-    public static final XmlUtil xml = new XmlUtil();
     private static final String urlAndPort = "http://localhost:" + getPort();
     private static Abdera abdera = null;
     
