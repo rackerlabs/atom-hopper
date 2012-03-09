@@ -25,7 +25,6 @@ public class AdapterGetterTest {
     private static final String BAD_REFERENCE = "bean-reference-bad";
     private static final String NULL_REFERENCE = "null-reference";
     private static final String FEED_SOURCE_REFERENCE = "feed-source";
-    public static final String FEED_ARCHIVE_REFERENCE = "feed-archive";
 
     @Ignore
     private static class InstanceableClass {
