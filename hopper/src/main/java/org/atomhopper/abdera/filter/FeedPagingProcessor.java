@@ -22,6 +22,7 @@ public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
     private static final String NEXT_LINK = "next";
     private static final String CURRENT_LINK = "current";
     private static final String DIRECTION = "direction";
+    private static final String SELF = "self";
 
     @Override
     public void process(RequestContext rc, AdapterResponse<Feed> adapterResponse) {
@@ -34,6 +35,8 @@ public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
 
         // Build the URL and PATH without the parameters
         final String self = StringUtils.split(rc.getResolvedUri().toString(), '?')[0];
+        // Add a self link to the feed
+        f.addLink(self).setRel(SELF);
 
         // Get a map of the url parameters
         final Map<String, List<String>> parameters = getParameterMap(rc);
