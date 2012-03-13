@@ -23,7 +23,7 @@ public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
     private static final String NEXT_LINK = "next";
     private static final String CURRENT_LINK = "current";
     private static final String DIRECTION = "direction";
-    private static final String SELF = "self";
+    private static final String SELF_LINK = "self";
 
     @Override
     public void process(RequestContext rc, AdapterResponse<Feed> adapterResponse) {
@@ -36,8 +36,6 @@ public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
 
         // Build the URL and PATH without the parameters
         final String self = StringUtils.split(rc.getResolvedUri().toString(), '?')[0];
-        // Add a self link to the feed
-        f.addLink(self).setRel(SELF);
         // Add an updated element to the feed
         final Calendar localNow = Calendar.getInstance(TimeZone.getDefault());
         localNow.setTimeInMillis(System.currentTimeMillis());
@@ -50,6 +48,10 @@ public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
         if (linkNotSet(f, CURRENT_LINK)) {
             f.addLink(StringUtils.join(new String[]{self, mapToParameters(parameters)}), CURRENT_LINK);
         }
+        // Add self link (same as current link)
+        if (linkNotSet(f, SELF_LINK)) {
+            f.addLink(StringUtils.join(new String[]{self, mapToParameters(parameters)}), SELF_LINK);
+        }        
 
         // If the feed source hasn't already defined this link
         if (linkNotSet(f, NEXT_LINK)) {
