@@ -17,7 +17,7 @@ import java.util.Properties;
 public class AtomHopperVersionServlet extends HttpServlet {
     
     private static final Logger LOG = LoggerFactory.getLogger(AtomHopperVersionServlet.class);
-    private final String POM_PROPERTIES_LOCATION = "META-INF/maven/org.atomhopper/ah-war/pom.properties";
+    private static final String POM_PROPERTIES_LOCATION = "META-INF/maven/org.atomhopper/ah-war/pom.properties";
 
     private Properties loadProperties() {
         Properties properties = new Properties();

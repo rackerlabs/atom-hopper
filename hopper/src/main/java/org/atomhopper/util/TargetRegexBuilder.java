@@ -7,12 +7,8 @@ public class TargetRegexBuilder {
 
     private static final String REPLACEMENT_ELEMENT = "@_",
             WORKSPACE_TEMPLATE = "/(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/?(\\?[^#]+)?",
-            CATAGORY_TEMPLATE = "/(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + ")/categories/?(\\?[^#]+)?",
             FEED_TEMPLATE = "/(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + ")/?(\\?[^#]+)?",
-            ENTRY_TEMPLATE = "/(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + ")/entries/([^/#?]+)/?(\\?[^#]+)?",
-            ARCHIVE_TEMPLATE = "/(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + "/archives)(/\\d\\d\\d\\d)(/\\d\\d)?(/\\d\\d)?(/\\d\\d:\\d\\d)?/?(\\?[^#]+)?",
-
-            ARCHIVES_URI_FRAGMENT = "archives";
+            ENTRY_TEMPLATE = "/(" + REPLACEMENT_ELEMENT + ")?(" + REPLACEMENT_ELEMENT + ")/(" + REPLACEMENT_ELEMENT + ")/entries/([^/#?]+)/?(\\?[^#]+)?";
 
     private String contextPath, workspace, feed;
 
@@ -64,10 +60,6 @@ public class TargetRegexBuilder {
         return workspace;
     }
 
-    public String getArchivesResource() {
-        return feed + ARCHIVES_URI_FRAGMENT;
-    }
-
     private void checkWorkspaceString() {
         if (StringUtils.isBlank(workspace)) {
             throw new IllegalStateException("Can not produce a regex pattern without the workspace field of the builder being set!");
@@ -100,12 +92,6 @@ public class TargetRegexBuilder {
         return asWorkspacePattern(WORKSPACE_TEMPLATE);
     }
 
-    public String toCategoriesPattern() {
-        checkWorkspaceString();
-
-        return asFeedPattern(CATAGORY_TEMPLATE);
-    }
-
     public String toFeedPattern() {
         checkFeedString();
 
@@ -116,12 +102,6 @@ public class TargetRegexBuilder {
         checkFeedString();
 
         return asFeedPattern(ENTRY_TEMPLATE);
-    }
-
-    public String toArchivesPattern() {
-        checkFeedString();
-
-        return asFeedPattern(ARCHIVE_TEMPLATE);
     }
 
     public static String[] getWorkspaceResolverFieldList() {
@@ -139,32 +119,12 @@ public class TargetRegexBuilder {
                 };
     }
 
-    public static String[] getCategoriesResolverFieldList() {
-        return new String[]{
-                    TargetResolverField.CONTEXT_PATH.toString(),
-                    TargetResolverField.WORKSPACE.toString(),
-                    TargetResolverField.FEED.toString()
-                };
-    }
-
     public static String[] getEntryResolverFieldList() {
         return new String[]{
                     TargetResolverField.CONTEXT_PATH.toString(),
                     TargetResolverField.WORKSPACE.toString(),
                     TargetResolverField.FEED.toString(),
                     TargetResolverField.ENTRY.toString()
-                };
-    }
-
-    public static String[] getArchiveResolverFieldList() {
-        return new String[]{
-                    TargetResolverField.CONTEXT_PATH.toString(),
-                    TargetResolverField.WORKSPACE.toString(),
-                    TargetResolverField.FEED.toString(),
-                    TargetResolverField.ARCHIVE_YEAR.toString(),
-                    TargetResolverField.ARCHIVE_MONTH.toString(),
-                    TargetResolverField.ARCHIVE_DAY.toString(),
-                    TargetResolverField.ARCHIVE_TIME.toString()
                 };
     }
 }
