@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import static java.net.URLEncoder.encode;
+import java.util.*;
 
 /**
  *
@@ -37,6 +38,10 @@ public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
         final String self = StringUtils.split(rc.getResolvedUri().toString(), '?')[0];
         // Add a self link to the feed
         f.addLink(self).setRel(SELF);
+        // Add an updated element to the feed
+        final Calendar localNow = Calendar.getInstance(TimeZone.getDefault());
+        localNow.setTimeInMillis(System.currentTimeMillis());
+        f.setUpdated(localNow.getTime());
 
         // Get a map of the url parameters
         final Map<String, List<String>> parameters = getParameterMap(rc);
