@@ -8,7 +8,7 @@
         <constructor-arg>
             <map>
                 <!-- Start H2 Config -->
-                <entry key="hibernate.connection.url" value="jdbc:h2:/opt/atomhopper/atom-hopper-db"/>
+                <entry key="hibernate.connection.url" value="jdbc:h2:~/atom-hopper-db" />
                 <entry key="hibernate.connection.driver_class" value="org.h2.Driver"/>
                 <entry key="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
                 <entry key="hibernate.connection.username" value="sa"/>
