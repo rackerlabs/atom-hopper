@@ -9,7 +9,7 @@ import org.hibernate.cfg.Configuration;
 
 import java.util.Map;
 
-public class HibernateSessionManager {
+public class HibernateSessionManager implements SessionManager {
 
     private final SessionFactory sessionFactory;
 
@@ -30,6 +30,7 @@ public class HibernateSessionManager {
         return hibernateConfiguration.buildSessionFactory();
     }
 
+   @Override
     public Session getSession() {
         return sessionFactory.openSession();
     }
