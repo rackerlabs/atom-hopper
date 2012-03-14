@@ -32,16 +32,8 @@ public final class ResponseBuilder {
         return new FeedSourceAdapterResponse<T>(null, HttpStatus.NOT_FOUND, message);
     }
 
-    public static AdapterResponse<EmptyBody> ok() {
-        return new FeedSourceAdapterResponse<EmptyBody>(EmptyBody.getInstance(), HttpStatus.OK, "");
-    }
-
     public static AdapterResponse<Feed> found(Feed f) {
         return new FeedSourceAdapterResponse<Feed>(f, HttpStatus.OK, "");
-    }
-
-    public static AdapterResponse<Categories> found(Categories c) {
-        return new FeedSourceAdapterResponse<Categories>(c, HttpStatus.OK, "");
     }
 
     public static AdapterResponse<Entry> found(Entry e) {
@@ -56,24 +48,8 @@ public final class ResponseBuilder {
         return reply(status, null, message);
     }
 
-    public static <T> AdapterResponse<T> reply(HttpStatus status, T payload) {
-        return reply(status, payload, null);
-    }
-
-    public static AdapterResponse<EmptyBody> reply(HttpStatus status) {
-        return reply(status, EmptyBody.getInstance(), null);
-    }
-
-    public static <T> AdapterResponse<T> error() {
-        return error("");
-    }
-
     public static <T> AdapterResponse<T> error(String message) {
         return new FeedSourceAdapterResponse<T>(null, HttpStatus.INTERNAL_SERVER_ERROR, message);
-    }
-
-    public static AdapterResponse<Entry> updated(Entry e) {
-        return updated(e, "");
     }
 
     public static AdapterResponse<Entry> updated(Entry e, String message) {
