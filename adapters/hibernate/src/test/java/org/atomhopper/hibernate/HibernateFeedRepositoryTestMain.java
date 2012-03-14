@@ -11,7 +11,7 @@ import java.util.Collections;
 public class HibernateFeedRepositoryTestMain {
 
     public static void main(String[] args) {
-        final HibernateFeedRepository feedRepository = new HibernateFeedRepository(Collections.EMPTY_MAP);
+        final HibernateFeedRepository feedRepository = new HibernateFeedRepository(new HibernateSessionManager(Collections.EMPTY_MAP));
 
         feedRepository.saveFeed(new PersistedFeed("testing", "uuid:not-really"));
         PersistedFeed f = feedRepository.getFeed("testing");
