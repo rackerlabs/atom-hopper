@@ -1,83 +1,88 @@
 package org.atomhopper.hibernate;
 
 import org.atomhopper.dbal.AtomDatabaseException;
+import org.atomhopper.hibernate.actions.ComplexSessionAction;
 import org.atomhopper.hibernate.actions.SimpleSessionAction;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 /**
- * User: sbrayman Date: 2/27/12
+ * User: sbrayman
+ * Date: 2/27/12
  */
+
 @RunWith(Enclosed.class)
 public class HibernateFeedRepositoryTest {
 
-    public static final SimpleSessionAction NOP_SIMPLE_ACTION = new SimpleSessionAction() {
-
-        @Override
-        public void perform(Session liveSession) {
-        }
-    };
-
     public static class WhenPerformingSimpleAction {
 
-        protected HibernateFeedRepository feedRepository;
-        protected Transaction mockedTransaction;
-        protected Session mockedSession;
+        HibernateFeedRepository feedRepository;
+        Map<String, String> parameters;
+        SimpleSessionAction simpleSessionAction;
 
         @Before
         public void setup() throws Exception {
-            mockedTransaction = mock(Transaction.class);
+            parameters = new HashMap<String, String>();
+            //parameters.put("hibernate.connection.url", "jdbc:h2:/opt/atomhopper/atom-hopper-db"); //removed to trigger exception
+            parameters.put("hibernate.connection.driver_class", "org.h2.Driver");
+            parameters.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
+            parameters.put("hibernate.connection.username", "sa");
+            parameters.put("hibernate.connection.password", "");
+            parameters.put("hibernate.hbm2ddl.auto", "update");
 
-            mockedSession = mock(Session.class);
-            when(mockedSession.beginTransaction()).thenReturn(mockedTransaction);
-
-            final SessionManager sessionManager = mock(SessionManager.class);
-            when(sessionManager.getSession()).thenReturn(mockedSession);
-
-            feedRepository = new HibernateFeedRepository(sessionManager);
+            feedRepository = new HibernateFeedRepository(parameters);
+            simpleSessionAction = mock(SimpleSessionAction.class);
         }
 
-        @Test(expected = AtomDatabaseException.class)
-        public void shouldHandleExceptionsThrownFromAction() {
-            final SimpleSessionAction myAction = new SimpleSessionAction() {
+        @Test(expected=AtomDatabaseException.class)
+        public void shouldThrowAtomDatabaseException() throws Exception {
+            feedRepository.performSimpleAction(simpleSessionAction);
+        }
+    }
 
-                @Override
-                public void perform(Session liveSession) {
-                    throw new RuntimeException("Failure occured.");
-                }
-            };
+    public static class WhenPerformingComplexAction {
 
-            try {
-                feedRepository.performSimpleAction(myAction);
-            } finally {
-                verify(mockedTransaction, times(1)).rollback();
-                verify(mockedSession, times(1)).close();
-            }
+        HibernateFeedRepository feedRepository;
+        Map<String, String> parameters;
+        ComplexSessionAction complexSessionAction;
+
+        @Before
+        public void setup() throws Exception {
+            parameters = new HashMap<String, String>();
+            parameters.put("hibernate.connection.driver_class", "org.h2.Driver");
+            parameters.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
+            parameters.put("hibernate.connection.username", "sa");
+            parameters.put("hibernate.connection.password", "");
+            parameters.put("hibernate.hbm2ddl.auto", "update");
+
+            feedRepository = new HibernateFeedRepository(parameters);
+            complexSessionAction = mock(ComplexSessionAction.class);
         }
 
-        @Test(expected = AtomDatabaseException.class)
-        public void shouldHandleExceptionsInStartingTransactions() {
-            when(mockedSession.beginTransaction()).thenThrow(new RuntimeException("Failure in starting transaction"));
+        /*This should throw the error because */
+        @Test(expected=AtomDatabaseException.class)
+        public void shouldThrowAtomDatabaseException() throws Exception {
+            feedRepository.performComplexAction(complexSessionAction);
+        }
+    }
 
-            feedRepository.performSimpleAction(NOP_SIMPLE_ACTION);
+    public static class WhenGettingCategories {
+
+        @Before
+        public void setup() throws Exception {
+
         }
 
         @Test
-        public void shouldPerformSimpleAction() {
-            feedRepository.performSimpleAction(NOP_SIMPLE_ACTION);
+        public void shouldReturnFeedCategories() throws Exception {
 
-            verify(mockedSession, times(1)).beginTransaction();
-            verify(mockedTransaction, times(1)).commit();
-            verify(mockedSession, times(1)).close();
         }
     }
 }
