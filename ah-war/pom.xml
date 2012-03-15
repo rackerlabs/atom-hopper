@@ -19,7 +19,7 @@
     </properties>
 
     <dependencies>
-       
+
         <dependency>
             <groupId>org.atomhopper</groupId>
             <artifactId>core</artifactId>
@@ -29,24 +29,28 @@
             <groupId>org.atomhopper.adapter</groupId>
             <artifactId>hibernate-adapter</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-c3p0</artifactId>
-        </dependency>          
+        </dependency>
 
     </dependencies>
-    
+
+    <build>
+        <finalName>atomhopper-${project.version}</finalName>
+    </build>
+
     <profiles>
         <!--
             By default we turn off this plugin to make builds faster - however,
             if you want to build the RPM simply run maven with
             the following option, '-P build-rpm'
-            
+
             Example: mvn -P build-rpm clean install
         -->
         <profile>
-            <id>build-rpm</id>            
+            <id>build-rpm</id>
             <build>
                 <plugins>
                     <plugin>
@@ -116,7 +120,7 @@
                                         <source>
                                             <location>src/main/resources/META-INF/atom-server.cfg.xml</location>
                                         </source>
-                                    </sources> 
+                                    </sources>
                                 </mapping>
                                 <mapping>
                                     <directory>/etc/atomhopper</directory>
@@ -130,7 +134,7 @@
                                         <source>
                                             <location>src/main/webapp/META-INF/application-context.xml</location>
                                         </source>
-                                    </sources>                         
+                                    </sources>
                                 </mapping>
                                 <mapping>
                                     <directory>/etc/atomhopper</directory>
@@ -145,9 +149,9 @@
                                             <location>src/main/webapp/META-INF/template-log4j.properties</location>
                                             <destination>log4j.properties</destination>
                                         </source>
-                                    </sources>                         
+                                    </sources>
                                 </mapping>
-                                <mapping>                                    
+                                <mapping>
                                     <!--
                                         Use this path for Tomcat6
                                         <directory>/var/lib/tomcat6/webapps/</directory>
@@ -160,18 +164,18 @@
                                     <username>tomcat</username>
                                     <groupname>tomcat</groupname>
                                     <!-- Modify file permissions as needed -->
-                                    <filemode>644</filemode>   
+                                    <filemode>644</filemode>
                                     <directoryIncluded>false</directoryIncluded>
                                     <sources>
                                         <source>
-                                            <location>target/ah-war-${project.version}.war</location>
+                                            <location>target/atomhopper-${project.version}.war</location>
                                             <!--
                                                 If you already have a ROOT.war and wish to keeo it
                                                 then remove the following destination completely
-                                            -->   
+                                            -->
                                             <destination>ROOT.war</destination>
                                         </source>
-                                    </sources>                         
+                                    </sources>
                                 </mapping>
                                 <mapping>
                                     <directory>/opt/atomhopper</directory>
@@ -185,7 +189,7 @@
                                         <source>
                                             <location>src/main/webapp/META-INF/PlaceholderForAtomHopperH2Files</location>
                                         </source>
-                                    </sources>                         
+                                    </sources>
                                 </mapping>
                                 <mapping>
                                     <directory>/var/log/atomhopper</directory>
@@ -199,9 +203,9 @@
                                         <source>
                                             <location>src/main/webapp/META-INF/PlaceholderForAtomHopperLogFiles</location>
                                         </source>
-                                    </sources>                         
-                                </mapping>                                 
-                            </mappings>                          
+                                    </sources>
+                                </mapping>
+                            </mappings>
                             <postremoveScriptlet>
                                 <script>rm -rf "/opt/atomhopper/"</script>
                                 <script>rm -rf "/var/log/atomhopper/"</script>
@@ -224,23 +228,23 @@
                                 <!--
                                 <require>jdk</require>
                                 -->
-                            </requires>                   
+                            </requires>
                         </configuration>
-                    </plugin>           
+                    </plugin>
 
                 </plugins>
             </build>
         </profile>
-        
+
         <!--
             By default we turn off this plugin to make builds faster - however,
             if you want to build the DEB package simply run maven with
             the following option, '-P build-deb'
-            
+
             Example: mvn -P build-deb clean install
         -->
         <profile>
-            <id>build-deb</id>    
+            <id>build-deb</id>
 
             <build>
                 <plugins>
@@ -249,26 +253,26 @@
                         <groupId>org.vafer</groupId>
                         <artifactId>jdeb</artifactId>
                         <version>0.8</version>
-                
+
                         <executions>
                             <execution>
                                 <phase>package</phase>
-                        
+
                                 <goals>
                                     <goal>jdeb</goal>
                                 </goals>
-                        
+
                                 <configuration>
                                     <dataSet>
                                         <!-- The war file -->
                                         <data>
-                                            <src>target/ah-war-${project.version}.war</src>
+                                            <src>target/atomhopper-${project.version}.war</src>
                                             <type>file</type>
                                             <mapper>
                                                 <type>perm</type>
                                                 <prefix>/var/lib/tomcat6/webapps</prefix>
                                                 <user>tomcat6</user>
-                                                <filemode>755</filemode>                                                
+                                                <filemode>755</filemode>
                                             </mapper>
                                         </data>
 
@@ -283,10 +287,10 @@
                                                 <prefix>/etc/atomhopper</prefix>
                                                 <user>tomcat6</user>
                                                 <!-- Modify file permissions as needed -->
-                                                <filemode>755</filemode>                                                 
+                                                <filemode>755</filemode>
                                             </mapper>
                                         </data>
-                                        
+
                                         <data>
                                             <src>src/main/resources/META-INF</src>
                                             <type>directory</type>
@@ -297,18 +301,18 @@
                                                 <prefix>/opt/atomhopper</prefix>
                                                 <user>tomcat6</user>
                                                 <!-- Modify file permissions as needed -->
-                                                <filemode>755</filemode>                                                 
+                                                <filemode>755</filemode>
                                             </mapper>
                                         </data>
                                     </dataSet>
                                 </configuration>
                             </execution>
                         </executions>
-                    </plugin> 
+                    </plugin>
                 </plugins>
             </build>
         </profile>
-    
+
     </profiles>
 
 </project>
