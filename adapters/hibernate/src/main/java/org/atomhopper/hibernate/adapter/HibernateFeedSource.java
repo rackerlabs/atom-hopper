@@ -30,7 +30,7 @@ public class HibernateFeedSource implements FeedSource {
 
     private static final int PAGE_SIZE = 25;
     private FeedRepository feedRepository;
-    private static final String LINKREL_OLDEST_ENTRY = "oldest-entry";
+    private static final String LAST_ENTRY = "last";
 
     public void setFeedRepository(FeedRepository feedRepository) {
         this.feedRepository = feedRepository;
@@ -50,10 +50,10 @@ public class HibernateFeedSource implements FeedSource {
 
         hyrdatedFeed.setId(persistedFeed.getFeedId());
         hyrdatedFeed.setTitle(persistedFeed.getName());
-        
+
         if(!(persistedEntries.isEmpty())) {
             hyrdatedFeed.addLink(decode(getFeedRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)))
-                                            + "entries/" + feedRepository.getLastEntry(persistedFeed.getName()).getEntryId()).setRel(LINKREL_OLDEST_ENTRY);
+                                            + "entries/" + feedRepository.getLastEntry(persistedFeed.getName()).getEntryId()).setRel(LAST_ENTRY);
         }
 
         for (PersistedEntry persistedFeedEntry : persistedEntries) {
@@ -91,7 +91,7 @@ public class HibernateFeedSource implements FeedSource {
     @Override
     public AdapterResponse<Feed> getFeed(GetFeedRequest getFeedRequest) {
         AdapterResponse<Feed> response;
-        
+
         int pageSize = PAGE_SIZE;
 
         try {
@@ -146,7 +146,7 @@ public class HibernateFeedSource implements FeedSource {
         if (markerEntry != null) {
             final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
             final Feed feed = hydrateFeed(
-                    getFeedRequest.getAbdera(), persistedFeed, 
+                    getFeedRequest.getAbdera(), persistedFeed,
                     feedRepository.getFeedPage(
                         getFeedRequest.getFeedName(), markerEntry, pageDirection, new SimpleCategoryCriteriaGenerator(searchString), pageSize),
                     getFeedRequest);
