@@ -12,7 +12,7 @@
     <artifactId>atomhopper</artifactId>
     <packaging>war</packaging>
 
-    <name>AtomHopper-WAR</name>
+    <name>ATOM Hopper - AtomHopper-WAR-RPM-DEB</name>
 
     <properties>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
