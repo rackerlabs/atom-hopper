@@ -28,10 +28,10 @@
       <module>hopper</module>
       <module>test-suite</module>
       <module>server</module>
-      <module>ah-war</module>
       <module>adapters/hibernate</module>
       <module>test-util</module>
       <module>documentation</module>
+      <module>atomhopper</module>
    </modules>
 
    <scm>
@@ -64,12 +64,12 @@
             <artifactId>hibernate-core</artifactId>
             <version>4.0.0.Final</version>
          </dependency>
-            
+
          <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-c3p0</artifactId>
             <version>4.0.0.Final</version>
-         </dependency>            
+         </dependency>
 
          <dependency>
             <groupId>org.javassist</groupId>
@@ -205,12 +205,12 @@
             <artifactId>javaee-endorsed-api</artifactId>
             <version>6.0</version>
          </dependency>
-            
+
          <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.1</version>
-         </dependency>            
+         </dependency>
 
          <dependency>
             <groupId>org.mockito</groupId>
@@ -245,8 +245,8 @@
          <id>rackspace-research</id>
          <name>Rackspace Research Repository</name>
          <url>http://maven.research.rackspacecloud.com/content/groups/public/</url>
-      </repository>        
-   </repositories>   
+      </repository>
+   </repositories>
 
    <distributionManagement>
       <repository>
