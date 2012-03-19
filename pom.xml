@@ -14,7 +14,7 @@
    <properties>
       <project.license>apache20</project.license>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-      <org.springframework.version>3.0.6.RELEASE</org.springframework.version>
+      <org.springframework.version>3.1.1.RELEASE</org.springframework.version>
    </properties>
 
    <licenses>
@@ -62,19 +62,19 @@
          <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>4.0.0.Final</version>
+            <version>4.1.1.Final</version>
          </dependency>
 
          <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-c3p0</artifactId>
-            <version>4.0.0.Final</version>
+            <version>4.1.1.Final</version>
          </dependency>
 
          <dependency>
             <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>
-            <version>3.15.0-GA</version>
+            <version>3.16.1-GA</version>
          </dependency>
 
          <dependency>
@@ -165,13 +165,13 @@
          <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
-            <version>8.0.4.v20111024</version>
+            <version>8.1.0.v20120127</version>
          </dependency>
 
          <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
-            <version>8.0.4.v20111024</version>
+            <version>8.1.0.v20120127</version>
          </dependency>
 
          <dependency>
