@@ -41,17 +41,19 @@
                     </execution>
                 </executions>
             </plugin>
-            
+            <!--- plugin for RACKBOOK (Rackspace + DocBook) document formatting 
+                  talk to Rose Coste if you need help --->
             <plugin>
                 <groupId>com.rackspace.cloud.api</groupId>
                 <artifactId>clouddocs-maven-plugin</artifactId>
-                <version>1.0.4</version>
                 <!-- this <version> relates only to the *plugin* used for document formatting -->
-                <!-- the version of the *API* that is the subject of the document is indicated within each document -->
-                <!-- 1.0.4 of the plugin supports yyyy-mm-dd pubdate, OpenStack branding -->
+                <!-- the version of the *software* that is the subject of the document is indicated within each document:
+                    look for <releaseinfo> near <pubdate>, both in the <info> section-->
+                <!-- 1.0.11 of the plugin supports customization of the color, logo and doclink on the cover page -->
+                <version>1.0.11</version>
                 <executions>
                     <execution>
-                        <id>g1</id>
+                        <id>doc</id>
                         <goals>
                             <!-- 2 output formats: PDF for print; HTML for online -->
                             <goal>generate-pdf</goal>
@@ -61,10 +63,15 @@
                         <configuration>
                             <!-- support inclusion from external /samples/, /figures/, etc -->
                             <xincludeSupported>true</xincludeSupported>
-                            <!-- set branding to OPENSTACK or RACKSPACE -->
-                            <branding>rackspace</branding>
+                            <!-- set branding to OPENSTACK or RACKSPACE or omit (default = RACKSPACE)
+                        <branding>openstack</branding> -->
+                            <builtForOpenStack>1</builtForOpenStack>
+                            <!-- customize color of doc cover as RGB: 00FF00 is true green -->
+                            <coverColor>00FF00</coverColor>
+                            <!-- customize more-info link on cover: show project home page -->
+                            <coverURL>http://www.atomhopper.org/</coverURL>
                             <!-- for WebHelp: -->
-                            <!-- enableDisqus turns on Disqus feature for feedback if any value other than 0; "intranet" for posting on our internal docs-beta.rackspace.com for internal review --> 
+                            <!-- enableDisqus turns on Disqus feature for feedback if any value other than 0; "intranet" for posting on our internal docs-beta.rackspace.com for internal review -->
                             <!-- disqusShortname = Disqus account where moderator is collecting this feedback -->
                             <enableDisqus>intranet</enableDisqus>
                             <disqusShortname>rc-integration</disqusShortname>
@@ -80,34 +87,7 @@
                             <textinsertExtension>1</textinsertExtension>
                             <!-- use this .XML as the source for the books to be generated as .PDF & .HTML -->
                             <!-- if not specified, generate for all -->
-                            <!-- <includes>papi-rootwar-deploy.xml,papi-versioning-deploy.xml,papi-ratelimiting-deploy.xml,papi-authn-deploy.xml</includes> -->
-                            <!--  -->
-                            <!-- I think the intention of this postProcess is to generate consistent SVGs & PNGs; I don't think it's accomplishing anything now -->
-                            <!-- ask David Cramer -->
-                            <!--
-                            <postProcess>
-                                <copy todir="target/docbkx/webhelp/papi-authn-deploy/content/figures">
-                                    <fileset dir="src/resources/figures">
-                                        <include name="**/*.png" />
-                                    </fileset>
-                                </copy>
-                                <copy todir="target/docbkx/webhelp/papi-ratelimiting-deploy/content/figures">
-                                    <fileset dir="src/resources/figures">
-                                        <include name="**/*.png" />
-                                    </fileset>
-                                </copy>
-                                <copy todir="target/docbkx/webhelp/papi-rootwar-deploy/content/figures">
-                                    <fileset dir="src/resources/figures">
-                                        <include name="**/*.png" />
-                                    </fileset>
-                                </copy>
-                                <copy todir="target/docbkx/webhelp/papi-versioning-deploy/content/figures">
-                                    <fileset dir="src/resources/figures">
-                                        <include name="**/*.png" />
-                                    </fileset>
-                                </copy>
-                            </postProcess>
-                            -->
+                            <!-- <includes>ah-info.xml</includes> -->
                         </configuration>
                     </execution>
                 </executions>
