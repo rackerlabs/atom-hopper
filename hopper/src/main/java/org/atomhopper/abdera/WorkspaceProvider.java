@@ -67,8 +67,6 @@ public class WorkspaceProvider implements Provider {
         templateTargetBuilder = new TemplateTargetBuilder();
         templateTargetBuilder.setTemplate(URITemplate.WORKSPACE, URITemplate.WORKSPACE.toString());
         templateTargetBuilder.setTemplate(URITemplate.FEED, URITemplate.FEED.toString());
-        templateTargetBuilder.setTemplate(URITemplate.FEED_CATEGORIES, URITemplate.FEED_CATEGORIES.toString());
-        templateTargetBuilder.setTemplate(URITemplate.FEED_ARCHIVES, URITemplate.FEED_ARCHIVES.toString());
 
         workspaceManager = new WorkspaceManager();
     }

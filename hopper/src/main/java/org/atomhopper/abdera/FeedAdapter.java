@@ -38,6 +38,7 @@ import java.util.Map;
 
 public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
 
+    private static final int ERROR_CODE = 422;
     private final ResponseHandler<EmptyBody> emptyBodyResponseHandler;
     private final ResponseHandler<Feed> feedResponseHandler;
     private final ResponseHandler<Entry> entryResponseHandler;
@@ -137,7 +138,7 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
             final AdapterResponse<Entry> response = feedPublisher.postEntry(new PostEntryRequestImpl(request));
             return entryResponseHandler.handleResponse(request, response);
         } catch (ParseException ex) {
-            return ProviderHelper.createErrorResponse(Abdera.getInstance(), 422, ex.getMessage(), ex);
+            return ProviderHelper.createErrorResponse(Abdera.getInstance(), ERROR_CODE, ex.getMessage(), ex);
         } catch (Exception ex) {
             return ProviderHelper.servererror(request, ex.getMessage(), ex);
         }

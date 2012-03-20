@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import static java.net.URLEncoder.encode;
+import java.util.*;
 
 /**
  *
@@ -22,6 +23,7 @@ public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
     private static final String NEXT_LINK = "next";
     private static final String CURRENT_LINK = "current";
     private static final String DIRECTION = "direction";
+    private static final String SELF_LINK = "self";
 
     @Override
     public void process(RequestContext rc, AdapterResponse<Feed> adapterResponse) {
@@ -34,6 +36,10 @@ public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
 
         // Build the URL and PATH without the parameters
         final String self = StringUtils.split(rc.getResolvedUri().toString(), '?')[0];
+        // Add an updated element to the feed
+        final Calendar localNow = Calendar.getInstance(TimeZone.getDefault());
+        localNow.setTimeInMillis(System.currentTimeMillis());
+        f.setUpdated(localNow.getTime());
 
         // Get a map of the url parameters
         final Map<String, List<String>> parameters = getParameterMap(rc);
@@ -42,6 +48,10 @@ public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
         if (linkNotSet(f, CURRENT_LINK)) {
             f.addLink(StringUtils.join(new String[]{self, mapToParameters(parameters)}), CURRENT_LINK);
         }
+        // Add self link (same as current link)
+        if (linkNotSet(f, SELF_LINK)) {
+            f.addLink(StringUtils.join(new String[]{self, mapToParameters(parameters)}), SELF_LINK);
+        }        
 
         // If the feed source hasn't already defined this link
         if (linkNotSet(f, NEXT_LINK)) {

@@ -130,11 +130,6 @@ public class WorkspaceConfigProcessor {
                     TargetType.TYPE_COLLECTION,
                     TargetRegexBuilder.getFeedResolverFieldList());
 
-            // feed categories
-            regexTargetResolver.setPattern(feedTargetRegexBuilder.toCategoriesPattern(),
-                    TargetType.TYPE_CATEGORIES,
-                    TargetRegexBuilder.getCategoriesResolverFieldList());
-
             // entry regex matching
             regexTargetResolver.setPattern(feedTargetRegexBuilder.toEntryPattern(),
                     TargetType.TYPE_ENTRY,

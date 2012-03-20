@@ -6,7 +6,7 @@
    <artifactId>parent</artifactId>
    <packaging>pom</packaging>
 
-   <version>0.10.2-SNAPSHOT</version>
+   <version>0.11.1-SNAPSHOT</version>
    <name>ATOM Hopper - ATOMpub Server Collection</name>
 
    <url>http://atomhopper.org/</url>
@@ -14,7 +14,7 @@
    <properties>
       <project.license>apache20</project.license>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-      <org.springframework.version>3.0.6.RELEASE</org.springframework.version>
+      <org.springframework.version>3.1.1.RELEASE</org.springframework.version>
    </properties>
 
    <licenses>
@@ -28,10 +28,10 @@
       <module>hopper</module>
       <module>test-suite</module>
       <module>server</module>
-      <module>ah-war</module>
       <module>adapters/hibernate</module>
       <module>test-util</module>
       <module>documentation</module>
+      <module>atomhopper</module>
    </modules>
 
    <scm>
@@ -62,19 +62,19 @@
          <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>4.0.0.Final</version>
+            <version>4.1.1.Final</version>
          </dependency>
-            
+
          <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-c3p0</artifactId>
-            <version>4.0.0.Final</version>
-         </dependency>            
+            <version>4.1.1.Final</version>
+         </dependency>
 
          <dependency>
             <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>
-            <version>3.15.0-GA</version>
+            <version>3.16.1-GA</version>
          </dependency>
 
          <dependency>
@@ -165,13 +165,13 @@
          <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
-            <version>8.0.4.v20111024</version>
+            <version>8.1.0.v20120127</version>
          </dependency>
 
          <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
-            <version>8.0.4.v20111024</version>
+            <version>8.1.0.v20120127</version>
          </dependency>
 
          <dependency>
@@ -205,12 +205,12 @@
             <artifactId>javaee-endorsed-api</artifactId>
             <version>6.0</version>
          </dependency>
-            
+
          <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.1</version>
-         </dependency>            
+         </dependency>
 
          <dependency>
             <groupId>org.mockito</groupId>
@@ -245,8 +245,8 @@
          <id>rackspace-research</id>
          <name>Rackspace Research Repository</name>
          <url>http://maven.research.rackspacecloud.com/content/groups/public/</url>
-      </repository>        
-   </repositories>   
+      </repository>
+   </repositories>
 
    <distributionManagement>
       <repository>

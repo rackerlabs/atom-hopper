@@ -33,21 +33,7 @@ public class FeedPagingProcessorTest {
         final int TOTAL_FEED_ENTRIES = 5;
 
         @Test
-        public void shouldAddCurrentLink() {
-            final FeedPagingProcessor target = feedPagingProcessor();
-            final AdapterResponse<Feed> feedResponse = adapterResponse(TOTAL_FEED_ENTRIES);
-            final RequestContext rc = requestContext();
-
-            target.process(rc, feedResponse);
-
-            Feed feed = feedResponse.getBody().getAsFeed();
-
-            assertThat("Should set current link", feed.getLink(REL_CURRENT), notNullValue());
-            assertThat("Should match self", feed.getLink(REL_CURRENT).getHref().toString(), equalTo(SELF_URL));
-        }
-
-        @Test
-        public void shouldAddNextLink() {
+        public void shouldAddLinksAndElements() {
             final FeedPagingProcessor target = feedPagingProcessor();
             final AdapterResponse<Feed> feedResponse = adapterResponse(TOTAL_FEED_ENTRIES);
             final RequestContext rc = requestContext();
@@ -57,10 +43,17 @@ public class FeedPagingProcessorTest {
             Feed feed = feedResponse.getBody().getAsFeed();
             String lastEntryId = Integer.toString(TOTAL_FEED_ENTRIES);
 
-            assertThat("Should set next link", feed.getLink(REL_NEXT), notNullValue());
-            assertThat("Should reference last entry on feed", feed.getLink(REL_NEXT).getHref().toString(), equalTo("http://localhost:8080/foo/bar?marker=" + lastEntryId));
-        }
+            assertThat("Should set current link", feed.getLink(REL_CURRENT), notNullValue());
+            assertThat("Should match self (current link)", feed.getLink(REL_CURRENT).getHref().toString(), equalTo(SELF_URL));
+            
+            assertThat("Should set updated element", feed.getUpdated(), notNullValue()); 
 
+            assertThat("Should set self link", feed.getLink(REL_SELF), notNullValue());
+            assertThat("Should match self (self link)", feed.getLink(REL_SELF).getHref().toString(), equalTo(SELF_URL)); 
+            
+            assertThat("Should set next link", feed.getLink(REL_NEXT), notNullValue());
+            assertThat("Should reference last entry on feed", feed.getLink(REL_NEXT).getHref().toString(), equalTo("http://localhost:8080/foo/bar?marker=" + lastEntryId));            
+        }
     }
 
 
@@ -68,21 +61,7 @@ public class FeedPagingProcessorTest {
         final int TOTAL_FEED_ENTRIES = 1;
 
         @Test
-        public void shouldAddCurrentLink() {
-            final FeedPagingProcessor target = feedPagingProcessor();
-            final AdapterResponse<Feed> feedResponse = adapterResponse(TOTAL_FEED_ENTRIES);
-            final RequestContext rc = requestContext();
-
-            target.process(rc, feedResponse);
-
-            Feed feed = feedResponse.getBody().getAsFeed();
-
-            assertThat("Should set current link", feed.getLink(REL_CURRENT), notNullValue());
-            assertThat("Should match self", feed.getLink(REL_CURRENT).getHref().toString(), equalTo(SELF_URL));
-        }
-
-        @Test
-        public void shouldAddNextLink() {
+        public void shouldAddLinksAndElements() {
             final FeedPagingProcessor target = feedPagingProcessor();
             final AdapterResponse<Feed> feedResponse = adapterResponse(TOTAL_FEED_ENTRIES);
             final RequestContext rc = requestContext();
@@ -92,8 +71,16 @@ public class FeedPagingProcessorTest {
             Feed feed = feedResponse.getBody().getAsFeed();
             String lastEntryId = Integer.toString(TOTAL_FEED_ENTRIES);
 
+            assertThat("Should set current link", feed.getLink(REL_CURRENT), notNullValue());
+            assertThat("Should match self (current link)", feed.getLink(REL_CURRENT).getHref().toString(), equalTo(SELF_URL));
+            
+            assertThat("Should set updated element", feed.getUpdated(), notNullValue()); 
+
+            assertThat("Should set self link", feed.getLink(REL_SELF), notNullValue());
+            assertThat("Should match self (self link)", feed.getLink(REL_SELF).getHref().toString(), equalTo(SELF_URL)); 
+            
             assertThat("Should set next link", feed.getLink(REL_NEXT), notNullValue());
-            assertThat("Should reference last entry on feed", feed.getLink(REL_NEXT).getHref().toString(), equalTo("http://localhost:8080/foo/bar?marker=" + lastEntryId));
+            assertThat("Should reference last entry on feed", feed.getLink(REL_NEXT).getHref().toString(), equalTo("http://localhost:8080/foo/bar?marker=" + lastEntryId)); 
         }
 
         @Test
@@ -191,6 +178,7 @@ public class FeedPagingProcessorTest {
         static final String SELF_URL = "http://localhost:8080/foo/bar?marker=1";
         static final String REL_CURRENT = "current";
         static final String REL_NEXT = "next";
+        static final String REL_SELF = "self";
 
 
         public FeedPagingProcessor feedPagingProcessor() {

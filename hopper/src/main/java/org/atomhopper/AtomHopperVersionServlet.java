@@ -15,16 +15,16 @@ import java.util.Properties;
 
 
 public class AtomHopperVersionServlet extends HttpServlet {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(AtomHopperVersionServlet.class);
-    private final String POM_PROPERTIES_LOCATION = "META-INF/maven/org.atomhopper/ah-war/pom.properties";
+    private static final String POM_PROPERTIES_LOCATION = "META-INF/maven/org.atomhopper/atomhopper/pom.properties";
 
     private Properties loadProperties() {
         Properties properties = new Properties();
         try {
             InputStream inStream = getServletContext().getResourceAsStream(POM_PROPERTIES_LOCATION);
             properties.load(inStream);
-            inStream.close();            
+            inStream.close();
         } catch (Exception e){
             LOG.error("Unable to load pom.properties", e);
         }
@@ -33,7 +33,7 @@ public class AtomHopperVersionServlet extends HttpServlet {
 
     private Properties getProperties(){
         return loadProperties();
-    }    
+    }
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -41,7 +41,7 @@ public class AtomHopperVersionServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         try {
             out.println(new Gson().toJson(getProperties()));
-        } finally {            
+        } finally {
             out.close();
         }
     }

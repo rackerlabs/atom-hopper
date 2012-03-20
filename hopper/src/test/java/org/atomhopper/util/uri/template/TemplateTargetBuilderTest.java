@@ -19,7 +19,6 @@ import static org.mockito.Mockito.when;
 @RunWith(Enclosed.class)
 public class TemplateTargetBuilderTest {
 
-    private static final Object ARCHIVE = new Object();
     public static final Object COLLECTION = new Object();
 
     public static class WhenGeneratingURLsFromFeedTemplates extends TestParent {
@@ -124,54 +123,6 @@ public class TemplateTargetBuilderTest {
 
             assertEquals("URL built from template should match expected feed URL",
                     expected, targetBuilder.urlFor(requestContext, params.getTargetTemplateKey(), params.toMap()));
-        }
-    }    
-
-    public static class WhenBuildingTemplatesManually extends TestParent {
-
-        @Before
-        public void setArchiveTemplate() {
-            targetBuilder.setTemplate(ARCHIVE, "{target_base}/{workspace=a}/{feed=b}{-prefix|/|entry}/{-opt|?|categories,marker,limit}{-opt|categories=|categories}{-listjoin|;|categories}{-opt|&|categories}{-join|&|marker,limit}");
-        }
-
-        @Test
-        public void shouldGenerateExpectedURLWithDefaults() {
-            final Map<String, String> parameterMap = new HashMap<String, String>();
-            parameterMap.put("marker", "12345");
-            parameterMap.put("limit", "5");
-
-            final String expected = "/root/context/a/b/?marker=12345&limit=5";
-
-            assertEquals("URL built from template should match expected", expected, targetBuilder.urlFor(requestContext, ARCHIVE, parameterMap));
-        }
-
-        @Test
-        public void shouldGenerateExpectedURL() {
-            final Map<String, String> parameterMap = new HashMap<String, String>();
-            parameterMap.put("workspace", "a");
-            parameterMap.put("feed", "b");
-            parameterMap.put("marker", "12345");
-            parameterMap.put("entry", "c");
-            parameterMap.put("limit", "5");
-
-            final String expected = "/root/context/a/b/c/?marker=12345&limit=5";
-
-            assertEquals("URL built from template should match expected", expected, targetBuilder.urlFor(requestContext, ARCHIVE, parameterMap));
-        }
-
-        @Test
-        public void shouldGenerateExpectedURLWithCategories() {
-            final Map<String, Object> parameterMap = new HashMap<String, Object>();
-            parameterMap.put("categories", Arrays.asList("cata", "catb", "catc"));
-            parameterMap.put("workspace", "a");
-            parameterMap.put("feed", "b");
-            parameterMap.put("marker", "12345");
-            parameterMap.put("entry", "c");
-            parameterMap.put("limit", "5");
-
-            final String expected = "/root/context/a/b/c/?categories=cata;catb;catc&marker=12345&limit=5";
-
-            assertEquals("URL built from template should match expected", expected, targetBuilder.urlFor(requestContext, ARCHIVE, parameterMap));
         }
     }
 
