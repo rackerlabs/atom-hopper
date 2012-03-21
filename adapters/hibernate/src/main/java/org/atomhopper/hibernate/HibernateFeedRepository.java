@@ -28,7 +28,7 @@ import java.util.Set;
 public class HibernateFeedRepository implements FeedRepository {
 
     private static final Logger LOG = LoggerFactory.getLogger(HibernateFeedRepository.class);
-    
+
     private final HibernateSessionManager sessionManager;
     private static final String DATE_LAST_UPDATED = "dateLastUpdated";
 
@@ -39,7 +39,7 @@ public class HibernateFeedRepository implements FeedRepository {
     public void performSimpleAction(SimpleSessionAction action) {
         final long begin = System.currentTimeMillis();
         LOG.debug("~!$: Simple Action Session begin: " + begin);
-        
+
         final Session session = sessionManager.getSession();
 
         Transaction tx = null;
@@ -65,7 +65,7 @@ public class HibernateFeedRepository implements FeedRepository {
     public <T> T performComplexAction(ComplexSessionAction<T> action) {
         final long begin = System.currentTimeMillis();
         LOG.debug("~!$: Complex Action Session begin: " + begin);
-        
+
         final Session session = sessionManager.getSession();
 
         T returnable = null;
@@ -185,12 +185,12 @@ public class HibernateFeedRepository implements FeedRepository {
 
                 for (PersistedCategory entryCategory : categories) {
                     PersistedCategory liveCategory = (PersistedCategory) liveSession.createCriteria(PersistedCategory.class).add(Restrictions.idEq(entryCategory.getTerm())).uniqueResult();
-                    
+
                     if (liveCategory == null) {
                         liveCategory = new PersistedCategory(entryCategory.getTerm());
                         liveSession.save(liveCategory);
                     }
-                    
+
                     updatedCategories.add(liveCategory);
                 }
 
@@ -229,12 +229,15 @@ public class HibernateFeedRepository implements FeedRepository {
     }
 
     @Override
-    public PersistedEntry getEntry(final String entryId) {
+    public PersistedEntry getEntry(final String entryId, final String feedName) {
         return performComplexAction(new ComplexSessionAction<PersistedEntry>() {
 
             @Override
             public PersistedEntry perform(Session liveSession) {
-                return (PersistedEntry) liveSession.createCriteria(PersistedEntry.class).add(Restrictions.idEq(entryId)).uniqueResult();
+                return (PersistedEntry) liveSession.createCriteria(PersistedEntry.class)
+                        .add(Restrictions.idEq(entryId))
+                        .add(Restrictions.eq("feed.name", feedName))
+                        .uniqueResult();
             }
         });
     }
@@ -249,7 +252,7 @@ public class HibernateFeedRepository implements FeedRepository {
             }
         });
     }
-    
+
     @Override
     public PersistedEntry getLastEntry(final String feedName) {
         return performComplexAction(new ComplexSessionAction<PersistedEntry>() {
@@ -262,5 +265,5 @@ public class HibernateFeedRepository implements FeedRepository {
                         .setMaxResults(1).uniqueResult();
             }
         });
-    }    
+    }
 }
