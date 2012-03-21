@@ -69,6 +69,16 @@
         <abstract>
             <para>This document is intended for anyone seeking basic information about &PRODNAME;. </para>
         </abstract>
+        <revhistory>
+            <revision>
+                <date>2012-03-29</date>
+                <revdescription>
+                    <itemizedlist spacing="compact">
+                        <listitem><para>Initial release for Atom Hopper v1.0.</para></listitem>
+                    </itemizedlist>
+                </revdescription>
+            </revision>
+        </revhistory>
     </info>
     <chapter xml:id="Overview-d1e85">
         <title>Overview</title>
@@ -79,7 +89,7 @@
             <itemizedlist spacing="normal">
                 <listitem>
                     <para>
-                        <link linkend="Define-d1e365">What is &PRODNAME;?</link>
+                        <link linkend="Introduction-000">What is &PRODNAME;?</link>
                     </para>
                 </listitem>
                 <listitem>
@@ -103,30 +113,11 @@
             <title>Document Change History</title>
             <para>This version of Getting Started replaces and obsoletes all previous versions. The
                 most recent changes are described in the table below: </para>
-            <informaltable rules="all">
-                <thead>
-                    <tr align="center">
-                        <td colspan="1">Revision Date</td>
-                        <td colspan="4">Summary of Changes</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr align="left">
-                        <td colspan="1" align="center">2012-03-29</td>
-                        <td colspan="4" align="left">
-                            <itemizedlist spacing="compact">
-                                <listitem>
-                                    <para>Initial release for v1.0.</para>
-                                </listitem>
-                            </itemizedlist>
-                        </td>
-                    </tr>
-                </tbody>
-            </informaltable>
+            <?rax revhistory?>
         </section>
         <xi:include href="chapters/available-doc.xml"/>
     </chapter>
-    <chapter xml:id="Define-d1e365">
+    <chapter xml:id="Introduction-000">
         <title>What is &PRODNAME;?</title>
         <annotation>
             <remark>
