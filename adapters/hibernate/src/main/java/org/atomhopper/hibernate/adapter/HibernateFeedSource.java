@@ -78,7 +78,7 @@ public class HibernateFeedSource implements FeedSource {
 
     @Override
     public AdapterResponse<Entry> getEntry(GetEntryRequest getEntryRequest) {
-        final PersistedEntry entry = feedRepository.getEntry(getEntryRequest.getEntryId());
+        final PersistedEntry entry = feedRepository.getEntry(getEntryRequest.getEntryId(), getEntryRequest.getFeedName());
         AdapterResponse<Entry> response = ResponseBuilder.notFound();
 
         if (entry != null) {
@@ -141,7 +141,7 @@ public class HibernateFeedSource implements FeedSource {
         }
 
         final PersistedFeed persistedFeed = feedRepository.getFeed(getFeedRequest.getFeedName());
-        final PersistedEntry markerEntry = feedRepository.getEntry(marker);
+        final PersistedEntry markerEntry = feedRepository.getEntry(marker, getFeedRequest.getFeedName());
 
         if (markerEntry != null) {
             final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
