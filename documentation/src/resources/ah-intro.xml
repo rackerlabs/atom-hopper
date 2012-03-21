@@ -36,8 +36,8 @@
       xmlns:svg="http://www.w3.org/2000/svg"
       xmlns:m="http://www.w3.org/1998/Math/MathML"
       xmlns:html="http://www.w3.org/1999/xhtml"
-      xmlns:db="http://docbook.org/ns/docbook" >
-    <?rax pdf.url="../../papi-intro.pdf"?>
+      xml:id="Atom-Hopper-Getting-Started">
+    <?rax pdf.url="../../ah-intro.pdf"?>
     <title>&PRODNAME; Getting Started</title>
     <!-- set watermark on cover and left margin 
         <?rax status.bar.text="CONFIDENTIAL"?>
@@ -58,9 +58,9 @@
             <year>2011</year>
             <holder>Rackspace US, Inc.</holder>
         </copyright>
-        <releaseinfo>v0.9</releaseinfo>
+        <releaseinfo>v1.0</releaseinfo>
         <productname>&PRODNAME;</productname>
-        <pubdate>2011-09-28</pubdate>
+        <pubdate>2012-03-29</pubdate>
         <legalnotice role="apache2">
             <annotation>
                 <remark>Copyright details are filled in by the template.</remark>
@@ -112,11 +112,11 @@
                 </thead>
                 <tbody>
                     <tr align="left">
-                        <td colspan="1" align="center">Sep 28, 2011</td>
+                        <td colspan="1" align="center">2012-03-29</td>
                         <td colspan="4" align="left">
                             <itemizedlist spacing="compact">
                                 <listitem>
-                                    <para>Initial release.</para>
+                                    <para>Initial release for v1.0.</para>
                                 </listitem>
                             </itemizedlist>
                         </td>

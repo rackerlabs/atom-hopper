@@ -41,8 +41,8 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--- plugin for RACKBOOK (Rackspace + DocBook) document formatting 
-                  talk to Rose Coste if you need help --->
+            <!-- plugin for RACKBOOK (Rackspace + DocBook) document formatting 
+                  talk to Rose Coste if you need help -->
             <plugin>
                 <groupId>com.rackspace.cloud.api</groupId>
                 <artifactId>clouddocs-maven-plugin</artifactId>
@@ -64,12 +64,7 @@
                             <!-- support inclusion from external /samples/, /figures/, etc -->
                             <xincludeSupported>true</xincludeSupported>
                             <!-- set branding to OPENSTACK or RACKSPACE or omit (default = RACKSPACE)
-                        <branding>openstack</branding> -->
-                            <builtForOpenStack>1</builtForOpenStack>
-                            <!-- customize color of doc cover as RGB: 00FF00 is true green -->
-                            <coverColor>00FF00</coverColor>
-                            <!-- customize more-info link on cover: show project home page -->
-                            <coverURL>http://www.atomhopper.org/</coverURL>
+                            <branding>openstack</branding> -->
                             <!-- for WebHelp: -->
                             <!-- enableDisqus turns on Disqus feature for feedback if any value other than 0; "intranet" for posting on our internal docs-beta.rackspace.com for internal review -->
                             <!-- disqusShortname = Disqus account where moderator is collecting this feedback -->
@@ -87,7 +82,18 @@
                             <textinsertExtension>1</textinsertExtension>
                             <!-- use this .XML as the source for the books to be generated as .PDF & .HTML -->
                             <!-- if not specified, generate for all -->
-                            <!-- <includes>ah-info.xml</includes> -->
+                            <!-- <includes>ah-intro.xml</includes> -->
+                            <builtForOpenStack>0</builtForOpenStack>
+                            <!-- customize source of product logo as path from pom.xml -->
+                            <coverLogoPath>src/resources/img/atomhopper-logo.png</coverLogoPath>
+                            <!-- customize position of product logo as inches in from left -->
+                            <coverLogoLeft>5in</coverLogoLeft>
+                            <!-- customize position of product logo as inches down from top -->
+                            <coverLogoTop>6.5in</coverLogoTop>
+                            <!-- customize more-info link on cover: show project home page -->
+                            <coverURL>http://www.atomhopper.org/</coverURL>
+                            <!-- customize color of wide band on doc cover as RGB: 00FF00 is true green -->
+                            <coverColor>99CC66</coverColor>
                         </configuration>
                     </execution>
                 </executions>
