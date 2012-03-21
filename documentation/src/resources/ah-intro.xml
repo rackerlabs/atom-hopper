@@ -117,13 +117,9 @@
         </section>
         <xi:include href="chapters/available-doc.xml"/>
     </chapter>
+    <!-- naming this section xml:id="Introduction-000" to make it the first page opened in HTML, matching <webhelpDefaultTopic>Introduction-000.html</webhelpDefaultTopic> in pom.xml -->
     <chapter xml:id="Introduction-000">
         <title>What is &PRODNAME;?</title>
-        <annotation>
-            <remark>
-                Source for this chapter is https://wiki.mosso.com/display/CT/Atom+Hopper and orientation handout from Chad Lung.
-            </remark>
-        </annotation>
         <para> 
             &PRODNAME; is a backend server that sends out XML feeds to internal teams. 
             Essentially, it accepts data and sends data back out when requested. 
@@ -143,47 +139,14 @@
                 </listitem>
             </itemizedlist>
         </para>
-        <para> 
-            &PRODNAME; can be deployed in several ways:
-        </para>
-        <itemizedlist>
-            <listitem>
-                <para>
-                    from an embedded Jetty server
-                </para>
-                <para>
-                    <emphasis>This is the easiest way to get &PRODNAME; up and running. It requires little knowledge or configuration.</emphasis>
-                </para>
-            </listitem>
-            <listitem>
-                <para>
-                    from a WAR file which can be dropped into a container such as Tomcat or Jetty
-                </para>
-            </listitem>
-            <listitem>
-                <para>
-                    from the source code or a generated JAR
-                </para>
-            </listitem>
-            <listitem>
-                <para>
-                    from an RPM Package Manager (RPM)
-                </para>
-            </listitem>
-        </itemizedlist>
+        <note>
+            <para>
+                See <xref linkend="Available_Doc-d1e140"></xref> for a list of documentation about these components.
+            </para>
+        </note>
     </chapter>
     <chapter xml:id="Design-d1e665">
         <title>How Does &PRODNAME; Work?</title>
-        <annotation>
-            <remark>
-                Source for this chapter is https://wiki.mosso.com/pages/viewpage.action?pageId=40828966 (title is Why Choose Atom Hopper?; question mark prevents saving as a named page
-            </remark>
-        </annotation>
-        <annotation>
-            <remark>
-                Source for this chapter is https://wiki.mosso.com/display/CT/PAPI+Components+and+Enterprise+Integration+Patterns
-            </remark>
-        </annotation>
         <para> &PRODNAME; is an AtomPub server based upon the Apache Abdera project. 
         It functions as a framework for accessing, processing, aggregating, and indexing Atom-formatted events.
         </para>
