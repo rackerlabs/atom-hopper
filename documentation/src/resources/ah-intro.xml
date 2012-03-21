@@ -81,9 +81,7 @@
         </revhistory>
     </info>
     <chapter xml:id="Overview-d1e85">
-        <title>Overview</title>
-        <section xml:id="Purpose-d1e90">
-            <title>Purpose of This Document</title>
+        <title>About This Document</title>
             <para> The purpose of this introductory Getting Started document is to answer several basic questions about
                 &PRODNAME;: </para>
             <itemizedlist spacing="normal">
@@ -108,7 +106,6 @@
                     </para>
                 </listitem>
             </itemizedlist>   
-        </section>
         <section xml:id="Document_Change_History-d1e102">
             <title>Document Change History</title>
             <para>This version of Getting Started replaces and obsoletes all previous versions. The
