@@ -117,11 +117,10 @@
     <!-- naming this section xml:id="Introduction-000" to make it the first page opened in HTML, matching <webhelpDefaultTopic>Introduction-000.html</webhelpDefaultTopic> in pom.xml -->
     <chapter xml:id="Introduction-000">
         <title>What is &PRODNAME;?</title>
-        <para> 
-            &PRODNAME; is a backend server that sends out XML feeds to internal teams. 
-            Essentially, it accepts data and sends data back out when requested. 
-            The idea is that there will be many of these throughout the company.
-        </para>
+        <para> &PRODNAME; is an open-source backend server that sends
+            out XML feeds to internal teams. Essentially, it accepts
+            data and sends data back out when requested. The idea is
+            that there will be many of these throughout the company. </para>
         <para> 
             The purpose of &PRODNAME; is to serve Atom feeds as well as to be a repository for those feeds.
         </para>
@@ -129,7 +128,9 @@
             You can install &PRODNAME; on any server that meets the minimal configuration requirements:
             <itemizedlist>
                 <listitem>
-                    <para><emphasis role="bold">Operating System:</emphasis> Windows, OS X, Linux</para>
+                    <para><emphasis role="bold">Operating
+                            System:</emphasis> Linux Centos 6+, Ubuntu
+                        10+, Apple Mac OS X</para>
                 </listitem>
                 <listitem>
                     <para><emphasis role="bold">Java Virtual Machine:</emphasis> Oracle Java v1.6 or OpenJDK 1.6</para>
@@ -147,25 +148,64 @@
         <para> &PRODNAME; is an AtomPub server based upon the Apache Abdera project. 
         It functions as a framework for accessing, processing, aggregating, and indexing Atom-formatted events.
         </para>
-        <para>
-            &PRODNAME; was designed to make it easy to build both generalized and specialized persistence mechanisms for Atom XML data, 
-            based on the Atom Syndication Format and the Atom Publishing Protocol.
+        <para> &PRODNAME; was designed to make it easy to build both
+            generalized and specialized persistence mechanisms for
+            Atom XML data, based on the Atom Syndication Format and
+            the Atom Publishing Protocol.  
+            Atom is an IETF-ratified
+            event syndication format that may have multiple
+            representations. It is widely used, with many libraries written for it.
+            You can read more about the Atom Syndication Format and
+            the Atom Publishing Protocol in the references suggested at 
+            <xref linkend="References-d1e994"></xref>.
         </para>
         <para>
-            &PRODNAME; can use several relational databases, including H2, PostgreSQL, Microsoft SQL Server, and HSQLDB. 
-            It fully supports &POST; (creating new Atom entries) and &GET; (retrieving a feed or a single Atom entry); 
+            &PRODNAME; can use several relational databases, 
+            including H2, PostgreSQL, Microsoft SQL Server, and HSQLDB. 
+        </para>
+        <para>
+            &PRODNAME; fully supports &POST; (creating new Atom entries) and &GET; (retrieving a feed or a single Atom entry); 
             it has stubs to support &DELETE; and &PUT; if needed.
+        </para>
+        <figure xml:id="Atom-Hopper-Event-Syndication">
+            <title>&PRODNAME; collects published events and forwards them to subscribers.</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="figures/ah-intro.png" format="PNG" align="center"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+        <para>
+            As illustrated above, &PRODNAME; can do more than simply listen for published events. 
+            It can provide subscribers with personalized feeds of only the events most relevant to them. 
+            For example: 
+            <itemizedlist>
+                <listitem>
+                    <para>
+                        Failures can be routed to an on-call's mobile phone. 
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        Warnings requiring proactive investigation can be routed to an on-site technician's tablet.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        Normal progress messages can be routed to an administrator's console.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        Records of successful task completion can be fed to a program for analysis and reporting.
+                    </para>
+                </listitem>
+            </itemizedlist>
         </para>
     </chapter>
     <chapter xml:id="Try-d1e731">
         <title>How Can I Try &PRODNAME;?</title>
-        <annotation>
-            <remark> Source for this chapter is https://wiki.mosso.com/display/CT/Deployment+Options and
-                https://wiki.mosso.com/display/CT/Installing+Atom+Hopper</remark>
-        </annotation>
-        <para>
-            &PRODNAME;'s components may be deployed in several ways, including:
-        </para> 
+        <para> &PRODNAME;' may be deployed in several ways, including: </para> 
         <itemizedlist spacing="compact">
             <listitem>
                 <para>
