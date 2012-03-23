@@ -35,6 +35,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang.StringUtils;
+import org.atomhopper.adapter.ResponseBuilder;
+import org.atomhopper.adapter.request.adapter.GetFeedRequest;
 
 public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
 
@@ -50,20 +53,20 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
         super(target);
 
         this.feedConfiguration = feedConfiguration;
-        
+
         final List<String> allowedMethodsList = new LinkedList<String>();
-        
+
         if (feedSource != null) {
             this.feedSource = feedSource;
-            
+
             allowedMethodsList.add("GET");
         } else {
             this.feedSource = DisabledFeedSource.getInstance();
         }
-        
+
         if (feedPublisher != null) {
             this.feedPublisher = feedPublisher;
-            
+
             allowedMethodsList.add("PUT");
             allowedMethodsList.add("POST");
             allowedMethodsList.add("DELETE");
@@ -72,7 +75,7 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
         }
 
         final String[] allowedMethods = allowedMethodsList.toArray(new String[allowedMethodsList.size()]);
-        
+
         feedResponseHandler = new FeedResponseHandler(allowedMethods, new FeedPagingProcessor(), new FeedEntityTagProcessor());
         entryResponseHandler = new EntryResponseHandler(allowedMethods);
         emptyBodyResponseHandler = new EmptyBodyResponseHandler(allowedMethods);
@@ -125,8 +128,20 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
 
     @Override
     public ResponseContext getFeed(RequestContext request) {
+        GetFeedRequest getFeedRequest = new GetFeedRequestImpl(request);
+
         try {
-            return feedResponseHandler.handleResponse(request, feedSource.getFeed(new GetFeedRequestImpl(request)));
+            final String pageSizeString = getFeedRequest.getPageSize();
+
+            if ((StringUtils.isNotBlank(pageSizeString)) && (Integer.parseInt(pageSizeString) <= 0)) {
+                return ProviderHelper.badrequest(request, "Limit parameter not valid");
+            }
+        } catch (NumberFormatException nfe) {
+            return ProviderHelper.badrequest(request, "Limit parameter not valid");
+        }
+
+        try {
+            return feedResponseHandler.handleResponse(request, feedSource.getFeed(getFeedRequest));
         } catch (Exception ex) {
             return ProviderHelper.servererror(request, ex.getMessage(), ex);
         }
