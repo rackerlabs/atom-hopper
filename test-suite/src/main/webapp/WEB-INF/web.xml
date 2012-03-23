@@ -9,6 +9,11 @@
         <param-value>/META-INF/application-context.xml</param-value>
     </context-param>
 
+    <context-param>
+        <param-name>powerapi-config-directory</param-name>
+        <param-value>/tmp/atom-server</param-value>
+    </context-param>
+
     <listener>
         <display-name>Spring Context Loader</display-name>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>

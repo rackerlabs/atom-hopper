@@ -20,7 +20,6 @@ import org.apache.abdera.protocol.server.processors.CollectionRequestProcessor;
 import org.apache.abdera.protocol.server.processors.EntryRequestProcessor;
 import org.apache.abdera.protocol.server.processors.ServiceRequestProcessor;
 import org.apache.abdera.protocol.server.servlet.ServletRequestContext;
-import org.atomhopper.config.v1_0.HostConfiguration;
 import org.atomhopper.util.uri.template.EnumKeyedTemplateParameters;
 import org.atomhopper.util.uri.template.TemplateParameters;
 import org.atomhopper.util.uri.template.URITemplate;
@@ -35,217 +34,228 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import org.atomhopper.config.AtomHopperConfigurationManager;
+import org.atomhopper.config.v1_0.HostConfiguration;
 
 public class WorkspaceProvider implements Provider {
 
-    private static final Logger LOG = LoggerFactory.getLogger(WorkspaceProvider.class);
-    private static final int MIN_ERROR_CODE = 400;
-    private static final int MAX_ERROR_CODE = 500;
-    private final Map<TargetType, RequestProcessor> requestProcessors;
-    private final List<Filter> filters;
-    private final WorkspaceManager workspaceManager;
-    private final RegexTargetResolver targetResolver;
-    private final HostConfiguration hostConfiguration;
-    private final TemplateTargetBuilder templateTargetBuilder;
-    private Map<String, String> properties;
-    private Abdera abdera;
+   private static final Logger LOG = LoggerFactory.getLogger(WorkspaceProvider.class);
+   private static final int MIN_ERROR_CODE = 400;
+   private static final int MAX_ERROR_CODE = 500;
+   private final Map<TargetType, RequestProcessor> requestProcessors;
+   private final List<Filter> filters;
+   private final ThreadSafeWorkspaceManager workspaceManager;
+   private final RegexTargetResolver targetResolver;
+   private final TemplateTargetBuilder templateTargetBuilder;
+   private HostConfiguration hostConfiguration;
+   private Map<String, String> properties;
+   private Abdera abdera;
 
-    public WorkspaceProvider(HostConfiguration hostConfiguration) {
-        requestProcessors = new HashMap<TargetType, RequestProcessor>();
-        filters = new LinkedList<Filter>();
-        targetResolver = new RegexTargetResolver();
+   public WorkspaceProvider(ThreadSafeWorkspaceManager workspaceManager) {
+      // Set the default host configuration
+      hostConfiguration = new HostConfiguration();
+      hostConfiguration.setDomain("localhost");
 
-        // Set the host configuration
-        this.hostConfiguration = hostConfiguration;
+      requestProcessors = new HashMap<TargetType, RequestProcessor>();
+      filters = new LinkedList<Filter>();
+      targetResolver = new RegexTargetResolver();
 
-        // Setting default request processors:
-        requestProcessors.put(TargetType.TYPE_SERVICE, new ServiceRequestProcessor());
-        requestProcessors.put(TargetType.TYPE_CATEGORIES, new CategoriesRequestProcessor());
-        requestProcessors.put(TargetType.TYPE_COLLECTION, new CollectionRequestProcessor());
-        requestProcessors.put(TargetType.TYPE_ENTRY, new EntryRequestProcessor());
+      // Setting default request processors:
+      requestProcessors.put(TargetType.TYPE_SERVICE, new ServiceRequestProcessor());
+      requestProcessors.put(TargetType.TYPE_CATEGORIES, new CategoriesRequestProcessor());
+      requestProcessors.put(TargetType.TYPE_COLLECTION, new CollectionRequestProcessor());
+      requestProcessors.put(TargetType.TYPE_ENTRY, new EntryRequestProcessor());
 
-        templateTargetBuilder = new TemplateTargetBuilder();
-        templateTargetBuilder.setTemplate(URITemplate.WORKSPACE, URITemplate.WORKSPACE.toString());
-        templateTargetBuilder.setTemplate(URITemplate.FEED, URITemplate.FEED.toString());
+      templateTargetBuilder = new TemplateTargetBuilder();
+      templateTargetBuilder.setTemplate(URITemplate.WORKSPACE, URITemplate.WORKSPACE.toString());
+      templateTargetBuilder.setTemplate(URITemplate.FEED, URITemplate.FEED.toString());
 
-        workspaceManager = new WorkspaceManager();
-    }
+      this.workspaceManager = workspaceManager;
+   }
 
-    public RegexTargetResolver getTargetResolver() {
-        return targetResolver;
-    }
+   public synchronized HostConfiguration getHostConfiguration() {
+      return hostConfiguration;
+   }
 
-    public WorkspaceManager getWorkspaceManager() {
-        return workspaceManager;
-    }
+   public synchronized void setHostConfiguration(HostConfiguration hostConfiguration) {
+      this.hostConfiguration = hostConfiguration;
+   }
 
-    @Override
-    public void init(Abdera abdera, Map<String, String> properties) {
-        this.abdera = abdera;
-        this.properties = properties;
-    }
+   public ThreadSafeWorkspaceManager getWorkspaceManager() {
+      return workspaceManager;
+   }
 
-    @Override
-    public String getProperty(String name) {
-        return properties.get(name);
-    }
+   public RegexTargetResolver getTargetResolver() {
+      return targetResolver;
+   }
 
-    @Override
-    public String[] getPropertyNames() {
-        return properties.keySet().toArray(new String[properties.size()]);
-    }
+   @Override
+   public void init(Abdera abdera, Map<String, String> properties) {
+      this.abdera = abdera;
+      this.properties = properties;
+   }
 
-    @Override
-    public Abdera getAbdera() {
-        return abdera;
-    }
+   @Override
+   public String getProperty(String name) {
+      return properties.get(name);
+   }
 
-    @Override
-    public Subject resolveSubject(RequestContext request) {
-        return new SimpleSubjectResolver().resolve(request);
-    }
+   @Override
+   public String[] getPropertyNames() {
+      return properties.keySet().toArray(new String[properties.size()]);
+   }
 
-    @Override
-    public Target resolveTarget(RequestContext request) {
-        return targetResolver.resolve(request);
-    }
+   @Override
+   public Abdera getAbdera() {
+      return abdera;
+   }
 
-    @Override
-    public String urlFor(RequestContext request, Object key, Object param) {
-        final Target resolvedTarget = request.getTarget();
-        
-        if (param == null || param instanceof TemplateParameters) {
-            final TemplateParameters templateParameters = param != null
-                    ? (TemplateParameters) param
-                    : new EnumKeyedTemplateParameters((Enum) key);
+   @Override
+   public Subject resolveSubject(RequestContext request) {
+      return new SimpleSubjectResolver().resolve(request);
+   }
 
-            templateParameters.set(URITemplateParameter.HOST_DOMAIN, hostConfiguration.getDomain());
-            
-            if (request instanceof ServletRequestContext) {
-                templateParameters.set(URITemplateParameter.HOST_SCHEME, ((ServletRequestContext)request).getRequest().getScheme());
-            }            
+   @Override
+   public Target resolveTarget(RequestContext request) {
+      return targetResolver.resolve(request);
+   }
 
-            //This is what happens when you don't use enumerations :p
-            if (resolvedTarget.getType() == TargetType.TYPE_SERVICE) {
-                templateParameters.set(URITemplateParameter.WORKSPACE_RESOURCE, resolvedTarget.getParameter(TargetResolverField.WORKSPACE.toString()));
-            } else if (resolvedTarget.getType() == TargetType.TYPE_COLLECTION) {
-                templateParameters.set(URITemplateParameter.WORKSPACE_RESOURCE, resolvedTarget.getParameter(TargetResolverField.WORKSPACE.toString()));
-                templateParameters.set(URITemplateParameter.FEED_RESOURCE, resolvedTarget.getParameter(TargetResolverField.FEED.toString()));
-            } else if (resolvedTarget.getType() == TargetType.TYPE_CATEGORIES) {
-                templateParameters.set(URITemplateParameter.WORKSPACE_RESOURCE, resolvedTarget.getParameter(TargetResolverField.WORKSPACE.toString()));
-                templateParameters.set(URITemplateParameter.FEED_RESOURCE, resolvedTarget.getParameter(TargetResolverField.FEED.toString()));
-            } else if (resolvedTarget.getType() == TargetType.TYPE_ENTRY) {
-                templateParameters.set(URITemplateParameter.WORKSPACE_RESOURCE, resolvedTarget.getParameter(TargetResolverField.WORKSPACE.toString()));
-                templateParameters.set(URITemplateParameter.FEED_RESOURCE, resolvedTarget.getParameter(TargetResolverField.FEED.toString()));
-                templateParameters.set(URITemplateParameter.ENTRY_RESOURCE, resolvedTarget.getParameter(TargetResolverField.ENTRY.toString()));
-            }
+   @Override
+   public String urlFor(RequestContext request, Object key, Object param) {
+      final Target resolvedTarget = request.getTarget();
 
-            return templateTargetBuilder.urlFor(request, key, templateParameters.toMap());
-        }
+      if (param == null || param instanceof TemplateParameters) {
+         final TemplateParameters templateParameters = param != null
+                 ? (TemplateParameters) param
+                 : new EnumKeyedTemplateParameters((Enum) key);
 
-        //Support maps eventually for this
-        throw new IllegalArgumentException("URL Generation expects a TemplateParameters object");
-    }
+         templateParameters.set(URITemplateParameter.HOST_DOMAIN, getHostConfiguration().getDomain());
 
-    @Override
-    public ResponseContext process(RequestContext request) {
-        final Target target = request.getTarget();
+         if (request instanceof ServletRequestContext) {
+            templateParameters.set(URITemplateParameter.HOST_SCHEME, ((ServletRequestContext) request).getRequest().getScheme());
+         }
 
-        if (target == null || target.getType() == TargetType.TYPE_NOT_FOUND) {
-            return ProviderHelper.notfound(request);
-        }
+         //This is what happens when you don't use enumerations :p
+         if (resolvedTarget.getType() == TargetType.TYPE_SERVICE) {
+            templateParameters.set(URITemplateParameter.WORKSPACE_RESOURCE, resolvedTarget.getParameter(TargetResolverField.WORKSPACE.toString()));
+         } else if (resolvedTarget.getType() == TargetType.TYPE_COLLECTION) {
+            templateParameters.set(URITemplateParameter.WORKSPACE_RESOURCE, resolvedTarget.getParameter(TargetResolverField.WORKSPACE.toString()));
+            templateParameters.set(URITemplateParameter.FEED_RESOURCE, resolvedTarget.getParameter(TargetResolverField.FEED.toString()));
+         } else if (resolvedTarget.getType() == TargetType.TYPE_CATEGORIES) {
+            templateParameters.set(URITemplateParameter.WORKSPACE_RESOURCE, resolvedTarget.getParameter(TargetResolverField.WORKSPACE.toString()));
+            templateParameters.set(URITemplateParameter.FEED_RESOURCE, resolvedTarget.getParameter(TargetResolverField.FEED.toString()));
+         } else if (resolvedTarget.getType() == TargetType.TYPE_ENTRY) {
+            templateParameters.set(URITemplateParameter.WORKSPACE_RESOURCE, resolvedTarget.getParameter(TargetResolverField.WORKSPACE.toString()));
+            templateParameters.set(URITemplateParameter.FEED_RESOURCE, resolvedTarget.getParameter(TargetResolverField.FEED.toString()));
+            templateParameters.set(URITemplateParameter.ENTRY_RESOURCE, resolvedTarget.getParameter(TargetResolverField.ENTRY.toString()));
+         }
 
-        final RequestProcessor processor = this.requestProcessors.get(target.getType());
+         return templateTargetBuilder.urlFor(request, key, templateParameters.toMap());
+      }
 
-        if (processor == null) {
-            return ProviderHelper.notfound(request);
-        }
+      //Support maps eventually for this
+      throw new IllegalArgumentException("URL Generation expects a TemplateParameters object");
+   }
 
-        final CollectionAdapter adapter = getWorkspaceManager().getCollectionAdapter(request);
+   @Override
+   public ResponseContext process(RequestContext request) {
+      final Target target = request.getTarget();
 
-        ResponseContext response = null;
+      if (target == null || target.getType() == TargetType.TYPE_NOT_FOUND) {
+         return ProviderHelper.notfound(request);
+      }
 
-        if (adapter != null) {
-            final Transactional transaction = adapter instanceof Transactional ? (Transactional) adapter : null;
+      final RequestProcessor processor = this.requestProcessors.get(target.getType());
 
-            try {
-                transactionStart(transaction, request);
-                response = processor.process(request, workspaceManager, adapter);
-                response = response != null ? response : processExtensionRequest(request, adapter);
-            } catch (Exception ex) {
-                response = handleAdapterException(ex, transaction, request);
-            } finally {
-                transactionEnd(transaction, request, response);
-            }
-        } else {
-            response = ProviderHelper.notfound(request);
-        }
+      if (processor == null) {
+         return ProviderHelper.notfound(request);
+      }
 
-        return response != null ? response : ProviderHelper.badrequest(request);
-    }
+      final CollectionAdapter adapter = workspaceManager.getCollectionAdapter(request);
 
-    private ResponseContext handleAdapterException(Exception ex, Transactional transaction, RequestContext request) {
-        if (ex instanceof ResponseContextException) {
-            final ResponseContextException rce = (ResponseContextException) ex;
+      ResponseContext response = null;
 
-            if (rce.getStatusCode() >= MIN_ERROR_CODE && rce.getStatusCode() < MAX_ERROR_CODE) {
-                // don't report routine 4xx HTTP errors
-                LOG.info(ex.getMessage(), ex);
-            } else {
-                LOG.error(ex.getMessage(), ex);
-            }
-        } else {
+      if (adapter != null) {
+         final Transactional transaction = adapter instanceof Transactional ? (Transactional) adapter : null;
+
+         try {
+            transactionStart(transaction, request);
+            response = processor.process(request, workspaceManager, adapter);
+            response = response != null ? response : processExtensionRequest(request, adapter);
+         } catch (Exception ex) {
+            response = handleAdapterException(ex, transaction, request);
+         } finally {
+            transactionEnd(transaction, request, response);
+         }
+      } else {
+         response = ProviderHelper.notfound(request);
+      }
+
+      return response != null ? response : ProviderHelper.badrequest(request);
+   }
+
+   private ResponseContext handleAdapterException(Exception ex, Transactional transaction, RequestContext request) {
+      if (ex instanceof ResponseContextException) {
+         final ResponseContextException rce = (ResponseContextException) ex;
+
+         if (rce.getStatusCode() >= MIN_ERROR_CODE && rce.getStatusCode() < MAX_ERROR_CODE) {
+            // don't report routine 4xx HTTP errors
+            LOG.info(ex.getMessage(), ex);
+         } else {
             LOG.error(ex.getMessage(), ex);
-        }
+         }
+      } else {
+         LOG.error(ex.getMessage(), ex);
+      }
 
-        transactionCompensate(transaction, request, ex);
-        return ProviderHelper.servererror(request, ex);
-    }
+      transactionCompensate(transaction, request, ex);
+      return ProviderHelper.servererror(request, ex);
+   }
 
-    private void transactionCompensate(Transactional transactional, RequestContext request, Throwable e) {
-        if (transactional != null) {
-            transactional.compensate(request, e);
-        }
-    }
+   private void transactionCompensate(Transactional transactional, RequestContext request, Throwable e) {
+      if (transactional != null) {
+         transactional.compensate(request, e);
+      }
+   }
 
-    private void transactionEnd(Transactional transactional, RequestContext request, ResponseContext response) {
-        if (transactional != null) {
-            transactional.end(request, response);
-        }
-    }
+   private void transactionEnd(Transactional transactional, RequestContext request, ResponseContext response) {
+      if (transactional != null) {
+         transactional.end(request, response);
+      }
+   }
 
-    private void transactionStart(Transactional transactional, RequestContext request) throws ResponseContextException {
-        if (transactional != null) {
-            transactional.start(request);
-        }
-    }
+   private void transactionStart(Transactional transactional, RequestContext request) throws ResponseContextException {
+      if (transactional != null) {
+         transactional.start(request);
+      }
+   }
 
-    private ResponseContext processExtensionRequest(RequestContext context, CollectionAdapter adapter) {
-        return adapter.extensionRequest(context);
-    }
+   private ResponseContext processExtensionRequest(RequestContext context, CollectionAdapter adapter) {
+      return adapter.extensionRequest(context);
+   }
 
-    @Override
-    public Filter[] getFilters(RequestContext request) {
-        return filters.toArray(new Filter[filters.size()]);
-    }
+   @Override
+   public Filter[] getFilters(RequestContext request) {
+      return filters.toArray(new Filter[filters.size()]);
+   }
 
-    public void addFilter(Filter... filters) {
-        this.filters.addAll(Arrays.asList(filters));
-    }
+   public void addFilter(Filter... filters) {
+      this.filters.addAll(Arrays.asList(filters));
+   }
 
-    @Override
-    public void setRequestProcessors(Map<TargetType, RequestProcessor> requestProcessors) {
-        this.requestProcessors.clear();
-        this.requestProcessors.putAll(requestProcessors);
-    }
+   @Override
+   public void setRequestProcessors(Map<TargetType, RequestProcessor> requestProcessors) {
+      this.requestProcessors.clear();
+      this.requestProcessors.putAll(requestProcessors);
+   }
 
-    @Override
-    public void addRequestProcessors(Map<TargetType, RequestProcessor> requestProcessors) {
-        this.requestProcessors.putAll(requestProcessors);
-    }
+   @Override
+   public void addRequestProcessors(Map<TargetType, RequestProcessor> requestProcessors) {
+      this.requestProcessors.putAll(requestProcessors);
+   }
 
-    @Override
-    public Map<TargetType, RequestProcessor> getRequestProcessors() {
-        return Collections.unmodifiableMap(this.requestProcessors);
-    }
+   @Override
+   public Map<TargetType, RequestProcessor> getRequestProcessors() {
+      return Collections.unmodifiableMap(this.requestProcessors);
+   }
 }
