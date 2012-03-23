@@ -38,6 +38,7 @@ public class AtomHopperJettyServerBuilder {
 
     private ServletContextHandler buildRootContext(Server serverReference) {
         final ServletContextHandler servletContext = new ServletContextHandler(serverReference, "/");
+        servletContext.getInitParams().put("powerapi-config-directory", "classpath:/META-INF/");
         servletContext.getInitParams().put("contextConfigLocation", "classpath:/META-INF/application-context.xml");
         servletContext.addEventListener(new ContextLoaderListener());
 
