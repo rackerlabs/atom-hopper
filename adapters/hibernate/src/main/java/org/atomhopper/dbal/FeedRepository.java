@@ -12,22 +12,22 @@ import java.util.Set;
 public interface FeedRepository {
 
     Set<PersistedCategory> getCategoriesForFeed(final String feedName);
-    
+
     Collection<PersistedFeed> getAllFeeds();
 
     PersistedFeed getFeed(String resourceName);
-    
+
     void saveFeed(PersistedFeed feed);
 
     List<PersistedEntry> getFeedHead(String feedName, CategoryCriteriaGenerator categoryCriteria, int pageSize);
-    
+
     List<PersistedEntry> getFeedPage(String feedName, PersistedEntry markerEntry, PageDirection direction, CategoryCriteriaGenerator categoryCriteria, int pageSize);
-    
-    PersistedEntry getEntry(String entryId);
-    
+
+    PersistedEntry getEntry(String entryId, String feedName);
+
     PersistedEntry getLastEntry(String feedName);
 
     void saveEntry(PersistedEntry entry);
-    
+
     Set<PersistedCategory> updateCategories(Set<PersistedCategory> categories);
 }
