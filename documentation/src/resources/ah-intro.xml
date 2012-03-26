@@ -205,53 +205,148 @@
     </chapter>
     <chapter xml:id="Try-d1e731">
         <title>How Can I Try &PRODNAME;?</title>
-        <para> &PRODNAME;' may be deployed in several ways, including: </para> 
-        <itemizedlist spacing="compact">
-            <listitem>
+        <section xml:id="Deploy-d1e735">
+            <title>Deploying &PRODNAME;</title>
+            <para> &PRODNAME;' may be deployed in several ways, including: </para> 
+            <itemizedlist spacing="compact">
+                <listitem>
+                    <para>
+                        <link linkend="Deploy_WAR-d1e111">WAR (recommended)</link>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <link linkend="Deploy_Embedded-d1e222">Embedded (for testing and evaluation)</link>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <link linkend="Deploy_Source_JAR-d1e333">Source Code (JAR)</link>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <link linkend="Deploy_RPM-d1e444">RPM Package Manager (RPM)</link>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <link linkend="Deploy_DEB-d1e555">Debian Package (DEB)</link>
+                    </para>
+                </listitem>
+            </itemizedlist>   
+            <section xml:id="Deploy_WAR-d1e111">
+                <title>Recommended Deployment Method: WAR</title>
                 <para>
-                    <link linkend="Executable_JAR-d1e111">Executable JAR</link>
+                    details to follow
                 </para>
-            </listitem>
-            <listitem>
-                <para>
-                    <link linkend="Hibernate-d1e222">Hibernate Config File</link>
-                </para>
-            </listitem>
-            <listitem>
-                <para>
-                    <link linkend="Source_JAR-d1e333">Source Code (JAR)</link>
-                    Valve
-                </para>
-            </listitem>
-            <listitem>
-                <para>
-                    <link linkend="RPM-d1e444">RPM Package Manager (RPM)</link>
-                </para>
-            </listitem>
-        </itemizedlist>   
-        <section xml:id="Executable_JAR-d1e111">
-            <title>Deployment Method: Executable JAR</title>
-            <para>
-                details to follow
-            </para>
+            </section>
+            <section xml:id="Deploy_Alternative-d1e123">
+                <title>Alternate Deployment Methods</title>
+                    <para>
+                        If you are unable to use the 
+                        <link linkend="Deploy_WAR-d1e111">recommended deployment method</link>, 
+                        here are several other approaches you can try.
+                    </para>
+                   <section xml:id="Deploy_Embedded-d1e222">
+                       <title>Deployment Method: Embedded</title>
+                       <para>
+                           details to follow
+                       </para>
+                   </section>
+                   <section xml:id="Deploy_Source_JAR-d1e333">
+                       <title>Deployment Method: Source Code (JAR)</title>
+                       <para>
+                           details to follow
+                       </para>
+                   </section>    
+                   <section xml:id="Deploy_RPM-d1e444">
+                       <title>Deployment Method: RPM Package Manager (RPM)</title>
+                       <para>
+                           details to follow
+                       </para>
+                   </section>
+                   <section xml:id="Deploy_DEB-d1e555">
+                       <title>Deployment Method: Debian Package (DEB)</title>
+                       <para>
+                           details to follow
+                       </para>
+                   </section>
+            </section>
         </section>
-        <section xml:id="Hibernate-d1e222">
-            <title>Deployment Method: Hibernate Config File</title>
+        <section xml:id="MultiFeed_d1e145">
+            <title>Scaling &PRODNAME;: Multiple Feeds and Multiple Databases</title>
             <para>
-                details to follow
+                You can configure &PRODNAME; to use multiple databases per feed, using the default data adapter.
+                For example, you can define a scenario such as the following, where three unique feeds each map to a different database server:
+                <itemizedlist>
+                    <listitem>
+                        <para>
+                            <code>http://localhost/myfeed/events/</code> maps to PostgreSQL Server 1
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <code>http://localhost/something/alerts/</code> maps to MySQL Server 1
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <code>http://localhost/hello/world/</code> maps to PostgreSQL Server 2
+                        </para>
+                    </listitem>
+                </itemizedlist>
             </para>
-        </section>
-        <section xml:id="Source_JAR-d1e333">
-            <title>Deployment Method: Source Code (JAR)</title>
             <para>
-                details to follow
+                Since &PRODNAME;'s default adapter uses 
+                <link xlink:href="http://www.hibernate.org/">Hibernate</link>, 
+                you can achieve this three-way mapping by modifying two configuration files. 
+                <itemizedlist>
+                    <listitem>
+                        <para>
+                            <code>atom-server.cfg.xml</code> configures a single feed or multiple feeds
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <code>application-context.xml</code> configures connection to a single database or multiple databases
+                        </para>
+                    </listitem>
+                </itemizedlist>
             </para>
-        </section>    
-        <section xml:id="RPM-d1e444">
-            <title>Deployment Method: RPM Package Manager (RPM)</title>
             <para>
-                details to follow
+                To establish the three-way mapping described above, create configuration files as shown below.
             </para>
+            <para>
+                In <code>atom-server.cfg.xml</code>,
+                define three unique feeds. Use <code>feed-source</code> and <code>publisher</code> 
+                to map each feed to the proper database.
+            </para>
+            <example>
+                <title>Configuring atom-server.cfg.xml for multiple feeds</title>
+                <programlisting language="xml">
+<xi:include href="samples/ah-multifeed-atom-server.cfg.xml" parse="text"/>
+                    </programlisting>
+            </example>
+            <para>
+                In <code>atom-server.cfg.xml</code>,
+                define databases to receive the three feeds.
+                This example defines two PostgreSQL databases and one MySQL database.
+            </para>
+            <example>
+                <title>Configuring application-context.xml for multiple databases</title>
+                <programlisting language="xml">
+<xi:include href="samples/ah-multidb-application-context.xml" parse="text"/>
+                    </programlisting>
+            </example>
+            <important>
+                <para>
+                    To use multiple databases, make sure your application server
+                    includes the JDBC drivers in its classpath.
+                    If your application server is Apache Tomcat, 
+                    you can put the JDBC drivers in the <code>lib</code> folder.
+                </para>
+            </important>
         </section>
     </chapter>
     <xi:include href="chapters/afterword.xml"/>

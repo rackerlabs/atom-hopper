@@ -72,6 +72,7 @@
                             <!-- for WebHelp: -->
                             <!-- enableDisqus turns on Disqus feature for feedback if any value other than 0; "intranet" for posting on our internal docs-beta.rackspace.com for internal review -->
                             <!-- disqusShortname = Disqus account where moderator is collecting this feedback -->
+                            <!-- feedbackemail gets comments from Disqus or Tildehash -->
                             <enableDisqus>intranet</enableDisqus>
                             <feedbackEmail>rose.coste@rackspace.com</feedbackEmail>
                             <disqusShortname>rc-integration</disqusShortname>
