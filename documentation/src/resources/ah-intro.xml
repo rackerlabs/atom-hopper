@@ -276,10 +276,10 @@
         </section>
         <section xml:id="Use_d1e155">
             <title>Using &PRODNAME;</title>
-            <para>
-                An Atom feed consists of one or more entries. 
-                You can use &PRODNAME; to get a feed, select entries from within a feed, add entries to a feed, and add categories to a feed entry. 
-            </para>
+            <para> An Atom feed consists of one or more entries. You
+                can get a feed from &PRODNAME;, select entries from
+                within a feed, add entries to a feed, and add
+                categories to a feed entry. </para>
             <para>
                 You can also use &PRODNAME; to tell you what version of &PRODNAME; you are using, if &PRODNAME; is deployed in a manner supporting 
                 that functionality.
@@ -287,8 +287,64 @@
             <section xml:id="Use_Get_Feed-d1e160">
                 <title>Getting a Feed</title>
                 <para> 
-                    later
+                    Your &PRODNAME; may be configured to collect a large number of Atom feeds, creating a database containing much more information than you wish to process at a given time.
+                    To retrieve a specific feed or selected entries within a feed from &PRODNAME;'s database, issue an HTTP &GET;. 
+                    You can use &GET; to ask for a specific entry,
+                    move forward and backward within the feed, search the feed for entries in specific <link linkend="Use_Add_Categories-d1e158">categories</link>, 
+                    and translate entries to JSON.
                 </para>
+                <para>
+                    To get the feed from your &PRODNAME;'s database, perform a &GET; against its URL. In a default installation, that URL is shaped like <code>http://localhost:8080/namespace/feed/</code>.
+                </para>
+                <para>
+                    The response to your &GET; will include a feed head with several links to entries within the feed.
+                </para>
+                <example>
+                    <title>Feed head with links to "last", "current", and "next" relative positions</title>
+                    <programlisting language="xml">
+<xi:include href="samples/ah-feedhead.xml" parse="text"/>
+                    </programlisting>
+                </example>               
+                <para>
+                    The feed head provides links to the oldest entry within the feed, the entry currently being viewed, and, 
+                    if they are available, links to the next and previous pages of entries.
+                </para>
+                <itemizedlist>
+                    <listitem>
+                        <para>
+                            <code>rel="last"</code> identifies a link to the oldest Atom entry in the database for this feed. 
+                            This entry is "last" in that all newer entries have been added ahead of it, but it was the first entry added to the feed.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <code>rel="current"</code> identifies a link to the currently-selected Atom entry. 
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <code>rel="next"</code> identifies a link to the next page of Atom entries, containing entries newer than the entry marked as <code>rel="current"</code>.
+                            A <link linkend="Use_Query-d1e162">query</link> with the <code>direction=forward</code> parameter moves in the same direction as this <code>next</code> page.
+                        </para>
+                    </listitem>
+                </itemizedlist>
+                <para>
+                    In the Atom feed,
+                    each entry includes a self-referencing link, marked as <code>rel="self"</code>. 
+                    The self-referencing link is constructed to use HTTP or HTTPS, depending upon whether you use HTTP &POST; or HTTPS &POST;.
+                </para>
+                <itemizedlist>
+                    <listitem>
+                        <para>
+                            If you use HTTP &POST;, the self-referencing link resembles <code>&gt;https://domain.com/namespace/feed/entries/urn:uuid:9b850562-d357-4cf8-8811-048a6730e869" rel="self" /&lt;</code>..
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            If you use HTTPS &POST;, the self-referencing link resembles <code>&gt;link href="http://domain.com/namespace/feed/entries/urn:uuid:9b850562-d357-4cf8-8811-048a6730e869" rel="self" /&lt;</code>..
+                        </para>
+                    </listitem>
+                </itemizedlist>
             </section>
             <section xml:id="Use_Add_Entries-d1e156">
                 <title>Adding Entries to a Feed</title>
