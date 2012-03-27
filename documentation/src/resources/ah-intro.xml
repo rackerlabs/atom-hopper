@@ -276,87 +276,134 @@
         </section>
         <section xml:id="Use_d1e155">
             <title>Using &PRODNAME;</title>
-            <section xml:id="Use_Add_Entries-d1e156">
-                <title>Adding Feed Entries</title>
-                <para> 
-                    later
-                </para>
-            </section>
-            <section xml:id="Use_Add_Categories-d1e158">
-                <title>Adding Feed Categories</title>
-                <para> 
-                    later
-                </para>
-            </section>
+            <para>
+                An Atom feed consists of one or more entries. 
+                You can use &PRODNAME; to get a feed, select entries from within a feed, add entries to a feed, and add categories to a feed entry. 
+            </para>
+            <para>
+                You can also use &PRODNAME; to tell you what version of &PRODNAME; you are using, if &PRODNAME; is deployed in a manner supporting 
+                that functionality.
+            </para>
             <section xml:id="Use_Get_Feed-d1e160">
                 <title>Getting a Feed</title>
                 <para> 
                     later
                 </para>
             </section>
+            <section xml:id="Use_Add_Entries-d1e156">
+                <title>Adding Entries to a Feed</title>
+                <para> 
+                    later
+                </para>
+            </section>
+            <section xml:id="Use_Add_Categories-d1e158">
+                <title>Adding Categories to a Feed Entry</title>
+                <para> 
+                    &PRODNAME; can <link linkend="Use_Query-d1e162">query a feed</link> for entries matching specified categories.
+                </para>
+                <para> 
+                    &PRODNAME; can also assign a category or several categories to an entry, so that the entry can later be retrieved along with all entries in the same category.
+                </para>
+                <para>
+                    To add categories to an Atom entry,
+                    include the <code>category</code> element with a <code>term</code> attribute. Do this once for every category you wish to add to the entry.
+                    For example,
+                    <itemizedlist>
+                        <listitem>
+                            <para>
+                                To label an entry as belonging to the "servers" category, 
+                                specify <code>&lt;category term="servers" /&gt;</code>
+                            </para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                To label an entry as belonging to three categories &mdash; "servers", "failures", and "mission-critical" &mdash; specify 
+                                <code>&lt;category term="servers" /&gt;</code>
+                                and <code>&lt;category term="failures" /&gt;</code>
+                                and <code>&lt;category term="mission-critical" /&gt;</code>
+                            </para>
+                        </listitem>
+                    </itemizedlist>
+                </para>
+                <para> By adding multiple category labels to a feed
+                    entry, you make it possible to retrieve that entry
+                    in multiple ways and use it for narrowly-targeted
+                    purposes. An entry categorized as "servers",
+                    "failures", and "mission-critical" can be
+                    retrieved by a query seeking all entries relating
+                    to servers, or all entries related to failures of
+                    any kind, or all entries related to
+                    mission-critical devices. It can also be retrieved
+                    by a query seeking a very specific combination of
+                    categories, representing only failures for
+                    mission-critical servers. </para>
+            </section>
             <section xml:id="Use_Query-d1e162">
-                <title>Querying a Feed</title>
+                <title>Selecting Entries from a Feed</title>
                        <para> 
                            You can use &PRODNAME; to examine an Atom feed and
                            select entries that meet your criteria. To do that,
                            issue a query with parameters describing the content
                            you are seeking. 
                        </para>
-                       <table rules="all" width="1087">
-                           <caption>&PRODNAME; Query Parameters</caption>
-                           <col width="12%"/>
-                           <col width="20%"/>
-                           <col width="11%"/>
-                           <col width="57%"/>
-                           <thead>
-                               <tr>
-                                   <th>Name</th>
-                                   <th>Data Type or Acceptable Values</th>
-                                   <th>Default Value</th>
-                                   <th>Description</th>
-                               </tr>
-                           </thead>
-                           <tbody>
-                               <tr>
-                                   <td><code>marker</code></td>
-                                   <td>valid ID</td>
-                                   <td><emphasis role="italic"
-                                          >none</emphasis></td>
-                                   <td>The unique ID of an Atom entry.</td>
-                               </tr>
-                               <tr>
-                                   <td><code>direction</code></td>
-                                   <td>forward | backward</td>
-                                   <td>forward</td>
-                                   <td>Starting from the current marker or
-                                       entry, the direction in which to
-                                       travel to collect more entries.</td>
-                               </tr>
-                               <tr>
-                                   <td><code>limit</code></td>
-                                   <td>1 to n</td>
-                                   <td>25</td>
-                                   <td>The number of entries returned. If the
-                                       value specified is greater than the
-                                       actual number of entries, the actual
-                                       number of entries will be used.</td>
-                               </tr>
-                               <tr>
-                                   <td><code>format</code></td>
-                                   <td>json</td>
-                                   <td><emphasis role="italic"
-                                          >none</emphasis></td>
-                                   <td>Returns the feed in JSON format.
-                                          <emphasis role="italic"
-                                          >Experimental</emphasis>.</td>
-                               </tr>
-                           </tbody>
-                       </table>
+                       <table rules="all" width="892">
+                    <caption>&PRODNAME; Query Parameters</caption>
+                    <col width="12%"/>
+                    <col width="16%"/>
+                    <col width="10%"/>
+                    <col width="62%"/>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Data Type or Acceptable Values</th>
+                            <th>Default Value</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>marker</code></td>
+                            <td>valid ID</td>
+                            <td><emphasis role="italic"
+                                   >none</emphasis></td>
+                            <td>The unique ID of an Atom entry.</td>
+                        </tr>
+                        <tr>
+                            <td><code>direction</code></td>
+                            <td>forward | backward</td>
+                            <td>forward</td>
+                            <td>Starting from the current marker or
+                                entry, the direction in which to
+                                traverse the feed to collect more
+                                entries.</td>
+                        </tr>
+                        <tr>
+                            <td><code>limit</code></td>
+                            <td>1 to n</td>
+                            <td>25</td>
+                            <td>The number of entries returned. If the
+                                value specified is greater than the
+                                actual number of entries, the actual
+                                number of entries will be used.</td>
+                        </tr>
+                        <tr>
+                            <td><code>format</code></td>
+                            <td>json</td>
+                            <td><emphasis role="italic"
+                                   >none</emphasis></td>
+                            <td>Returns the feed in the specified
+                                format. <emphasis role="italic"
+                                   >Experimental: available only for
+                                   JSON format</emphasis>.</td>
+                        </tr>
+                    </tbody>
+                </table>
                 </section>
             <section xml:id="Use_Get_Version-d1e158">
                 <title>Getting &PRODNAME; Version Information</title>
                 <important>
-                <para> This functionality is available only if &PRODNAME; is deployed via a WAR file, by
+                <para> This functionality is available only if &PRODNAME; is deployed via a WAR file. 
+                    You can accomplish this by
                     either the 
                     <link linkend="Deploy_WAR-d1e111">recommended deployment method</link> or the
                     <link linkend="Deploy_RPM-d1e444">RPM method</link>, which also installs a WAR.</para>
@@ -366,10 +413,20 @@
                     with <code>/buildinfo</code> appended to the URL where &PRODNAME; is mapped.
                 </para>
                 <para> 
-                    For example, a &GET; for
-                        <?sbr?><code>http://localhost:8080/however-you-have-atomhopper-mapped/buildinfo</code>
-                        <?sbr?>returns a response similar to
-                        <?sbr?><code>{"version":"0.10.2-SNAPSHOT","groupId":"org.atomhopper","artifactId":"ah-war"}</code>.
+                    For example, 
+                    <itemizedlist>
+                        <listitem>
+                            <para> a &GET; for
+                                   <code>http://localhost:8080/atomhopper-location/buildinfo</code>
+                            </para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                returns a response similar to
+                                <code>{"version":"0.10.2-SNAPSHOT","groupId":"org.atomhopper","artifactId":"ah-war"}</code>
+                            </para>
+                        </listitem>
+                    </itemizedlist>
                 </para>
             </section>
         </section>
