@@ -106,7 +106,8 @@
                 </title>   
                 <abstract>
                     <para>
-                        Hibernate is a collection of related projects enabling developers to utilize POJO-style domain models in their applications.
+                        Hibernate is a collection of related projects enabling developers to utilize POJO-style domain models in their applications. 
+                        &PRODNAME; uses Hibernate to configure multiple feeds and databases.
                     </para>
                 </abstract>
             </biblioentry>
@@ -127,6 +128,27 @@
                 <abstract>
                     <para>
                         HTTP status codes returned by &PRODNAME; are fully documented here.
+                    </para>
+                </abstract>
+            </biblioentry>
+            <biblioentry xml:id="LOG4J">
+                <author>
+                    <personname>
+                        <firstname></firstname>
+                        <surname></surname>
+                        <othername role="mi"/>
+                    </personname>
+                </author>
+                <orgname>
+                    Apache Logging Services Project
+                </orgname>
+                <title>Logging Services: Apache log4j <link
+                    xlink:href="http://logging.apache.org/log4j/"
+                    >http://logging.apache.org/log4j/</link>
+                </title>   
+                <abstract>
+                    <para>
+                        log4j is a Java logging framework used to create &PRODNAME;'s logs.
                     </para>
                 </abstract>
             </biblioentry>

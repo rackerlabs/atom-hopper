@@ -296,8 +296,31 @@
             </section>
             <section xml:id="Config_Log-d1e844">
                 <title>Configuring Logs</title>
+                <para> &PRODNAME; uses <link
+                        xlink:href="http://logging.apache.org/log4j/"
+                        >log4j</link> for logging. </para>
                 <para>
-                    details to follow
+                    The <code>log4j.properties</code> file must exist and must be readable by the user running the &PRODNAME; instance.
+                    Its default location is <code>/etc/atomhopper/log4j.properties</code>.
+                </para>
+                <para>
+                    The following example shows a <code>log4j.properties</code> file that is likely to be usable as-is.
+                </para>
+                <example>
+                    <title>Logging configuration described in log4j.properties</title>
+                    <programlisting language="xml">
+<xi:include href="samples/ah-log4j-properties.txt" parse="text"/>
+                    </programlisting>
+                </example>
+                <tip>
+                    <para> For details about understanding and
+                        customizing <code>log4j.properties</code>,
+                        read <link
+                            xlink:href="http://logging.apache.org/log4j/"
+                            >log4j's documentation</link>. </para>
+                </tip>
+                <para>
+                    The default location of the &PRODNAME; log file is <code>/var/log/atomhopper.log</code>.
                 </para>
             </section>
             <section xml:id="Config_WEBXML-d1e855">
@@ -324,7 +347,7 @@
                     using "atom" as a URL pattern.
                 </para>
                 <example>
-                    <title>atomhopper-url-pattern configured in web.xml</title>
+                    <title>URL pattern configured in web.xml</title>
                     <programlisting language="xml">
 <xi:include href="samples/ah-web.xml" parse="text"/>
                     </programlisting>
