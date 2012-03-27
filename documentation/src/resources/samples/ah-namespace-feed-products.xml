@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<atom-hopper-config xmlns="http://atomhopper.org/atom/hopper-config/v1.0" xmlns:xsi="http://w$
+    <defaults>
+        <author name="Atom Hopper" />
+    </defaults>
+    
+    <host domain="mydomain.com" />
+    
+    <workspace title="Changes at Rackspace" resource="/whatsnew/">
+        <categories-descriptor reference="workspace-categories-descriptor" />
+        
+        <feed title="New Products" resource="/products">
+            <feed-source reference="hibernate-feed-source" />
+            <publisher reference="hibernate-feed-publisher" />
+        </feed>
+    </workspace>
+</atom-hopper-config>

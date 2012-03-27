@@ -274,6 +274,63 @@
                    </section>
             </section>
         </section>
+        <section xml:id="Configure_d1e811">
+            <title>Configuring &PRODNAME;</title>
+            <para> In addition to installing &PRODNAME; itself, you
+                may need to configure &PRODNAME; to use namespaces,
+                feeds, databases, and logs according to your
+                preferences. If your Apache Tomcat manages  multiple
+                WARs, you may also need to configure your <link
+                    linkend="Config_WEBXML-d1e855">web.xml</link>. </para>
+            <section xml:id="Config_Namespace-d1e822">
+                <title>Configuring Namespaces and Feeds</title>
+                <para>
+                    details to follow
+                </para>
+            </section>
+            <section xml:id="Config_Database-d1e833">
+                <title>Configuring Databases</title>
+                <para>
+                    details to follow
+                </para>
+            </section>
+            <section xml:id="Config_Log-d1e844">
+                <title>Configuring Logs</title>
+                <para>
+                    details to follow
+                </para>
+            </section>
+            <section xml:id="Config_WEBXML-d1e855">
+                <title>Configuring web.xml</title>
+                <important>
+                    <para>
+                        This section pertains to you only if &PRODNAME;'s WAR
+                        will not be the only WAR managed by Apache Tomcat 6 or 7.
+                    </para>
+                    <para>
+                        If &PRODNAME;'s is the only WAR,
+                        there is nothing for you to configure here.
+                    </para>
+                </important>
+                <para>
+                    To create valid self-referencing links in Atom entries, 
+                    you must define the URL pattern used in such entries.
+                </para>
+                <para>
+                    In <code>web.xml</code>,
+                    set a parameter named <code>atomhopper-url-pattern</code> to a value 
+                    matching the URL pattern you will use. 
+                    The following sample <code>web.xml</code> shows how this is done, 
+                    using "atom" as a URL pattern.
+                </para>
+                <example>
+                    <title>atomhopper-url-pattern configured in web.xml</title>
+                    <programlisting language="xml">
+<xi:include href="samples/ah-web.xml" parse="text"/>
+                    </programlisting>
+                </example> 
+            </section>
+        </section>
         <section xml:id="Use_d1e155">
             <title>Using &PRODNAME;</title>
             <para> An Atom feed consists of one or more entries. You
@@ -365,10 +422,11 @@
                         To support HTTPS/SSL, you may need to make changes to Apache Tomcat or whatever application server you use.
                     </para>
                 </tip>
-                <para>
-                    If your &POST; to the &PRODNAME; endpoint successfully added an entry, you'll receive an HTTP 201 (created) response. 
-                    The Atom XML you posted will be echoed back to you in the response body.
-                </para>
+                <para> If your &POST; to the &PRODNAME; endpoint
+                    successfully added an entry, you'll receive an
+                    HTTP <returnvalue>201</returnvalue> (created)
+                    response and the Atom XML you posted will be
+                    echoed back to you in the response body. </para>
                 <para> The following is an example of a simple Atom
                     entry. In addition to delivering its content, it
                     describes its own title, creation date, author,
@@ -443,7 +501,7 @@
                            issue a query with parameters describing the content
                            you are seeking. 
                        </para>
-                       <table rules="all" width="892">
+                       <table rules="all" width="794">
                     <caption>&PRODNAME; Query Parameters</caption>
                     <col width="12%"/>
                     <col width="16%"/>
@@ -524,6 +582,12 @@
                             </para>
                         </listitem>
                     </itemizedlist>
+                </para>
+            </section>
+            <section xml:id="Use_Translate-d1e166">
+                <title>Translating a Feed to JSON</title>
+                <para>
+                    later
                 </para>
             </section>
         </section>
