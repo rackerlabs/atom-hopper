@@ -608,10 +608,26 @@
                 </para>
             </section>
             <section xml:id="Use_Translate-d1e166">
-                <title>Translating a Feed to JSON</title>
+                <title>Translating a Feed to JSON (Experimental)</title>
                 <para>
-                    later
+                    By default, Atom feeds are formatted as XML.
+                    You can ask for a feed to be formatted as JSON by appending <code>format=json</code> to its URL,
+                    as in <code>http://localhost:8080/namespace/feed/?format=json</code>.
                 </para>
+                <para>
+                    &PRODNAME; uses the 
+                    <link xlink:href="https://cwiki.apache.org/ABDERA/json-serialization.html">Abdera JSON Writer</link>
+                    to translate simple Atom feed entries to JSON.
+                </para>
+                <important>
+                    <para>
+                        Be sure to fully test the translation of your Atom entries to confirm that the JSON translation matches the XML original.
+                    </para>
+                    <para>
+                        If you want to embed some JSON into an Atom XML entry,
+                        wrap the JSON content in an XML <code>CDATA</code> section.
+                    </para>
+                </important>
             </section>
         </section>
         <section xml:id="MultiFeed_d1e145">
@@ -663,7 +679,8 @@
                 to map each feed to the proper database.
             </para>
             <example>
-                <title>Configuring atom-server.cfg.xml for multiple feeds</title>
+                <title>Multiple feeds configured in
+                    atom-server.cfg.xml</title>
                 <programlisting language="xml">
 <xi:include href="samples/ah-multifeed-atom-server.cfg.xml" parse="text"/>
                     </programlisting>
@@ -674,7 +691,8 @@
                 This example defines two PostgreSQL databases and one MySQL database.
             </para>
             <example>
-                <title>Configuring application-context.xml for multiple databases</title>
+                <title>Multiple databases configured in
+                    application-context.xml </title>
                 <programlisting language="xml">
 <xi:include href="samples/ah-multidb-application-context.xml" parse="text"/>
                     </programlisting>
