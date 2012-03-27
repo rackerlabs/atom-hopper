@@ -1,0 +1,61 @@
+<entry xmlns="http://www.w3.org/2005/Atom">
+    <author>
+        <name>Entry Author 1 of 2</name>
+        <email>Author 1 email.</email>
+        <uri>http://author.uri/1</uri>
+    </author>
+    <author>
+        <name>Author 2 name.</name>
+        <email>Author 2 email.</email>
+        <uri>http://author.uri/2</uri>
+    </author>
+    <category term="Entry category 1 term." scheme="Category_Scheme_1" label="Entry category 1 label"/>
+    <category term="Entry category 2 term." scheme="Category_Scheme_2" label="Entry category 2 label."/>
+    <content type="text">Entry content, whooo hoooo!</content>
+    <contributor>
+        <name>Entry contributor 1 of 2.</name>
+        <email>Contributor 1 email.</email>
+        <uri>http://contributor.uri/1</uri>
+    </contributor>
+    <contributor>
+        <name>Contributor 2 name.</name>
+        <email>Contributor 2 email.</email>
+        <uri>http://contributor.uri/2</uri>
+    </contributor>
+    <link href="http://entry.link/1"/>
+    <link href="http://entry.link/2"/>
+    <published>2011-11-14T16:32:12.800Z</published>
+    <rights type="text">Entry copyright info.</rights>
+    <source>
+        <author>
+            <name>Source author 1 name.</name>
+            <email>Source author 1 email.</email>
+            <uri>http://source.author.uri/1</uri>
+        </author>
+        <author>
+            <name>Source author 2 name.</name>
+            <email>Source author 2 email.</email>
+            <uri>http://source.author.uri/2</uri>
+        </author>
+        <category term="Source category 1 term." scheme="Source_Category_Scheme1" label="Source category 1 label"/>
+        <category term="Source category 2 term." scheme="Source_Category_Scheme2" label="Source category 2 label."/>
+        <contributor>
+            <name>Source contributor 1 of 2.</name>
+        </contributor>
+        <contributor>
+            <name>Source contributor 2 of 2.</name>
+        </contributor>
+        <generator uri="Generator_IRI." version="Generator_version.">Generator_value.</generator>
+        <icon>Source_icon_IRI.</icon>
+        <id>Source_ID.</id>
+        <link href="Source_link_1_of_2"/>
+        <link href="Source_link_2_of_2"/>
+        <rights type="text">Source rights.</rights>
+        <subtitle type="text">Source subtitle.</subtitle>
+        <title type="text">Source Title.</title>
+        <updated>2011-11-14T16:32:12.800Z</updated>
+    </source>
+    <summary type="text">Entry summary.</summary>
+    <title type="text">Entry title - entryWithComplexAuthorAndContributor.</title>
+    <updated>2011-11-14T16:32:12.800Z</updated>
+</entry>

@@ -274,6 +274,105 @@
                    </section>
             </section>
         </section>
+        <section xml:id="Use_d1e155">
+            <title>Using &PRODNAME;</title>
+            <section xml:id="Use_Add_Entries-d1e156">
+                <title>Adding Feed Entries</title>
+                <para> 
+                    later
+                </para>
+            </section>
+            <section xml:id="Use_Add_Categories-d1e158">
+                <title>Adding Feed Categories</title>
+                <para> 
+                    later
+                </para>
+            </section>
+            <section xml:id="Use_Get_Feed-d1e160">
+                <title>Getting a Feed</title>
+                <para> 
+                    later
+                </para>
+            </section>
+            <section xml:id="Use_Query-d1e162">
+                <title>Querying a Feed</title>
+                       <para> 
+                           You can use &PRODNAME; to examine an Atom feed and
+                           select entries that meet your criteria. To do that,
+                           issue a query with parameters describing the content
+                           you are seeking. 
+                       </para>
+                       <table rules="all" width="1087">
+                           <caption>&PRODNAME; Query Parameters</caption>
+                           <col width="12%"/>
+                           <col width="20%"/>
+                           <col width="11%"/>
+                           <col width="57%"/>
+                           <thead>
+                               <tr>
+                                   <th>Name</th>
+                                   <th>Data Type or Acceptable Values</th>
+                                   <th>Default Value</th>
+                                   <th>Description</th>
+                               </tr>
+                           </thead>
+                           <tbody>
+                               <tr>
+                                   <td><code>marker</code></td>
+                                   <td>valid ID</td>
+                                   <td><emphasis role="italic"
+                                          >none</emphasis></td>
+                                   <td>The unique ID of an Atom entry.</td>
+                               </tr>
+                               <tr>
+                                   <td><code>direction</code></td>
+                                   <td>forward | backward</td>
+                                   <td>forward</td>
+                                   <td>Starting from the current marker or
+                                       entry, the direction in which to
+                                       travel to collect more entries.</td>
+                               </tr>
+                               <tr>
+                                   <td><code>limit</code></td>
+                                   <td>1 to n</td>
+                                   <td>25</td>
+                                   <td>The number of entries returned. If the
+                                       value specified is greater than the
+                                       actual number of entries, the actual
+                                       number of entries will be used.</td>
+                               </tr>
+                               <tr>
+                                   <td><code>format</code></td>
+                                   <td>json</td>
+                                   <td><emphasis role="italic"
+                                          >none</emphasis></td>
+                                   <td>Returns the feed in JSON format.
+                                          <emphasis role="italic"
+                                          >Experimental</emphasis>.</td>
+                               </tr>
+                           </tbody>
+                       </table>
+                </section>
+            <section xml:id="Use_Get_Version-d1e158">
+                <title>Getting &PRODNAME; Version Information</title>
+                <important>
+                <para> This functionality is available only if &PRODNAME; is deployed via a WAR file, by
+                    either the 
+                    <link linkend="Deploy_WAR-d1e111">recommended deployment method</link> or the
+                    <link linkend="Deploy_RPM-d1e444">RPM method</link>, which also installs a WAR.</para>
+                </important>
+                <para>
+                    To find out what version of &PRODNAME; you are running, you can perform an HTTP &GET; 
+                    with <code>/buildinfo</code> appended to the URL where &PRODNAME; is mapped.
+                </para>
+                <para> 
+                    For example, a &GET; for
+                        <?sbr?><code>http://localhost:8080/however-you-have-atomhopper-mapped/buildinfo</code>
+                        <?sbr?>returns a response similar to
+                        <?sbr?><code>{"version":"0.10.2-SNAPSHOT","groupId":"org.atomhopper","artifactId":"ah-war"}</code>.
+                </para>
+            </section>
+        </section>
         <section xml:id="MultiFeed_d1e145">
             <title>Scaling &PRODNAME;: Multiple Feeds and Multiple Databases</title>
             <para>

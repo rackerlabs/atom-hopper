@@ -1,0 +1,11 @@
+<entry xmlns="http://www.w3.org/2005/Atom">
+    <title type="text">This is a greeting from John Doe</title>
+    <updated>2011-09-22T21:39:49.904Z</updated>
+    <author>
+        <name>John Doe</name>
+    </author>
+    <content type="text">Hello World</content>
+    <category term="MyCategory 1" />
+    <category term="MyCategory 2" />
+    <category term="MyCategory 3" />
+</entry>
