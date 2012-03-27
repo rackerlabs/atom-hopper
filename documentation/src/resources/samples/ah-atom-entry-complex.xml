@@ -11,7 +11,7 @@
     </author>
     <category term="Entry category 1 term." scheme="Category_Scheme_1" label="Entry category 1 label"/>
     <category term="Entry category 2 term." scheme="Category_Scheme_2" label="Entry category 2 label."/>
-    <content type="text">Entry content, whooo hoooo!</content>
+    <content type="text">YOU FOUND IT! This is the only line of content! Everything else in the entry exists only to describe the entry.</content>
     <contributor>
         <name>Entry contributor 1 of 2.</name>
         <email>Contributor 1 email.</email>

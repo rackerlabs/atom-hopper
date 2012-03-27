@@ -5,7 +5,7 @@
         <name>John Doe</name>
     </author>
     <content type="text">Hello World</content>
-    <category term="MyCategory 1" />
-    <category term="MyCategory 2" />
-    <category term="MyCategory 3" />
+    <category term="greetings" />
+    <category term="messages from John" />
+    <category term="experiments" />
 </entry>

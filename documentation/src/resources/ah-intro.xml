@@ -329,6 +329,10 @@
                     </listitem>
                 </itemizedlist>
                 <para>
+                    The feed head may also include a link to the previous page of Atom entries, identified as <code>rel="previous"</code>. 
+                    A <link linkend="Use_Query-d1e162">query</link> with the <code>direction=backward</code> parameter moves in the same direction as this <code>previous</code> page.
+                </para>
+                <para>
                     In the Atom feed,
                     each entry includes a self-referencing link, marked as <code>rel="self"</code>. 
                     The self-referencing link is constructed to use HTTP or HTTPS, depending upon whether you use HTTP &POST; or HTTPS &POST;.
@@ -336,21 +340,58 @@
                 <itemizedlist>
                     <listitem>
                         <para>
-                            If you use HTTP &POST;, the self-referencing link resembles <code>&gt;https://domain.com/namespace/feed/entries/urn:uuid:9b850562-d357-4cf8-8811-048a6730e869" rel="self" /&lt;</code>..
+                            If you use HTTP &POST;, the self-referencing link resembles <code>&gt;https://domain.com/namespace/feed/entries/urn:uuid:9b850562-d357-4cf8-8811-048a6730e869" rel="self" /&gt;</code>..
                         </para>
                     </listitem>
                     <listitem>
                         <para>
-                            If you use HTTPS &POST;, the self-referencing link resembles <code>&gt;link href="http://domain.com/namespace/feed/entries/urn:uuid:9b850562-d357-4cf8-8811-048a6730e869" rel="self" /&lt;</code>..
+                            If you use HTTPS &POST;, the self-referencing link resembles <code>&gt;link href="http://domain.com/namespace/feed/entries/urn:uuid:9b850562-d357-4cf8-8811-048a6730e869" rel="self" /&gt;</code>..
                         </para>
                     </listitem>
                 </itemizedlist>
             </section>
             <section xml:id="Use_Add_Entries-d1e156">
                 <title>Adding Entries to a Feed</title>
-                <para> 
-                    later
+                <para> You can add an entry to a feed in Atom Hopper's
+                    database. To do this, issue an HTTP &POST; to &PRODNAME;'s endpoint, 
+                    with an HTTP <code>Content-Type</code> header set
+                    to <code>application/atom+xml</code>. </para>
+                <tip>
+                    <para>
+                        Use whatever tool you prefer to issue a &POST; to &PRODNAME;.
+                    </para>
+                    <para>
+                        You can use HTTP &POST; or HTTPS &POST;. 
+                        To support HTTPS/SSL, you may need to make changes to Apache Tomcat or whatever application server you use.
+                    </para>
+                </tip>
+                <para>
+                    If your &POST; to the &PRODNAME; endpoint successfully added an entry, you'll receive an HTTP 201 (created) response. 
+                    The Atom XML you posted will be echoed back to you in the response body.
                 </para>
+                <para> The following is an example of a simple Atom
+                    entry. In addition to delivering its content, it
+                    describes its own title, creation date, author,
+                    and three 
+                    <link linkend="Use_Add_Categories-d1e158">category labels</link>. 
+                </para>
+                <example>
+                    <title>Simple Atom entry</title>
+                    <programlisting language="xml">
+<xi:include href="samples/ah-atom-entry-simple.xml" parse="text"/>
+                    </programlisting>
+                </example>
+                <para>
+                    The structure of a complex Atom entry is similar to that of a simple Atom entry, expanded to convey additional descriptive information 
+                    such as contact information for multiple
+                    authors and contributors, copyright information, and a summary of the content.
+                </para>
+                <example>
+                    <title>Complex Atom entry</title>
+                    <programlisting language="xml">
+<xi:include href="samples/ah-atom-entry-complex.xml" parse="text"/>
+                    </programlisting>
+                </example>
             </section>
             <section xml:id="Use_Add_Categories-d1e158">
                 <title>Adding Categories to a Feed Entry</title>
