@@ -262,8 +262,60 @@
             </itemizedlist>   
             <section xml:id="Deploy_WAR-d1e111">
                 <title>Recommended Deployment Method: WAR</title>
-                <para>
-                    details to follow
+                <para> You may take the &PRODNAME; WAR file and deploy
+                    it to an HTTP server/servlet container such as
+                    Apache Tomcat, Eclipse Jetty, or Glassfish.
+                    &PRODNAME; has been tested with Apache Tomcat and
+                    Eclipse Jetty. Follow the instructions for the
+                    HTTP server/servlet container and deploy the
+                    &PRODNAME; WAR file just as you would any other
+                    application. </para>
+                <para> The following paths and files must exist with
+                    permissions to read and write from the account you
+                    are using to run Apache Tomcat.  <table
+                        rules="all">
+                        <caption>Files Required by WAR
+                            Installation</caption>
+                        <thead>
+                            <tr>
+                                <th>Location</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                   <code>/opt/atomhopper</code>
+                                </td>
+                                <td>
+                                    &PRODNAME; H2 database:
+                                   <emphasis role="italic"> Required
+                                   only if you wish to use H2 as your
+                                   database. </emphasis>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><code>/etc/atomhopper/atom-server.cfg.xml</code></td>
+                                <td>
+                                    Configuration file for 
+                                    <link linkend="Config_Namespace-d1e822">namespaces and feeds</link>.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><code>/etc/atomhopper/application-context.xml</code></td>
+                                <td> Configuration file for 
+                                    <link linkend="Config_Database-d1e833">databases</link>
+                                   and the default data adapter.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><code>/etc/atomhopper/log4j.properties</code></td>
+                                <td> Configuration file for 
+                                    <link linkend="Config_Log-d1e844">logs</link>.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </para>
             </section>
             <section xml:id="Deploy_Alternative-d1e123">
@@ -393,6 +445,11 @@
                         <listitem>
                             <para>
                                 Ensure that the latest JDBC driver for MySQL or PostgreSQL is copied into Apache Tomcat's <code>lib</code> folder.
+                            </para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                If &PRODNAME; is already running, restart Apache Tomcat's so that the database change can take effect.
                             </para>
                         </listitem>
                     </itemizedlist>
