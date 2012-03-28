@@ -328,9 +328,64 @@
             </section>
             <section xml:id="Config_Database-d1e833">
                 <title>Configuring Databases</title>
-                <para>
-                    details to follow
+                <para> 
+                    To customize your database configuration, edit your 
+                    <code>/etc/atomhopper/application-context.xml</code> file; this file contains settings for connection pooling as well as some default
+                    settings for connections to other databases.
                 </para>
+                <para>
+                    By default, &PRODNAME; is configured to connect to a local 
+                    <link
+                        xlink:href="http://www.h2database.com/"
+                        >H2 database</link>;
+                    if this database doesn't exist, it will be created.
+                </para>
+                <para>
+                    &PRODNAME; supports other database types if they are enabled in its 
+                    <code>application-context.xml</code> file. 
+                    As distributed, <code>application-context.xml</code> includes 
+                    commented-out configurations for MySQL and PostgreSQL as well as the active configuration for H2.
+                </para>
+                <example>
+                    <title>Default application-context.xml: H2 enabled; MySQL and PostgreSQL commented out</title>
+                    <programlisting language="xml">
+<xi:include href="samples/ah-application-context-db-h2.xml" parse="text"/>
+                    </programlisting>
+                </example>
+                <para> 
+                    To use either MySQL or PostgreSQL rather than
+                    H2: 
+                    <itemizedlist>
+                        <listitem>
+                            <para>
+                                Comment out the H2 section of <code>application-context.xml</code>.
+                            </para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                Remove the comments (&lt;!-- and --&gt;) surrounding the MySQL or PostgreSQL section of <code>application-context.xml</code>.
+                            </para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                Ensure that the latest JDBC driver for MySQL or PostgreSQL is copied into Apache Tomcat's <code>lib</code> folder.
+                            </para>
+                        </listitem>
+                    </itemizedlist>
+                </para>
+                <tip>
+                    <para>
+                        If you plan to use PostgreSQL
+                        create an <code>atomhopper</code> database first.
+                        Once the <code>atomhopper</code> database exists, &PRODNAME; will create the tables for PostgreSQL automatically.
+                    </para>
+                </tip>
+                <example>
+                    <title>Customized application-context.xml: MySQL enabled; H2 and PostgreSQL commented out</title>
+                    <programlisting language="xml">
+<xi:include href="samples/ah-application-context-db-mysql.xml" parse="text"/>
+                    </programlisting>
+                </example>
             </section>
             <section xml:id="Config_Log-d1e844">
                 <title>Configuring Logs</title>

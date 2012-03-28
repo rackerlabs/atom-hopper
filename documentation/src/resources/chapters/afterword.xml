@@ -111,6 +111,27 @@
                     </para>
                 </abstract>
             </biblioentry>
+            <biblioentry xml:id="H2">
+                <author>
+                    <personname>
+                        <firstname></firstname>
+                        <surname></surname>
+                        <othername role="mi"/>
+                    </personname>
+                </author>
+                <orgname>
+                    H2
+                </orgname>
+                <title>H2 Database Engine <link
+                    xlink:href="http://www.h2database.com/"
+                    >http://www.h2database.com/</link>
+                </title>   
+                <abstract>
+                    <para>
+                        By default, &PRODNAME; is configured to connect to a local H2 database.
+                    </para>
+                </abstract>
+            </biblioentry>
             <biblioentry xml:id="RFC2616">
                 <author>
                     <personname>
