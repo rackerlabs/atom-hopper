@@ -394,13 +394,68 @@
                    </section>   
                    <section xml:id="Deploy_RPM-d1e444">
                        <title>Deployment Method: RPM Package Manager (RPM)</title>
+                       <para> Using this method, a single
+                           <code>yum</code> command installs
+                           &PRODNAME;.</para>
+                       <para> You can use this method if your
+                           &PRODNAME; server conforms to the required
+                           operating environment: <itemizedlist>
+                               <listitem>
+                                   <para> Supported operating system:
+                                       CentOS 6.0 or higher; Fedora 15 or higher</para>
+                               </listitem>
+                               <listitem>
+                                   <para> Java OpenJDK 1.6 or Oracle JRE 1.6 </para>
+                               </listitem>
+                               <listitem>
+                                   <para> Apache Tomcat 6 </para>
+                               </listitem>
+                           </itemizedlist>
+                       </para>
+                       <note>
+                           <para>
+                               If you do not wish to use an H2 database, customize your 
+                               <link linkend="Config_Database-d1e833">database configuration</link>
+                               to use a different type of database.
+                           </para>
+                       </note>
+                       <para> Before attempting to install the RPM,
+                        examine the Maven <code>pom.xml</code> file
+                        for the <code>ah-war</code> project: <itemizedlist>
+                            <listitem>
+                                <para> By default, the installation
+                                   file is named
+                                   <code>ROOT.war</code>; you may wish
+                                   to change this to a name that you
+                                   prefer. </para>
+                            </listitem>
+                            <listitem>
+                                <para> In the section where the RPM is
+                                   built, read the comments and
+                                   consider adjusting the settings to
+                                   suit your operating environment.
+                                </para>
+                            </listitem>
+                        </itemizedlist>
+                    </para>
+                       <important>
+                           <para>
+                                Stop the application server (Apache Tomcat) 
+                                before installing the RPM package.
+                           </para>
+                       </important>
+                       <para> To install the package: from the command
+                        prompt, issue a command such as <code>$ yum
+                            localinstall ah-war-VERSION-INFO-HERE.rpm
+                            --nopgcheck</code>, replacing
+                            <code>VERSION-INFO-HERE</code> with
+                        identifying information for the version you
+                        wish to install.  </para>
                        <para>
-                           details to follow
+                          The &PRODNAME; RPM file is not signed, so you might be asked to override the warning that yum issues when attempting to install it. 
                        </para>
                        <para> 
-                           The following paths and files must exist with
-                           permissions to read and write from the account you
-                           are using to run Apache Tomcat. 
+                           The following paths and files will be created by the RPM installation process.  
                        </para>
                        <table rules="all">
                            <caption>Paths and Files Created by RPM
@@ -412,6 +467,12 @@
                                </tr>
                            </thead>
                            <tbody>
+                               <tr>
+                                   <td>
+                                       <code>/var/lib/tomcat6/webapps</code>
+                                   </td>
+                                   <td> &PRODNAME; WAR </td>
+                               </tr>
                                <tr>
                                    <td>
                                        <code>/opt/atomhopper</code>
@@ -451,26 +512,21 @@
                        <para> Using this method, a single
                             <code>dpkg</code> command installs
                         &PRODNAME;.</para>
-                       <para>
-                           You can use this method if &PRODNAME; server conforms to the required operating environment:
-                           <itemizedlist>
-                               <listitem>
-                                   <para>
-                                       Supported operating system: Debian 6.0
-                                   </para>
-                               </listitem>
-                               <listitem>
-                                   <para>
-                                       Oracle JRE 1.6
-                                   </para>
-                               </listitem>
-                               <listitem>
-                                   <para>
-                                       Apache Tomcat 6
-                                   </para>
-                               </listitem>
-                           </itemizedlist>
-                       </para>
+                       <para> You can use this method if your
+                        &PRODNAME; server conforms to the required
+                        operating environment: <itemizedlist>
+                            <listitem>
+                                <para> Supported operating system:
+                                   Debian 6.0 </para>
+                            </listitem>
+                            <listitem>
+                                <para> Oracle JRE 1.6 </para>
+                            </listitem>
+                            <listitem>
+                                <para> Apache Tomcat 6 </para>
+                            </listitem>
+                        </itemizedlist>
+                    </para>
                        <note>
                            <para>
                                If you do not wish to use an H2 database, customize your 
@@ -478,12 +534,13 @@
                                to use a different type of database.
                            </para>
                        </note>
-                       <para>
-                           To install the package:
-                           from the command prompt, issue a command such as
-                           <code>dpkg -i install ah-war-VERSION-INFO-HERE.deb</code>, replacing <code>VERSION-INFO-HERE</code> with identifying information for the 
-                           version you wish to install.
-                       </para>
+                       <para> To install the package: from the command
+                        prompt, issue a command such as <code>$ dpkg
+                            -i install
+                            ah-war-VERSION-INFO-HERE.deb</code>,
+                        replacing <code>VERSION-INFO-HERE</code> with
+                        identifying information for the version you
+                        wish to install. </para>
                        <para> The following paths and files will be
                         created by the Debian package installation
                         process. </para>
