@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <atom-hopper-config xmlns="http://atomhopper.org/atom/hopper-config/v1.0" xmlns:xsi="http://w$
     <defaults>
-        <author name="Atom Hopper" />
+        <author name="Atomhopping Public Relations Department" />
     </defaults>
     
     <host domain="mydomain.com" />
     
-    <workspace title="Changes at Rackspace" resource="/whatsnew/">
+    <workspace title="Changes at Atomhopping" resource="/whatsnew/">
         <categories-descriptor reference="workspace-categories-descriptor" />
         
         <feed title="New Products" resource="/products">

@@ -284,9 +284,47 @@
                     linkend="Config_WEBXML-d1e855">web.xml</link>. </para>
             <section xml:id="Config_Namespace-d1e822">
                 <title>Configuring Namespaces and Feeds</title>
+                <para> &PRODNAME; collects incoming feeds and stores
+                    them in databases to be queried later. To create
+                    this connection between feeds and databases,
+                    define one or more paths for your incoming and
+                    outgoing Atom-based data. In each path definition,
+                    identify your namespace and your feed. For
+                    example, in
+                        <code>http://mydomain.com/whatsnew/products/</code>,
+                        <code>whatsnew</code> identifies a namespace
+                    and <code>products</code> identifies a feed. </para>
                 <para>
-                    details to follow
+                    By default, the configuration file in which namespaces and feeds are defined is located at
+                    <code>/etc/atomhopper/atom-server.cfg.xml</code>.
                 </para>
+                <para>
+                    In the following example, <code>atom-server.cfg.xml</code> defines an Atom feed about new product announcements from a company named "Atomhopping", 
+                </para>
+                <example>
+                    <title>Atom feed announcing new products</title>
+                    <programlisting language="xml">
+<xi:include href="samples/ah-namespace-feed-products.xml" parse="text"/>
+                    </programlisting>
+                </example>
+                <para>
+                    To announce both new products and pricing changes, expand the configuration in <code>atom-server.cfg.xml</code> to include two feeds as shown below.
+                </para>
+                <example>
+                    <title>Atom feed announcing new products and pricing changes</title>
+                    <programlisting language="xml">
+<xi:include href="samples/ah-namespace-feed-news.xml" parse="text"/>
+                    </programlisting>
+                </example>
+                <important>
+                    <para>
+                        Use <code>atom-server.cfg.xml</code>
+                        to describe the domain or IP address and the port number where your &PRODNAME; server can be reached.
+                        For example, 
+                        if your domain is atomhopper.org and your port is 8080,
+                        specify <code>&lt;host domain="atomhopper.org:8080" /&gt;</code> in <code>atom-server.cfg.xml</code>.
+                    </para>
+                </important>
             </section>
             <section xml:id="Config_Database-d1e833">
                 <title>Configuring Databases</title>
