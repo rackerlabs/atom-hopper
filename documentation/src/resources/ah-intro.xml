@@ -265,9 +265,11 @@
                     HTTP server/servlet container and deploy the
                     &PRODNAME; WAR file just as you would any other
                     application. </para>
-                <para> The following paths and files must exist with
+                <para> 
+                    The following paths and files must exist with
                     permissions to read and write from the account you
-                    are using to run Apache Tomcat.  
+                    are using to run Apache Tomcat. 
+                </para>
                     <table rules="all">
                         <caption>Paths and Files Required by WAR
                             Installation</caption>
@@ -311,7 +313,6 @@
                             </tr>
                         </tbody>
                     </table>
-                </para>
             </section>
             <section xml:id="Deploy_Alternative-d1e123">
                 <title>Alternate Deployment Methods</title>
@@ -396,12 +397,128 @@
                        <para>
                            details to follow
                        </para>
+                       <para> 
+                           The following paths and files must exist with
+                           permissions to read and write from the account you
+                           are using to run Apache Tomcat. 
+                       </para>
+                       <table rules="all">
+                           <caption>Paths and Files Created by RPM
+                               Installation</caption>
+                           <thead>
+                               <tr>
+                                   <th>Location</th>
+                                   <th>Description</th>
+                               </tr>
+                           </thead>
+                           <tbody>
+                               <tr>
+                                   <td>
+                                       <code>/opt/atomhopper</code>
+                                   </td>
+                                   <td>
+                                       &PRODNAME; H2 database:
+                                       <emphasis role="italic"> Required
+                                           only if you wish to use H2 as your
+                                           database. </emphasis>
+                                   </td>
+                               </tr>
+                               <tr>
+                                   <td><code>/etc/atomhopper/atom-server.cfg.xml</code></td>
+                                   <td>
+                                       Configuration file for 
+                                       <link linkend="Config_Namespace-d1e822">namespaces and feeds</link>.
+                                   </td>
+                               </tr>
+                               <tr>
+                                   <td><code>/etc/atomhopper/application-context.xml</code></td>
+                                   <td> Configuration file for 
+                                       <link linkend="Config_Database-d1e833">databases</link>
+                                       and the default data adapter.
+                                   </td>
+                               </tr>
+                               <tr>
+                                   <td><code>/etc/atomhopper/log4j.properties</code></td>
+                                   <td> Configuration file for 
+                                       <link linkend="Config_Log-d1e844">logs</link>.
+                                   </td>
+                               </tr>
+                           </tbody>
+                       </table>
                    </section>
                    <section xml:id="Deploy_DEB-d1e555">
                        <title>Deployment Method: Debian Package (DEB)</title>
+                       <para> Using this method, a single
+                            <code>dpkg</code> command installs
+                        &PRODNAME;.</para>
                        <para>
-                           details to follow
+                           You can use this method if &PRODNAME; server conforms to the required operating environment:
+                           <itemizedlist>
+                               <listitem>
+                                   <para>
+                                       Supported operating system: Debian 6.0
+                                   </para>
+                               </listitem>
+                               <listitem>
+                                   <para>
+                                       Oracle JRE 1.6
+                                   </para>
+                               </listitem>
+                               <listitem>
+                                   <para>
+                                       Apache Tomcat 6
+                                   </para>
+                               </listitem>
+                           </itemizedlist>
                        </para>
+                       <note>
+                           <para>
+                               If you do not wish to use an H2 database, customize your 
+                               <link linkend="Config_Database-d1e833">database configuration</link>
+                               to use a different type of database.
+                           </para>
+                       </note>
+                       <para>
+                           To install the package:
+                           from the command prompt, issue a command such as
+                           <code>dpkg -i install ah-war-VERSION-INFO-HERE.deb</code>, replacing <code>VERSION-INFO-HERE</code> with identifying information for the 
+                           version you wish to install.
+                       </para>
+                       <para> The following paths and files will be
+                        created by the Debian package installation
+                        process. </para>
+                       <table rules="all">
+                           <caption>Paths and Files Created by Debian
+                               Installation</caption>
+                           <thead>
+                               <tr>
+                                   <th>Location</th>
+                                   <th>Description</th>
+                               </tr>
+                           </thead>
+                           <tbody>
+                               <tr>
+                                   <td>
+                                   <code>/var/lib/tomcat6/webapps</code>
+                                </td>
+                                   <td> &PRODNAME; WAR </td>
+                               </tr>
+                               <tr>
+                                   <td><code>/opt/atomhopper</code>
+                                </td>
+                                   <td> &PRODNAME; H2 database:
+                                   <emphasis role="italic"> Required
+                                   only if you wish to use H2 as your
+                                   database. </emphasis></td>
+                               </tr>
+                               <tr>
+                                   <td><code>/etc/atomhopper/atom-server.cfg.xml</code></td>
+                                   <td> Configuration file for <link
+                                   linkend="Config_Namespace-d1e822"
+                                   >namespaces and feeds</link>. </td>
+                               </tr>
+                           </tbody>
+                       </table>
                    </section>
             </section>
         </section>
