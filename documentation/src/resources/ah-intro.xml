@@ -272,9 +272,9 @@
                     application. </para>
                 <para> The following paths and files must exist with
                     permissions to read and write from the account you
-                    are using to run Apache Tomcat.  <table
-                        rules="all">
-                        <caption>Files Required by WAR
+                    are using to run Apache Tomcat.  
+                    <table rules="all">
+                        <caption>Paths and Files Required by WAR
                             Installation</caption>
                         <thead>
                             <tr>
@@ -326,9 +326,75 @@
                     other approaches. </para>
                    <section xml:id="Deploy_Embedded-d1e222">
                        <title>Deployment Method: Embedded</title>
-                       <para>
-                           details to follow
+                       <warning>
+                           <para>
+                               The embedded version of &PRODNAME; is intended only for 
+                               rapid deployment to support testing and evaluation.
+                           </para>
+                           <para>
+                               For production environments,
+                               use the 
+                               <link linkend="Deploy_WAR-d1e111">WAR</link> (recommended) or 
+                               <link linkend="Deploy_RPM-d1e444">RPM</link> deployment methods. 
+                           </para>
+                       </warning>
+                       <para> 
+                           The embedded version of &PRODNAME; is completely self-contained in <code>AtomHopperServer.jar</code>.
+                           It requires either Oracle's JRE or the Open JDK version 1.6 or later.
                        </para>
+                       <para> To use the Jetty-embedded version of
+                        &PRODNAME;, pass it arguments to start it, to
+                        set the port where it should listen for
+                        incoming requests, and to stop it. </para>
+                       <table rules="all" width="1102">
+                        <caption>Arguments Available in Embedded
+                            Installation</caption>
+                        <thead>
+                            <tr>
+                                <th>Argument</th>
+                                <th>Sample Command</th>
+                                <th>Result</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                   <code>start</code>
+                                </td>
+                                <td><code>java -jar
+                                   AtomHopperServer.jar
+                                   start</code></td>
+                                <td> Start &PRODNAME;.</td>
+                            </tr>
+                            <tr>
+                                <td><code>-p (alias
+                                   --port)</code></td>
+                                <td><code>java -jar
+                                   AtomHopperServer.jar -p
+                                   8088</code></td>
+                                <td> Listen to port 8088 for incoming
+                                   requests.  Port 8080 is the default
+                                   for incoming requests.</td>
+                            </tr>
+                            <tr>
+                                <td><code>-s (alias
+                                   --shutdown-port)</code></td>
+                                <td><code>java -jar
+                                   AtomHopperServer.jar -s
+                                   8090</code></td>
+                                <td> Listen to port 8090 for incoming
+                                   requests.  Port 8818 is the default
+                                   for shutdown requests.</td>
+                            </tr>
+                            <tr>
+                                <td><code>stop</code></td>
+                                <td><code>java -jar
+                                   AtomHopperServer.jar
+                                   stop</code></td>
+                                <td> Stop &PRODNAME;.</td>
+                            </tr>
+                        </tbody>
+                    </table>
                    </section>
                    <section xml:id="Deploy_Source_JAR-d1e333">
                        <title>Deployment Method: Source Code (JAR)</title>
@@ -700,10 +766,6 @@
                        </para>
                        <table rules="all" width="794">
                     <caption>&PRODNAME; Query Parameters</caption>
-                    <col width="12%"/>
-                    <col width="16%"/>
-                    <col width="10%"/>
-                    <col width="62%"/>
                     <thead>
                         <tr>
                             <th>Name</th>
