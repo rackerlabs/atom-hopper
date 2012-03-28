@@ -544,25 +544,28 @@
                             <td>valid ID</td>
                             <td><emphasis role="italic"
                                    >none</emphasis></td>
-                            <td>The unique ID of an Atom entry.</td>
+                            <td>Specifies the unique ID of an Atom
+                                entry.</td>
                         </tr>
                         <tr>
                             <td><code>direction</code></td>
                             <td>forward | backward</td>
                             <td>forward</td>
-                            <td>Starting from the current marker or
-                                entry, the direction in which to
+                            <td>Controls the direction in which to
                                 traverse the feed to collect more
-                                entries.</td>
+                                entries, starting from the current
+                                entry or the value set by
+                                   <code>marker</code>.</td>
                         </tr>
                         <tr>
                             <td><code>limit</code></td>
                             <td>1 to n</td>
                             <td>25</td>
-                            <td>The number of entries returned. If the
-                                value specified is greater than the
-                                actual number of entries, the actual
-                                number of entries will be used.</td>
+                            <td>Controls the number of entries
+                                returned. If the value specified is
+                                greater than the actual number of
+                                entries, the actual number of entries
+                                will be used.</td>
                         </tr>
                         <tr>
                             <td><code>format</code></td>
@@ -574,8 +577,82 @@
                                    >Experimental: available only for
                                    JSON format</emphasis>.</td>
                         </tr>
+                        <tr>
+                            <td><code>search</code></td>
+                            <td>string</td>
+                            <td><emphasis role="italic"
+                                   >none</emphasis></td>
+                            <td>Specifies a category for which all
+                                matching entries should be
+                                returned.</td>
+                        </tr>
                     </tbody>
                 </table>
+                <para>
+                    By combining these parameters, you can select one or multiple entries from within a feed.
+                </para>
+                <itemizedlist>
+                    <listitem>
+                        <para><emphasis role="italic"><emphasis
+                                   role="bold">Choose a single
+                                   entry.</emphasis></emphasis></para>
+                        <para>
+                            &PRODNAME; assigns a unique identifier, <code>uuid</code>, to every Atom entry within a feed. 
+                            You can retrieve a single entry by specifying its <code>uuid</code>.
+                        </para>
+                        <para>
+                            For example, 
+                            <code>http://localhost:8080/namespace/feed/entries/urn:uuid:8439541b-b40e-4c23-b290-2820bd64257d</code> 
+                            requests the one entry for which <code>uuid</code> is set to <code>8439541b-b40e-4c23-b290-2820bd64257d</code>.
+                        </para>
+                    </listitem>
+                    <listitem>
+                    <para><emphasis role="italic"><emphasis
+                        role="bold">Start at a marker and page forward or backward.</emphasis></emphasis></para>
+                    <para>
+                        &PRODNAME; assigns a unique identifier, <code>uuid</code>, to every Atom entry within a feed. 
+                        To use a specific entry as a starting point and then page forward or backward from that point, 
+                        set <code>marker</code> to the initial entry's <code>uuid</code>, then specify a <code>direction</code> and a distance (<code>limit</code>).
+                    </para>
+                    <para>
+                        For example, 
+                        <code>http://localhost:8080/namespace/feed/?marker=urn:uuid:8439541b-b40e-4c23-b290-2820bd64257d&amp;direction=backward&amp;limit=50</code> 
+                        marks the starting point as the one entry for which <code>uuid</code> is set to <code>8439541b-b40e-4c23-b290-2820bd64257d</code>, then it moves
+                        backward through the feed for 50 pages.
+                    </para>
+                    </listitem>
+                    <listitem>
+                    <para><emphasis role="italic"><emphasis
+                        role="bold">Filter entries by category.</emphasis></emphasis></para>
+                    <warning>
+                        <para>
+                        This functionality is experimental and does not work well with paging feeds.
+                        </para>
+                    </warning>
+                    <para> Set <code>search</code> to match one or
+                            multiple categories that may be assigned
+                            to entries within the feed; precede each
+                            search criterion within the search string
+                            with <code>%2B</code>, a URL-encoded
+                                <code>+</code>. There is no limit to
+                            the number of search criteria you can
+                            specify; simply precede each one with
+                                <code>%2B</code>. All entries matching
+                            one or more of the search criteria will be
+                            returned. The search criteria must match
+                            exactly: category specifications are
+                            case-sensitive; no wild cards are
+                            supported.</para>
+                    <para> For example,
+                                <code>http://localhost:8080/namespace/feed/?search=%2Bsignups%2cancellations</code>
+                            searches the feed for all entries labeled
+                            as belonging to categories
+                                <code>signups</code> or
+                                <code>cancellations</code>.  The list
+                            of matches will not include any entries in
+                            category <code>SignUps</code>.</para>
+                    </listitem>
+                </itemizedlist>
                 </section>
             <section xml:id="Use_Get_Version-d1e158">
                 <title>Getting &PRODNAME; Version Information</title>
