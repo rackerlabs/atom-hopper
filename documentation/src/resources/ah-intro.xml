@@ -684,10 +684,17 @@
                     </itemizedlist>
                 </para>
                 <tip>
+                    <para> If you plan to use PostgreSQL, create a
+                        database named <code>atomhopper</code> first.
+                        Once the <code>atomhopper</code> database
+                        exists, &PRODNAME; will create the tables for
+                        PostgreSQL automatically. </para>
                     <para>
-                        If you plan to use PostgreSQL
-                        create an <code>atomhopper</code> database first.
-                        Once the <code>atomhopper</code> database exists, &PRODNAME; will create the tables for PostgreSQL automatically.
+                        If you prefer to create the database schema yourself, 
+                        you may simplify the process by adapting a DDL script provided at 
+                        <link
+                            xlink:href="https://github.com/rackspace/atom-hopper/tree/master/adapters/hibernate/src/main/resources/ddl"
+                            >https://github.com/rackspace/atom-hopper/tree/master/adapters/hibernate/src/main/resources/ddl</link>.
                     </para>
                 </tip>
                 <example>
