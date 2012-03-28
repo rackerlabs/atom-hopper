@@ -134,7 +134,7 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
         try {
             final String pageSizeString = getFeedRequest.getPageSize();
 
-            if ((StringUtils.isNotBlank(pageSizeString)) && (Integer.parseInt(pageSizeString) <= 0) && (Integer.parseInt(pageSizeString) <= 1000)) {
+            if ((StringUtils.isNotBlank(pageSizeString)) && ((Integer.parseInt(pageSizeString) <= 0) && (Integer.parseInt(pageSizeString) > 1000))) {
                 return ProviderHelper.badrequest(request, LIMIT_ERROR_MESSAGE);
             }
         } catch (NumberFormatException nfe) {
