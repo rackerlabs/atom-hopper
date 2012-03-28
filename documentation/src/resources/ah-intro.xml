@@ -205,6 +205,31 @@
     </chapter>
     <chapter xml:id="Try-d1e731">
         <title>How Can I Try &PRODNAME;?</title>
+        <para>
+            To try &PRODNAME; with the Atom feeds that are relevant to you:
+            <itemizedlist>
+                <listitem>
+                    <para>
+                        <link linkend="Deploy-d1e735">Install it</link> on a server.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <link linkend="Configure_d1e811">Configure it</link> to use feeds, namespaces, databases, and logs according to your preferences.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <link linkend="Use_d1e155">Use it</link> to get and query feeds, add entries to feeds, add categories to entries, and translate feeds from XML to JSON.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <link linkend="MultiFeed_d1e145">Scale it</link> to manage a large number of feeds in a large number of databases.
+                    </para>
+                </listitem>
+            </itemizedlist>
+        </para>
         <section xml:id="Deploy-d1e735">
             <title>Deploying &PRODNAME;</title>
             <para> &PRODNAME;' may be deployed in several ways, including: </para> 
@@ -243,11 +268,10 @@
             </section>
             <section xml:id="Deploy_Alternative-d1e123">
                 <title>Alternate Deployment Methods</title>
-                    <para>
-                        If you are unable to use the 
-                        <link linkend="Deploy_WAR-d1e111">recommended deployment method</link>, 
-                        here are several other approaches you can try.
-                    </para>
+                    <para> If you are unable to use the <link
+                        linkend="Deploy_WAR-d1e111">recommended
+                        deployment method</link>, you can try several
+                    other approaches. </para>
                    <section xml:id="Deploy_Embedded-d1e222">
                        <title>Deployment Method: Embedded</title>
                        <para>
