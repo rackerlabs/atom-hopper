@@ -246,11 +246,6 @@
                 </listitem>
                 <listitem>
                     <para>
-                        <link linkend="Deploy_Source_JAR-d1e333">Source Code (JAR)</link>
-                    </para>
-                </listitem>
-                <listitem>
-                    <para>
                         <link linkend="Deploy_RPM-d1e444">RPM Package Manager (RPM)</link>
                     </para>
                 </listitem>
@@ -395,13 +390,7 @@
                             </tr>
                         </tbody>
                     </table>
-                   </section>
-                   <section xml:id="Deploy_Source_JAR-d1e333">
-                       <title>Deployment Method: Source Code (JAR)</title>
-                       <para>
-                           details to follow
-                       </para>
-                   </section>    
+                   </section>   
                    <section xml:id="Deploy_RPM-d1e444">
                        <title>Deployment Method: RPM Package Manager (RPM)</title>
                        <para>
