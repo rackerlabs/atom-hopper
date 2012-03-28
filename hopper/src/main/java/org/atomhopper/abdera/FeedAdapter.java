@@ -130,12 +130,15 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
     public ResponseContext getFeed(RequestContext request) {
         GetFeedRequest getFeedRequest = new GetFeedRequestImpl(request);
         final String LIMIT_ERROR_MESSAGE = "Limit parameter not valid, acceptable values are 1 to 1000";
+        final int MIN_LIMIT = 0;
+        final int MAX_LIMIT = 1000;
 
         try {
             final String pageSizeString = getFeedRequest.getPageSize();
 
-            if ((StringUtils.isNotBlank(pageSizeString)) && ((Integer.parseInt(pageSizeString) <= 0) && (Integer.parseInt(pageSizeString) > 1000))) {
-                return ProviderHelper.badrequest(request, LIMIT_ERROR_MESSAGE);
+            if(StringUtils.isNotBlank(pageSizeString)) {
+                if((Integer.parseInt(pageSizeString) <= MIN_LIMIT) || (Integer.parseInt(pageSizeString) > MAX_LIMIT))
+                    return ProviderHelper.badrequest(request, LIMIT_ERROR_MESSAGE);
             }
         } catch (NumberFormatException nfe) {
             return ProviderHelper.badrequest(request, LIMIT_ERROR_MESSAGE);
