@@ -46,10 +46,10 @@
             <plugin>
                 <groupId>com.rackspace.cloud.api</groupId>
                 <artifactId>clouddocs-maven-plugin</artifactId>
-                <!-- this <version> relates only to the *plugin* used for document formatting -->
-                <!-- the version of the *software* that is the subject of the document is indicated within each document:
-                    look for <releaseinfo> near <pubdate>, both in the <info> section-->
-                <!-- 1.0.11 of the plugin supports customization of the color, logo and doclink on the cover page -->
+                <!-- this <version> relates only to the *plugin* used for document formatting 
+                    the version of the *software* that is the subject of the document is indicated within each document:
+                    look for <releaseinfo> near <pubdate>, both in the <info> section
+                    1.0.11 of the plugin supports customization of the color, logo and doclink on the cover page -->
                 <version>1.0.11</version>
                 <executions>
                     <execution>
@@ -69,15 +69,16 @@
                             <xincludeSupported>true</xincludeSupported>
                             <!-- set branding to OPENSTACK or RACKSPACE or omit (default = RACKSPACE)
                             <branding>openstack</branding> -->
-                            <!-- for WebHelp: -->
-                            <!-- enableDisqus turns on Disqus feature for feedback if any value other than 0; "intranet" for posting on our internal docs-beta.rackspace.com for internal review -->
-                            <!-- disqusShortname = Disqus account where moderator is collecting this feedback -->
-                            <!-- feedbackemail gets comments from Disqus or Tildehash -->
+                            <!-- for WebHelp only : 
+                                enableDisqus turns on Disqus feature for feedback if any value other than "0"; 
+                                if "intranet", use TildeHash (open source, can be private) rather than Disqus (proprietary, must be public)  
+                                disqusShortname = Disqus account where moderator is collecting this feedback 
+                                feedbackemail gets comments from Disqus or Tildehash -->
                             <enableDisqus>intranet</enableDisqus>
                             <feedbackEmail>rose.coste@rackspace.com</feedbackEmail>
                             <disqusShortname>rc-integration</disqusShortname>
-                            <!-- open at the What Is It? page -->
-                            <!-- or use index.html to open Webhelp at the front matter: copyright page, list of tables, list of figures, list of examples -->
+                            <!-- open at the What Is It? page 
+                                 or use index.html to open Webhelp at the front matter: copyright page, list of tables, list of figures, list of examples -->
                             <htmlhelpDefaultTopic>Introduction-000.html</htmlhelpDefaultTopic>
                             <!-- look here for the .xml and everything to include such as samples and figures -->
                             <sourceDirectory>src/resources</sourceDirectory>
@@ -87,22 +88,20 @@
                             <useExtensions>1</useExtensions>
                             <calloutsExtension>1</calloutsExtension>
                             <textinsertExtension>1</textinsertExtension>
-                            <!-- use this .XML as the source for the books to be generated as .PDF & .HTML -->
-                            <!-- if not specified, generate for all -->
+                            <!-- use this .XML as the source for the books to be generated as .PDF & .HTML 
+                                 if not specified, generate for all -->
                             <!-- <includes>ah-intro.xml</includes> -->
-                            <builtForOpenStack>0</builtForOpenStack>
                             <!-- customize source of product logo as path from pom.xml -->
                             <coverLogoPath>src/resources/img/atomhopper-logo.png</coverLogoPath>
                             <!-- customize position of product logo as inches in from left -->
                             <coverLogoLeft>4in</coverLogoLeft>
                             <!-- customize position of product logo as inches down from top -->
                             <coverLogoTop>5.5in</coverLogoTop>
-                            <!-- customize more-info link on cover: show project home page -->
-                            <!-- <coverUrl> value is displayed as-is but "http://" is prepended to link so don't specify it for display -->
+                            <!-- customize more-info link on cover: show project home page  
+                                 <coverUrl> value is displayed as-is but "http://" is prepended to link so don't specify it for display -->
                             <coverUrl>www.atomhopper.org</coverUrl>
                             <!-- customize color of wide band on doc cover as RGB: 00FF00 is true green -->
                             <coverColor>99CC66</coverColor>
-                            <showXslMessages>true</showXslMessages>
                         </configuration>
                     </execution>
                 </executions>

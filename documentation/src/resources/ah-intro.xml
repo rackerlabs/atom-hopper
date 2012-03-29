@@ -44,6 +44,7 @@
     -->
     <?rax title.font.size="35px" subtitle.font.size="24px"?>
     <titleabbrev>&PRODABBREV; Getting Started</titleabbrev>
+    <?rax status.bar.text="RAX INTERNAL"?>
     <info>
         <author>
             <personname>
@@ -56,6 +57,7 @@
         </author>
         <copyright>
             <year>2011</year>
+            <year>2012</year>
             <holder>Rackspace US, Inc.</holder>
         </copyright>
         <releaseinfo>v1.0</releaseinfo>
