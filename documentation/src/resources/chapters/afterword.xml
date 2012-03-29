@@ -19,10 +19,10 @@
     </para>
     <section xml:id="Feedback-d1e992">
         <title>Feedback</title>
-        <para> If you find errors in this document or have suggestions about how to improve it,
-            please let us know. You can contact the maintainer directly at
-                <emphasis>chad.lung@rackspace.com</emphasis>. 
-        </para>
+        <para> If you find errors in this document or have suggestions
+            about how to improve it, please let us know. You can
+            contact the maintainer directly at
+                <emphasis>rose.coste@rackspace.com</emphasis>. </para>
     </section> 
     <section xml:id="References-d1e994">
         <title>References</title>
@@ -89,6 +89,49 @@
                         of timestamped entries. These lists are referred to as feeds. </para>
                 </abstract>
             </biblioentry>
+            <biblioentry xml:id="HIBERNATE">
+                <author>
+                    <personname>
+                        <firstname></firstname>
+                        <surname></surname>
+                        <othername role="mi"/>
+                    </personname>
+                </author>
+                <orgname>
+                    JBoss Community
+                </orgname>
+                <title>Hibernate: Relational Persistence for Java and .NET <link
+                    xlink:href="http://www.hibernate.org/"
+                    >http://www.hibernate.org/</link>
+                </title>   
+                <abstract>
+                    <para>
+                        Hibernate is a collection of related projects enabling developers to utilize POJO-style domain models in their applications. 
+                        &PRODNAME; uses Hibernate to configure multiple feeds and databases.
+                    </para>
+                </abstract>
+            </biblioentry>
+            <biblioentry xml:id="H2">
+                <author>
+                    <personname>
+                        <firstname></firstname>
+                        <surname></surname>
+                        <othername role="mi"/>
+                    </personname>
+                </author>
+                <orgname>
+                    H2
+                </orgname>
+                <title>H2 Database Engine <link
+                    xlink:href="http://www.h2database.com/"
+                    >http://www.h2database.com/</link>
+                </title>   
+                <abstract>
+                    <para>
+                        By default, &PRODNAME; is configured to connect to a local H2 database.
+                    </para>
+                </abstract>
+            </biblioentry>
             <biblioentry xml:id="RFC2616">
                 <author>
                     <personname>
@@ -106,6 +149,48 @@
                 <abstract>
                     <para>
                         HTTP status codes returned by &PRODNAME; are fully documented here.
+                    </para>
+                </abstract>
+            </biblioentry>           
+            <biblioentry xml:id="ABDERA-JSON">
+                <author>
+                    <personname>
+                        <firstname></firstname>
+                        <surname></surname>
+                        <othername role="mi"/>
+                    </personname>
+                </author>
+                <orgname>
+                    Apache Abdera
+                </orgname>
+                <title>JSON Serialization <link
+                    xlink:href="https://cwiki.apache.org/ABDERA/json-serialization.html"
+                    >https://cwiki.apache.org/ABDERA/json-serialization.html</link>
+                </title>   
+                <abstract>
+                    <para>
+                        &PRODNAME; uses Abdera's JSON Writer to translate Atom XML into JSON.
+                    </para>
+                </abstract>
+            </biblioentry>
+            <biblioentry xml:id="LOG4J">
+                <author>
+                    <personname>
+                        <firstname></firstname>
+                        <surname></surname>
+                        <othername role="mi"/>
+                    </personname>
+                </author>
+                <orgname>
+                    Apache Logging Services Project
+                </orgname>
+                <title>Logging Services: Apache log4j <link
+                    xlink:href="http://logging.apache.org/log4j/"
+                    >http://logging.apache.org/log4j/</link>
+                </title>   
+                <abstract>
+                    <para>
+                        log4j is a Java logging framework used to create &PRODNAME;'s logs.
                     </para>
                 </abstract>
             </biblioentry>

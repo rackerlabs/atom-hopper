@@ -10,16 +10,39 @@
     xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0"
     xml:id="Available_Doc-d1e140">
     <title>Available Documentation</title>
-    <para>The following &PRODNAME; documentation is available as of v0.9:</para>
+    <para>The following &PRODNAME; documentation is available as of v1.0:</para>
     <itemizedlist>
         <listitem>
             <para>
                 <emphasis role="bold">Getting Started</emphasis>: This high-level introduction
-                provides an architectural overview and summarizes several deployment methods. </para>
+                summarizes several deployment methods and identifies basic functionality provided by &PRODNAME;. 
+            </para>
+        </listitem>
+        <listitem>
+            <para>
+                <emphasis role="bold">Release Notes</emphasis>: In our wiki, we announce new features and bug fixes at  
+                <link xlink:href="https://github.com/rackspace/atom-hopper/wiki/Release-Notes">https://github.com/rackspace/atom-hopper/wiki/Release-Notes</link>. 
+            </para>
+        </listitem>
+        <listitem>
+            <para>
+                <emphasis role="bold">FAQ</emphasis>: In our wiki, we answer questions and offer advice at   
+                <link xlink:href="https://github.com/rackspace/atom-hopper/wiki/FAQ">https://github.com/rackspace/atom-hopper/wiki/FAQ</link>. 
+            </para>
         </listitem>
     </itemizedlist> 
-    <para>
-        &PRODNAME; is an open-source project. Visit <link xlink:href="http://www.atomhopper.org/">http://www.atomhopper.org/</link> and our GitHub repository at <link xlink:href="https://github.com/rackspace/atom-hopper/">https://github.com/rackspace/atom-hopper/</link>
-        for access to our source code and documentation.
-    </para>
+    <tip>
+        <para>
+            For the latest information about &PRODNAME;, 
+            visit 
+            the &PRODNAME; website at <link xlink:href="http://atomhopper.org/">http://atomhopper.org/</link>
+            and 
+            the &PRODNAME; wiki at <link xlink:href="https://github.com/rackspace/atom-hopper/wiki/">https://github.com/rackspace/atom-hopper/wiki/</link>.
+        </para>
+        <para> &PRODNAME; is an open-source project. You are
+            welcome to examine and contribute to our GitHub source
+            repository at <link
+                xlink:href="https://github.com/rackspace/atom-hopper"
+                >https://github.com/rackspace/atom-hopper</link>. </para>
+    </tip>
 </section>
