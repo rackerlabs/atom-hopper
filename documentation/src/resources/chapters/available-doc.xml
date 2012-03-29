@@ -15,7 +15,20 @@
         <listitem>
             <para>
                 <emphasis role="bold">Getting Started</emphasis>: This high-level introduction
-                provides an architectural overview and summarizes several deployment methods. </para>
+                summarizes several deployment methods and identifies basic functionality provided by &PRODNAME;. 
+            </para>
+        </listitem>
+        <listitem>
+            <para>
+                <emphasis role="bold">Release Notes</emphasis>: In our wiki, we announce new features and bug fixes at  
+                <link xlink:href="https://github.com/rackspace/atom-hopper/wiki/Release-Notes">https://github.com/rackspace/atom-hopper/wiki/Release-Notes</link>. 
+            </para>
+        </listitem>
+        <listitem>
+            <para>
+                <emphasis role="bold">FAQ</emphasis>: In our wiki, we answer questions and offer advice at   
+                <link xlink:href="https://github.com/rackspace/atom-hopper/wiki/FAQ">https://github.com/rackspace/atom-hopper/wiki/FAQ</link>. 
+            </para>
         </listitem>
     </itemizedlist> 
     <tip>
