@@ -102,6 +102,7 @@
                             <coverUrl>www.atomhopper.org</coverUrl>
                             <!-- customize color of wide band on doc cover as RGB: 00FF00 is true green -->
                             <coverColor>99CC66</coverColor>
+                            <showXslMessages>true</showXslMessages>
                         </configuration>
                     </execution>
                 </executions>
