@@ -67,10 +67,10 @@
             </goals>
           </execution>
         </executions>
-        <configuration>
-          <excludes>
-            <exclude>empty-skeleton.jmx</exclude>
-          </excludes>
+        <configuration>   
+          <testFilesExcluded>
+            <excludeJMeterTestFile>empty-skeleton.jmx</excludeJMeterTestFile>
+          </testFilesExcluded>
         </configuration>
       </plugin>
     </plugins>
