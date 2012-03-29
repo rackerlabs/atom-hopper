@@ -31,6 +31,7 @@ public class HibernateFeedRepository implements FeedRepository {
 
     private final HibernateSessionManager sessionManager;
     private static final String DATE_LAST_UPDATED = "dateLastUpdated";
+    private static final String FEED_NAME = "feed.name";
 
     public HibernateFeedRepository(Map<String, String> parameters) {
         sessionManager = new HibernateSessionManager(parameters);
@@ -119,7 +120,7 @@ public class HibernateFeedRepository implements FeedRepository {
             public List<PersistedEntry> perform(Session liveSession) {
                 final List<PersistedEntry> feedHead = new LinkedList<PersistedEntry>();
 
-                final Criteria criteria = liveSession.createCriteria(PersistedEntry.class).add(Restrictions.eq("feed.name", feedName));
+                final Criteria criteria = liveSession.createCriteria(PersistedEntry.class).add(Restrictions.eq(FEED_NAME, feedName));
                 criteriaGenerator.enhanceCriteria(criteria);
 
                 criteria.setMaxResults(pageSize).addOrder(Order.desc(DATE_LAST_UPDATED));
@@ -139,7 +140,7 @@ public class HibernateFeedRepository implements FeedRepository {
             public List<PersistedEntry> perform(Session liveSession) {
                 final LinkedList<PersistedEntry> feedPage = new LinkedList<PersistedEntry>();
 
-                final Criteria criteria = liveSession.createCriteria(PersistedEntry.class).add(Restrictions.eq("feed.name", feedName));
+                final Criteria criteria = liveSession.createCriteria(PersistedEntry.class).add(Restrictions.eq(FEED_NAME, feedName));
                 criteriaGenerator.enhanceCriteria(criteria);
                 criteria.setMaxResults(pageSize);
 
@@ -260,7 +261,7 @@ public class HibernateFeedRepository implements FeedRepository {
             @Override
             public PersistedEntry perform(Session liveSession) {
                 return (PersistedEntry) liveSession.createCriteria(PersistedEntry.class)
-                        .add(Restrictions.eq("feed.name", feedName))
+                        .add(Restrictions.eq(FEED_NAME, feedName))
                         .addOrder(Order.asc(DATE_LAST_UPDATED))
                         .setMaxResults(1).uniqueResult();
             }
