@@ -50,7 +50,7 @@
                     the version of the *software* that is the subject of the document is indicated within each document:
                     look for <releaseinfo> near <pubdate>, both in the <info> section
                     1.0.11 of the plugin supports customization of the color, logo and doclink on the cover page -->
-                <version>1.0.11</version>
+                <version>1.0.10</version>
                 <executions>
                     <execution>
                         <id>doc</id>
@@ -91,17 +91,20 @@
                             <!-- use this .XML as the source for the books to be generated as .PDF & .HTML 
                                  if not specified, generate for all -->
                             <!-- <includes>ah-intro.xml</includes> -->
-                            <!-- customize source of product logo as path from pom.xml -->
+                            <!-- 
+                                hide this whole section while testing 1.0.10 for Jenkins failure
+                             customize source of product logo as path from pom.xml 
                             <coverLogoPath>src/resources/img/atomhopper-logo.png</coverLogoPath>
-                            <!-- customize position of product logo as inches in from left -->
+                             customize position of product logo as inches in from left 
                             <coverLogoLeft>4in</coverLogoLeft>
-                            <!-- customize position of product logo as inches down from top -->
+                             customize position of product logo as inches down from top 
                             <coverLogoTop>5.5in</coverLogoTop>
-                            <!-- customize more-info link on cover: show project home page  
-                                 <coverUrl> value is displayed as-is but "http://" is prepended to link so don't specify it for display -->
+                             customize more-info link on cover: show project home page  
+                                 <coverUrl> value is displayed as-is but "http://" is prepended to link so don't specify it for display 
                             <coverUrl>www.atomhopper.org</coverUrl>
-                            <!-- customize color of wide band on doc cover as RGB: 00FF00 is true green -->
+                             customize color of wide band on doc cover as RGB: 00FF00 is true green 
                             <coverColor>99CC66</coverColor>
+                            -->
                         </configuration>
                     </execution>
                 </executions>
