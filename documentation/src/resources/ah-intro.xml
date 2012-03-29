@@ -36,14 +36,15 @@
       xmlns:svg="http://www.w3.org/2000/svg"
       xmlns:m="http://www.w3.org/1998/Math/MathML"
       xmlns:html="http://www.w3.org/1999/xhtml"
-      xmlns:db="http://docbook.org/ns/docbook" >
-    <?rax pdf.url="../../papi-intro.pdf"?>
+      xml:id="Atom-Hopper-Getting-Started">
+    <?rax pdf.url="../../ah-intro.pdf"?>
     <title>&PRODNAME; Getting Started</title>
     <!-- set watermark on cover and left margin 
         <?rax status.bar.text="CONFIDENTIAL"?>
     -->
     <?rax title.font.size="35px" subtitle.font.size="24px"?>
     <titleabbrev>&PRODABBREV; Getting Started</titleabbrev>
+    <?rax status.bar.text="DRAFT"?>
     <info>
         <author>
             <personname>
@@ -56,11 +57,12 @@
         </author>
         <copyright>
             <year>2011</year>
+            <year>2012</year>
             <holder>Rackspace US, Inc.</holder>
         </copyright>
-        <releaseinfo>v0.9</releaseinfo>
+        <releaseinfo>v1.0</releaseinfo>
         <productname>&PRODNAME;</productname>
-        <pubdate>2011-09-28</pubdate>
+        <pubdate>2012-03-29</pubdate>
         <legalnotice role="apache2">
             <annotation>
                 <remark>Copyright details are filled in by the template.</remark>
@@ -69,17 +71,25 @@
         <abstract>
             <para>This document is intended for anyone seeking basic information about &PRODNAME;. </para>
         </abstract>
+        <revhistory>
+            <revision>
+                <date>2012-03-29</date>
+                <revdescription>
+                    <itemizedlist spacing="compact">
+                        <listitem><para>Initial release for Atom Hopper v1.0.</para></listitem>
+                    </itemizedlist>
+                </revdescription>
+            </revision>
+        </revhistory>
     </info>
     <chapter xml:id="Overview-d1e85">
-        <title>Overview</title>
-        <section xml:id="Purpose-d1e90">
-            <title>Purpose of This Document</title>
+        <title>About This Document</title>
             <para> The purpose of this introductory Getting Started document is to answer several basic questions about
                 &PRODNAME;: </para>
             <itemizedlist spacing="normal">
                 <listitem>
                     <para>
-                        <link linkend="Define-d1e365">What is &PRODNAME;?</link>
+                        <link linkend="Introduction-000">What is &PRODNAME;?</link>
                     </para>
                 </listitem>
                 <listitem>
@@ -98,46 +108,21 @@
                     </para>
                 </listitem>
             </itemizedlist>   
-        </section>
         <section xml:id="Document_Change_History-d1e102">
             <title>Document Change History</title>
             <para>This version of Getting Started replaces and obsoletes all previous versions. The
                 most recent changes are described in the table below: </para>
-            <informaltable rules="all">
-                <thead>
-                    <tr align="center">
-                        <td colspan="1">Revision Date</td>
-                        <td colspan="4">Summary of Changes</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr align="left">
-                        <td colspan="1" align="center">Sep 28, 2011</td>
-                        <td colspan="4" align="left">
-                            <itemizedlist spacing="compact">
-                                <listitem>
-                                    <para>Initial release.</para>
-                                </listitem>
-                            </itemizedlist>
-                        </td>
-                    </tr>
-                </tbody>
-            </informaltable>
+            <?rax revhistory?>
         </section>
         <xi:include href="chapters/available-doc.xml"/>
     </chapter>
-    <chapter xml:id="Define-d1e365">
+    <!-- naming this section xml:id="Introduction-000" to make it the first page opened in HTML, matching <webhelpDefaultTopic>Introduction-000.html</webhelpDefaultTopic> in pom.xml -->
+    <chapter xml:id="Introduction-000">
         <title>What is &PRODNAME;?</title>
-        <annotation>
-            <remark>
-                Source for this chapter is https://wiki.mosso.com/display/CT/Atom+Hopper and orientation handout from Chad Lung.
-            </remark>
-        </annotation>
-        <para> 
-            &PRODNAME; is a backend server that sends out XML feeds to internal teams. 
-            Essentially, it accepts data and sends data back out when requested. 
-            The idea is that there will be many of these throughout the company.
-        </para>
+        <para> &PRODNAME; is an open-source backend server that sends
+            out XML feeds to internal teams. Essentially, it accepts
+            data and sends data back out when requested. The idea is
+            that there will be many of these throughout the company. </para>
         <para> 
             The purpose of &PRODNAME; is to serve Atom feeds as well as to be a repository for those feeds.
         </para>
@@ -145,122 +130,1076 @@
             You can install &PRODNAME; on any server that meets the minimal configuration requirements:
             <itemizedlist>
                 <listitem>
-                    <para><emphasis role="bold">Operating System:</emphasis> Windows, OS X, Linux</para>
+                    <para><emphasis role="bold">Operating
+                            System:</emphasis> Linux Centos 6+, Ubuntu
+                        10+, Apple Mac OS X</para>
                 </listitem>
                 <listitem>
                     <para><emphasis role="bold">Java Virtual Machine:</emphasis> Oracle Java v1.6 or OpenJDK 1.6</para>
                 </listitem>
             </itemizedlist>
         </para>
-        <para> 
-            &PRODNAME; can be deployed in several ways:
-        </para>
-        <itemizedlist>
-            <listitem>
-                <para>
-                    from an embedded Jetty server
-                </para>
-                <para>
-                    <emphasis>This is the easiest way to get &PRODNAME; up and running. It requires little knowledge or configuration.</emphasis>
-                </para>
-            </listitem>
-            <listitem>
-                <para>
-                    from a WAR file which can be dropped into a container such as Tomcat or Jetty
-                </para>
-            </listitem>
-            <listitem>
-                <para>
-                    from the source code or a generated JAR
-                </para>
-            </listitem>
-            <listitem>
-                <para>
-                    from an RPM Package Manager (RPM)
-                </para>
-            </listitem>
-        </itemizedlist>
+        <note>
+            <para>
+                See <xref linkend="Available_Doc-d1e140"></xref> for a list of documentation about these components.
+            </para>
+        </note>
     </chapter>
     <chapter xml:id="Design-d1e665">
         <title>How Does &PRODNAME; Work?</title>
-        <annotation>
-            <remark>
-                Source for this chapter is https://wiki.mosso.com/pages/viewpage.action?pageId=40828966 (title is Why Choose Atom Hopper?; question mark prevents saving as a named page
-            </remark>
-        </annotation>
-        <annotation>
-            <remark>
-                Source for this chapter is https://wiki.mosso.com/display/CT/PAPI+Components+and+Enterprise+Integration+Patterns
-            </remark>
-        </annotation>
         <para> &PRODNAME; is an AtomPub server based upon the Apache Abdera project. 
         It functions as a framework for accessing, processing, aggregating, and indexing Atom-formatted events.
         </para>
-        <para>
-            &PRODNAME; was designed to make it easy to build both generalized and specialized persistence mechanisms for Atom XML data, 
-            based on the Atom Syndication Format and the Atom Publishing Protocol.
+        <para> &PRODNAME; was designed to make it easy to build both
+            generalized and specialized persistence mechanisms for
+            Atom XML data, based on the Atom Syndication Format and
+            the Atom Publishing Protocol.  
+            Atom is an IETF-ratified
+            event syndication format that may have multiple
+            representations. It is widely used, with many libraries written for it.
+            You can read more about the Atom Syndication Format and
+            the Atom Publishing Protocol in the references suggested at 
+            <xref linkend="References-d1e994"></xref>.
         </para>
         <para>
-            &PRODNAME; can use several relational databases, including H2, PostgreSQL, Microsoft SQL Server, and HSQLDB. 
-            It fully supports &POST; (creating new Atom entries) and &GET; (retrieving a feed or a single Atom entry); 
+            &PRODNAME; can use several relational databases, 
+            including H2, PostgreSQL, Microsoft SQL Server, and HSQLDB. 
+        </para>
+        <para>
+            &PRODNAME; fully supports &POST; (creating new Atom entries) and &GET; (retrieving a feed or a single Atom entry); 
             it has stubs to support &DELETE; and &PUT; if needed.
+        </para>
+        <figure xml:id="Atom-Hopper-Event-Syndication">
+            <title>&PRODNAME; collects published events and forwards them to subscribers.</title>
+            <mediaobject>
+                <imageobject>
+                    <imagedata fileref="figures/ah-intro.png" format="PNG" align="center"/>
+                </imageobject>
+            </mediaobject>
+        </figure>
+        <para>
+            As illustrated above, &PRODNAME; can do more than simply listen for published events. 
+            It can provide subscribers with personalized feeds of only the events most relevant to them. 
+            For example: 
+            <itemizedlist>
+                <listitem>
+                    <para>
+                        Failures can be routed to an on-call's mobile phone. 
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        Warnings requiring proactive investigation can be routed to an on-site technician's tablet.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        Normal progress messages can be routed to an administrator's console.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        Records of successful task completion can be fed to a program for analysis and reporting.
+                    </para>
+                </listitem>
+            </itemizedlist>
         </para>
     </chapter>
     <chapter xml:id="Try-d1e731">
         <title>How Can I Try &PRODNAME;?</title>
-        <annotation>
-            <remark> Source for this chapter is https://wiki.mosso.com/display/CT/Deployment+Options and
-                https://wiki.mosso.com/display/CT/Installing+Atom+Hopper</remark>
-        </annotation>
         <para>
-            &PRODNAME;'s components may be deployed in several ways, including:
-        </para> 
-        <itemizedlist spacing="compact">
-            <listitem>
-                <para>
-                    <link linkend="Executable_JAR-d1e111">Executable JAR</link>
+            To try &PRODNAME; with the Atom feeds that are relevant to you:
+            <itemizedlist>
+                <listitem>
+                    <para>
+                        <link linkend="Deploy-d1e735">Install it</link> on a server.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <link linkend="Configure_d1e811">Configure it</link> to use feeds, namespaces, databases, and logs according to your preferences.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <link linkend="Use_d1e155">Use it</link> to get and query feeds, add entries to feeds, add categories to entries, and translate feeds from XML to JSON.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <link linkend="MultiFeed_d1e145">Scale it</link> to manage a large number of feeds in a large number of databases.
+                    </para>
+                </listitem>
+            </itemizedlist>
+        </para>
+        <section xml:id="Deploy-d1e735">
+            <title>Deploying &PRODNAME;</title>
+            <para> &PRODNAME;' may be deployed in several ways, including: </para> 
+            <itemizedlist spacing="compact">
+                <listitem>
+                    <para>
+                        <link linkend="Deploy_WAR-d1e111">WAR (recommended)</link>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <link linkend="Deploy_Embedded-d1e222">Embedded (for testing and evaluation)</link>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <link linkend="Deploy_RPM-d1e444">RPM Package Manager (RPM)</link>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <link linkend="Deploy_DEB-d1e555">Debian Package (DEB)</link>
+                    </para>
+                </listitem>
+            </itemizedlist>   
+            <section xml:id="Deploy_WAR-d1e111">
+                <title>Recommended Deployment Method: WAR</title>
+                <para> You may take the &PRODNAME; WAR file and deploy
+                    it to an HTTP server/servlet container such as
+                    Apache Tomcat, Eclipse Jetty, or Glassfish.
+                    &PRODNAME; has been tested with Apache Tomcat and
+                    Eclipse Jetty. Follow the instructions for the
+                    HTTP server/servlet container and deploy the
+                    &PRODNAME; WAR file just as you would any other
+                    application. </para>
+                <para> 
+                    The following paths and files must exist with
+                    permissions to read and write from the account you
+                    are using to run Apache Tomcat. 
                 </para>
-            </listitem>
-            <listitem>
-                <para>
-                    <link linkend="Hibernate-d1e222">Hibernate Config File</link>
-                </para>
-            </listitem>
-            <listitem>
-                <para>
-                    <link linkend="Source_JAR-d1e333">Source Code (JAR)</link>
-                    Valve
-                </para>
-            </listitem>
-            <listitem>
-                <para>
-                    <link linkend="RPM-d1e444">RPM Package Manager (RPM)</link>
-                </para>
-            </listitem>
-        </itemizedlist>   
-        <section xml:id="Executable_JAR-d1e111">
-            <title>Deployment Method: Executable JAR</title>
-            <para>
-                details to follow
-            </para>
+                    <table rules="all">
+                        <?dbhtml table-width="85%" ?>
+                        <?dbfo table-width="85%" ?>
+                        <caption>Paths and Files Required by WAR
+                            Installation</caption>
+                        <thead>
+                            <tr>
+                                <th>Location</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                   <code>/opt/atomhopper</code>
+                                </td>
+                                <td>
+                                    &PRODNAME; H2 database:
+                                   <emphasis role="italic"> Required
+                                   only if you wish to use H2 as your
+                                   database. </emphasis>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><code>/etc/atomhopper/atom-server.cfg.xml</code></td>
+                                <td>
+                                    Configuration file for 
+                                    <link linkend="Config_Namespace-d1e822">namespaces and feeds</link>.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><code>/etc/atomhopper/application-context.xml</code></td>
+                                <td> Configuration file for 
+                                    <link linkend="Config_Database-d1e833">databases</link>
+                                   and the default data adapter.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><code>/etc/atomhopper/log4j.properties</code></td>
+                                <td> Configuration file for 
+                                    <link linkend="Config_Log-d1e844">logs</link>.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+            </section>
+            <section xml:id="Deploy_Alternative-d1e123">
+                <title>Alternate Deployment Methods</title>
+                    <para> If you are unable to use the <link
+                        linkend="Deploy_WAR-d1e111">recommended
+                        deployment method</link>, you can try several
+                    other approaches. </para>
+                   <section xml:id="Deploy_Embedded-d1e222">
+                       <title>Deployment Method: Embedded</title>
+                       <warning>
+                           <para>
+                               The embedded version of &PRODNAME; is intended only for 
+                               rapid deployment to support testing and evaluation.
+                           </para>
+                           <para>
+                               For production environments,
+                               use the 
+                               <link linkend="Deploy_WAR-d1e111">WAR</link> (recommended) or 
+                               <link linkend="Deploy_RPM-d1e444">RPM</link> deployment methods. 
+                           </para>
+                       </warning>
+                       <para> 
+                           The embedded version of &PRODNAME; is completely self-contained in <code>AtomHopperServer.jar</code>.
+                           It requires either Oracle's JRE or the Open JDK version 1.6 or later.
+                       </para>
+                       <para> To use the Jetty-embedded version of
+                        &PRODNAME;, pass it arguments to start it, to
+                        set the port where it should listen for
+                        incoming requests, and to stop it. </para>
+                       <table rules="all">
+                           <?dbhtml table-width="85%" ?>
+                           <?dbfo table-width="85%" ?>
+                        <caption>Arguments Available in Embedded
+                            Installation</caption>
+                        <thead>
+                            <tr>
+                                <th>Argument</th>
+                                <th>Sample Command</th>
+                                <th>Result</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                   <code>start</code>
+                                </td>
+                                <td><code>java -jar
+                                   AtomHopperServer.jar
+                                   start</code></td>
+                                <td> Start &PRODNAME;.</td>
+                            </tr>
+                            <tr>
+                                <td><code>-p (alias
+                                   --port)</code></td>
+                                <td><code>java -jar
+                                   AtomHopperServer.jar -p
+                                   8088</code></td>
+                                <td> Listen to port 8088 for incoming
+                                   requests.  Port 8080 is the default
+                                   for incoming requests.</td>
+                            </tr>
+                            <tr>
+                                <td><code>-s (alias
+                                   --shutdown-port)</code></td>
+                                <td><code>java -jar
+                                   AtomHopperServer.jar -s
+                                   8090</code></td>
+                                <td> Listen to port 8090 for incoming
+                                   requests.  Port 8818 is the default
+                                   for shutdown requests.</td>
+                            </tr>
+                            <tr>
+                                <td><code>stop</code></td>
+                                <td><code>java -jar
+                                   AtomHopperServer.jar
+                                   stop</code></td>
+                                <td> Stop &PRODNAME;.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                   </section>   
+                   <section xml:id="Deploy_RPM-d1e444">
+                       <title>Deployment Method: RPM Package Manager (RPM)</title>
+                       <para> Using this method, a single
+                           <code>yum</code> command installs
+                           &PRODNAME;.</para>
+                       <para> You can use this method if your
+                           &PRODNAME; server conforms to the required
+                           operating environment: <itemizedlist>
+                               <listitem>
+                                   <para> Supported operating system:
+                                       CentOS 6.0 or higher; Fedora 15 or higher</para>
+                               </listitem>
+                               <listitem>
+                                   <para> Java OpenJDK 1.6 or Oracle JRE 1.6 </para>
+                               </listitem>
+                               <listitem>
+                                   <para> Apache Tomcat 6 </para>
+                               </listitem>
+                           </itemizedlist>
+                       </para>
+                       <note>
+                           <para>
+                               If you do not wish to use an H2 database, customize your 
+                               <link linkend="Config_Database-d1e833">database configuration</link>
+                               to use a different type of database.
+                           </para>
+                       </note>
+                       <para> Before attempting to install the RPM,
+                        examine the Maven <code>pom.xml</code> file
+                        for the <code>ah-war</code> project: <itemizedlist>
+                            <listitem>
+                                <para> By default, the installation
+                                   file is named
+                                   <code>ROOT.war</code>; you may wish
+                                   to change this to a name that you
+                                   prefer. </para>
+                            </listitem>
+                            <listitem>
+                                <para> In the section where the RPM is
+                                   built, read the comments and
+                                   consider adjusting the settings to
+                                   suit your operating environment.
+                                </para>
+                            </listitem>
+                        </itemizedlist>
+                    </para>
+                       <important>
+                           <para>
+                                Stop the application server (Apache Tomcat) 
+                                before installing the RPM package.
+                           </para>
+                       </important>
+                       <para> To install the package: from the command
+                        prompt, issue a command such as <code>$ yum
+                            localinstall ah-war-VERSION-INFO-HERE.rpm
+                            --nopgcheck</code>, replacing
+                            <code>VERSION-INFO-HERE</code> with
+                        identifying information for the version you
+                        wish to install.  </para>
+                       <para>
+                          The &PRODNAME; RPM file is not signed, so you might be asked to override the warning that yum issues when attempting to install it. 
+                       </para>
+                       <para> 
+                           The following paths and files will be created by the RPM installation process.  
+                       </para>
+                       <table rules="all">
+                           <?dbhtml table-width="85%" ?>
+                           <?dbfo table-width="85%" ?>
+                           <caption>Paths and Files Created by RPM
+                               Installation</caption>
+                           <thead>
+                               <tr>
+                                   <th>Location</th>
+                                   <th>Description</th>
+                               </tr>
+                           </thead>
+                           <tbody>
+                               <tr>
+                                   <td>
+                                       <code>/var/lib/tomcat6/webapps</code>
+                                   </td>
+                                   <td> &PRODNAME; WAR </td>
+                               </tr>
+                               <tr>
+                                   <td>
+                                       <code>/opt/atomhopper</code>
+                                   </td>
+                                   <td>
+                                       &PRODNAME; H2 database:
+                                       <emphasis role="italic"> Required
+                                           only if you wish to use H2 as your
+                                           database. </emphasis>
+                                   </td>
+                               </tr>
+                               <tr>
+                                   <td><code>/etc/atomhopper/atom-server.cfg.xml</code></td>
+                                   <td>
+                                       Configuration file for 
+                                       <link linkend="Config_Namespace-d1e822">namespaces and feeds</link>.
+                                   </td>
+                               </tr>
+                               <tr>
+                                   <td><code>/etc/atomhopper/application-context.xml</code></td>
+                                   <td> Configuration file for 
+                                       <link linkend="Config_Database-d1e833">databases</link>
+                                       and the default data adapter.
+                                   </td>
+                               </tr>
+                               <tr>
+                                   <td><code>/etc/atomhopper/log4j.properties</code></td>
+                                   <td> Configuration file for 
+                                       <link linkend="Config_Log-d1e844">logs</link>.
+                                   </td>
+                               </tr>
+                           </tbody>
+                       </table>
+                   </section>
+                   <section xml:id="Deploy_DEB-d1e555">
+                       <title>Deployment Method: Debian Package (DEB)</title>
+                       <para> Using this method, a single
+                            <code>dpkg</code> command installs
+                        &PRODNAME;.</para>
+                       <para> You can use this method if your
+                        &PRODNAME; server conforms to the required
+                        operating environment: <itemizedlist>
+                            <listitem>
+                                <para> Supported operating system:
+                                   Debian 6.0 </para>
+                            </listitem>
+                            <listitem>
+                                <para> Oracle JRE 1.6 </para>
+                            </listitem>
+                            <listitem>
+                                <para> Apache Tomcat 6 </para>
+                            </listitem>
+                        </itemizedlist>
+                    </para>
+                       <note>
+                           <para>
+                               If you do not wish to use an H2 database, customize your 
+                               <link linkend="Config_Database-d1e833">database configuration</link>
+                               to use a different type of database.
+                           </para>
+                       </note>
+                       <para> To install the package: from the command
+                        prompt, issue a command such as <code>$ dpkg
+                            -i install
+                            ah-war-VERSION-INFO-HERE.deb</code>,
+                        replacing <code>VERSION-INFO-HERE</code> with
+                        identifying information for the version you
+                        wish to install. </para>
+                       <para> The following paths and files will be
+                        created by the Debian package installation
+                        process. </para>
+                       <table rules="all">
+                           <?dbhtml table-width="85%" ?>
+                           <?dbfo table-width="85%" ?>
+                           <caption>Paths and Files Created by Debian
+                               Installation</caption>
+                           <thead>
+                               <tr>
+                                   <th>Location</th>
+                                   <th>Description</th>
+                               </tr>
+                           </thead>
+                           <tbody>
+                               <tr>
+                                   <td>
+                                   <code>/var/lib/tomcat6/webapps</code>
+                                </td>
+                                   <td> &PRODNAME; WAR </td>
+                               </tr>
+                               <tr>
+                                   <td><code>/opt/atomhopper</code>
+                                </td>
+                                   <td> &PRODNAME; H2 database:
+                                   <emphasis role="italic"> Required
+                                   only if you wish to use H2 as your
+                                   database. </emphasis></td>
+                               </tr>
+                               <tr>
+                                   <td><code>/etc/atomhopper/atom-server.cfg.xml</code></td>
+                                   <td> Configuration file for <link
+                                   linkend="Config_Namespace-d1e822"
+                                   >namespaces and feeds</link>. </td>
+                               </tr>
+                           </tbody>
+                       </table>
+                   </section>
+            </section>
         </section>
-        <section xml:id="Hibernate-d1e222">
-            <title>Deployment Method: Hibernate Config File</title>
-            <para>
-                details to follow
-            </para>
+        <section xml:id="Configure_d1e811">
+            <title>Configuring &PRODNAME;</title>
+            <para> In addition to installing &PRODNAME; itself, you
+                may need to configure &PRODNAME; to use namespaces,
+                feeds, databases, and logs according to your
+                preferences. If your Apache Tomcat manages  multiple
+                WARs, you may also need to configure your <link
+                    linkend="Config_WEBXML-d1e855">web.xml</link>. </para>
+            <section xml:id="Config_Namespace-d1e822">
+                <title>Configuring Namespaces and Feeds</title>
+                <para> &PRODNAME; collects incoming feeds and stores
+                    them in databases to be queried later. To create
+                    this connection between feeds and databases,
+                    define one or more paths for your incoming and
+                    outgoing Atom-based data. In each path definition,
+                    identify your namespace and your feed. For
+                    example, in
+                        <code>http://mydomain.com/whatsnew/products/</code>,
+                        <code>whatsnew</code> identifies a namespace
+                    and <code>products</code> identifies a feed. </para>
+                <para>
+                    By default, the configuration file in which namespaces and feeds are defined is located at
+                    <code>/etc/atomhopper/atom-server.cfg.xml</code>.
+                </para>
+                <para>
+                    In the following example, <code>atom-server.cfg.xml</code> defines an Atom feed about new product announcements from a company named "Atomhopping", 
+                </para>
+                <example>
+                    <title>Atom feed announcing new products</title>
+                    <programlisting language="xml">
+<xi:include href="samples/ah-namespace-feed-products.xml" parse="text"/>
+                    </programlisting>
+                </example>
+                <para>
+                    To announce both new products and pricing changes, expand the configuration in <code>atom-server.cfg.xml</code> to include two feeds as shown below.
+                </para>
+                <example>
+                    <title>Atom feed announcing new products and pricing changes</title>
+                    <programlisting language="xml">
+<xi:include href="samples/ah-namespace-feed-news.xml" parse="text"/>
+                    </programlisting>
+                </example>
+                <important>
+                    <para>
+                        Use <code>atom-server.cfg.xml</code>
+                        to describe the domain or IP address and the port number where your &PRODNAME; server can be reached.
+                        For example, 
+                        if your domain is atomhopper.org and your port is 8080,
+                        specify <code>&lt;host domain="atomhopper.org:8080" /&gt;</code> in <code>atom-server.cfg.xml</code>.
+                    </para>
+                </important>
+            </section>
+            <section xml:id="Config_Database-d1e833">
+                <title>Configuring Databases</title>
+                <para> 
+                    To customize your database configuration, edit your 
+                    <code>/etc/atomhopper/application-context.xml</code> file; this file contains settings for connection pooling as well as some default
+                    settings for connections to other databases.
+                </para>
+                <para>
+                    By default, &PRODNAME; is configured to connect to a local 
+                    <link
+                        xlink:href="http://www.h2database.com/"
+                        >H2 database</link>;
+                    if this database doesn't exist, it will be created.
+                </para>
+                <para>
+                    &PRODNAME; supports other database types if they are enabled in its 
+                    <code>application-context.xml</code> file. 
+                    As distributed, <code>application-context.xml</code> includes 
+                    commented-out configurations for MySQL and PostgreSQL as well as the active configuration for H2.
+                </para>
+                <example>
+                    <title>Default application-context.xml: H2 enabled; MySQL and PostgreSQL commented out</title>
+                    <programlisting language="xml">
+<xi:include href="samples/ah-application-context-db-h2.xml" parse="text"/>
+                    </programlisting>
+                </example>
+                <para> 
+                    To use either MySQL or PostgreSQL rather than
+                    H2: 
+                    <itemizedlist>
+                        <listitem>
+                            <para>
+                                Comment out the H2 section of <code>application-context.xml</code>.
+                            </para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                Remove the comments (&lt;!-- and --&gt;) surrounding the MySQL or PostgreSQL section of <code>application-context.xml</code>.
+                            </para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                Ensure that the latest JDBC driver for MySQL or PostgreSQL is copied into Apache Tomcat's <code>lib</code> folder.
+                            </para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                If &PRODNAME; is already running, restart Apache Tomcat's so that the database change can take effect.
+                            </para>
+                        </listitem>
+                    </itemizedlist>
+                </para>
+                <tip>
+                    <para> If you plan to use PostgreSQL, create a
+                        database named <code>atomhopper</code> first.
+                        Once the <code>atomhopper</code> database
+                        exists, &PRODNAME; will create the tables for
+                        PostgreSQL automatically. </para>
+                    <para>
+                        If you prefer to create the database schema yourself, 
+                        you may simplify the process by adapting a DDL script provided at 
+                        <link
+                            xlink:href="https://github.com/rackspace/atom-hopper/tree/master/adapters/hibernate/src/main/resources/ddl"
+                            >https://github.com/rackspace/atom-hopper/tree/master/adapters/hibernate/src/main/resources/ddl</link>.
+                    </para>
+                </tip>
+                <example>
+                    <title>Customized application-context.xml: MySQL enabled; H2 and PostgreSQL commented out</title>
+                    <programlisting language="xml">
+<xi:include href="samples/ah-application-context-db-mysql.xml" parse="text"/>
+                    </programlisting>
+                </example>
+            </section>
+            <section xml:id="Config_Log-d1e844">
+                <title>Configuring Logs</title>
+                <para> &PRODNAME; uses <link
+                        xlink:href="http://logging.apache.org/log4j/"
+                        >log4j</link> for logging. </para>
+                <para>
+                    The <code>log4j.properties</code> file must exist and must be readable by the user running the &PRODNAME; instance.
+                    Its default location is <code>/etc/atomhopper/log4j.properties</code>.
+                </para>
+                <para>
+                    The following example shows a <code>log4j.properties</code> file that is likely to be usable as-is.
+                </para>
+                <example>
+                    <title>Logging configuration described in log4j.properties</title>
+                    <programlisting language="xml">
+<xi:include href="samples/ah-log4j-properties.txt" parse="text"/>
+                    </programlisting>
+                </example>
+                <tip>
+                    <para> For details about understanding and
+                        customizing <code>log4j.properties</code>,
+                        read <link
+                            xlink:href="http://logging.apache.org/log4j/"
+                            >log4j's documentation</link>. </para>
+                </tip>
+                <para>
+                    The default location of the &PRODNAME; log file is <code>/var/log/atomhopper.log</code>.
+                </para>
+            </section>
+            <section xml:id="Config_WEBXML-d1e855">
+                <title>Configuring web.xml</title>
+                <important>
+                    <para>
+                        This section pertains to you only if &PRODNAME;'s WAR
+                        will not be the only WAR managed by Apache Tomcat 6 or 7.
+                    </para>
+                    <para>
+                        If &PRODNAME;'s is the only WAR,
+                        there is nothing for you to configure here.
+                    </para>
+                </important>
+                <para>
+                    To create valid self-referencing links in Atom entries, 
+                    you must define the URL pattern used in such entries.
+                </para>
+                <para>
+                    In <code>web.xml</code>,
+                    set a parameter named <code>atomhopper-url-pattern</code> to a value 
+                    matching the URL pattern you will use. 
+                    The following sample <code>web.xml</code> shows how this is done, 
+                    using "atom" as a URL pattern.
+                </para>
+                <example>
+                    <title>URL pattern configured in web.xml</title>
+                    <programlisting language="xml">
+<xi:include href="samples/ah-web.xml" parse="text"/>
+                    </programlisting>
+                </example> 
+            </section>
         </section>
-        <section xml:id="Source_JAR-d1e333">
-            <title>Deployment Method: Source Code (JAR)</title>
+        <section xml:id="Use_d1e155">
+            <title>Using &PRODNAME;</title>
+            <para> An Atom feed consists of one or more entries. You
+                can get a feed from &PRODNAME;, select entries from
+                within a feed, add entries to a feed, and add
+                categories to a feed entry. </para>
             <para>
-                details to follow
+                You can also use &PRODNAME; to tell you what version of &PRODNAME; you are using, if &PRODNAME; is deployed in a manner supporting 
+                that functionality.
             </para>
-        </section>    
-        <section xml:id="RPM-d1e444">
-            <title>Deployment Method: RPM Package Manager (RPM)</title>
+            <section xml:id="Use_Get_Feed-d1e160">
+                <title>Getting a Feed</title>
+                <para> 
+                    Your &PRODNAME; may be configured to collect a large number of Atom feeds, creating a database containing much more information than you wish to process at a given time.
+                    To retrieve a specific feed or selected entries within a feed from &PRODNAME;'s database, issue an HTTP &GET;. 
+                    You can use &GET; to ask for a specific entry,
+                    move forward and backward within the feed, search the feed for entries in specific <link linkend="Use_Add_Categories-d1e158">categories</link>, 
+                    and translate entries to JSON.
+                </para>
+                <para>
+                    To get the feed from your &PRODNAME;'s database, perform a &GET; against its URL. In a default installation, that URL is shaped like <code>http://localhost:8080/namespace/feed/</code>.
+                </para>
+                <para>
+                    The response to your &GET; will include a feed head with several links to entries within the feed.
+                </para>
+                <example>
+                    <title>Feed head with links to "last", "current", and "next" relative positions</title>
+                    <programlisting language="xml">
+<xi:include href="samples/ah-feedhead.xml" parse="text"/>
+                    </programlisting>
+                </example>               
+                <para>
+                    The feed head provides links to the oldest entry within the feed, the entry currently being viewed, and, 
+                    if they are available, links to the next and previous pages of entries.
+                </para>
+                <itemizedlist>
+                    <listitem>
+                        <para>
+                            <code>rel="last"</code> identifies a link to the oldest Atom entry in the database for this feed. 
+                            This entry is "last" in that all newer entries have been added ahead of it, but it was the first entry added to the feed.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <code>rel="current"</code> identifies a link to the currently-selected Atom entry. 
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <code>rel="next"</code> identifies a link to the next page of Atom entries, containing entries newer than the entry marked as <code>rel="current"</code>.
+                            A <link linkend="Use_Query-d1e162">query</link> with the <code>direction=forward</code> parameter moves in the same direction as this <code>next</code> page.
+                        </para>
+                    </listitem>
+                </itemizedlist>
+                <para>
+                    The feed head may also include a link to the previous page of Atom entries, identified as <code>rel="previous"</code>. 
+                    A <link linkend="Use_Query-d1e162">query</link> with the <code>direction=backward</code> parameter moves in the same direction as this <code>previous</code> page.
+                </para>
+                <para>
+                    In the Atom feed,
+                    each entry includes a self-referencing link, marked as <code>rel="self"</code>. 
+                    The self-referencing link is constructed to use HTTP or HTTPS, depending upon whether you use HTTP &POST; or HTTPS &POST;.
+                </para>
+                <itemizedlist>
+                    <listitem>
+                        <para>
+                            If you use HTTP &POST;, the self-referencing link resembles <code>&gt;https://domain.com/namespace/feed/entries/urn:uuid:9b850562-d357-4cf8-8811-048a6730e869" rel="self" /&gt;</code>..
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            If you use HTTPS &POST;, the self-referencing link resembles <code>&gt;link href="http://domain.com/namespace/feed/entries/urn:uuid:9b850562-d357-4cf8-8811-048a6730e869" rel="self" /&gt;</code>..
+                        </para>
+                    </listitem>
+                </itemizedlist>
+            </section>
+            <section xml:id="Use_Add_Entries-d1e156">
+                <title>Adding Entries to a Feed</title>
+                <para> You can add an entry to a feed in Atom Hopper's
+                    database. To do this, issue an HTTP &POST; to &PRODNAME;'s endpoint, 
+                    with an HTTP <code>Content-Type</code> header set
+                    to <code>application/atom+xml</code>. </para>
+                <tip>
+                    <para>
+                        Use whatever tool you prefer to issue a &POST; to &PRODNAME;.
+                    </para>
+                    <para>
+                        You can use HTTP &POST; or HTTPS &POST;. 
+                        To support HTTPS/SSL, you may need to make changes to Apache Tomcat or whatever application server you use.
+                    </para>
+                </tip>
+                <para> If your &POST; to the &PRODNAME; endpoint
+                    successfully added an entry, you'll receive an
+                    HTTP <returnvalue>201</returnvalue> (created)
+                    response and the Atom XML you posted will be
+                    echoed back to you in the response body. </para>
+                <para> The following is an example of a simple Atom
+                    entry. In addition to delivering its content, it
+                    describes its own title, creation date, author,
+                    and three 
+                    <link linkend="Use_Add_Categories-d1e158">category labels</link>. 
+                </para>
+                <example>
+                    <title>Simple Atom entry</title>
+                    <programlisting language="xml">
+<xi:include href="samples/ah-atom-entry-simple.xml" parse="text"/>
+                    </programlisting>
+                </example>
+                <para>
+                    The structure of a complex Atom entry is similar to that of a simple Atom entry, expanded to convey additional descriptive information 
+                    such as contact information for multiple
+                    authors and contributors, copyright information, and a summary of the content.
+                </para>
+                <example>
+                    <title>Complex Atom entry</title>
+                    <programlisting language="xml">
+<xi:include href="samples/ah-atom-entry-complex.xml" parse="text"/>
+                    </programlisting>
+                </example>
+            </section>
+            <section xml:id="Use_Add_Categories-d1e158">
+                <title>Adding Categories to a Feed Entry</title>
+                <para> 
+                    &PRODNAME; can <link linkend="Use_Query-d1e162">query a feed</link> for entries matching specified categories.
+                </para>
+                <para> 
+                    &PRODNAME; can also assign a category or several categories to an entry, so that the entry can later be retrieved along with all entries in the same category.
+                </para>
+                <para>
+                    To add categories to an Atom entry,
+                    include the <code>category</code> element with a <code>term</code> attribute. Do this once for every category you wish to add to the entry.
+                    For example,
+                    <itemizedlist>
+                        <listitem>
+                            <para>
+                                To label an entry as belonging to the "servers" category, 
+                                specify <code>&lt;category term="servers" /&gt;</code>
+                            </para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                To label an entry as belonging to three categories &mdash; "servers", "failures", and "mission-critical" &mdash; specify 
+                                <code>&lt;category term="servers" /&gt;</code>
+                                and <code>&lt;category term="failures" /&gt;</code>
+                                and <code>&lt;category term="mission-critical" /&gt;</code>
+                            </para>
+                        </listitem>
+                    </itemizedlist>
+                </para>
+                <para> By adding multiple category labels to a feed
+                    entry, you make it possible to retrieve that entry
+                    in multiple ways and use it for narrowly-targeted
+                    purposes. An entry categorized as "servers",
+                    "failures", and "mission-critical" can be
+                    retrieved by a query seeking all entries relating
+                    to servers, or all entries related to failures of
+                    any kind, or all entries related to
+                    mission-critical devices. It can also be retrieved
+                    by a query seeking a very specific combination of
+                    categories, representing only failures for
+                    mission-critical servers. </para>
+            </section>
+            <section xml:id="Use_Query-d1e162">
+                <title>Selecting Entries from a Feed</title>
+                       <para> 
+                           You can use &PRODNAME; to examine an Atom feed and
+                           select entries that meet your criteria. To do that,
+                           issue a query with parameters describing the content
+                           you are seeking. 
+                       </para>
+                       <table rules="all">
+                           <?dbhtml table-width="85%" ?>
+                           <?dbfo table-width="85%" ?>
+                    <caption>&PRODNAME; Query Parameters</caption>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Data Type or Acceptable Values</th>
+                            <th>Default Value</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>marker</code></td>
+                            <td>valid ID</td>
+                            <td><emphasis role="italic"
+                                   >none</emphasis></td>
+                            <td>Specifies the unique ID of an Atom
+                                entry.</td>
+                        </tr>
+                        <tr>
+                            <td><code>direction</code></td>
+                            <td>forward | backward</td>
+                            <td>forward</td>
+                            <td>Controls the direction in which to
+                                traverse the feed to collect more
+                                entries, starting from the current
+                                entry or the value set by
+                                   <code>marker</code>.</td>
+                        </tr>
+                        <tr>
+                            <td><code>limit</code></td>
+                            <td>1 to n</td>
+                            <td>25</td>
+                            <td>Controls the number of entries
+                                returned. If the value specified is
+                                greater than the actual number of
+                                entries, the actual number of entries
+                                will be used.</td>
+                        </tr>
+                        <tr>
+                            <td><code>format</code></td>
+                            <td>json</td>
+                            <td><emphasis role="italic"
+                                   >none</emphasis></td>
+                            <td>Returns the feed in the specified
+                                format. <emphasis role="italic"
+                                   >Experimental: available only for
+                                   JSON format</emphasis>.</td>
+                        </tr>
+                        <tr>
+                            <td><code>search</code></td>
+                            <td>string</td>
+                            <td><emphasis role="italic"
+                                   >none</emphasis></td>
+                            <td>Specifies a category for which all
+                                matching entries should be
+                                returned.</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <para>
+                    By combining these parameters, you can select one or multiple entries from within a feed.
+                </para>
+                <itemizedlist>
+                    <listitem>
+                        <para><emphasis role="italic"><emphasis
+                                   role="bold">Choose a single
+                                   entry.</emphasis></emphasis></para>
+                        <para>
+                            &PRODNAME; assigns a unique identifier, <code>uuid</code>, to every Atom entry within a feed. 
+                            You can retrieve a single entry by specifying its <code>uuid</code>.
+                        </para>
+                        <para>
+                            For example, 
+                            <code>http://localhost:8080/namespace/feed/entries/urn:uuid:8439541b-b40e-4c23-b290-2820bd64257d</code> 
+                            requests the one entry for which <code>uuid</code> is set to <code>8439541b-b40e-4c23-b290-2820bd64257d</code>.
+                        </para>
+                    </listitem>
+                    <listitem>
+                    <para><emphasis role="italic"><emphasis
+                        role="bold">Start at a marker and page forward or backward.</emphasis></emphasis></para>
+                    <para>
+                        &PRODNAME; assigns a unique identifier, <code>uuid</code>, to every Atom entry within a feed. 
+                        To use a specific entry as a starting point and then page forward or backward from that point, 
+                        set <code>marker</code> to the initial entry's <code>uuid</code>, then specify a <code>direction</code> and a distance (<code>limit</code>).
+                    </para>
+                    <para>
+                        For example, 
+                        <code>http://localhost:8080/namespace/feed/?marker=urn:uuid:8439541b-b40e-4c23-b290-2820bd64257d&amp;direction=backward&amp;limit=50</code> 
+                        marks the starting point as the one entry for which <code>uuid</code> is set to <code>8439541b-b40e-4c23-b290-2820bd64257d</code>, then it moves
+                        backward through the feed for 50 pages.
+                    </para>
+                    </listitem>
+                    <listitem>
+                    <para><emphasis role="italic"><emphasis
+                        role="bold">Filter entries by category.</emphasis></emphasis></para>
+                    <warning>
+                        <para>
+                        This functionality is experimental and does not work well with paging feeds.
+                        </para>
+                    </warning>
+                    <para> Set <code>search</code> to match one or
+                            multiple categories that may be assigned
+                            to entries within the feed; precede each
+                            search criterion within the search string
+                            with <code>%2B</code>, a URL-encoded
+                                <code>+</code>. There is no limit to
+                            the number of search criteria you can
+                            specify; simply precede each one with
+                                <code>%2B</code>. All entries matching
+                            one or more of the search criteria will be
+                            returned. The search criteria must match
+                            exactly: category specifications are
+                            case-sensitive; no wild cards are
+                            supported.</para>
+                    <para> For example,
+                                <code>http://localhost:8080/namespace/feed/?search=%2Bsignups%2cancellations</code>
+                            searches the feed for all entries labeled
+                            as belonging to categories
+                                <code>signups</code> or
+                                <code>cancellations</code>.  The list
+                            of matches will not include any entries in
+                            category <code>SignUps</code>.</para>
+                    </listitem>
+                </itemizedlist>
+                </section>
+            <section xml:id="Use_Get_Version-d1e158">
+                <title>Getting &PRODNAME; Version Information</title>
+                <important>
+                <para> This functionality is available only if &PRODNAME; is deployed via a WAR file. 
+                    You can accomplish this by
+                    either the 
+                    <link linkend="Deploy_WAR-d1e111">recommended deployment method</link> or the
+                    <link linkend="Deploy_RPM-d1e444">RPM method</link>, which also installs a WAR.</para>
+                </important>
+                <para>
+                    To find out what version of &PRODNAME; you are running, you can perform an HTTP &GET; 
+                    with <code>/buildinfo</code> appended to the URL where &PRODNAME; is mapped.
+                </para>
+                <para> 
+                    For example, 
+                    <itemizedlist>
+                        <listitem>
+                            <para> a &GET; for
+                                   <code>http://localhost:8080/atomhopper-location/buildinfo</code>
+                            </para>
+                        </listitem>
+                        <listitem>
+                            <para>
+                                returns a response similar to
+                                <code>{"version":"0.10.2-SNAPSHOT","groupId":"org.atomhopper","artifactId":"ah-war"}</code>
+                            </para>
+                        </listitem>
+                    </itemizedlist>
+                </para>
+            </section>
+            <section xml:id="Use_Translate-d1e166">
+                <title>Translating a Feed to JSON (Experimental)</title>
+                <para>
+                    By default, Atom feeds are formatted as XML.
+                    You can ask for a feed to be formatted as JSON by appending <code>format=json</code> to its URL,
+                    as in <code>http://localhost:8080/namespace/feed/?format=json</code>.
+                </para>
+                <para>
+                    &PRODNAME; uses the 
+                    <link xlink:href="https://cwiki.apache.org/ABDERA/json-serialization.html">Abdera JSON Writer</link>
+                    to translate simple Atom feed entries to JSON.
+                </para>
+                <important>
+                    <para>
+                        Be sure to fully test the translation of your Atom entries to confirm that the JSON translation matches the XML original.
+                    </para>
+                    <para>
+                        If you want to embed some JSON into an Atom XML entry,
+                        wrap the JSON content in an XML <code>CDATA</code> section.
+                    </para>
+                </important>
+            </section>
+        </section>
+        <section xml:id="MultiFeed_d1e145">
+            <title>Scaling &PRODNAME;: Multiple Feeds and Multiple Databases</title>
             <para>
-                details to follow
+                You can configure &PRODNAME; to use multiple databases per feed, using the default data adapter.
+                For example, you can define a scenario such as the following, where three unique feeds each map to a different database server:
+                <itemizedlist>
+                    <listitem>
+                        <para>
+                            <code>http://localhost/myfeed/events/</code> maps to PostgreSQL Server 1
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <code>http://localhost/something/alerts/</code> maps to MySQL Server 1
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <code>http://localhost/hello/world/</code> maps to PostgreSQL Server 2
+                        </para>
+                    </listitem>
+                </itemizedlist>
             </para>
+            <para>
+                Since &PRODNAME;'s default adapter uses 
+                <link xlink:href="http://www.hibernate.org/">Hibernate</link>, 
+                you can achieve this three-way mapping by modifying two configuration files. 
+                <itemizedlist>
+                    <listitem>
+                        <para>
+                            <code>atom-server.cfg.xml</code> configures a single feed or multiple feeds
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <code>application-context.xml</code> configures connection to a single database or multiple databases
+                        </para>
+                    </listitem>
+                </itemizedlist>
+            </para>
+            <para>
+                To establish the three-way mapping described above, create configuration files as shown below.
+            </para>
+            <para>
+                In <code>atom-server.cfg.xml</code>,
+                define three unique feeds. Use <code>feed-source</code> and <code>publisher</code> 
+                to map each feed to the proper database.
+            </para>
+            <example>
+                <title>Multiple feeds configured in
+                    atom-server.cfg.xml</title>
+                <programlisting language="xml">
+<xi:include href="samples/ah-multifeed-atom-server.cfg.xml" parse="text"/>
+                    </programlisting>
+            </example>
+            <para>
+                In <code>atom-server.cfg.xml</code>,
+                define databases to receive the three feeds.
+                This example defines two PostgreSQL databases and one MySQL database.
+            </para>
+            <example>
+                <title>Multiple databases configured in
+                    application-context.xml </title>
+                <programlisting language="xml">
+<xi:include href="samples/ah-multidb-application-context.xml" parse="text"/>
+                    </programlisting>
+            </example>
+            <important>
+                <para>
+                    To use multiple databases, make sure your application server
+                    includes the JDBC drivers in its classpath.
+                    If your application server is Apache Tomcat, 
+                    you can put the JDBC drivers in the <code>lib</code> folder.
+                </para>
+            </important>
         </section>
     </chapter>
     <xi:include href="chapters/afterword.xml"/>

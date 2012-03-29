@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<atom-hopper-config xmlns="http://atomhopper.org/atom/hopper-config/v1.0">
+    <defaults>
+        <author name="author"/>
+    </defaults>
+    <host domain="localhost"/>
+    <workspace resource="/myfeed/" title="My Feed">
+        <feed resource="/events/" title="Events">
+            <feed-source reference="hibernate-feed-source-pg1"/>
+            <publisher reference="hibernate-feed-publisher-pg1"/>
+        </feed>
+    </workspace>
+    <workspace resource="/something/" title="Something">
+        <feed resource="/alerts/" title="Alerts">
+            <feed-source reference="hibernate-feed-source-mysql1"/>
+            <publisher reference="hibernate-feed-publisher-mysql1"/>
+        </feed>
+    </workspace>
+    <workspace resource="/hello/" title="Hello">
+        <feed resource="/world/" title="World">
+            <feed-source reference="hibernate-feed-source-pg2"/>
+            <publisher reference="hibernate-feed-publisher-pg2"/>
+        </feed>
+    </workspace>
+</atom-hopper-config>
