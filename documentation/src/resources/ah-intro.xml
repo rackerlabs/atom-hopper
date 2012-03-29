@@ -271,6 +271,8 @@
                     are using to run Apache Tomcat. 
                 </para>
                     <table rules="all">
+                        <?dbhtml table-width="85%" ?>
+                        <?dbfo table-width="85%" ?>
                         <caption>Paths and Files Required by WAR
                             Installation</caption>
                         <thead>
@@ -342,7 +344,9 @@
                         &PRODNAME;, pass it arguments to start it, to
                         set the port where it should listen for
                         incoming requests, and to stop it. </para>
-                       <table rules="all" width="1102">
+                       <table rules="all">
+                           <?dbhtml table-width="85%" ?>
+                           <?dbfo table-width="85%" ?>
                         <caption>Arguments Available in Embedded
                             Installation</caption>
                         <thead>
@@ -458,6 +462,8 @@
                            The following paths and files will be created by the RPM installation process.  
                        </para>
                        <table rules="all">
+                           <?dbhtml table-width="85%" ?>
+                           <?dbfo table-width="85%" ?>
                            <caption>Paths and Files Created by RPM
                                Installation</caption>
                            <thead>
@@ -545,6 +551,8 @@
                         created by the Debian package installation
                         process. </para>
                        <table rules="all">
+                           <?dbhtml table-width="85%" ?>
+                           <?dbfo table-width="85%" ?>
                            <caption>Paths and Files Created by Debian
                                Installation</caption>
                            <thead>
@@ -934,7 +942,9 @@
                            issue a query with parameters describing the content
                            you are seeking. 
                        </para>
-                       <table rules="all" width="794">
+                       <table rules="all">
+                           <?dbhtml table-width="85%" ?>
+                           <?dbfo table-width="85%" ?>
                     <caption>&PRODNAME; Query Parameters</caption>
                     <thead>
                         <tr>
