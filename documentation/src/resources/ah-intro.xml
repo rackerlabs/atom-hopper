@@ -930,11 +930,34 @@
                     categories, representing only failures for
                     mission-critical servers. </para>
             </section>
-            <section xml:id="Use_Query-d1e162">
-                <title>Selecting Entries from a Feed</title>
+            <section xml:id="Use_Select-d1e172">
+                <title>Retrieving One Item from a Feed</title>
+                <para> You can use &PRODNAME; to select a single entry
+                    from within an Atom feed. To do that, issue a
+                    query identifying the single entry you are
+                    seeking. </para>
+                <itemizedlist>
+                    <listitem>
+                        <para><emphasis role="italic"><emphasis
+                            role="bold">Choose a single
+                            entry.</emphasis></emphasis></para>
+                        <para>
+                            &PRODNAME; assigns a unique identifier, <code>uuid</code>, to every Atom entry within a feed. 
+                            You can retrieve a single entry by specifying its <code>uuid</code>.
+                        </para>
+                        <para>
+                            For example, 
+                            <code>http://localhost:8080/namespace/feed/entries/urn:uuid:8439541b-b40e-4c23-b290-2820bd64257d</code> 
+                            requests the one entry for which <code>uuid</code> is set to <code>8439541b-b40e-4c23-b290-2820bd64257d</code>.
+                        </para>
+                    </listitem>
+                </itemizedlist>
+            </section>
+            <section xml:id="Use_Search-d1e162">
+                <title>Searching within a Feed</title>
                        <para> 
                            You can use &PRODNAME; to examine an Atom feed and
-                           select entries that meet your criteria. To do that,
+                           select multiple entries that meet your criteria. To do that,
                            issue a query with parameters describing the content
                            you are seeking. 
                        </para>
@@ -1000,25 +1023,10 @@
                         </tr>
                     </tbody>
                 </table>
-                <para>
-                    By combining these parameters, you can select one or multiple entries from within a feed.
-                </para>
-                <itemizedlist>
-                    <listitem>
-                        <para><emphasis role="italic"><emphasis
-                                   role="bold">Choose a single
-                                   entry.</emphasis></emphasis></para>
-                        <para>
-                            &PRODNAME; assigns a unique identifier, <code>uuid</code>, to every Atom entry within a feed. 
-                            You can retrieve a single entry by specifying its <code>uuid</code>.
-                        </para>
-                        <para>
-                            For example, 
-                            <code>http://localhost:8080/namespace/feed/entries/urn:uuid:8439541b-b40e-4c23-b290-2820bd64257d</code> 
-                            requests the one entry for which <code>uuid</code> is set to <code>8439541b-b40e-4c23-b290-2820bd64257d</code>.
-                        </para>
-                    </listitem>
-                    <listitem>
+                <para> By combining these parameters, you can select
+                    all the entries matching your criteria. </para>
+            <itemizedlist>
+                <listitem>
                     <para><emphasis role="italic"><emphasis
                         role="bold">Start at a marker and page forward or backward.</emphasis></emphasis></para>
                     <para>
