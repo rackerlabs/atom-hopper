@@ -883,16 +883,10 @@
                     </programlisting>
                 </example>
                 <para>
-                    The structure of a complex Atom entry is similar to that of a simple Atom entry, expanded to convey additional descriptive information 
+                    You can create a more complex Atom entry by expanding it to convey additional descriptive information 
                     such as contact information for multiple
                     authors and contributors, copyright information, and a summary of the content.
                 </para>
-                <example>
-                    <title>Complex Atom entry</title>
-                    <programlisting language="xml">
-<xi:include href="samples/ah-atom-entry-complex.xml" parse="text"/>
-                    </programlisting>
-                </example>
             </section>
             <section xml:id="Use_Add_Categories-d1e158">
                 <title>Adding Categories to a Feed Entry</title>
