@@ -41,6 +41,21 @@
             <stringProp name="Argument.metadata">=</stringProp>
             <stringProp name="Argument.desc">neither begins nor ends with /</stringProp>
           </elementProp>
+          <elementProp name="buildinfo.version" elementType="Argument">
+            <stringProp name="Argument.name">buildinfo.version</stringProp>
+            <stringProp name="Argument.value">${__P(buildinfo.version,0.11.1-SNAPSHOT)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="buildinfo.groupid" elementType="Argument">
+            <stringProp name="Argument.name">buildinfo.groupid</stringProp>
+            <stringProp name="Argument.value">${__P(buildinfo.groupid,org.atomhopper)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="buildinfo.artifactid" elementType="Argument">
+            <stringProp name="Argument.name">buildinfo.artifactid</stringProp>
+            <stringProp name="Argument.value">${__P(buildinfo.artifactid,atomhopper)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
         </collectionProp>
       </Arguments>
       <hashTree/>
@@ -147,10 +162,10 @@
           <hashTree/>
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Check for expected buildinfo" enabled="true">
             <collectionProp name="Asserion.test_strings">
-              <stringProp name="1197381669">{&quot;version&quot;:&quot;0.11.1-SNAPSHOT&quot;,&quot;groupId&quot;:&quot;org.atomhopper&quot;,&quot;artifactId&quot;:&quot;atomhopper&quot;}</stringProp>
+              <stringProp name="-1294412944">{&quot;version&quot;:&quot;${buildinfo.version}&quot;,&quot;groupId&quot;:&quot;${buildinfo.groupid}&quot;,&quot;artifactId&quot;:&quot;${buildinfo.artifactid}&quot;}</stringProp>
             </collectionProp>
             <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
-            <boolProp name="Assertion.assume_success">true</boolProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">2</intProp>
           </ResponseAssertion>
           <hashTree/>
