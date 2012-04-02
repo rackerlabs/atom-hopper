@@ -96,7 +96,7 @@
         <stringProp name="ThreadGroup.delay"></stringProp>
       </ThreadGroup>
       <hashTree>
-        <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Add ${maxPagingSizePlusOne} entries" enabled="false">
+        <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Add ${maxPagingSizePlusOne} entries" enabled="true">
           <boolProp name="LoopController.continue_forever">true</boolProp>
           <stringProp name="LoopController.loops">${maxPagingSizePlusOne}</stringProp>
         </LoopController>
