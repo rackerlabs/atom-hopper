@@ -43,12 +43,12 @@
           </elementProp>
           <elementProp name="numEntriesToAdd" elementType="Argument">
             <stringProp name="Argument.name">numEntriesToAdd</stringProp>
-            <stringProp name="Argument.value">10</stringProp>
+            <stringProp name="Argument.value">20</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="limit" elementType="Argument">
             <stringProp name="Argument.name">limit</stringProp>
-            <stringProp name="Argument.value">3</stringProp>
+            <stringProp name="Argument.value">5</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
         </collectionProp>
@@ -148,8 +148,9 @@
             <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
           </HTTPSamplerProxy>
           <hashTree/>
-          <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Wait 2 Seconds" enabled="true">
-            <stringProp name="ConstantTimer.delay">2000</stringProp>
+          <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Wait" enabled="true">
+            <stringProp name="ConstantTimer.delay">200</stringProp>
+            <stringProp name="TestPlan.comments">This is to ensure that the entries added have different timestamps, and thus are returned in the order we added them</stringProp>
           </ConstantTimer>
           <hashTree/>
         </hashTree>
