@@ -1,74 +1,79 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-   <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-   <groupId>com.rackspace.papi.tests</groupId>
-   <artifactId>TestMaster</artifactId>
-   <version>1.0</version>
-   <name>TestMaster</name>
-   <packaging>pom</packaging>
+  <groupId>org.atomhopper.tests</groupId>
+  <artifactId>JMeterSuite</artifactId>
+  <version>0.11.1-SNAPSHOT</version>
+  <name>JMeterSuite</name>
+  <packaging>pom</packaging>
 
-   <organization>
-      <name>Rackspace Cloud Research</name>
-      <url>http://research.rackspace.com/</url>
-   </organization>
+  <organization>
+    <name>Rackspace Cloud Research</name>
+    <url>http://research.rackspace.com/</url>
+  </organization>
 
-   <properties>
-      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-      <project.license>apache20</project.license>
-   </properties>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.license>apache20</project.license>
+  </properties>
 
-   <licenses>
-      <license>
-         <name>Apache License, Version 2.0</name>
-         <url>http://www.apache.org/licenses/LICENSE-2.0</url>
-      </license>
-   </licenses>
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+    </license>
+  </licenses>
 
-   <scm>
-      <connection>scm:git:ssh://git@github.com/rackspace/atom-hopper.git</connection>
-   </scm>
+  <scm>
+    <connection>scm:git:ssh://git@github.com/rackspace/atom-hopper.git</connection>
+  </scm>
 
-   <repositories>
-      <repository>
-         <id>public.maven.research.rackspace.com</id>
-         <name>Rackspace Research</name>
-         <url>http://maven.research.rackspacecloud.com/content/groups/aggregate</url>
-      </repository>
-   </repositories>
+  <repositories>
+    <repository>
+      <id>public.maven.research.rackspace.com</id>
+      <name>Rackspace Research</name>
+      <url>http://maven.research.rackspacecloud.com/content/groups/aggregate</url>
+    </repository>
+  </repositories>
    
-   <pluginRepositories>
-      <pluginRepository>
-        <id>Sonatype Repository</id>
-        <url>https://oss.sonatype.org/content/groups/staging</url>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>Sonatype Repository</id>
+      <url>https://oss.sonatype.org/content/groups/staging</url>
     </pluginRepository>
-   </pluginRepositories>
+  </pluginRepositories>
 
-   <dependencies>
-      <dependency>
-         <groupId>org.apache.jmeter</groupId>
-         <artifactId>jmeter</artifactId>
-         <version>2.2</version>
-      </dependency>
-   </dependencies>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.jmeter</groupId>
+      <artifactId>jmeter</artifactId>
+      <version>2.2</version>
+    </dependency>
+  </dependencies>
    
-   <build>
-      <plugins>
-          <plugin>
-              <groupId>com.lazerycode.jmeter</groupId>
-              <artifactId>jmeter-maven-plugin</artifactId>
-              <version>1.4.1</version>
-              <executions>
-                  <execution>
-                      <id>jmeter-tests</id>
-                      <phase>verify</phase>
-                      <goals>
-                          <goal>jmeter</goal>
-                      </goals>
-                  </execution>
-              </executions>
-          </plugin>
-      </plugins>
-   </build>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.lazerycode.jmeter</groupId>
+        <artifactId>jmeter-maven-plugin</artifactId>
+        <version>1.4.1</version>
+        <executions>
+          <execution>
+            <id>jmeter-tests</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>jmeter</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>   
+          <testFilesExcluded>
+            <excludeJMeterTestFile>empty-skeleton.jmx</excludeJMeterTestFile>
+          </testFilesExcluded>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
 

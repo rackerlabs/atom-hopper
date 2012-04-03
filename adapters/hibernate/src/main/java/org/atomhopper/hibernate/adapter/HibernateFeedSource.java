@@ -25,7 +25,6 @@ import java.util.Map;
 
 import static org.apache.abdera.i18n.text.UrlEncoding.decode;
 
-
 public class HibernateFeedSource implements FeedSource {
 
     private static final int PAGE_SIZE = 25;
@@ -51,9 +50,9 @@ public class HibernateFeedSource implements FeedSource {
         hyrdatedFeed.setId(persistedFeed.getFeedId());
         hyrdatedFeed.setTitle(persistedFeed.getName());
 
-        if(!(persistedEntries.isEmpty())) {
+        if (!(persistedEntries.isEmpty())) {
             hyrdatedFeed.addLink(decode(getFeedRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)))
-                                            + "entries/" + feedRepository.getLastEntry(persistedFeed.getName()).getEntryId()).setRel(LAST_ENTRY);
+                    + "entries/" + feedRepository.getLastEntry(persistedFeed.getName()).getEntryId()).setRel(LAST_ENTRY);
         }
 
         for (PersistedEntry persistedFeedEntry : persistedEntries) {
@@ -78,7 +77,7 @@ public class HibernateFeedSource implements FeedSource {
 
     @Override
     public AdapterResponse<Entry> getEntry(GetEntryRequest getEntryRequest) {
-        final PersistedEntry entry = feedRepository.getEntry(getEntryRequest.getEntryId());
+        final PersistedEntry entry = feedRepository.getEntry(getEntryRequest.getEntryId(), getEntryRequest.getFeedName());
         AdapterResponse<Entry> response = ResponseBuilder.notFound();
 
         if (entry != null) {
@@ -93,15 +92,10 @@ public class HibernateFeedSource implements FeedSource {
         AdapterResponse<Feed> response;
 
         int pageSize = PAGE_SIZE;
+        final String pageSizeString = getFeedRequest.getPageSize();
 
-        try {
-            final String pageSizeString = getFeedRequest.getPageSize();
-
-            if (StringUtils.isNotBlank(pageSizeString)) {
-                pageSize = Integer.parseInt(pageSizeString);
-            }
-        } catch (NumberFormatException nfe) {
-            return ResponseBuilder.badRequest("Page size parameter not valid");
+        if (StringUtils.isNotBlank(pageSizeString)) {
+            pageSize = Integer.parseInt(pageSizeString);
         }
 
         final String marker = getFeedRequest.getPageMarker();
@@ -141,14 +135,14 @@ public class HibernateFeedSource implements FeedSource {
         }
 
         final PersistedFeed persistedFeed = feedRepository.getFeed(getFeedRequest.getFeedName());
-        final PersistedEntry markerEntry = feedRepository.getEntry(marker);
+        final PersistedEntry markerEntry = feedRepository.getEntry(marker, getFeedRequest.getFeedName());
 
         if (markerEntry != null) {
             final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
             final Feed feed = hydrateFeed(
                     getFeedRequest.getAbdera(), persistedFeed,
                     feedRepository.getFeedPage(
-                        getFeedRequest.getFeedName(), markerEntry, pageDirection, new SimpleCategoryCriteriaGenerator(searchString), pageSize),
+                    getFeedRequest.getFeedName(), markerEntry, pageDirection, new SimpleCategoryCriteriaGenerator(searchString), pageSize),
                     getFeedRequest);
 
             response = ResponseBuilder.found(feed);
