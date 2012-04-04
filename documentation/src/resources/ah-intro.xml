@@ -824,13 +824,13 @@
                     <listitem>
                         <para>
                             <code>rel="next"</code> identifies a link to the next page of Atom entries, containing entries newer than the entry marked as <code>rel="current"</code>.
-                            A <link linkend="Use_Query-d1e162">query</link> with the <code>direction=forward</code> parameter moves in the same direction as this <code>next</code> page.
+                            A <link linkend="Use_Search-d1e162">query</link> with the <code>direction=forward</code> parameter moves in the same direction as this <code>next</code> page.
                         </para>
                     </listitem>
                 </itemizedlist>
                 <para>
                     The feed head may also include a link to the previous page of Atom entries, identified as <code>rel="previous"</code>. 
-                    A <link linkend="Use_Query-d1e162">query</link> with the <code>direction=backward</code> parameter moves in the same direction as this <code>previous</code> page.
+                    A <link linkend="Use_Search-d1e162">query</link> with the <code>direction=backward</code> parameter moves in the same direction as this <code>previous</code> page.
                 </para>
                 <para>
                     In the Atom feed,
@@ -839,13 +839,62 @@
                 </para>
                 <itemizedlist>
                     <listitem>
+                        <para> If you use HTTP &POST;, the
+                            self-referencing link resembles
+                                <code>&gt;https://domain.com/namespace/feed/entries/urn:uuid:9b850562-d357-4cf8-8811-048a6730e869"
+                                rel="self" /&gt;</code>.</para>
+                    </listitem>
+                    <listitem>
+                        <para> If you use HTTPS &POST;, the
+                            self-referencing link resembles
+                                <code>&gt;link
+                                href="http://domain.com/namespace/feed/entries/urn:uuid:9b850562-d357-4cf8-8811-048a6730e869"
+                                rel="self" /&gt;</code>.</para>
+                    </listitem>
+                </itemizedlist>
+            </section>
+            <section xml:id="Use_ETag-d1e256">
+                <title>Checking for Changes in a Feed</title>
+                <para> 
+                    If you are interested in a feed that rarely changes, 
+                    you can increase efficiency by checking whether anything has changed before deciding to perform other processing.
+                </para>
+                <para>
+                    An entity tag (ETag) uniquely identifies each version of a feed; the feed's ETag exists in its HTTP header, in a field named <code>ETag</code>. 
+                    When the content of the feed changes, its ETag also changes.
+                </para>
+                <para>
+                    Strong and weak ETags exist; &PRODNAME; supports weak ETags.
+                </para>
+                <itemizedlist>
+                    <listitem>
                         <para>
-                            If you use HTTP &POST;, the self-referencing link resembles <code>&gt;https://domain.com/namespace/feed/entries/urn:uuid:9b850562-d357-4cf8-8811-048a6730e869" rel="self" /&gt;</code>..
+                            <emphasis role="italic"><emphasis role="bold">
+                                ETag for single-entry feed
+                            </emphasis></emphasis>
+                        </para>
+                        <para>
+                            If a feed contains only one entry, its ETag shows the same <code>uuid</code> for the first and last entries in the feed.
+                        </para>
+                        <para>
+                            For example, 
+                            <code>W/"urn:uuid:21d39ce9-940b-4277-baa3-7daa3f209e76:urn:uuid:21d39ce9-940b-4277-baa3-7daa3f209e76"</code> 
+                            identifies a single-entry feed.
                         </para>
                     </listitem>
                     <listitem>
                         <para>
-                            If you use HTTPS &POST;, the self-referencing link resembles <code>&gt;link href="http://domain.com/namespace/feed/entries/urn:uuid:9b850562-d357-4cf8-8811-048a6730e869" rel="self" /&gt;</code>..
+                            <emphasis role="italic"><emphasis role="bold">
+                                ETag for multi-entry feed
+                            </emphasis></emphasis>
+                        </para>
+                        <para>
+                            If a feed contains multiple entries, its ETag shows one <code>uuid</code> for the first entry and a different <code>uuid</code> for the final entry in the feed.
+                        </para>
+                        <para>
+                            For example, 
+                            <code>W/"urn:uuid:21d39ce9-940b-4277-baa3-7daa3f209e76:urn:uuid:def3ba91-799f-4347-833e-d9a97d3359dc"</code> 
+                            identifies a multi-entry feed.
                         </para>
                     </listitem>
                 </itemizedlist>
@@ -883,21 +932,15 @@
                     </programlisting>
                 </example>
                 <para>
-                    The structure of a complex Atom entry is similar to that of a simple Atom entry, expanded to convey additional descriptive information 
+                    You can create a more complex Atom entry by expanding it to convey additional descriptive information 
                     such as contact information for multiple
                     authors and contributors, copyright information, and a summary of the content.
                 </para>
-                <example>
-                    <title>Complex Atom entry</title>
-                    <programlisting language="xml">
-<xi:include href="samples/ah-atom-entry-complex.xml" parse="text"/>
-                    </programlisting>
-                </example>
             </section>
             <section xml:id="Use_Add_Categories-d1e158">
                 <title>Adding Categories to a Feed Entry</title>
                 <para> 
-                    &PRODNAME; can <link linkend="Use_Query-d1e162">query a feed</link> for entries matching specified categories.
+                    &PRODNAME; can <link linkend="Use_Search-d1e162">search a feed</link> for entries matching specified categories.
                 </para>
                 <para> 
                     &PRODNAME; can also assign a category or several categories to an entry, so that the entry can later be retrieved along with all entries in the same category.
@@ -936,11 +979,34 @@
                     categories, representing only failures for
                     mission-critical servers. </para>
             </section>
-            <section xml:id="Use_Query-d1e162">
-                <title>Selecting Entries from a Feed</title>
+            <section xml:id="Use_Select-d1e172">
+                <title>Retrieving One Item from a Feed</title>
+                <para> You can use &PRODNAME; to select a single entry
+                    from within an Atom feed. To do that, issue a
+                    query identifying the single entry you are
+                    seeking. </para>
+                <itemizedlist>
+                    <listitem>
+                        <para><emphasis role="italic"><emphasis
+                            role="bold">Choose a single
+                            entry.</emphasis></emphasis></para>
+                        <para>
+                            &PRODNAME; assigns a unique identifier, <code>uuid</code>, to every Atom entry within a feed. 
+                            You can retrieve a single entry by specifying its <code>uuid</code>.
+                        </para>
+                        <para>
+                            For example, 
+                            <code>http://localhost:8080/namespace/feed/entries/urn:uuid:8439541b-b40e-4c23-b290-2820bd64257d</code> 
+                            requests the one entry for which <code>uuid</code> is set to <code>8439541b-b40e-4c23-b290-2820bd64257d</code>.
+                        </para>
+                    </listitem>
+                </itemizedlist>
+            </section>
+            <section xml:id="Use_Search-d1e162">
+                <title>Searching within a Feed</title>
                        <para> 
                            You can use &PRODNAME; to examine an Atom feed and
-                           select entries that meet your criteria. To do that,
+                           select multiple entries that meet your criteria. To do that,
                            issue a query with parameters describing the content
                            you are seeking. 
                        </para>
@@ -1006,25 +1072,10 @@
                         </tr>
                     </tbody>
                 </table>
-                <para>
-                    By combining these parameters, you can select one or multiple entries from within a feed.
-                </para>
-                <itemizedlist>
-                    <listitem>
-                        <para><emphasis role="italic"><emphasis
-                                   role="bold">Choose a single
-                                   entry.</emphasis></emphasis></para>
-                        <para>
-                            &PRODNAME; assigns a unique identifier, <code>uuid</code>, to every Atom entry within a feed. 
-                            You can retrieve a single entry by specifying its <code>uuid</code>.
-                        </para>
-                        <para>
-                            For example, 
-                            <code>http://localhost:8080/namespace/feed/entries/urn:uuid:8439541b-b40e-4c23-b290-2820bd64257d</code> 
-                            requests the one entry for which <code>uuid</code> is set to <code>8439541b-b40e-4c23-b290-2820bd64257d</code>.
-                        </para>
-                    </listitem>
-                    <listitem>
+                <para> By combining these parameters, you can select
+                    all the entries matching your criteria. </para>
+            <itemizedlist>
+                <listitem>
                     <para><emphasis role="italic"><emphasis
                         role="bold">Start at a marker and page forward or backward.</emphasis></emphasis></para>
                     <para>
