@@ -59,14 +59,14 @@ public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
     public static class WhenGettingFeedsWithLimit {
         @Test
         public void shouldErrorWithBadRequest() throws Exception {
-            final HttpMethod getFeedMethod = new GetMethod(urlAndPort + "/namespace/feed/?limit=1001");
-            assertEquals("Getting a feed with a limit over 1000 should return 400", HttpStatus.SC_BAD_REQUEST, httpClient.executeMethod(getFeedMethod));
+            final HttpMethod getFeedMethod = new GetMethod(urlAndPort + "/namespace/feed/?limit=10001");
+            assertEquals("Getting a feed with a limit over 10000 should return 400", HttpStatus.SC_BAD_REQUEST, httpClient.executeMethod(getFeedMethod));
         }
 
         @Test
         public void shouldReturnWithFeed() throws Exception {
-            final HttpMethod getFeedMethod = new GetMethod(urlAndPort + "/namespace/feed/?limit=1000");
-            assertEquals("Getting a feed with a limit under or equal to 1000 should return 200", HttpStatus.SC_OK, httpClient.executeMethod(getFeedMethod));
+            final HttpMethod getFeedMethod = new GetMethod(urlAndPort + "/namespace/feed/?limit=10000");
+            assertEquals("Getting a feed with a limit under or equal to 10000 should return 200", HttpStatus.SC_OK, httpClient.executeMethod(getFeedMethod));
         }
 
         @Test
