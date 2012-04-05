@@ -43,12 +43,12 @@
           </elementProp>
           <elementProp name="maxPagingSize" elementType="Argument">
             <stringProp name="Argument.name">maxPagingSize</stringProp>
-            <stringProp name="Argument.value">1000</stringProp>
+            <stringProp name="Argument.value">10000</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="maxPagingSizePlusOne" elementType="Argument">
             <stringProp name="Argument.name">maxPagingSizePlusOne</stringProp>
-            <stringProp name="Argument.value">1001</stringProp>
+            <stringProp name="Argument.value">10001</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
         </collectionProp>
