@@ -1,5 +1,7 @@
-DELETE FROM categoryentryreferences
-WHERE categoryentryreferences.entryid
-IN (SELECT entries.entryid FROM entries WHERE datelastupdated < (now() - '8 day'::interval));
+# With the ON DELETE CASCADE constriant on the referenced columns this query is no longer needed.
+#
+#DELETE FROM categoryentryreferences
+#WHERE categoryentryreferences.entryid
+#IN (SELECT entries.entryid FROM entries WHERE datelastupdated < (now() - '8 day'::interval));
 
 DELETE FROM entries WHERE datelastupdated < (now() - '8 day'::interval);
