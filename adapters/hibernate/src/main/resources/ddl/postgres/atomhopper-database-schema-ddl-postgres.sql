@@ -12,40 +12,34 @@ SET search_path = public, pg_catalog;
 SET default_tablespace = '';
 SET default_with_oids = false;
 
-CREATE TABLE categories (
-    term character varying(255) NOT NULL,
-    CONSTRAINT categories_pkey PRIMARY KEY (term)
+CREATE TABLE feeds (
+    name character varying(255) CONSTRAINT feeds_pkey PRIMARY KEY,
+    feedid character varying(255)
 );
-ALTER TABLE public.categories OWNER TO atomschema;
-
-CREATE TABLE categoryentryreferences (
-    entryid character varying(255) NOT NULL,
-    category character varying(255) NOT NULL,
-    CONSTRAINT categoryentryreferences_pkey PRIMARY KEY (entryid, category),
-    CONSTRAINT fk_entryid_entries_entryid FOREIGN KEY (entryid) REFERENCES entries(entryid),
-    CONSTRAINT fk_category_categories_term FOREIGN KEY (category) REFERENCES categories(term)
-);
-ALTER TABLE public.categoryentryreferences OWNER TO atomschema;
+ALTER TABLE public.feeds OWNER TO atomschema;
 
 CREATE TABLE entries (
-    entryid character varying(255) NOT NULL,
+    entryid character varying(255) CONSTRAINT entries_pkey PRIMARY KEY,
     creationdate timestamp without time zone NOT NULL,
     datelastupdated timestamp without time zone NOT NULL,
     entrybody text,
     feed character varying(255),
-    CONSTRAINT fk_feed_feeds_name FOREIGN KEY (feed) REFERENCES feeds(name),
-    CONSTRAINT entries_pkey PRIMARY KEY (entryid)
+    CONSTRAINT fk_feed_feeds_name FOREIGN KEY (feed) REFERENCES feeds(name) ON DELETE CASCADE
 );
 ALTER TABLE public.entries OWNER TO atomschema;
+CREATE INDEX datelastupdated_idx on entries(datelastupdated);
 
-CREATE TABLE feeds (
-    name character varying(255) NOT NULL,
-    feedid character varying(255),
-    CONSTRAINT feeds_pkey PRIMARY KEY (name)
+CREATE TABLE categories (
+    term character varying(255) CONSTRAINT categories_pkey PRIMARY KEY
 );
+ALTER TABLE public.categories OWNER TO atomschema;
 
-
-ALTER TABLE public.feeds OWNER TO atomschema;
+CREATE TABLE categoryentryreferences (
+    entryid character varying(255) CONSTRAINT fk_entryid_entries_entryid REFERENCES entries(entryid) ON DELETE CASCADE,
+    category character varying(255) CONSTRAINT fk_category_categories_term REFERENCES categories(term) ON DELETE CASCADE,
+    CONSTRAINT categoryentryreferences_pkey PRIMARY KEY (entryid, category)
+);
+ALTER TABLE public.categoryentryreferences OWNER TO atomschema;
 
 REVOKE ALL ON SCHEMA public FROM PUBLIC;
 REVOKE ALL ON SCHEMA public FROM postgres;
