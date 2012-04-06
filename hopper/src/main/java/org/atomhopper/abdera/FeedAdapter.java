@@ -128,9 +128,9 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
     @Override
     public ResponseContext getFeed(RequestContext request) {
         GetFeedRequest getFeedRequest = new GetFeedRequestImpl(request);
-        final String LIMIT_ERROR_MESSAGE = "Limit parameter not valid, acceptable values are 1 to 10000";
+        final String LIMIT_ERROR_MESSAGE = "Limit parameter not valid, acceptable values are 1 to 1000";
         final int MIN_LIMIT = 1;
-        final int MAX_LIMIT = 10000;
+        final int MAX_LIMIT = 1000;
 
         try {
             final String pageSizeString = getFeedRequest.getPageSize();
