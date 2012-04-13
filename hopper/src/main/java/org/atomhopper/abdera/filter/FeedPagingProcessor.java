@@ -7,12 +7,13 @@ import org.atomhopper.response.AdapterResponse;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import static java.net.URLEncoder.encode;
-import java.util.*;
 
 /**
  *
@@ -48,17 +49,18 @@ public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
         if (linkNotSet(f, CURRENT_LINK)) {
             f.addLink(StringUtils.join(new String[]{self, mapToParameters(parameters)}), CURRENT_LINK);
         }
+
         // Add self link (same as current link)
         if (linkNotSet(f, SELF_LINK)) {
             f.addLink(StringUtils.join(new String[]{self, mapToParameters(parameters)}), SELF_LINK);
-        }        
+        }
 
         // If the feed source hasn't already defined this link
         if (linkNotSet(f, NEXT_LINK)) {
             String id = f.getEntries().get(f.getEntries().size() - 1).getId().toString();
-            
+
             if (parameters.containsKey(DIRECTION)) {
-                if(parameters.get(DIRECTION).get(0).equalsIgnoreCase("forward")) {
+                if (parameters.get(DIRECTION).get(0).equalsIgnoreCase("forward")) {
                     id = f.getEntries().get(0).getId().toString();
                 }
             }
@@ -78,9 +80,9 @@ public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
         for (String parameter : rc.getParameterNames()) {
             ArrayList<String> values = new ArrayList<String>();
             for (String value : rc.getParameters(parameter)) {
-                values.add(value);
+                values.add(value.replace("amp;", ""));
             }
-            parameters.put(parameter.toLowerCase(), values);
+            parameters.put(parameter.toLowerCase().replace("amp;", ""), values);
         }
 
         return parameters;
@@ -89,6 +91,7 @@ public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
     public static String mapToParameters(Map<String, List<String>> parameters) {
         try {
             List<String> result = new ArrayList<String>();
+            String queryString = "";
 
             // Combine the keys into a key=value list
             for (String key : parameters.keySet()) {
@@ -98,12 +101,15 @@ public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
                 }
             }
 
-            if (result.isEmpty()) {
+            queryString = StringUtils.join(result.toArray(), "&");
+
+            if (queryString == null || queryString.isEmpty()) {
                 return "";
             }
 
-            // Join the list into a string separated by '&' and prefix with '?'
-            return StringUtils.join(new String[]{"?", StringUtils.join(result.toArray(), "&")});
+            queryString = "?" + queryString;
+
+            return queryString;
         } catch (UnsupportedEncodingException e) {
             throw new IllegalArgumentException(e);
         }
