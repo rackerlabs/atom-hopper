@@ -1,17 +1,19 @@
 package org.atomhopper.abdera.filter;
 
-import org.apache.abdera.i18n.text.UrlEncoding;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.commons.lang.StringUtils;
 import org.atomhopper.response.AdapterResponse;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+
+import static java.net.URLEncoder.encode;
 
 /**
  *
@@ -91,48 +93,26 @@ public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
             List<String> result = new ArrayList<String>();
             String queryString = "";
 
-            // make string with params
-            // unencode string
-            //do everything else
-            //re-encode and pass back
-
             // Combine the keys into a key=value list
             for (String key : parameters.keySet()) {
                 //The key isn't unique, and we might end up with an array of multiple parameters
                 for (String value : parameters.get(key)) {
-                    result.add(key + '=' + value);
+                    result.add(encode(key, "UTF-8") + '=' + encode(value, "UTF-8"));
                 }
             }
 
             queryString = StringUtils.join(result.toArray(), "&");
 
-            //queryString = encode(queryString, "UTF-8");
-
-            String s = UrlEncoding.decode(queryString);
-
             if (queryString == null || queryString.isEmpty()) {
                 return "";
             }
 
-/*
-            for (int i = 0; i < result.size(); i++) {
-                queryString += result.get(i);
-                if (i + 1 < result.size() && !result.get(i).contains("&amp;") && !result.get(i).contains("amp%3B")) {
-                    queryString += "&";
-                }
-            }
-*/
+            queryString = "?" + queryString;
 
-/*
-            String s = StringUtils.join(new String[]{"?", StringUtils.join(result.toArray(), "&")});
-
-            // Join the list into a string separated by '&' and prefix with '?'
-            return s;
-*/
-
-            return "?" + queryString;
-
-        } catch (Exception e) {
+            return queryString;
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(e);
+        } catch (UnsupportedEncodingException e) {
             throw new IllegalArgumentException(e);
         }
     }
