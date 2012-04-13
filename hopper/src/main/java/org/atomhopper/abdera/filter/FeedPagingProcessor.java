@@ -110,8 +110,6 @@ public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
             queryString = "?" + queryString;
 
             return queryString;
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(e);
         } catch (UnsupportedEncodingException e) {
             throw new IllegalArgumentException(e);
         }
