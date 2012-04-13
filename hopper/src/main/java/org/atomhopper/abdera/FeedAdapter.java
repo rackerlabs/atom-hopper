@@ -8,6 +8,7 @@ import org.apache.abdera.protocol.server.ProviderHelper;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.ResponseContext;
 import org.apache.abdera.protocol.server.TargetType;
+import org.apache.commons.lang.StringUtils;
 import org.atomhopper.abdera.filter.FeedEntityTagProcessor;
 import org.atomhopper.abdera.filter.FeedPagingProcessor;
 import org.atomhopper.abdera.response.EmptyBodyResponseHandler;
@@ -19,6 +20,7 @@ import org.atomhopper.adapter.FeedSource;
 import org.atomhopper.adapter.impl.DisabledFeedSource;
 import org.atomhopper.adapter.impl.DisabledPublisher;
 import org.atomhopper.adapter.request.adapter.GetCategoriesRequest;
+import org.atomhopper.adapter.request.adapter.GetFeedRequest;
 import org.atomhopper.adapter.request.adapter.impl.DeleteEntryRequestImpl;
 import org.atomhopper.adapter.request.adapter.impl.GetCategoriesRequestImpl;
 import org.atomhopper.adapter.request.adapter.impl.GetEntryRequestImpl;
@@ -35,9 +37,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.lang.StringUtils;
-import org.atomhopper.adapter.ResponseBuilder;
-import org.atomhopper.adapter.request.adapter.GetFeedRequest;
 
 public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
 
