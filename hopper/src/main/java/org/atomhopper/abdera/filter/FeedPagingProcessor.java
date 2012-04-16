@@ -25,6 +25,11 @@ public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
     private static final String CURRENT_LINK = "current";
     private static final String DIRECTION = "direction";
     private static final String SELF_LINK = "self";
+    private static final String MARKER = "marker";
+    private static final String FORWARD = "forward";
+    private static final String AMP = "amp;";
+    private static final String EMPTY_STRING = "";
+    private static final String UTF8 = "UTF-8";
 
     @Override
     public void process(RequestContext rc, AdapterResponse<Feed> adapterResponse) {
@@ -60,13 +65,13 @@ public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
             String id = f.getEntries().get(f.getEntries().size() - 1).getId().toString();
 
             if (parameters.containsKey(DIRECTION)) {
-                if (parameters.get(DIRECTION).get(0).equalsIgnoreCase("forward")) {
+                if (parameters.get(DIRECTION).get(0).equalsIgnoreCase(FORWARD)) {
                     id = f.getEntries().get(0).getId().toString();
                 }
             }
             List<String> markerList = new ArrayList<String>();
             markerList.add(id);
-            parameters.put("marker", markerList);
+            parameters.put(MARKER, markerList);
             f.addLink(StringUtils.join(new String[]{self, mapToParameters(parameters)}), NEXT_LINK);
         }
     }
@@ -80,9 +85,9 @@ public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
         for (String parameter : rc.getParameterNames()) {
             ArrayList<String> values = new ArrayList<String>();
             for (String value : rc.getParameters(parameter)) {
-                values.add(value.replace("amp;", ""));
+                values.add(value.replace(AMP, EMPTY_STRING));
             }
-            parameters.put(parameter.toLowerCase().replace("amp;", ""), values);
+            parameters.put(parameter.toLowerCase().replace(AMP, EMPTY_STRING), values);
         }
 
         return parameters;
@@ -91,20 +96,19 @@ public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
     public static String mapToParameters(Map<String, List<String>> parameters) {
         try {
             List<String> result = new ArrayList<String>();
-            String queryString = "";
 
             // Combine the keys into a key=value list
             for (String key : parameters.keySet()) {
                 //The key isn't unique, and we might end up with an array of multiple parameters
                 for (String value : parameters.get(key)) {
-                    result.add(encode(key, "UTF-8") + '=' + encode(value, "UTF-8"));
+                    result.add(encode(key, UTF8) + '=' + encode(value, UTF8));
                 }
             }
 
-            queryString = StringUtils.join(result.toArray(), "&");
+            String queryString = StringUtils.join(result.toArray(), "&");
 
             if (queryString == null || queryString.isEmpty()) {
-                return "";
+                return EMPTY_STRING;
             }
 
             queryString = "?" + queryString;
