@@ -46,13 +46,6 @@ public class PersistedEntry {
     public void setEntryBody(String entryBody) {
         this.entryBody = entryBody;
     }
-    /*
-     * public List<PersistedCategory> getCategories() { return categories; }
-     *
-     * public void setCategories(List<PersistedCategory> categories) {
-     * this.categories = categories; }
-    *
-     */
 
     public List<PersistedCategory> getCategories() {
         return categories;
