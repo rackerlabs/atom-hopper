@@ -55,7 +55,7 @@ public class MongodbFeedPublisher implements FeedPublisher {
                 + "entries/" + persistedEntry.getEntryId()).setRel(LINKREL_SELF);
 
         // TODO: ADd a unique feed id back, probably in the FeedPagingProcessor...
-        //final PersistedFeed feedRef = new PersistedFeed(postEntryRequest.getFeedName(), UUID_URI_SCHEME + UUID.randomUUID().toString());
+        // final PersistedFeed feedRef = new PersistedFeed(postEntryRequest.getFeedName(), UUID_URI_SCHEME + UUID.randomUUID().toString());
         // persistedEntry.setFeed(feedRef);
 
         persistedEntry.setFeed(postEntryRequest.getFeedName());
