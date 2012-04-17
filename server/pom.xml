@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    
+
     <parent>
         <groupId>org.atomhopper</groupId>
         <artifactId>parent</artifactId>
         <version>1.0.2-SNAPSHOT</version>
-    </parent>    
+    </parent>
 
     <groupId>org.atomhopper</groupId>
     <artifactId>ah-jetty-server</artifactId>
@@ -30,11 +30,16 @@
             <groupId>org.atomhopper.adapter</groupId>
             <artifactId>hibernate-adapter</artifactId>
         </dependency>
-        
+
+        <dependency>
+            <groupId>org.atomhopper.adapter</groupId>
+            <artifactId>mongodb-adapter</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-c3p0</artifactId>
-        </dependency>          
+        </dependency>
 
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
@@ -45,32 +50,37 @@
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
         </dependency>
- 
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
         </dependency>
-        
+
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-mongodb</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.abdera</groupId>
             <artifactId>abdera-core</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.abdera</groupId>
             <artifactId>abdera-server</artifactId>
@@ -80,44 +90,44 @@
             <groupId>args4j</groupId>
             <artifactId>args4j</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>postgresql</groupId>
             <artifactId>postgresql</artifactId>
-        </dependency>        
-        
+        </dependency>
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.6.4</version>
         </dependency>
     </dependencies>
-  
+
     <profiles>
         <!--
             By default we turn off this plugin to make builds faster - however,
             if you want to build the executable server jar simply run maven with
             the following option, '-P pack-server-jar'
-            
+
             Example: mvn -P pack-server-jar clean install
         -->
         <profile>
             <id>pack-server-jar</id>
-            
+
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
-            
+
             <build>
                 <plugins>
                     <plugin>
@@ -144,6 +154,6 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile> 
+        </profile>
     </profiles>
 </project>

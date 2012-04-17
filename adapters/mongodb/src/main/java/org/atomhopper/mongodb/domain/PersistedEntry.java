@@ -1,9 +1,6 @@
 package org.atomhopper.mongodb.domain;
 
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
+import java.util.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -13,7 +10,7 @@ public class PersistedEntry {
     @Id
     private String entryId;
     private String entryBody;
-    private String[] categories;
+    private List<PersistedCategory> categories = new ArrayList<PersistedCategory>();
     private String feed;
     private Date creationDate;
     private Date dateLastUpdated;
@@ -49,13 +46,21 @@ public class PersistedEntry {
     public void setEntryBody(String entryBody) {
         this.entryBody = entryBody;
     }
+    /*
+     * public List<PersistedCategory> getCategories() { return categories; }
+     *
+     * public void setCategories(List<PersistedCategory> categories) {
+     * this.categories = categories; }
+    *
+     */
 
-    public String[] getCategories() {
+    public List<PersistedCategory> getCategories() {
         return categories;
     }
 
-    public void setCategories(String[] categories) {
-        this.categories = categories;
+    public void addCategory(PersistedCategory persistedCategories) {
+
+        this.categories.add(persistedCategories);
     }
 
     public String getFeed() {
@@ -76,8 +81,12 @@ public class PersistedEntry {
 
     @Override
     public String toString() {
-        return "PersistedEntry [id=" + this.entryId + ", entryBody=" + this.entryBody + ", creationDate="
-                + this.creationDate + ", dateLastupdated=" + this.dateLastUpdated
-                + ", categories=" + Arrays.toString(this.categories) + "]";
+        return "";
+        /*
+         * return "PersistedEntry [id=" + this.entryId + ", entryBody=" +
+         * this.entryBody + ", creationDate=" + this.creationDate + ",
+         * dateLastupdated=" + this.dateLastUpdated + ", categories=" +
+         * Arrays.toString(this.categories) + "]";
+         */
     }
 }

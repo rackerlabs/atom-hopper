@@ -61,6 +61,12 @@
             </dependency>
 
             <dependency>
+                <groupId>org.atomhopper.adapter</groupId>
+                <artifactId>mongodb-adapter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-core</artifactId>
                 <version>4.1.1.Final</version>

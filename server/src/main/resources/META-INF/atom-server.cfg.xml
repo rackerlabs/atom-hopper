@@ -5,14 +5,14 @@
         <author name="Atom Hopper" />
     </defaults>
 
-    <host domain="domain.com" />
+    <host domain="localhost:8080" />
 
     <workspace title="Testing Namespace" resource="/namespace/">
         <categories-descriptor reference="workspace-categories-descriptor" />
-        
+
         <feed title="Testing Feed" resource="/feed">
-            <feed-source reference="hibernate-feed-source" />            
-            <publisher reference="hibernate-feed-publisher" />
+            <!--<feed-source reference="hibernate-feed-source" />-->
+            <publisher reference="mongodb-feed-publisher" />
         </feed>
-    </workspace>  
+    </workspace>
 </atom-hopper-config>
