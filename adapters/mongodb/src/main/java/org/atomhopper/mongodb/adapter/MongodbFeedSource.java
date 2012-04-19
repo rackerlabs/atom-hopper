@@ -1,11 +1,6 @@
 package org.atomhopper.mongodb.adapter;
 
-import java.io.StringReader;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import org.apache.abdera.Abdera;
-import static org.apache.abdera.i18n.text.UrlEncoding.decode;
 import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
@@ -28,6 +23,14 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Order;
 import org.springframework.data.mongodb.core.query.Query;
+
+import java.io.StringReader;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import static org.apache.abdera.i18n.text.UrlEncoding.decode;
 
 public class MongodbFeedSource implements FeedSource {
 
@@ -154,8 +157,8 @@ public class MongodbFeedSource implements FeedSource {
             final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
             final Feed feed = hydrateFeed(
                     getFeedRequest.getAbdera(),
-                    feedRepository.getFeedPage(
-                    getFeedRequest.getFeedName(), markerEntry, pageDirection, new SimpleCategoryCriteriaGenerator(searchString), pageSize),
+                    enhancedGetFeedPage(
+                            getFeedRequest.getFeedName(), markerEntry, pageDirection, new SimpleCategoryCriteriaGenerator(searchString), pageSize),
                     getFeedRequest);
 
             response = ResponseBuilder.found(feed);
@@ -166,18 +169,25 @@ public class MongodbFeedSource implements FeedSource {
         return response;
     }
 
-    private List<PersistedEntry> getFeedPage(final String feedName, final PersistedEntry markerEntry, final PageDirection direction, final CategoryCriteriaGenerator criteriaGenerator, final int pageSize) {
+    private List<PersistedEntry> enhancedGetFeedPage(final String feedName, final PersistedEntry markerEntry, final PageDirection direction, final CategoryCriteriaGenerator criteriaGenerator, final int pageSize) {
 
         final LinkedList<PersistedEntry> feedPage = new LinkedList<PersistedEntry>();
 
-        final Criteria criteria = liveSession.createCriteria(PersistedEntry.class).add(Restrictions.eq(FEED_NAME, feedName));
-        criteriaGenerator.enhanceCriteria(criteria);
-        criteria.setMaxResults(pageSize);
+        //final Criteria criteria = liveSession.createCriteria(PersistedEntry.class).add(Restrictions.eq(FEED_NAME, feedName));
+        final Query query = new Query(Criteria.where("feed").is(feedName)).limit(pageSize);
+
+        criteriaGenerator.enhanceCriteria(query);
 
         switch (direction) {
             case FORWARD:
-                criteria.add(Restrictions.gt(DATE_LAST_UPDATED, markerEntry.getCreationDate())).addOrder(Order.asc(DATE_LAST_UPDATED));
-                feedPage.addAll(criteria.list());
+                query.addCriteria(Criteria.where(DATE_LAST_UPDATED).gt(markerEntry.getCreationDate()));
+                query.sort().on(DATE_LAST_UPDATED, Order.ASCENDING);
+                feedPage.addAll()
+
+
+
+                //Restrictions.gt(DATE_LAST_UPDATED, markerEntry.getCreationDate())).addOrder(Order.asc(DATE_LAST_UPDATED));
+                feedPage.addAll(cr);
                 Collections.reverse(feedPage);
                 break;
 
