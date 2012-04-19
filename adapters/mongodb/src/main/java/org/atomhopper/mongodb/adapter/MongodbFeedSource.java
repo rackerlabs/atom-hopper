@@ -4,6 +4,7 @@ import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
 import org.apache.abdera.Abdera;
+import static org.apache.abdera.i18n.text.UrlEncoding.decode;
 import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
@@ -15,12 +16,12 @@ import org.atomhopper.adapter.jpa.PersistedEntry;
 import org.atomhopper.adapter.jpa.PersistedFeed;
 import org.atomhopper.adapter.request.adapter.GetEntryRequest;
 import org.atomhopper.adapter.request.adapter.GetFeedRequest;
+import org.atomhopper.dbal.PageDirection;
 import org.atomhopper.response.AdapterResponse;
 import org.atomhopper.util.uri.template.EnumKeyedTemplateParameters;
 import org.atomhopper.util.uri.template.URITemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -41,11 +42,8 @@ public class MongodbFeedSource implements FeedSource {
     public void setParameters(Map<String, String> params) {
     }
 
-    private Feed hydrateFeed(Abdera abdera, PersistedFeed persistedFeed, List<PersistedEntry> persistedEntries, GetFeedRequest getFeedRequest) {
+    private Feed hydrateFeed(Abdera abdera, List<PersistedEntry> persistedEntries, GetFeedRequest getFeedRequest) {
         final Feed hyrdatedFeed = abdera.newFeed();
-
-        hyrdatedFeed.setId(persistedFeed.getFeedId());
-        hyrdatedFeed.setTitle(persistedFeed.getName());
 
         final PersistedEntry persistedEntry = mongoTemplate.findOne(new Query(
                 Criteria.where("feed").is(getFeedRequest.getFeedName())
@@ -55,6 +53,9 @@ public class MongodbFeedSource implements FeedSource {
         //mongoTemplate.findOne(new Sort(new Sort.Order(Sort.Direction.ASC, DATE_LAST_UPDATED)));
 
         if (!(persistedEntries.isEmpty())) {
+            hyrdatedFeed.setId(persistedEntries.get(0).getFeed().getName());
+            hyrdatedFeed.setTitle(persistedFeed.getName());
+
             hyrdatedFeed.addLink(decode(getFeedRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)))
                     + "entries/" + feedRepository.getLastEntry(persistedFeed.getName()).getEntryId()).setRel(LAST_ENTRY);
         }
