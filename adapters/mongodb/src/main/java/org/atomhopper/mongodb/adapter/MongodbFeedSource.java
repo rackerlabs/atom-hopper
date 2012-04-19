@@ -1,6 +1,7 @@
 package org.atomhopper.mongodb.adapter;
 
 import java.io.StringReader;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import org.apache.abdera.Abdera;
@@ -12,11 +13,11 @@ import org.apache.commons.lang.StringUtils;
 import org.atomhopper.adapter.FeedInformation;
 import org.atomhopper.adapter.FeedSource;
 import org.atomhopper.adapter.ResponseBuilder;
-import org.atomhopper.adapter.jpa.PersistedEntry;
-import org.atomhopper.adapter.jpa.PersistedFeed;
 import org.atomhopper.adapter.request.adapter.GetEntryRequest;
 import org.atomhopper.adapter.request.adapter.GetFeedRequest;
 import org.atomhopper.dbal.PageDirection;
+import org.atomhopper.mongodb.domain.PersistedEntry;
+import org.atomhopper.mongodb.query.SimpleCategoryCriteriaGenerator;
 import org.atomhopper.response.AdapterResponse;
 import org.atomhopper.util.uri.template.EnumKeyedTemplateParameters;
 import org.atomhopper.util.uri.template.URITemplate;
@@ -24,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Order;
 import org.springframework.data.mongodb.core.query.Query;
 
 
@@ -44,20 +46,17 @@ public class MongodbFeedSource implements FeedSource {
 
     private Feed hydrateFeed(Abdera abdera, List<PersistedEntry> persistedEntries, GetFeedRequest getFeedRequest) {
         final Feed hyrdatedFeed = abdera.newFeed();
-
-        final PersistedEntry persistedEntry = mongoTemplate.findOne(new Query(
-                Criteria.where("feed").is(getFeedRequest.getFeedName())
-                .andOperator(Criteria.where("id")
-                .is(getFeedRequest.getEntryId()))), PersistedEntry.class);
-
-        //mongoTemplate.findOne(new Sort(new Sort.Order(Sort.Direction.ASC, DATE_LAST_UPDATED)));
+        Query query = new Query(Criteria.where("feed").is(getFeedRequest.getFeedName()));
+        query.sort().on(DATE_LAST_UPDATED, Order.ASCENDING);
+        final PersistedEntry persistedEntry = mongoTemplate.findOne(query, PersistedEntry.class);
 
         if (!(persistedEntries.isEmpty())) {
-            hyrdatedFeed.setId(persistedEntries.get(0).getFeed().getName());
-            hyrdatedFeed.setTitle(persistedFeed.getName());
+            hyrdatedFeed.setId(persistedEntries.get(0).getFeed());
+            hyrdatedFeed.setTitle(persistedEntries.get(0).getFeed());
 
-            hyrdatedFeed.addLink(decode(getFeedRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)))
-                    + "entries/" + feedRepository.getLastEntry(persistedFeed.getName()).getEntryId()).setRel(LAST_ENTRY);
+            hyrdatedFeed.addLink(new StringBuilder().append(decode(getFeedRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED))))
+                    .append("entries/")
+                    .append(persistedEntry.getEntryId()).toString()).setRel(LAST_ENTRY);
         }
 
         for (PersistedEntry persistedFeedEntry : persistedEntries) {
@@ -120,14 +119,22 @@ public class MongodbFeedSource implements FeedSource {
     }
     private AdapterResponse<Feed> getFeedHead(GetFeedRequest getFeedRequest, String feedName, int pageSize) {
         final Abdera abdera = getFeedRequest.getAbdera();
-        final PersistedFeed persistedFeed = feedRepository.getFeed(feedName);
+        Query queryIfFeedExists = new Query(Criteria.where("feed").is(feedName));
+        final PersistedEntry persistedEntry = mongoTemplate.findOne(queryIfFeedExists, PersistedEntry.class);
+
         AdapterResponse<Feed> response = null;
 
-        if (persistedFeed != null) {
+        if (persistedEntry != null) {
             final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
-            final List<PersistedEntry> persistedEntries = feedRepository.getFeedHead(feedName, new SimpleCategoryCriteriaGenerator(searchString), pageSize);
+            final List<PersistedEntry> feedHead = new LinkedList<PersistedEntry>();
+            Query queryForFeedHead = new Query(Criteria.where("feed").is(feedName)).limit(pageSize);
+            queryForFeedHead.sort().on(DATE_LAST_UPDATED, Order.ASCENDING);
 
-            response = ResponseBuilder.found(hydrateFeed(abdera, persistedFeed, persistedEntries, getFeedRequest));
+            SimpleCategoryCriteriaGenerator simpleCategoryCriteriaGenerator = new SimpleCategoryCriteriaGenerator(searchString);
+            simpleCategoryCriteriaGenerator.enhanceCriteria(queryForFeedHead);
+            final List<PersistedEntry> persistedEntries = mongoTemplate.find(queryForFeedHead, PersistedEntry.class);
+
+            response = ResponseBuilder.found(hydrateFeed(abdera, persistedEntries, getFeedRequest));
         }
 
         return response != null ? response : ResponseBuilder.found(abdera.newFeed());
