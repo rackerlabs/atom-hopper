@@ -172,8 +172,6 @@ public class MongodbFeedSource implements FeedSource {
     private List<PersistedEntry> enhancedGetFeedPage(final String feedName, final PersistedEntry markerEntry, final PageDirection direction, final CategoryCriteriaGenerator criteriaGenerator, final int pageSize) {
 
         final LinkedList<PersistedEntry> feedPage = new LinkedList<PersistedEntry>();
-
-        //final Criteria criteria = liveSession.createCriteria(PersistedEntry.class).add(Restrictions.eq(FEED_NAME, feedName));
         final Query query = new Query(Criteria.where("feed").is(feedName)).limit(pageSize);
 
         criteriaGenerator.enhanceCriteria(query);
@@ -182,19 +180,15 @@ public class MongodbFeedSource implements FeedSource {
             case FORWARD:
                 query.addCriteria(Criteria.where(DATE_LAST_UPDATED).gt(markerEntry.getCreationDate()));
                 query.sort().on(DATE_LAST_UPDATED, Order.ASCENDING);
-                feedPage.addAll()
-
-
-
-                //Restrictions.gt(DATE_LAST_UPDATED, markerEntry.getCreationDate())).addOrder(Order.asc(DATE_LAST_UPDATED));
-                feedPage.addAll(cr);
+                feedPage.addAll(mongoTemplate.find(query, PersistedEntry.class));
                 Collections.reverse(feedPage);
                 break;
 
             case BACKWARD:
-                criteria.add(Restrictions.lt(DATE_LAST_UPDATED, markerEntry.getCreationDate())).addOrder(Order.desc(DATE_LAST_UPDATED));
+                query.addCriteria(Criteria.where(DATE_LAST_UPDATED).gt(markerEntry.getCreationDate()));
+                query.sort().on(DATE_LAST_UPDATED, Order.DESCENDING);
                 feedPage.add(markerEntry);
-                feedPage.addAll(criteria.list());
+                feedPage.addAll(mongoTemplate.find(query, PersistedEntry.class));
                 break;
         }
 
