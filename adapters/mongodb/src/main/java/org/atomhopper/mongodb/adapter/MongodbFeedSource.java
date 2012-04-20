@@ -185,8 +185,8 @@ public class MongodbFeedSource implements FeedSource {
         switch (direction) {
             case FORWARD:
                 query.addCriteria(Criteria.where(DATE_LAST_UPDATED).gt(markerEntry.getCreationDate()));
-                //query.sort().on(DATE_LAST_UPDATED, Order.ASCENDING);
-                query.sort().on(DATE_LAST_UPDATED, Order.DESCENDING);
+                query.sort().on(DATE_LAST_UPDATED, Order.ASCENDING);
+                //query.sort().on(DATE_LAST_UPDATED, Order.DESCENDING);
                 feedPage.addAll(mongoTemplate.find(query, PersistedEntry.class));
                 Collections.reverse(feedPage);
                 break;
