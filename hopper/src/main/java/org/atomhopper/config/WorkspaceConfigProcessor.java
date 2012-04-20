@@ -52,9 +52,7 @@ public class WorkspaceConfigProcessor {
 
         for (TargetAwareAbstractCollectionAdapter collectionAdapter : assembleFeeds(config.getFeed())) {
             final WorkspaceHandler workspace = new WorkspaceHandler(config);
-
-            workspace.addCollectionAdapter(new StringBuilder().append(config.getResource())
-                    .append(collectionAdapter.getTarget()).toString(), collectionAdapter);
+            workspace.addCollectionAdapter(collectionAdapter.getTarget(), collectionAdapter);
 
             LOG.info("Loading Workspace: " + collectionAdapter.getTarget());
             workspaces.add(workspace);
