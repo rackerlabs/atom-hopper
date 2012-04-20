@@ -85,4 +85,8 @@
     <bean name="mongodb-feed-publisher" class="org.atomhopper.mongodb.adapter.MongodbFeedPublisher">
         <property name="mongoTemplate" ref="mongoTemplate" />
     </bean>
+
+    <bean name="mongodb-feed-source" class="org.atomhopper.mongodb.adapter.MongodbFeedSource">
+        <property name="mongoTemplate" ref="mongoTemplate" />
+    </bean>
 </beans>

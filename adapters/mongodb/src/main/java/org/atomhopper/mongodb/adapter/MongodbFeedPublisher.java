@@ -51,12 +51,10 @@ public class MongodbFeedPublisher implements FeedPublisher {
         // Make sure the persisted xml has the right id
         abderaParsedEntry.setId(persistedEntry.getEntryId());
 
-        abderaParsedEntry.addLink(decode(postEntryRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)))
-                + "entries/" + persistedEntry.getEntryId()).setRel(LINKREL_SELF);
-
-        // TODO: Add a unique feed id back, probably in the FeedPagingProcessor...
-        // final PersistedFeed feedRef = new PersistedFeed(postEntryRequest.getFeedName(), UUID_URI_SCHEME + UUID.randomUUID().toString());
-        // persistedEntry.setFeed(feedRef);
+        abderaParsedEntry.addLink(new StringBuilder()
+                .append(decode(postEntryRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED))))
+                .append("entries/")
+                .append(persistedEntry.getEntryId()).toString()).setRel(LINKREL_SELF);
 
         persistedEntry.setFeed(postEntryRequest.getFeedName());
 
