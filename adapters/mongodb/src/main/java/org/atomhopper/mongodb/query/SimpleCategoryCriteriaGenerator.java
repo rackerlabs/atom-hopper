@@ -48,7 +48,6 @@ public class SimpleCategoryCriteriaGenerator implements CategoryCriteriaGenerato
     public void enhanceCriteria(Query ongoingQuery) {
         if (hasTerms) {
             if (!inclusionTerms.isEmpty()) {
-                // ongoingQuery.addCriteria(Criteria.where("term").in(inclusionTerms));
                 ongoingQuery.addCriteria(Criteria.where("categories.term").in(inclusionTerms));
             }
         }
