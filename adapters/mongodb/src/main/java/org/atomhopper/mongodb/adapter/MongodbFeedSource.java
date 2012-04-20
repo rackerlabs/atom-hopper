@@ -52,7 +52,7 @@ public class MongodbFeedSource implements FeedSource {
         final Feed hyrdatedFeed = abdera.newFeed();
         Query query = new Query(Criteria.where(FEED).is(getFeedRequest.getFeedName())).limit(1);
         query.sort().on(DATE_LAST_UPDATED, Order.ASCENDING);
-        final PersistedEntry persistedEntry = mongoTemplate.findOne(query, PersistedEntry.class);
+        final PersistedEntry lastPersistedEntry = mongoTemplate.findOne(query, PersistedEntry.class);
 
         if (!(persistedEntries.isEmpty())) {
             hyrdatedFeed.setId(persistedEntries.get(0).getFeed());
@@ -61,7 +61,7 @@ public class MongodbFeedSource implements FeedSource {
             hyrdatedFeed.addLink(new StringBuilder()
                     .append(decode(getFeedRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED))))
                     .append("entries/")
-                    .append(persistedEntry.getEntryId()).toString()).setRel(LAST_ENTRY);
+                    .append(lastPersistedEntry.getEntryId()).toString()).setRel(LAST_ENTRY);
         }
 
         for (PersistedEntry persistedFeedEntry : persistedEntries) {
@@ -134,7 +134,8 @@ public class MongodbFeedSource implements FeedSource {
             final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
             final List<PersistedEntry> feedHead = new LinkedList<PersistedEntry>();
             Query queryForFeedHead = new Query(Criteria.where(FEED).is(feedName)).limit(pageSize);
-            queryForFeedHead.sort().on(DATE_LAST_UPDATED, Order.ASCENDING);
+            //queryForFeedHead.sort().on(DATE_LAST_UPDATED, Order.ASCENDING);
+            queryForFeedHead.sort().on(DATE_LAST_UPDATED, Order.DESCENDING);
 
             SimpleCategoryCriteriaGenerator simpleCategoryCriteriaGenerator = new SimpleCategoryCriteriaGenerator(searchString);
             simpleCategoryCriteriaGenerator.enhanceCriteria(queryForFeedHead);
@@ -156,7 +157,7 @@ public class MongodbFeedSource implements FeedSource {
             return ResponseBuilder.badRequest("Marker must have a page direction specified as either \"forward\" or \"backward\"");
         }
         final PersistedEntry markerEntry = mongoTemplate.findOne(new Query(
-                Criteria.where(FEED).is(getFeedRequest.getFeedName()).andOperator(Criteria.where(ID).is(getFeedRequest.getFeedName()))), PersistedEntry.class);
+                Criteria.where(FEED).is(getFeedRequest.getFeedName()).andOperator(Criteria.where(ID).is(marker))), PersistedEntry.class);
 
         if (markerEntry != null) {
             final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
@@ -184,16 +185,19 @@ public class MongodbFeedSource implements FeedSource {
         switch (direction) {
             case FORWARD:
                 query.addCriteria(Criteria.where(DATE_LAST_UPDATED).gt(markerEntry.getCreationDate()));
-                query.sort().on(DATE_LAST_UPDATED, Order.ASCENDING);
+                //query.sort().on(DATE_LAST_UPDATED, Order.ASCENDING);
+                query.sort().on(DATE_LAST_UPDATED, Order.DESCENDING);
                 feedPage.addAll(mongoTemplate.find(query, PersistedEntry.class));
                 Collections.reverse(feedPage);
                 break;
 
             case BACKWARD:
-                query.addCriteria(Criteria.where(DATE_LAST_UPDATED).gt(markerEntry.getCreationDate()));
+                query.addCriteria(Criteria.where(DATE_LAST_UPDATED).lt(markerEntry.getCreationDate()));
                 query.sort().on(DATE_LAST_UPDATED, Order.DESCENDING);
-                feedPage.add(markerEntry);
+                //query.sort().on(DATE_LAST_UPDATED, Order.ASCENDING);
                 feedPage.addAll(mongoTemplate.find(query, PersistedEntry.class));
+                //Collections.reverse(feedPage);
+                feedPage.addFirst(markerEntry);
                 break;
         }
 

@@ -59,7 +59,7 @@ public class MongodbFeedPublisher implements FeedPublisher {
         persistedEntry.setFeed(postEntryRequest.getFeedName());
 
         for (Category category : (List<Category>) abderaParsedEntry.getCategories()) {
-            persistedEntry.addCategory(new PersistedCategory(category.getTerm()));
+            persistedEntry.addCategory(new PersistedCategory(category.getTerm().toLowerCase()));
         }
 
         persistedEntry.setEntryBody(entryToString(abderaParsedEntry));
