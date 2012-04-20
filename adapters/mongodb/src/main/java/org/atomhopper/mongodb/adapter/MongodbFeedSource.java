@@ -1,6 +1,12 @@
 package org.atomhopper.mongodb.adapter;
 
+import java.io.StringReader;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import org.apache.abdera.Abdera;
+import static org.apache.abdera.i18n.text.UrlEncoding.decode;
 import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
@@ -24,20 +30,14 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Order;
 import org.springframework.data.mongodb.core.query.Query;
 
-import java.io.StringReader;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import static org.apache.abdera.i18n.text.UrlEncoding.decode;
-
 public class MongodbFeedSource implements FeedSource {
 
     private static final Logger LOG = LoggerFactory.getLogger(MongodbFeedSource.class);
     private static final int PAGE_SIZE = 25;
     private static final String LAST_ENTRY = "last";
     private static final String DATE_LAST_UPDATED = "dateLastUpdated";
+    private static final String FEED = "feed";
+    private static final String ID = "_id";
     private MongoTemplate mongoTemplate;
 
     public void setMongoTemplate(MongoTemplate mongoTemplate) {
@@ -50,7 +50,7 @@ public class MongodbFeedSource implements FeedSource {
 
     private Feed hydrateFeed(Abdera abdera, List<PersistedEntry> persistedEntries, GetFeedRequest getFeedRequest) {
         final Feed hyrdatedFeed = abdera.newFeed();
-        Query query = new Query(Criteria.where("feed").is(getFeedRequest.getFeedName()));
+        Query query = new Query(Criteria.where(FEED).is(getFeedRequest.getFeedName())).limit(1);
         query.sort().on(DATE_LAST_UPDATED, Order.ASCENDING);
         final PersistedEntry persistedEntry = mongoTemplate.findOne(query, PersistedEntry.class);
 
@@ -58,7 +58,10 @@ public class MongodbFeedSource implements FeedSource {
             hyrdatedFeed.setId(persistedEntries.get(0).getFeed());
             hyrdatedFeed.setTitle(persistedEntries.get(0).getFeed());
 
-            hyrdatedFeed.addLink(new StringBuilder().append(decode(getFeedRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)))).append("entries/").append(persistedEntry.getEntryId()).toString()).setRel(LAST_ENTRY);
+            hyrdatedFeed.addLink(new StringBuilder()
+                    .append(decode(getFeedRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED))))
+                    .append("entries/")
+                    .append(persistedEntry.getEntryId()).toString()).setRel(LAST_ENTRY);
         }
 
         for (PersistedEntry persistedFeedEntry : persistedEntries) {
@@ -84,7 +87,9 @@ public class MongodbFeedSource implements FeedSource {
     @Override
     public AdapterResponse<Entry> getEntry(GetEntryRequest getEntryRequest) {
         final PersistedEntry entry = mongoTemplate.findOne(new Query(
-                Criteria.where("feed").is(getEntryRequest.getFeedName()).andOperator(Criteria.where("id").is(getEntryRequest.getEntryId()))), PersistedEntry.class);
+                Criteria.where(FEED).is(getEntryRequest.getFeedName())
+                .andOperator(Criteria.where(ID)
+                .is(getEntryRequest.getEntryId()))), PersistedEntry.class);
 
 
         AdapterResponse<Entry> response = ResponseBuilder.notFound();
@@ -120,7 +125,7 @@ public class MongodbFeedSource implements FeedSource {
 
     private AdapterResponse<Feed> getFeedHead(GetFeedRequest getFeedRequest, String feedName, int pageSize) {
         final Abdera abdera = getFeedRequest.getAbdera();
-        Query queryIfFeedExists = new Query(Criteria.where("feed").is(feedName));
+        Query queryIfFeedExists = new Query(Criteria.where(FEED).is(feedName));
         final PersistedEntry persistedEntry = mongoTemplate.findOne(queryIfFeedExists, PersistedEntry.class);
 
         AdapterResponse<Feed> response = null;
@@ -128,7 +133,7 @@ public class MongodbFeedSource implements FeedSource {
         if (persistedEntry != null) {
             final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
             final List<PersistedEntry> feedHead = new LinkedList<PersistedEntry>();
-            Query queryForFeedHead = new Query(Criteria.where("feed").is(feedName)).limit(pageSize);
+            Query queryForFeedHead = new Query(Criteria.where(FEED).is(feedName)).limit(pageSize);
             queryForFeedHead.sort().on(DATE_LAST_UPDATED, Order.ASCENDING);
 
             SimpleCategoryCriteriaGenerator simpleCategoryCriteriaGenerator = new SimpleCategoryCriteriaGenerator(searchString);
@@ -151,7 +156,7 @@ public class MongodbFeedSource implements FeedSource {
             return ResponseBuilder.badRequest("Marker must have a page direction specified as either \"forward\" or \"backward\"");
         }
         final PersistedEntry markerEntry = mongoTemplate.findOne(new Query(
-                Criteria.where("feed").is(getFeedRequest.getFeedName()).andOperator(Criteria.where("id").is(getFeedRequest.getFeedName()))), PersistedEntry.class);
+                Criteria.where(FEED).is(getFeedRequest.getFeedName()).andOperator(Criteria.where(ID).is(getFeedRequest.getFeedName()))), PersistedEntry.class);
 
         if (markerEntry != null) {
             final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
@@ -172,7 +177,7 @@ public class MongodbFeedSource implements FeedSource {
     private List<PersistedEntry> enhancedGetFeedPage(final String feedName, final PersistedEntry markerEntry, final PageDirection direction, final CategoryCriteriaGenerator criteriaGenerator, final int pageSize) {
 
         final LinkedList<PersistedEntry> feedPage = new LinkedList<PersistedEntry>();
-        final Query query = new Query(Criteria.where("feed").is(feedName)).limit(pageSize);
+        final Query query = new Query(Criteria.where(FEED).is(feedName)).limit(pageSize);
 
         criteriaGenerator.enhanceCriteria(query);
 
