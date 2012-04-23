@@ -31,6 +31,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.atomhopper.adapter</groupId>
+            <artifactId>mongodb-adapter</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-c3p0</artifactId>
         </dependency>

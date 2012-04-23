@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
- 
+
      <parent>
         <groupId>org.atomhopper</groupId>
         <artifactId>parent</artifactId>
         <version>1.0.3-SNAPSHOT</version>
-    </parent>    
+    </parent>
 
     <groupId>org.atomhopper</groupId>
     <artifactId>documentation</artifactId>
     <packaging>pom</packaging>
 
     <name>ATOM Hopper - Documentation</name>
-    
+
     <pluginRepositories>
         <pluginRepository>
             <id>rackspace-research</id>
             <name>Rackspace Research Repository</name>
             <url>http://maven.research.rackspacecloud.com/content/groups/public/</url>
         </pluginRepository>
-    </pluginRepositories>     
+    </pluginRepositories>
 
     <build>
         <plugins>
@@ -41,12 +41,12 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- plugin for RACKBOOK (Rackspace + DocBook) document formatting 
+            <!-- plugin for RACKBOOK (Rackspace + DocBook) document formatting
                   talk to Rose Coste if you need help -->
             <plugin>
                 <groupId>com.rackspace.cloud.api</groupId>
                 <artifactId>clouddocs-maven-plugin</artifactId>
-                <!-- this <version> relates only to the *plugin* used for document formatting 
+                <!-- this <version> relates only to the *plugin* used for document formatting
                     the version of the *software* that is the subject of the document is indicated within each document:
                     look for <releaseinfo> near <pubdate>, both in the <info> section
                     1.1.0 of the plugin is compatible with Maven 2 for inclusion in the Jenkins build & color-formats sample code -->
@@ -69,15 +69,15 @@
                             <xincludeSupported>true</xincludeSupported>
                             <!-- set branding to OPENSTACK or RACKSPACE or omit (default = RACKSPACE)
                             <branding>openstack</branding> -->
-                            <!-- for WebHelp only : 
-                                enableDisqus turns on Disqus feature for feedback if any value other than "0"; 
-                                if "intranet", use TildeHash (open source, can be private) rather than Disqus (proprietary, must be public)  
-                                disqusShortname = Disqus account where moderator is collecting this feedback 
+                            <!-- for WebHelp only :
+                                enableDisqus turns on Disqus feature for feedback if any value other than "0";
+                                if "intranet", use TildeHash (open source, can be private) rather than Disqus (proprietary, must be public)
+                                disqusShortname = Disqus account where moderator is collecting this feedback
                                 feedbackemail gets comments from Disqus or Tildehash -->
                             <enableDisqus>intranet</enableDisqus>
                             <feedbackEmail>rose.coste@rackspace.com</feedbackEmail>
                             <disqusShortname>rc-integration</disqusShortname>
-                            <!-- open at the What Is It? page 
+                            <!-- open at the What Is It? page
                                  or use index.html to open Webhelp at the front matter: copyright page, list of tables, list of figures, list of examples -->
                             <htmlhelpDefaultTopic>Introduction-000.html</htmlhelpDefaultTopic>
                             <!-- look here for the .xml and everything to include such as samples and figures -->
@@ -88,8 +88,8 @@
                             <useExtensions>1</useExtensions>
                             <calloutsExtension>1</calloutsExtension>
                             <textinsertExtension>1</textinsertExtension>
-                            <!-- use this .XML as the source for the books to be generated as .PDF & .HTML 
-                                 if not specified, generate for all 
+                            <!-- use this .XML as the source for the books to be generated as .PDF & .HTML
+                                 if not specified, generate for all
                             <includes>ah-intro.xml</includes> -->
                             <!-- customize source of product logo as path from pom.xml -->
                             <coverLogoPath>src/resources/img/atomhopper-sponsored-by-rackspace.png</coverLogoPath>
@@ -97,7 +97,7 @@
                             <coverLogoLeft>4in</coverLogoLeft>
                             <!-- customize position of product logo as inches down from top -->
                             <coverLogoTop>5.5in</coverLogoTop>
-                            <!-- customize more-info link on cover: show project home page  
+                            <!-- customize more-info link on cover: show project home page
                                  <coverUrl> value is displayed as-is but "http://" is prepended to link so don't specify it for display -->
                             <coverUrl>www.atomhopper.org</coverUrl>
                             <!-- customize color of wide band on doc cover as RGB: 00FF00 is true green -->

@@ -23,7 +23,8 @@ import java.util.List;
 /**
  * I eat configurations.
  *
- * TODO: Sanitize configured workspace and feed resource paths for regex insertion
+ * TODO: Sanitize configured workspace and feed resource paths for regex
+ * insertion
  */
 public class WorkspaceConfigProcessor {
 
