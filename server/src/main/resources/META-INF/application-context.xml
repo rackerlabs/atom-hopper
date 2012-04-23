@@ -54,6 +54,7 @@
                 <entry key="hibernate.c3p0.timeout" value="1800" />
                 <entry key="hibernate.c3p0.max_statements" value="50" />
                 <entry key="hibernate.c3p0.idle_test_period" value="3000" />
+                -->
                 <!-- End C3P0 Config -->
             </map>
         </constructor-arg>
