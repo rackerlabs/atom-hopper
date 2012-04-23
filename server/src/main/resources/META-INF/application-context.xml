@@ -1,21 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+       xsi:schemaLocation=
+          "http://www.springframework.org/schema/context
+          http://www.springframework.org/schema/context/spring-context-3.0.xsd
+          http://www.springframework.org/schema/data/mongo
+          http://www.springframework.org/schema/data/mongo/spring-mongo-1.0.xsd
+          http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
     <!-- Hibernate -->
     <bean name="feed-repository-bean" class="org.atomhopper.hibernate.HibernateFeedRepository">
         <constructor-arg>
-            <map>                
+            <map>
                 <!-- Start H2 Config -->
                 <entry key="hibernate.connection.url" value="jdbc:h2:/opt/atomhopper/atom-hopper-db" />
                 <entry key="hibernate.connection.driver_class" value="org.h2.Driver" />
                 <entry key="hibernate.dialect" value="org.hibernate.dialect.H2Dialect" />
                 <entry key="hibernate.connection.username" value="sa" />
-                <entry key="hibernate.connection.password" value="" />                
+                <entry key="hibernate.connection.password" value="" />
                 <!-- End H2 Config -->
-                
+
                 <!-- Start MySQL Config -->
                 <!--
                 <entry key="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver" />
@@ -25,20 +32,20 @@
                 <entry key="hibernate.connection.password" value="root" />
                 -->
                 <!-- End MySQL Config -->
-                
+
                 <!-- Start PostgreSQL Config -->
-                <!--                
+                <!--
                 <entry key="hibernate.connection.driver_class" value="org.postgresql.Driver" />
                 <entry key="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
                 <entry key="hibernate.connection.url" value="jdbc:postgresql://localhost:5432/atomhopper" />
                 <entry key="hibernate.connection.username" value="postgres" />
                 <entry key="hibernate.connection.password" value="password" />
-                -->                
-                <!-- End PostgreSQL Config -->                
-                
-                <entry key="hibernate.hbm2ddl.auto" value="update" />
+                -->
+                <!-- End PostgreSQL Config -->
+
+                <!-- <entry key="hibernate.hbm2ddl.auto" value="update" /> -->
                 <!-- <entry key="hibernate.show_sql" value="false" /> -->
-                
+
                 <!-- Start C3P0 Config -->
                 <!--
                 <entry key="hibernate.c3p0.min_size" value="5" />
@@ -47,17 +54,34 @@
                 <entry key="hibernate.c3p0.timeout" value="1800" />
                 <entry key="hibernate.c3p0.max_statements" value="50" />
                 <entry key="hibernate.c3p0.idle_test_period" value="3000" />
-                -->
-                <!-- End C3P0 Config -->               
+                <!-- End C3P0 Config -->
             </map>
         </constructor-arg>
     </bean>
-                
+
     <bean name="hibernate-feed-source" class="org.atomhopper.hibernate.adapter.HibernateFeedSource">
         <property name="feedRepository" ref="feed-repository-bean" />
     </bean>
-    
+
     <bean name="hibernate-feed-publisher" class="org.atomhopper.hibernate.adapter.HibernateFeedPublisher">
         <property name="feedRepository" ref="feed-repository-bean" />
     </bean>
+
+    <!-- MongoDB -->
+    <!--
+    <mongo:mongo host="localhost" port="27017"/>
+
+    <bean name="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+        <constructor-arg ref="mongo"/>
+        <constructor-arg name="databaseName" value="atomhopper"/>
+    </bean>
+
+    <bean name="mongodb-feed-publisher" class="org.atomhopper.mongodb.adapter.MongodbFeedPublisher">
+        <property name="mongoTemplate" ref="mongoTemplate" />
+    </bean>
+
+    <bean name="mongodb-feed-source" class="org.atomhopper.mongodb.adapter.MongodbFeedSource">
+        <property name="mongoTemplate" ref="mongoTemplate" />
+    </beans>
+    -->
 </beans>
