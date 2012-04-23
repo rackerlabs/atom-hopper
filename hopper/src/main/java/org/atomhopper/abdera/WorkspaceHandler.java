@@ -30,7 +30,10 @@ public class WorkspaceHandler implements WorkspaceInfo {
     public TargetAwareAbstractCollectionAdapter getAnsweringAdapter(RequestContext rc) {
         final String feedSpec = rc.getTarget().getParameter(TargetResolverField.FEED.toString());
 
-        return !StringUtils.isBlank(feedSpec) ? collectionAdapterMap.get(feedSpec) : null;
+        return !StringUtils.isBlank(feedSpec) ? collectionAdapterMap.get(new StringBuilder().append("/")
+                .append(rc.getTarget().getParameter(TargetResolverField.WORKSPACE.toString()))
+                .append("/")
+                .append(feedSpec).toString()) : null;
     }
 
     @Override
