@@ -12,18 +12,15 @@
           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
     <!-- Hibernate -->
-    <!--
     <bean name="feed-repository-bean" class="org.atomhopper.hibernate.HibernateFeedRepository">
         <constructor-arg>
-            <map>-->
+            <map>
                 <!-- Start H2 Config -->
-                <!--
                 <entry key="hibernate.connection.url" value="jdbc:h2:/opt/atomhopper/atom-hopper-db" />
                 <entry key="hibernate.connection.driver_class" value="org.h2.Driver" />
                 <entry key="hibernate.dialect" value="org.hibernate.dialect.H2Dialect" />
                 <entry key="hibernate.connection.username" value="sa" />
                 <entry key="hibernate.connection.password" value="" />
-                -->
                 <!-- End H2 Config -->
 
                 <!-- Start MySQL Config -->
@@ -57,14 +54,11 @@
                 <entry key="hibernate.c3p0.timeout" value="1800" />
                 <entry key="hibernate.c3p0.max_statements" value="50" />
                 <entry key="hibernate.c3p0.idle_test_period" value="3000" />
-                -->
                 <!-- End C3P0 Config -->
-                <!--
             </map>
         </constructor-arg>
-    </bean>-->
+    </bean>
 
-    <!--
     <bean name="hibernate-feed-source" class="org.atomhopper.hibernate.adapter.HibernateFeedSource">
         <property name="feedRepository" ref="feed-repository-bean" />
     </bean>
@@ -72,9 +66,9 @@
     <bean name="hibernate-feed-publisher" class="org.atomhopper.hibernate.adapter.HibernateFeedPublisher">
         <property name="feedRepository" ref="feed-repository-bean" />
     </bean>
-    -->
 
     <!-- MongoDB -->
+    <!--
     <mongo:mongo host="localhost" port="27017"/>
 
     <bean name="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
@@ -88,5 +82,6 @@
 
     <bean name="mongodb-feed-source" class="org.atomhopper.mongodb.adapter.MongodbFeedSource">
         <property name="mongoTemplate" ref="mongoTemplate" />
-    </bean>
+    </beans>
+    -->
 </beans>
