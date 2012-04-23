@@ -23,8 +23,6 @@ import org.atomhopper.mongodb.query.SimpleCategoryCriteriaGenerator;
 import org.atomhopper.response.AdapterResponse;
 import org.atomhopper.util.uri.template.EnumKeyedTemplateParameters;
 import org.atomhopper.util.uri.template.URITemplate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Order;
@@ -32,7 +30,6 @@ import org.springframework.data.mongodb.core.query.Query;
 
 public class MongodbFeedSource implements FeedSource {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MongodbFeedSource.class);
     private static final int PAGE_SIZE = 25;
     private static final String LAST_ENTRY = "last";
     private static final String DATE_LAST_UPDATED = "dateLastUpdated";
@@ -132,7 +129,6 @@ public class MongodbFeedSource implements FeedSource {
 
         if (persistedEntry != null) {
             final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
-            final List<PersistedEntry> feedHead = new LinkedList<PersistedEntry>();
             Query queryForFeedHead = new Query(Criteria.where(FEED).is(feedName)).limit(pageSize);
             queryForFeedHead.sort().on(DATE_LAST_UPDATED, Order.DESCENDING);
 
