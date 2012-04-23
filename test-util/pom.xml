@@ -5,9 +5,9 @@
     <parent>
         <groupId>org.atomhopper</groupId>
         <artifactId>parent</artifactId>
-        <version>1.0.2-SNAPSHOT</version>
+        <version>1.0.3-SNAPSHOT</version>
     </parent>
-    
+
     <groupId>org.atomhopper</groupId>
     <artifactId>test-util</artifactId>
     <packaging>jar</packaging>
