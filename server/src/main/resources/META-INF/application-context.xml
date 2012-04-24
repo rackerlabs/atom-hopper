@@ -83,6 +83,6 @@
 
     <bean name="mongodb-feed-source" class="org.atomhopper.mongodb.adapter.MongodbFeedSource">
         <property name="mongoTemplate" ref="mongoTemplate" />
-    </beans>
+    </bean>
     -->
 </beans>
