@@ -1,20 +1,22 @@
 package org.atomhopper.mongodb.adapter;
 
+import java.util.UUID;
+import static junit.framework.Assert.assertEquals;
 import org.apache.abdera.model.Entry;
+import org.apache.abdera.parser.stax.FOMEntry;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.atomhopper.adapter.request.adapter.DeleteEntryRequest;
 import org.atomhopper.adapter.request.adapter.PostEntryRequest;
 import org.atomhopper.adapter.request.adapter.PutEntryRequest;
-import org.atomhopper.adapter.request.adapter.impl.PostEntryRequestImpl;
 import org.atomhopper.response.AdapterResponse;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
-
-import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.http.HttpStatus;
 
 @RunWith(Enclosed.class)
 public class MongodbFeedPublisherTest {
@@ -26,24 +28,25 @@ public class MongodbFeedPublisherTest {
         private MongodbFeedPublisher mongodbFeedPublisher;
         private PostEntryRequest postEntryRequest;
         private RequestContext requestContext;
+        private MongoTemplate mongoTemplate;
 
 
         @Before
         public void setUp() throws Exception {
             putEntryRequest = mock(PutEntryRequest.class);
             deleteEntryRequest = mock(DeleteEntryRequest.class);
+            mongoTemplate = mock(MongoTemplate.class);
             mongodbFeedPublisher = new MongodbFeedPublisher();
+            mongodbFeedPublisher.setMongoTemplate(mongoTemplate);
             requestContext = mock(RequestContext.class);
-            postEntryRequest = new PostEntryRequestImpl(requestContext);
+            postEntryRequest = mock(PostEntryRequest.class);
+            when(postEntryRequest.getEntry()).thenReturn(entry());
         }
 
         @Test
-        @Ignore //TODO: Feed this test a correctly mocked entry.
-        public void shouldReturnFeedSourceAdapterResponseWithCategory() throws Exception {
-            Entry entry = postEntryRequest.getEntry();
-            entry.addCategory("category");
-            AdapterResponse adapterResponse = mongodbFeedPublisher.postEntry(postEntryRequest);
-            assertEquals("Category added to the PostEntryRequest should come back in the AdapterResponse", "category", adapterResponse);
+        public void shouldReturnHTTPCreated() throws Exception {
+            AdapterResponse<Entry> adapterResponse = mongodbFeedPublisher.postEntry(postEntryRequest);
+            assertEquals("Should return HTTP 201 (Created)", HttpStatus.CREATED, adapterResponse.getResponseStatus());
         }
 
         @Test(expected = UnsupportedOperationException.class)
@@ -54,6 +57,14 @@ public class MongodbFeedPublisherTest {
         @Test(expected = UnsupportedOperationException.class)
         public void shouldDeleteEntry() throws Exception {
             mongodbFeedPublisher.deleteEntry(deleteEntryRequest);
+        }
+
+        public Entry entry() {
+            final FOMEntry entry = new FOMEntry();
+            entry.setId(UUID.randomUUID().toString());
+            entry.setContent("testing");
+            entry.addCategory("category");
+            return entry;
         }
     }
 }
