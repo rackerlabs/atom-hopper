@@ -27,7 +27,6 @@ public class MongodbFeedPublisherTest {
         private DeleteEntryRequest deleteEntryRequest;
         private MongodbFeedPublisher mongodbFeedPublisher;
         private PostEntryRequest postEntryRequest;
-        private RequestContext requestContext;
         private MongoTemplate mongoTemplate;
 
 
@@ -38,7 +37,6 @@ public class MongodbFeedPublisherTest {
             mongoTemplate = mock(MongoTemplate.class);
             mongodbFeedPublisher = new MongodbFeedPublisher();
             mongodbFeedPublisher.setMongoTemplate(mongoTemplate);
-            requestContext = mock(RequestContext.class);
             postEntryRequest = mock(PostEntryRequest.class);
             when(postEntryRequest.getEntry()).thenReturn(entry());
         }
