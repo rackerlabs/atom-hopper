@@ -78,7 +78,7 @@ public class PersistedEntry {
                 .append(this.entryId).append(", entryBody=")
                 .append(this.entryBody).append(", creationDate=")
                 .append(this.creationDate).append(", dateLastupdated = ")
-                .append(this.dateLastUpdated).append(", categories =")
-                .append(Arrays.toString(this.categories.toArray())).append("]").toString();
+                .append(this.dateLastUpdated).append(", feed=")
+                .append(feed).append("]").toString();
     }
 }

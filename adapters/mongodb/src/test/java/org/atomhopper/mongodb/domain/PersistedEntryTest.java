@@ -1,0 +1,69 @@
+package org.atomhopper.mongodb.domain;
+
+import java.util.UUID;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.experimental.runners.Enclosed;
+import org.junit.runner.RunWith;
+
+@RunWith(Enclosed.class)
+public class PersistedEntryTest {
+
+    public static class WhenUsingPersistedEntries {
+
+        private PersistedEntry persistedEntry;
+        private PersistedCategory persistedCategory;
+        private final String ID = UUID.randomUUID().toString();
+        private final String ENTRY_BODY = "body";
+        private final String FEED = "namespace/feed";
+
+        @Before
+        public void setUp() throws Exception {
+            persistedEntry = new PersistedEntry();
+            persistedCategory = new PersistedCategory("MyCategory1");
+
+            persistedEntry.setEntryId(ID);
+            persistedEntry.setEntryBody(ENTRY_BODY);
+            persistedEntry.setFeed(FEED);
+            persistedEntry.addCategory(persistedCategory);
+        }
+
+        @Test
+        public void shouldReturnCreationDate() throws Exception {
+            assertNotNull(persistedEntry.getCreationDate());
+        }
+
+        @Test
+        public void shouldReturnDateLastUpdated() throws Exception {
+            assertNotNull(persistedEntry.getDateLastUpdated());
+        }
+
+        @Test
+        public void shouldReturnId() throws Exception {
+            assertEquals("IDs should match", ID, persistedEntry.getEntryId());
+        }
+
+        @Test
+        public void shouldReturnEntryBody() throws Exception {
+            assertEquals("Entry body should match", ENTRY_BODY, persistedEntry.getEntryBody());
+        }
+
+        @Test
+        public void shouldReturnFeed() throws Exception {
+            assertEquals("Feed should match", FEED, persistedEntry.getFeed());
+        }
+
+        @Test
+        public void shouldContainCategories() throws Exception {
+            assertNotNull(persistedEntry.getCategories());
+        }
+
+        @Test
+        public void shouldDisplayContentsViaToString() throws Exception {
+            assertNotNull(persistedEntry.toString());
+            System.out.println(persistedEntry.toString());
+        }
+    }
+}
