@@ -74,12 +74,11 @@ public class PersistedEntry {
 
     @Override
     public String toString() {
-        return "";
-        /*
-         * return "PersistedEntry [id=" + this.entryId + ", entryBody=" +
-         * this.entryBody + ", creationDate=" + this.creationDate + ",
-         * dateLastupdated=" + this.dateLastUpdated + ", categories=" +
-         * Arrays.toString(this.categories) + "]";
-         */
+        return new StringBuilder().append("PersistedEntry [id=")
+                .append(this.entryId).append(", entryBody=")
+                .append(this.entryBody).append(", creationDate=")
+                .append(this.creationDate).append(", dateLastupdated = ")
+                .append(this.dateLastUpdated).append(", feed=")
+                .append(feed).append("]").toString();
     }
 }
