@@ -7,15 +7,15 @@
     <!-- Hibernate -->
     <bean name="feed-repository-bean" class="org.atomhopper.hibernate.HibernateFeedRepository">
         <constructor-arg>
-            <map>                
+            <map>
                 <!-- Start H2 Config -->
                 <entry key="hibernate.connection.url" value="jdbc:h2:~/atom-hopper-db" />
                 <entry key="hibernate.connection.driver_class" value="org.h2.Driver" />
                 <entry key="hibernate.dialect" value="org.hibernate.dialect.H2Dialect" />
                 <entry key="hibernate.connection.username" value="sa" />
-                <entry key="hibernate.connection.password" value="" />                
+                <entry key="hibernate.connection.password" value="" />
                 <!-- End H2 Config -->
-                
+
                 <!-- Start MySQL Config -->
                 <!--
                 <entry key="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver" />
@@ -25,38 +25,27 @@
                 <entry key="hibernate.connection.password" value="root" />
                 -->
                 <!-- End MySQL Config -->
-                
+
                 <!-- Start PostgreSQL Config -->
-                <!--                
+                <!--
                 <entry key="hibernate.connection.driver_class" value="org.postgresql.Driver" />
                 <entry key="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
                 <entry key="hibernate.connection.url" value="jdbc:postgresql://localhost:5432/atomhopper" />
                 <entry key="hibernate.connection.username" value="postgres" />
                 <entry key="hibernate.connection.password" value="password" />
-                -->                
-                <!-- End PostgreSQL Config -->                
-                
+                -->
+                <!-- End PostgreSQL Config -->
+
                 <entry key="hibernate.hbm2ddl.auto" value="create" />
                 <!--<entry key="hibernate.show_sql" value="true" />-->
-                
-                <!-- Start C3P0 Config -->
-                <!--
-                <entry key="hibernate.c3p0.min_size" value="5" />
-                <entry key="hibernate.c3p0.max_size" value="100" />
-                <entry key="hibernate.c3p0.initialPoolSize" value="5" />
-                <entry key="hibernate.c3p0.timeout" value="1800" />
-                <entry key="hibernate.c3p0.max_statements" value="50" />
-                <entry key="hibernate.c3p0.idle_test_period" value="3000" />
-                -->
-                <!-- End C3P0 Config -->                 
             </map>
         </constructor-arg>
     </bean>
-                
+
     <bean name="hibernate-feed-source" class="org.atomhopper.hibernate.adapter.HibernateFeedSource">
         <property name="feedRepository" ref="feed-repository-bean" />
     </bean>
-    
+
     <bean name="hibernate-feed-publisher" class="org.atomhopper.hibernate.adapter.HibernateFeedPublisher">
         <property name="feedRepository" ref="feed-repository-bean" />
     </bean>
