@@ -48,23 +48,17 @@ public class MongodbFeedSource implements FeedSource {
 
     private Feed hydrateFeed(Abdera abdera, List<PersistedEntry> persistedEntries, GetFeedRequest getFeedRequest, final int pageSize) {
         final Feed hyrdatedFeed = abdera.newFeed();
-        // Get the last page of entries
-        Query query = new Query(Criteria.where(FEED).is(getFeedRequest.getFeedName())).limit(1);
-        query.sort().on(DATE_LAST_UPDATED, Order.ASCENDING);
-        final PersistedEntry lastPersistedEntry = mongoTemplate.findOne(query, PersistedEntry.class);
 
         if (!(persistedEntries.isEmpty())) {
+            final String BASE_FEED_URI = decode(getFeedRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
+
             hyrdatedFeed.setId(persistedEntries.get(0).getFeed());
             hyrdatedFeed.setTitle(persistedEntries.get(0).getFeed());
-
-            hyrdatedFeed.addLink(new StringBuilder().append(decode(getFeedRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)))).append("entries/").append(lastPersistedEntry.getEntryId()).toString()).setRel(LAST_ENTRY);
 
             // If limit > actual number of entries in the database, there
             // is not a previous or next link
             if (persistedEntries.size() > pageSize) {
                 // Set the previous link
-                final String BASE_FEED_URI = decode(getFeedRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
-
                 hyrdatedFeed.addLink(new StringBuilder()
                         .append(BASE_FEED_URI)
                         .append("?marker=")
@@ -165,7 +159,25 @@ public class MongodbFeedSource implements FeedSource {
             simpleCategoryCriteriaGenerator.enhanceCriteria(queryForFeedHead);
             final List<PersistedEntry> persistedEntries = mongoTemplate.find(queryForFeedHead, PersistedEntry.class);
 
-            response = ResponseBuilder.found(hydrateFeed(abdera, persistedEntries, getFeedRequest, pageSize));
+            Feed hyrdatedFeed = hydrateFeed(abdera, persistedEntries, getFeedRequest, pageSize);
+            // Set the last link in the feed head
+            final String BASE_FEED_URI = decode(getFeedRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
+            Query query = new Query(Criteria.where(FEED).is(getFeedRequest.getFeedName())).limit(pageSize);
+            query.sort().on(DATE_LAST_UPDATED, Order.ASCENDING);
+            final List<PersistedEntry> lastPersistedEntries = mongoTemplate.find(query, PersistedEntry.class);
+
+            if (!(lastPersistedEntries.isEmpty())) {
+                hyrdatedFeed.addLink(new StringBuilder()
+                        .append(BASE_FEED_URI)
+                        .append("?marker=")
+                        .append(lastPersistedEntries.get(0).getEntryId())
+                        .append("&limit=")
+                        .append(String.valueOf(pageSize))
+                        .append("&direction=forward").toString())
+                        .setRel(LAST_ENTRY);
+            }
+
+            response = ResponseBuilder.found(hyrdatedFeed);
         }
 
         return response != null ? response : ResponseBuilder.found(abdera.newFeed());
