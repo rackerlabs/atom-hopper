@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import static java.net.URLEncoder.encode;
+import org.apache.abdera.model.Link;
 
 /**
  *
@@ -21,10 +22,7 @@ import static java.net.URLEncoder.encode;
  */
 public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
 
-    private static final String NEXT_LINK = "next";
-    private static final String CURRENT_LINK = "current";
     private static final String DIRECTION = "direction";
-    private static final String SELF_LINK = "self";
     private static final String MARKER = "marker";
     private static final String FORWARD = "forward";
     private static final String AMP = "amp;";
@@ -51,16 +49,17 @@ public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
         final Map<String, List<String>> parameters = getParameterMap(rc);
 
         // Add current link
-        if (linkNotSet(f, CURRENT_LINK)) {
-            f.addLink(StringUtils.join(new String[]{self, mapToParameters(parameters)}), CURRENT_LINK);
+        if (linkNotSet(f, Link.REL_CURRENT)) {
+            f.addLink(StringUtils.join(new String[]{self, mapToParameters(parameters)}), Link.REL_CURRENT);
         }
 
         // Add self link (same as current link)
-        if (linkNotSet(f, SELF_LINK)) {
-            f.addLink(StringUtils.join(new String[]{self, mapToParameters(parameters)}), SELF_LINK);
+        if (linkNotSet(f, Link.REL_SELF)) {
+            f.addLink(StringUtils.join(new String[]{self, mapToParameters(parameters)}), Link.REL_SELF);
         }
 
         // If the feed source hasn't already defined this link
+        /*
         if (linkNotSet(f, NEXT_LINK)) {
             String id = f.getEntries().get(f.getEntries().size() - 1).getId().toString();
 
@@ -74,6 +73,7 @@ public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
             parameters.put(MARKER, markerList);
             f.addLink(StringUtils.join(new String[]{self, mapToParameters(parameters)}), NEXT_LINK);
         }
+        * */
     }
 
     private boolean linkNotSet(Feed feed, String link) {
