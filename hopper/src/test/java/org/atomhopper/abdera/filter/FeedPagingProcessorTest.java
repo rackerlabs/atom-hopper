@@ -50,9 +50,6 @@ public class FeedPagingProcessorTest {
 
             assertThat("Should set self link", feed.getLink(REL_SELF), notNullValue());
             assertThat("Should match self (self link)", feed.getLink(REL_SELF).getHref().toString(), equalTo(SELF_URL));
-
-            //assertThat("Should set next link", feed.getLink(REL_NEXT), notNullValue());
-            //assertThat("Should reference last entry on feed", feed.getLink(REL_NEXT).getHref().toString(), equalTo("http://localhost:8080/foo/bar?marker=" + lastEntryId));
         }
     }
 
@@ -78,9 +75,6 @@ public class FeedPagingProcessorTest {
 
             assertThat("Should set self link", feed.getLink(REL_SELF), notNullValue());
             assertThat("Should match self (self link)", feed.getLink(REL_SELF).getHref().toString(), equalTo(SELF_URL));
-
-            //assertThat("Should set next link", feed.getLink(REL_NEXT), notNullValue());
-            //assertThat("Should reference last entry on feed", feed.getLink(REL_NEXT).getHref().toString(), equalTo("http://localhost:8080/foo/bar?marker=" + lastEntryId));
         }
 
         @Test
