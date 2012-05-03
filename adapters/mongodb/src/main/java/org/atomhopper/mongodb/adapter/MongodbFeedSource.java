@@ -32,7 +32,6 @@ import org.springframework.data.mongodb.core.query.Query;
 public class MongodbFeedSource implements FeedSource {
 
     private static final int PAGE_SIZE = 25;
-    private static final String LAST_ENTRY = "last";
     private static final String DATE_LAST_UPDATED = "dateLastUpdated";
     private static final String FEED = "feed";
     private static final String ID = "_id";
@@ -55,19 +54,19 @@ public class MongodbFeedSource implements FeedSource {
             hyrdatedFeed.setId(persistedEntries.get(0).getFeed());
             hyrdatedFeed.setTitle(persistedEntries.get(0).getFeed());
 
-            // If limit > actual number of entries in the database, there
-            // is not a previous or next link
-            if (persistedEntries.size() > pageSize) {
-                // Set the previous link
-                hyrdatedFeed.addLink(new StringBuilder()
-                        .append(BASE_FEED_URI)
-                        .append("?marker=")
-                        .append(persistedEntries.get(0).getEntryId())
-                        .append("&limit=")
-                        .append(String.valueOf(pageSize))
-                        .append("&direction=forward").toString())
-                        .setRel(Link.REL_PREVIOUS);
+            // Set the previous link
+            hyrdatedFeed.addLink(new StringBuilder()
+                    .append(BASE_FEED_URI)
+                    .append("?marker=")
+                    .append(persistedEntries.get(0).getEntryId())
+                    .append("&limit=")
+                    .append(String.valueOf(pageSize))
+                    .append("&direction=forward").toString())
+                    .setRel(Link.REL_PREVIOUS);
 
+            // If limit > actual number of entries in the database, there
+            // is not a next link
+            if (persistedEntries.size() > pageSize) {
                 // Set the next link
                 hyrdatedFeed.addLink(new StringBuilder()
                         .append(BASE_FEED_URI)
@@ -170,11 +169,11 @@ public class MongodbFeedSource implements FeedSource {
                 hyrdatedFeed.addLink(new StringBuilder()
                         .append(BASE_FEED_URI)
                         .append("?marker=")
-                        .append(lastPersistedEntries.get(0).getEntryId())
+                        .append(lastPersistedEntries.get(lastPersistedEntries.size() - 1).getEntryId())
                         .append("&limit=")
                         .append(String.valueOf(pageSize))
-                        .append("&direction=forward").toString())
-                        .setRel(LAST_ENTRY);
+                        .append("&direction=backward").toString())
+                        .setRel(Link.REL_LAST);
             }
 
             response = ResponseBuilder.found(hyrdatedFeed);
@@ -230,7 +229,7 @@ public class MongodbFeedSource implements FeedSource {
                 query.addCriteria(Criteria.where(DATE_LAST_UPDATED).lte(markerEntry.getCreationDate()));
                 query.sort().on(DATE_LAST_UPDATED, Order.DESCENDING);
                 feedPage.addAll(mongoTemplate.find(query, PersistedEntry.class));
-                feedPage.addFirst(markerEntry);
+                //feedPage.addFirst(markerEntry);
                 break;
         }
 
