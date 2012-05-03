@@ -57,23 +57,6 @@ public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
         if (linkNotSet(f, Link.REL_SELF)) {
             f.addLink(StringUtils.join(new String[]{self, mapToParameters(parameters)}), Link.REL_SELF);
         }
-
-        // If the feed source hasn't already defined this link
-        /*
-        if (linkNotSet(f, NEXT_LINK)) {
-            String id = f.getEntries().get(f.getEntries().size() - 1).getId().toString();
-
-            if (parameters.containsKey(DIRECTION)) {
-                if (parameters.get(DIRECTION).get(0).equalsIgnoreCase(FORWARD)) {
-                    id = f.getEntries().get(0).getId().toString();
-                }
-            }
-            List<String> markerList = new ArrayList<String>();
-            markerList.add(id);
-            parameters.put(MARKER, markerList);
-            f.addLink(StringUtils.join(new String[]{self, mapToParameters(parameters)}), NEXT_LINK);
-        }
-        * */
     }
 
     private boolean linkNotSet(Feed feed, String link) {

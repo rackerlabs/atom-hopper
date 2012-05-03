@@ -50,6 +50,7 @@ public class MongodbFeedSource implements FeedSource {
 
         if (!(persistedEntries.isEmpty())) {
             final String BASE_FEED_URI = decode(getFeedRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
+            final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
 
             hyrdatedFeed.setId(persistedEntries.get(0).getFeed());
             hyrdatedFeed.setTitle(persistedEntries.get(0).getFeed());
@@ -61,6 +62,8 @@ public class MongodbFeedSource implements FeedSource {
                     .append(persistedEntries.get(0).getEntryId())
                     .append("&limit=")
                     .append(String.valueOf(pageSize))
+                    .append("&search=")
+                    .append(searchString)
                     .append("&direction=forward").toString())
                     .setRel(Link.REL_PREVIOUS);
 
@@ -74,6 +77,8 @@ public class MongodbFeedSource implements FeedSource {
                         .append(persistedEntries.get(persistedEntries.size() - 1).getEntryId())
                         .append("&limit=")
                         .append(String.valueOf(pageSize))
+                        .append("&search=")
+                        .append(searchString)
                         .append("&direction=backward").toString())
                         .setRel(Link.REL_NEXT);
                 // If the amount of persisted entries is greater than the pageSize
@@ -172,6 +177,8 @@ public class MongodbFeedSource implements FeedSource {
                         .append(lastPersistedEntries.get(lastPersistedEntries.size() - 1).getEntryId())
                         .append("&limit=")
                         .append(String.valueOf(pageSize))
+                        .append("&search=")
+                        .append(searchString)
                         .append("&direction=backward").toString())
                         .setRel(Link.REL_LAST);
             }
@@ -229,7 +236,6 @@ public class MongodbFeedSource implements FeedSource {
                 query.addCriteria(Criteria.where(DATE_LAST_UPDATED).lte(markerEntry.getCreationDate()));
                 query.sort().on(DATE_LAST_UPDATED, Order.DESCENDING);
                 feedPage.addAll(mongoTemplate.find(query, PersistedEntry.class));
-                //feedPage.addFirst(markerEntry);
                 break;
         }
 
