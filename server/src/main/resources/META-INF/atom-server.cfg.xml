@@ -11,8 +11,8 @@
         <categories-descriptor reference="workspace-categories-descriptor" />
 
         <feed title="Testing Feed" resource="/feed">
-            <publisher reference="hibernate-feed-publisher" />
-            <feed-source reference="hibernate-feed-source" />
+            <publisher reference="mongodb-feed-publisher" />
+            <feed-source reference="mongodb-feed-source" />
         </feed>
     </workspace>
 </atom-hopper-config>

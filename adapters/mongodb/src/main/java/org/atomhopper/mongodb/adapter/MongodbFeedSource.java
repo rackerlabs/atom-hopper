@@ -10,6 +10,7 @@ import static org.apache.abdera.i18n.text.UrlEncoding.decode;
 import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
+import org.apache.abdera.model.Link;
 import org.apache.commons.lang.StringUtils;
 import org.atomhopper.adapter.FeedInformation;
 import org.atomhopper.adapter.FeedSource;
@@ -31,7 +32,6 @@ import org.springframework.data.mongodb.core.query.Query;
 public class MongodbFeedSource implements FeedSource {
 
     private static final int PAGE_SIZE = 25;
-    private static final String LAST_ENTRY = "last";
     private static final String DATE_LAST_UPDATED = "dateLastUpdated";
     private static final String FEED = "feed";
     private static final String ID = "_id";
@@ -45,20 +45,49 @@ public class MongodbFeedSource implements FeedSource {
     public void setParameters(Map<String, String> params) {
     }
 
-    private Feed hydrateFeed(Abdera abdera, List<PersistedEntry> persistedEntries, GetFeedRequest getFeedRequest) {
+    private Feed hydrateFeed(Abdera abdera, List<PersistedEntry> persistedEntries, GetFeedRequest getFeedRequest, final int pageSize) {
         final Feed hyrdatedFeed = abdera.newFeed();
-        Query query = new Query(Criteria.where(FEED).is(getFeedRequest.getFeedName())).limit(1);
-        query.sort().on(DATE_LAST_UPDATED, Order.ASCENDING);
-        final PersistedEntry lastPersistedEntry = mongoTemplate.findOne(query, PersistedEntry.class);
 
         if (!(persistedEntries.isEmpty())) {
+            final String BASE_FEED_URI = decode(getFeedRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
+            final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
+
             hyrdatedFeed.setId(persistedEntries.get(0).getFeed());
             hyrdatedFeed.setTitle(persistedEntries.get(0).getFeed());
 
+            // Set the previous link
             hyrdatedFeed.addLink(new StringBuilder()
-                    .append(decode(getFeedRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED))))
-                    .append("entries/")
-                    .append(lastPersistedEntry.getEntryId()).toString()).setRel(LAST_ENTRY);
+                    .append(BASE_FEED_URI)
+                    .append("?marker=")
+                    .append(persistedEntries.get(0).getEntryId())
+                    .append("&limit=")
+                    .append(String.valueOf(pageSize))
+                    .append("&search=")
+                    .append(searchString)
+                    .append("&direction=forward").toString())
+                    .setRel(Link.REL_PREVIOUS);
+
+            // If limit > actual number of entries in the database, there
+            // is not a next link
+            if (persistedEntries.size() > pageSize) {
+                // Set the next link
+                hyrdatedFeed.addLink(new StringBuilder()
+                        .append(BASE_FEED_URI)
+                        .append("?marker=")
+                        .append(persistedEntries.get(persistedEntries.size() - 1).getEntryId())
+                        .append("&limit=")
+                        .append(String.valueOf(pageSize))
+                        .append("&search=")
+                        .append(searchString)
+                        .append("&direction=backward").toString())
+                        .setRel(Link.REL_NEXT);
+                // If the amount of persisted entries is greater than the pageSize
+                // then remove the last persisted entry and set the next link to
+                // the last entry
+                if (persistedEntries.size() > pageSize) {
+                    persistedEntries.remove(persistedEntries.size() - 1);
+                }
+            }
         }
 
         for (PersistedEntry persistedFeedEntry : persistedEntries) {
@@ -84,9 +113,7 @@ public class MongodbFeedSource implements FeedSource {
     @Override
     public AdapterResponse<Entry> getEntry(GetEntryRequest getEntryRequest) {
         final PersistedEntry entry = mongoTemplate.findOne(new Query(
-                Criteria.where(FEED).is(getEntryRequest.getFeedName())
-                .andOperator(Criteria.where(ID)
-                .is(getEntryRequest.getEntryId()))), PersistedEntry.class);
+                Criteria.where(FEED).is(getEntryRequest.getFeedName()).andOperator(Criteria.where(ID).is(getEntryRequest.getEntryId()))), PersistedEntry.class);
 
 
         AdapterResponse<Entry> response = ResponseBuilder.notFound();
@@ -129,14 +156,34 @@ public class MongodbFeedSource implements FeedSource {
 
         if (persistedEntry != null) {
             final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
-            Query queryForFeedHead = new Query(Criteria.where(FEED).is(feedName)).limit(pageSize);
+            Query queryForFeedHead = new Query(Criteria.where(FEED).is(feedName)).limit(pageSize + 1);
             queryForFeedHead.sort().on(DATE_LAST_UPDATED, Order.DESCENDING);
 
             SimpleCategoryCriteriaGenerator simpleCategoryCriteriaGenerator = new SimpleCategoryCriteriaGenerator(searchString);
             simpleCategoryCriteriaGenerator.enhanceCriteria(queryForFeedHead);
             final List<PersistedEntry> persistedEntries = mongoTemplate.find(queryForFeedHead, PersistedEntry.class);
 
-            response = ResponseBuilder.found(hydrateFeed(abdera, persistedEntries, getFeedRequest));
+            Feed hyrdatedFeed = hydrateFeed(abdera, persistedEntries, getFeedRequest, pageSize);
+            // Set the last link in the feed head
+            final String BASE_FEED_URI = decode(getFeedRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
+            Query query = new Query(Criteria.where(FEED).is(getFeedRequest.getFeedName())).limit(pageSize);
+            query.sort().on(DATE_LAST_UPDATED, Order.ASCENDING);
+            final List<PersistedEntry> lastPersistedEntries = mongoTemplate.find(query, PersistedEntry.class);
+
+            if (!(lastPersistedEntries.isEmpty())) {
+                hyrdatedFeed.addLink(new StringBuilder()
+                        .append(BASE_FEED_URI)
+                        .append("?marker=")
+                        .append(lastPersistedEntries.get(lastPersistedEntries.size() - 1).getEntryId())
+                        .append("&limit=")
+                        .append(String.valueOf(pageSize))
+                        .append("&search=")
+                        .append(searchString)
+                        .append("&direction=backward").toString())
+                        .setRel(Link.REL_LAST);
+            }
+
+            response = ResponseBuilder.found(hyrdatedFeed);
         }
 
         return response != null ? response : ResponseBuilder.found(abdera.newFeed());
@@ -159,8 +206,8 @@ public class MongodbFeedSource implements FeedSource {
             final Feed feed = hydrateFeed(
                     getFeedRequest.getAbdera(),
                     enhancedGetFeedPage(
-                            getFeedRequest.getFeedName(), markerEntry, pageDirection, new SimpleCategoryCriteriaGenerator(searchString), pageSize),
-                    getFeedRequest);
+                    getFeedRequest.getFeedName(), markerEntry, pageDirection, new SimpleCategoryCriteriaGenerator(searchString), pageSize + 1),
+                    getFeedRequest, pageSize);
 
             response = ResponseBuilder.found(feed);
         } else {
@@ -186,10 +233,9 @@ public class MongodbFeedSource implements FeedSource {
                 break;
 
             case BACKWARD:
-                query.addCriteria(Criteria.where(DATE_LAST_UPDATED).lt(markerEntry.getCreationDate()));
+                query.addCriteria(Criteria.where(DATE_LAST_UPDATED).lte(markerEntry.getCreationDate()));
                 query.sort().on(DATE_LAST_UPDATED, Order.DESCENDING);
                 feedPage.addAll(mongoTemplate.find(query, PersistedEntry.class));
-                feedPage.addFirst(markerEntry);
                 break;
         }
 
