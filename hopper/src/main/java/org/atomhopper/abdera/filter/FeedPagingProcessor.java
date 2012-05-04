@@ -24,7 +24,6 @@ public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
 
     private static final String DIRECTION = "direction";
     private static final String MARKER = "marker";
-    private static final String FORWARD = "forward";
     private static final String AMP = "amp;";
     private static final String EMPTY_STRING = "";
     private static final String UTF8 = "UTF-8";
