@@ -1,10 +1,7 @@
 package org.atomhopper.mongodb.adapter;
 
 import java.io.StringReader;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import org.apache.abdera.Abdera;
 import static org.apache.abdera.i18n.text.UrlEncoding.decode;
 import org.apache.abdera.model.Document;
@@ -36,6 +33,7 @@ public class MongodbFeedSource implements FeedSource {
     private static final String FEED = "feed";
     private static final String ID = "_id";
     private MongoTemplate mongoTemplate;
+    private static final String UUID_URI_SCHEME = "urn:uuid:";
 
     public void setMongoTemplate(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
@@ -52,7 +50,7 @@ public class MongodbFeedSource implements FeedSource {
             final String BASE_FEED_URI = decode(getFeedRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
             final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
 
-            hyrdatedFeed.setId(persistedEntries.get(0).getFeed());
+            hyrdatedFeed.setId(UUID_URI_SCHEME + UUID.randomUUID().toString());
             hyrdatedFeed.setTitle(persistedEntries.get(0).getFeed());
 
             // Set the previous link
