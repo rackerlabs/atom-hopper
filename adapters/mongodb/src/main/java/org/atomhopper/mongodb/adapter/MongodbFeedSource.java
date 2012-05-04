@@ -215,7 +215,8 @@ public class MongodbFeedSource implements FeedSource {
         return response;
     }
 
-    private List<PersistedEntry> enhancedGetFeedPage(final String feedName, final PersistedEntry markerEntry, final PageDirection direction, final CategoryCriteriaGenerator criteriaGenerator, final int pageSize) {
+    private List<PersistedEntry> enhancedGetFeedPage(final String feedName, final PersistedEntry markerEntry,
+            final PageDirection direction, final CategoryCriteriaGenerator criteriaGenerator, final int pageSize) {
 
         final LinkedList<PersistedEntry> feedPage = new LinkedList<PersistedEntry>();
         final Query query = new Query(Criteria.where(FEED).is(feedName)).limit(pageSize);

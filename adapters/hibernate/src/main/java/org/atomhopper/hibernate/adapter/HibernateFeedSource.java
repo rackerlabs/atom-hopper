@@ -57,13 +57,17 @@ public class HibernateFeedSource implements FeedSource {
             hyrdatedFeed.setTitle(getFeedRequest.getFeedName().toString());
 
             // Set the previous link
-            hyrdatedFeed.addLink(new StringBuilder().append(BASE_FEED_URI).append("?marker=").append(persistedEntries.get(0).getEntryId()).append("&limit=").append(String.valueOf(pageSize)).append("&search=").append(searchString).append("&direction=forward").toString()).setRel(Link.REL_PREVIOUS);
+            hyrdatedFeed.addLink(new StringBuilder().append(BASE_FEED_URI).append("?marker=").append(persistedEntries
+                    .get(0).getEntryId()).append("&limit=").append(String.valueOf(pageSize)).append("&search=")
+                    .append(searchString).append("&direction=forward").toString()).setRel(Link.REL_PREVIOUS);
 
             // If limit > actual number of entries in the database, there
             // is not a next link
             if (persistedEntries.size() > pageSize) {
                 // Set the next link
-                hyrdatedFeed.addLink(new StringBuilder().append(BASE_FEED_URI).append("?marker=").append(persistedEntries.get(persistedEntries.size() - 1).getEntryId()).append("&limit=").append(String.valueOf(pageSize)).append("&search=").append(searchString).append("&direction=backward").toString()).setRel(Link.REL_NEXT);
+                hyrdatedFeed.addLink(new StringBuilder().append(BASE_FEED_URI).append("?marker=").append(persistedEntries
+                        .get(persistedEntries.size() - 1).getEntryId()).append("&limit=").append(String.valueOf(pageSize))
+                        .append("&search=").append(searchString).append("&direction=backward").toString()).setRel(Link.REL_NEXT);
                 // If the amount of persisted entries is greater than the pageSize
                 // then remove the last persisted entry and set the next link to
                 // the last entry
@@ -134,10 +138,27 @@ public class HibernateFeedSource implements FeedSource {
 
         if (persistedFeed != null) {
             final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
-            final List<PersistedEntry> persistedEntries = feedRepository.getFeedHead(feedName, new SimpleCategoryCriteriaGenerator(searchString), pageSize);
+            final List<PersistedEntry> persistedEntries = feedRepository.getFeedHead(feedName, new SimpleCategoryCriteriaGenerator(searchString), pageSize + 1);
 
-            response = ResponseBuilder.found(hydrateFeed(abdera, persistedEntries, getFeedRequest, pageSize));
-        }
+            Feed hyrdatedFeed = hydrateFeed(abdera, persistedEntries, getFeedRequest, pageSize);
+            // Set the last link in the feed head
+            final String BASE_FEED_URI = decode(getFeedRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
+            final List<PersistedEntry> lastPersistedEntries = feedRepository.getLastPage(feedName, pageSize);
+
+            if (!(lastPersistedEntries.isEmpty())) {
+                hyrdatedFeed.addLink(new StringBuilder()
+                        .append(BASE_FEED_URI)
+                        .append("?marker=")
+                        .append(lastPersistedEntries.get(lastPersistedEntries.size() - 1).getEntryId())
+                        .append("&limit=")
+                        .append(String.valueOf(pageSize))
+                        .append("&search=")
+                        .append(searchString)
+                        .append("&direction=backward").toString())
+                        .setRel(Link.REL_LAST);
+            }
+
+            response = ResponseBuilder.found(hyrdatedFeed);        }
 
         return response != null ? response : ResponseBuilder.found(abdera.newFeed());
     }
@@ -159,7 +180,7 @@ public class HibernateFeedSource implements FeedSource {
             final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
             final Feed feed = hydrateFeed(getFeedRequest.getAbdera(),
                     feedRepository.getFeedPage(getFeedRequest.getFeedName(), markerEntry, pageDirection,
-                    new SimpleCategoryCriteriaGenerator(searchString), pageSize), getFeedRequest, pageSize);
+                    new SimpleCategoryCriteriaGenerator(searchString), pageSize), getFeedRequest, pageSize + 1);
 
             response = ResponseBuilder.found(feed);
         } else {
