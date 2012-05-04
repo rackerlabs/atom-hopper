@@ -15,6 +15,8 @@ import java.util.TimeZone;
 
 import static java.net.URLEncoder.encode;
 import org.apache.abdera.model.Link;
+import org.atomhopper.util.uri.template.EnumKeyedTemplateParameters;
+import org.atomhopper.util.uri.template.URITemplate;
 
 /**
  *
@@ -52,9 +54,9 @@ public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
             f.addLink(StringUtils.join(new String[]{self, mapToParameters(parameters)}), Link.REL_CURRENT);
         }
 
-        // Add self link (same as current link)
+        // Add self link
         if (linkNotSet(f, Link.REL_SELF)) {
-            f.addLink(StringUtils.join(new String[]{self, mapToParameters(parameters)}), Link.REL_SELF);
+            f.addLink(self).setRel(Link.REL_SELF);
         }
     }
 

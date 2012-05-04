@@ -44,7 +44,7 @@ public class FeedPagingProcessorTest {
             String lastEntryId = Integer.toString(TOTAL_FEED_ENTRIES);
 
             assertThat("Should set current link", feed.getLink(REL_CURRENT), notNullValue());
-            assertThat("Should match self (current link)", feed.getLink(REL_CURRENT).getHref().toString(), equalTo(SELF_URL));
+            assertThat("Should match self (current link)", feed.getLink(REL_CURRENT).getHref().toString(), equalTo(CURRENT_URL));
 
             assertThat("Should set updated element", feed.getUpdated(), notNullValue());
 
@@ -69,7 +69,7 @@ public class FeedPagingProcessorTest {
             String lastEntryId = Integer.toString(TOTAL_FEED_ENTRIES);
 
             assertThat("Should set current link", feed.getLink(REL_CURRENT), notNullValue());
-            assertThat("Should match self (current link)", feed.getLink(REL_CURRENT).getHref().toString(), equalTo(SELF_URL));
+            assertThat("Should match self (current link)", feed.getLink(REL_CURRENT).getHref().toString(), equalTo(CURRENT_URL));
 
             assertThat("Should set updated element", feed.getUpdated(), notNullValue());
 
@@ -169,7 +169,8 @@ public class FeedPagingProcessorTest {
         static final String BASE_URI = "http://localhost:8080/";
         static final String TARGET_PATH = "/foo/bar";
         static final String TARGET_PARAMS = "?marker=1";
-        static final String SELF_URL = "http://localhost:8080/foo/bar?marker=1";
+        static final String CURRENT_URL = "http://localhost:8080/foo?marker=1";
+        static final String SELF_URL = "http://localhost:8080/foo";
         static final String REL_CURRENT = "current";
         static final String REL_NEXT = "next";
         static final String REL_SELF = "self";
