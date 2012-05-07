@@ -79,12 +79,10 @@ public class MongodbFeedSource implements FeedSource {
                         .append(searchString)
                         .append("&direction=backward").toString())
                         .setRel(Link.REL_NEXT);
+
                 // If the amount of persisted entries is greater than the pageSize
-                // then remove the last persisted entry and set the next link to
-                // the last entry
-                if (persistedEntries.size() > pageSize) {
-                    persistedEntries.remove(persistedEntries.size() - 1);
-                }
+                // then remove the last persisted entry.
+                persistedEntries.remove(persistedEntries.size() - 1);
             }
         }
 
@@ -215,7 +213,8 @@ public class MongodbFeedSource implements FeedSource {
         return response;
     }
 
-    private List<PersistedEntry> enhancedGetFeedPage(final String feedName, final PersistedEntry markerEntry, final PageDirection direction, final CategoryCriteriaGenerator criteriaGenerator, final int pageSize) {
+    private List<PersistedEntry> enhancedGetFeedPage(final String feedName, final PersistedEntry markerEntry,
+            final PageDirection direction, final CategoryCriteriaGenerator criteriaGenerator, final int pageSize) {
 
         final LinkedList<PersistedEntry> feedPage = new LinkedList<PersistedEntry>();
         final Query query = new Query(Criteria.where(FEED).is(feedName)).limit(pageSize);
@@ -224,7 +223,7 @@ public class MongodbFeedSource implements FeedSource {
 
         switch (direction) {
             case FORWARD:
-                query.addCriteria(Criteria.where(DATE_LAST_UPDATED).gt(markerEntry.getCreationDate()));
+                query.addCriteria(Criteria.where(DATE_LAST_UPDATED).gte(markerEntry.getCreationDate()));
                 query.sort().on(DATE_LAST_UPDATED, Order.ASCENDING);
                 feedPage.addAll(mongoTemplate.find(query, PersistedEntry.class));
                 Collections.reverse(feedPage);
