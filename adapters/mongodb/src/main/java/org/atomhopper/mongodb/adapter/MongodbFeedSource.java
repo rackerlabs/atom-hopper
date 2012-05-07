@@ -199,12 +199,16 @@ public class MongodbFeedSource implements FeedSource {
         final PersistedEntry markerEntry = mongoTemplate.findOne(new Query(
                 Criteria.where(FEED).is(getFeedRequest.getFeedName()).andOperator(Criteria.where(ID).is(marker))), PersistedEntry.class);
 
+        if (pageDirection.equals(PageDirection.BACKWARD)) {
+            pageSize++;
+        }
+
         if (markerEntry != null) {
             final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
             final Feed feed = hydrateFeed(
                     getFeedRequest.getAbdera(),
                     enhancedGetFeedPage(
-                    getFeedRequest.getFeedName(), markerEntry, pageDirection, new SimpleCategoryCriteriaGenerator(searchString), pageSize + 1),
+                    getFeedRequest.getFeedName(), markerEntry, pageDirection, new SimpleCategoryCriteriaGenerator(searchString), pageSize),
                     getFeedRequest, pageSize);
 
             response = ResponseBuilder.found(feed);

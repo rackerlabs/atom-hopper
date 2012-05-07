@@ -176,11 +176,15 @@ public class HibernateFeedSource implements FeedSource {
         final PersistedFeed persistedFeed = feedRepository.getFeed(getFeedRequest.getFeedName());
         final PersistedEntry markerEntry = feedRepository.getEntry(marker, getFeedRequest.getFeedName());
 
+        if (pageDirection.equals(PageDirection.BACKWARD)) {
+            pageSize++;
+        }
+
         if (markerEntry != null) {
             final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
             final Feed feed = hydrateFeed(getFeedRequest.getAbdera(),
                     feedRepository.getFeedPage(getFeedRequest.getFeedName(), markerEntry, pageDirection,
-                    new SimpleCategoryCriteriaGenerator(searchString), pageSize), getFeedRequest, pageSize + 1);
+                    new SimpleCategoryCriteriaGenerator(searchString), pageSize), getFeedRequest, pageSize);
 
             response = ResponseBuilder.found(feed);
         } else {
