@@ -57,23 +57,32 @@ public class HibernateFeedSource implements FeedSource {
             hyrdatedFeed.setTitle(getFeedRequest.getFeedName().toString());
 
             // Set the previous link
-            hyrdatedFeed.addLink(new StringBuilder().append(BASE_FEED_URI).append("?marker=").append(persistedEntries
-                    .get(0).getEntryId()).append("&limit=").append(String.valueOf(pageSize)).append("&search=")
-                    .append(searchString).append("&direction=forward").toString()).setRel(Link.REL_PREVIOUS);
+            hyrdatedFeed.addLink(new StringBuilder()
+                    .append(BASE_FEED_URI).append("?marker=")
+                    .append(persistedEntries.get(0).getEntryId())
+                    .append("&limit=")
+                    .append(String.valueOf(pageSize))
+                    .append("&search=")
+                    .append(searchString)
+                    .append("&direction=forward").toString()).setRel(Link.REL_PREVIOUS);
 
             // If limit > actual number of entries in the database, there
             // is not a next link
             if (persistedEntries.size() > pageSize) {
                 // Set the next link
-                hyrdatedFeed.addLink(new StringBuilder().append(BASE_FEED_URI).append("?marker=").append(persistedEntries
-                        .get(persistedEntries.size() - 1).getEntryId()).append("&limit=").append(String.valueOf(pageSize))
-                        .append("&search=").append(searchString).append("&direction=backward").toString()).setRel(Link.REL_NEXT);
+                hyrdatedFeed.addLink(new StringBuilder()
+                        .append(BASE_FEED_URI)
+                        .append("?marker=")
+                        .append(persistedEntries.get(persistedEntries.size() - 1).getEntryId())
+                        .append("&limit=")
+                        .append(String.valueOf(pageSize))
+                        .append("&search=")
+                        .append(searchString)
+                        .append("&direction=backward").toString()).setRel(Link.REL_NEXT);
+
                 // If the amount of persisted entries is greater than the pageSize
-                // then remove the last persisted entry and set the next link to
-                // the last entry
-                if (persistedEntries.size() > pageSize) {
-                    persistedEntries.remove(persistedEntries.size() - 1);
-                }
+                // then remove the last persisted entry.
+                persistedEntries.remove(persistedEntries.size() - 1);
             }
         }
 
@@ -166,6 +175,7 @@ public class HibernateFeedSource implements FeedSource {
     private AdapterResponse<Feed> getFeedPage(GetFeedRequest getFeedRequest, String marker, int pageSize) {
         AdapterResponse<Feed> response;
         PageDirection pageDirection;
+
         try {
             final String pageDirectionValue = getFeedRequest.getDirection();
             pageDirection = PageDirection.valueOf(pageDirectionValue.toUpperCase());
@@ -176,15 +186,11 @@ public class HibernateFeedSource implements FeedSource {
         final PersistedFeed persistedFeed = feedRepository.getFeed(getFeedRequest.getFeedName());
         final PersistedEntry markerEntry = feedRepository.getEntry(marker, getFeedRequest.getFeedName());
 
-        if (pageDirection.equals(PageDirection.BACKWARD)) {
-            pageSize++;
-        }
-
         if (markerEntry != null) {
             final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
             final Feed feed = hydrateFeed(getFeedRequest.getAbdera(),
                     feedRepository.getFeedPage(getFeedRequest.getFeedName(), markerEntry, pageDirection,
-                    new SimpleCategoryCriteriaGenerator(searchString), pageSize), getFeedRequest, pageSize);
+                    new SimpleCategoryCriteriaGenerator(searchString), pageSize + 1), getFeedRequest, pageSize);
 
             response = ResponseBuilder.found(feed);
         } else {

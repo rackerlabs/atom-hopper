@@ -79,12 +79,10 @@ public class MongodbFeedSource implements FeedSource {
                         .append(searchString)
                         .append("&direction=backward").toString())
                         .setRel(Link.REL_NEXT);
+
                 // If the amount of persisted entries is greater than the pageSize
-                // then remove the last persisted entry and set the next link to
-                // the last entry
-                if (persistedEntries.size() > pageSize) {
-                    persistedEntries.remove(persistedEntries.size() - 1);
-                }
+                // then remove the last persisted entry.
+                persistedEntries.remove(persistedEntries.size() - 1);
             }
         }
 
@@ -199,16 +197,12 @@ public class MongodbFeedSource implements FeedSource {
         final PersistedEntry markerEntry = mongoTemplate.findOne(new Query(
                 Criteria.where(FEED).is(getFeedRequest.getFeedName()).andOperator(Criteria.where(ID).is(marker))), PersistedEntry.class);
 
-        if (pageDirection.equals(PageDirection.BACKWARD)) {
-            pageSize++;
-        }
-
         if (markerEntry != null) {
             final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
             final Feed feed = hydrateFeed(
                     getFeedRequest.getAbdera(),
                     enhancedGetFeedPage(
-                    getFeedRequest.getFeedName(), markerEntry, pageDirection, new SimpleCategoryCriteriaGenerator(searchString), pageSize),
+                    getFeedRequest.getFeedName(), markerEntry, pageDirection, new SimpleCategoryCriteriaGenerator(searchString), pageSize + 1),
                     getFeedRequest, pageSize);
 
             response = ResponseBuilder.found(feed);
@@ -229,7 +223,7 @@ public class MongodbFeedSource implements FeedSource {
 
         switch (direction) {
             case FORWARD:
-                query.addCriteria(Criteria.where(DATE_LAST_UPDATED).gt(markerEntry.getCreationDate()));
+                query.addCriteria(Criteria.where(DATE_LAST_UPDATED).gte(markerEntry.getCreationDate()));
                 query.sort().on(DATE_LAST_UPDATED, Order.ASCENDING);
                 feedPage.addAll(mongoTemplate.find(query, PersistedEntry.class));
                 Collections.reverse(feedPage);
