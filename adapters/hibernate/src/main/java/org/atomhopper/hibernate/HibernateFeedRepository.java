@@ -1,5 +1,6 @@
 package org.atomhopper.hibernate;
 
+import java.util.ArrayList;
 import org.atomhopper.adapter.jpa.PersistedCategory;
 import org.atomhopper.adapter.jpa.PersistedEntry;
 import org.atomhopper.adapter.jpa.PersistedFeed;
@@ -256,8 +257,16 @@ public class HibernateFeedRepository implements FeedRepository {
 
             @Override
             public List<PersistedEntry> perform(Session liveSession) {
-                return (List<PersistedEntry>) liveSession.createCriteria(PersistedEntry.class)
-                        .add(Restrictions.eq(FEED_NAME, feedName)).addOrder(Order.asc(DATE_LAST_UPDATED)).setMaxResults(pageSize).uniqueResult();
+
+                final LinkedList<PersistedEntry> lastPage = new LinkedList<PersistedEntry>();
+                
+                lastPage.addAll(liveSession.createCriteria(PersistedEntry.class)
+                        .add(Restrictions.eq(FEED_NAME, feedName))
+                        .addOrder(Order.asc(DATE_LAST_UPDATED))
+                        .setMaxResults(pageSize).list());
+                
+                
+                return lastPage;
             }
         });
     }
