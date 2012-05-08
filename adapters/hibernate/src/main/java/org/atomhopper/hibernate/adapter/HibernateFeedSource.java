@@ -68,7 +68,9 @@ public class HibernateFeedSource implements FeedSource {
 
             // If limit > actual number of entries in the database, there
             // is not a next link
-            if (persistedEntries.size() > pageSize) {
+            if ((persistedEntries.size() > pageSize) 
+                    || (persistedEntries.size() <= pageSize && getFeedRequest.getDirection().equalsIgnoreCase(PageDirection.FORWARD.toString()))) {
+                
                 // Set the next link
                 hyrdatedFeed.addLink(new StringBuilder()
                         .append(BASE_FEED_URI)
