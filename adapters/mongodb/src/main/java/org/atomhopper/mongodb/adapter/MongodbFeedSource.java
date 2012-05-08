@@ -65,24 +65,25 @@ public class MongodbFeedSource implements FeedSource {
                     .append("&direction=forward").toString())
                     .setRel(Link.REL_PREVIOUS);
 
-            // If limit > actual number of entries in the database, there
-            // is not a next link
-            if (persistedEntries.size() > pageSize) {
+            final PersistedEntry lastEntryInCollection = persistedEntries.get(persistedEntries.size() - 1);
+            Query query = new Query(Criteria.where(FEED).is(lastEntryInCollection.getFeed())).limit(1)
+                    .addCriteria(Criteria.where(DATE_LAST_UPDATED)
+                    .lt(lastEntryInCollection.getDateLastUpdated()));
+            query.sort().on(DATE_LAST_UPDATED, Order.DESCENDING);
+            final PersistedEntry nextEntry = mongoTemplate.findOne(query, PersistedEntry.class);
+
+            if (nextEntry != null) {
                 // Set the next link
                 hyrdatedFeed.addLink(new StringBuilder()
                         .append(BASE_FEED_URI)
                         .append("?marker=")
-                        .append(persistedEntries.get(persistedEntries.size() - 1).getEntryId())
+                        .append(nextEntry.getEntryId())
                         .append("&limit=")
                         .append(String.valueOf(pageSize))
                         .append("&search=")
                         .append(searchString)
                         .append("&direction=backward").toString())
                         .setRel(Link.REL_NEXT);
-
-                // If the amount of persisted entries is greater than the pageSize
-                // then remove the last persisted entry.
-                persistedEntries.remove(persistedEntries.size() - 1);
             }
         }
 
@@ -152,7 +153,7 @@ public class MongodbFeedSource implements FeedSource {
 
         if (persistedEntry != null) {
             final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
-            Query queryForFeedHead = new Query(Criteria.where(FEED).is(feedName)).limit(pageSize + 1);
+            Query queryForFeedHead = new Query(Criteria.where(FEED).is(feedName)).limit(pageSize);
             queryForFeedHead.sort().on(DATE_LAST_UPDATED, Order.DESCENDING);
 
             SimpleCategoryCriteriaGenerator simpleCategoryCriteriaGenerator = new SimpleCategoryCriteriaGenerator(searchString);
@@ -202,7 +203,7 @@ public class MongodbFeedSource implements FeedSource {
             final Feed feed = hydrateFeed(
                     getFeedRequest.getAbdera(),
                     enhancedGetFeedPage(
-                    getFeedRequest.getFeedName(), markerEntry, pageDirection, new SimpleCategoryCriteriaGenerator(searchString), pageSize + 1),
+                    getFeedRequest.getFeedName(), markerEntry, pageDirection, new SimpleCategoryCriteriaGenerator(searchString), pageSize),
                     getFeedRequest, pageSize);
 
             response = ResponseBuilder.found(feed);
@@ -223,7 +224,7 @@ public class MongodbFeedSource implements FeedSource {
 
         switch (direction) {
             case FORWARD:
-                query.addCriteria(Criteria.where(DATE_LAST_UPDATED).gte(markerEntry.getCreationDate()));
+                query.addCriteria(Criteria.where(DATE_LAST_UPDATED).gt(markerEntry.getCreationDate()));
                 query.sort().on(DATE_LAST_UPDATED, Order.ASCENDING);
                 feedPage.addAll(mongoTemplate.find(query, PersistedEntry.class));
                 Collections.reverse(feedPage);
