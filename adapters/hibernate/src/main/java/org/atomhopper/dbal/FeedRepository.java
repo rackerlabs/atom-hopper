@@ -31,4 +31,6 @@ public interface FeedRepository {
     void saveEntry(PersistedEntry entry);
 
     Set<PersistedCategory> updateCategories(Set<PersistedCategory> categories);
+
+    List<PersistedEntry> getNextMarker(PersistedEntry persistedEntry, String feedName);
 }
