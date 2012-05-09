@@ -1,5 +1,7 @@
 package org.atomhopper.mongodb.adapter;
 
+import com.mongodb.DBCollection;
+import com.mongodb.MongoException;
 import java.io.StringReader;
 import java.util.*;
 import org.apache.abdera.Abdera;
@@ -21,6 +23,8 @@ import org.atomhopper.mongodb.query.SimpleCategoryCriteriaGenerator;
 import org.atomhopper.response.AdapterResponse;
 import org.atomhopper.util.uri.template.EnumKeyedTemplateParameters;
 import org.atomhopper.util.uri.template.URITemplate;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.mongodb.core.CollectionCallback;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Order;
@@ -34,6 +38,7 @@ public class MongodbFeedSource implements FeedSource {
     private static final String ID = "_id";
     private MongoTemplate mongoTemplate;
     private static final String UUID_URI_SCHEME = "urn:uuid:";
+    private static final String PERSISTED_ENTRY_COLLECTION = "persistedentry";
 
     public void setMongoTemplate(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
@@ -163,7 +168,14 @@ public class MongodbFeedSource implements FeedSource {
             Feed hyrdatedFeed = hydrateFeed(abdera, persistedEntries, getFeedRequest, pageSize);
             // Set the last link in the feed head
             final String BASE_FEED_URI = decode(getFeedRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
-            Query query = new Query(Criteria.where(FEED).is(getFeedRequest.getFeedName())).limit(pageSize);
+            Query feedQuery = new Query(Criteria.where(FEED).is(getFeedRequest.getFeedName()));
+            final int totalFeedEntryCount = safeLongToInt(countDocuments(PERSISTED_ENTRY_COLLECTION, feedQuery) % pageSize);
+            int lastPageSize = pageSize;
+            if(totalFeedEntryCount != 0) {
+                lastPageSize = totalFeedEntryCount;
+            }
+            Query query = new Query(Criteria.where(FEED).is(getFeedRequest.getFeedName()))
+                    .limit(lastPageSize);
             query.sort().on(DATE_LAST_UPDATED, Order.ASCENDING);
             final List<PersistedEntry> lastPersistedEntries = mongoTemplate.find(query, PersistedEntry.class);
 
@@ -243,5 +255,25 @@ public class MongodbFeedSource implements FeedSource {
     @Override
     public FeedInformation getFeedInformation() {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    private long countDocuments( final String collection, final Query query ) {
+        return mongoTemplate.execute( collection,
+            new CollectionCallback< Long >() {
+                @Override
+                public Long doInCollection(DBCollection collection)
+                        throws MongoException, DataAccessException {
+                    return collection.count(query.getQueryObject());
+                }
+            }
+        );
+    }
+
+    private int safeLongToInt(long value) {
+        if (value < Integer.MIN_VALUE || value > Integer.MAX_VALUE) {
+            throw new IllegalArgumentException
+                (value + " cannot be cast to int without changing its value.");
+        }
+        return (int) value;
     }
 }
