@@ -71,11 +71,15 @@ public class MongodbFeedSource implements FeedSource {
                     .setRel(Link.REL_PREVIOUS);
 
             final PersistedEntry lastEntryInCollection = persistedEntries.get(persistedEntries.size() - 1);
-            Query query = new Query(Criteria.where(FEED).is(lastEntryInCollection.getFeed())).limit(1)
+            Query nextLinkQuery = new Query(Criteria.where(FEED).is(lastEntryInCollection.getFeed())).limit(1)
                     .addCriteria(Criteria.where(DATE_LAST_UPDATED)
                     .lt(lastEntryInCollection.getDateLastUpdated()));
-            query.sort().on(DATE_LAST_UPDATED, Order.DESCENDING);
-            final PersistedEntry nextEntry = mongoTemplate.findOne(query, PersistedEntry.class);
+            nextLinkQuery.sort().on(DATE_LAST_UPDATED, Order.DESCENDING);
+
+            SimpleCategoryCriteriaGenerator simpleCategoryCriteriaGenerator = new SimpleCategoryCriteriaGenerator(searchString);
+            simpleCategoryCriteriaGenerator.enhanceCriteria(nextLinkQuery);
+
+            final PersistedEntry nextEntry = mongoTemplate.findOne(nextLinkQuery, PersistedEntry.class);
 
             if (nextEntry != null) {
                 // Set the next link
@@ -174,10 +178,11 @@ public class MongodbFeedSource implements FeedSource {
             if(totalFeedEntryCount != 0) {
                 lastPageSize = totalFeedEntryCount;
             }
-            Query query = new Query(Criteria.where(FEED).is(getFeedRequest.getFeedName()))
+            Query lastLinkQuery = new Query(Criteria.where(FEED).is(getFeedRequest.getFeedName()))
                     .limit(lastPageSize);
-            query.sort().on(DATE_LAST_UPDATED, Order.ASCENDING);
-            final List<PersistedEntry> lastPersistedEntries = mongoTemplate.find(query, PersistedEntry.class);
+            simpleCategoryCriteriaGenerator.enhanceCriteria(lastLinkQuery);
+            lastLinkQuery.sort().on(DATE_LAST_UPDATED, Order.ASCENDING);
+            final List<PersistedEntry> lastPersistedEntries = mongoTemplate.find(lastLinkQuery, PersistedEntry.class);
 
             if (!(lastPersistedEntries.isEmpty())) {
                 hyrdatedFeed.addLink(new StringBuilder()
