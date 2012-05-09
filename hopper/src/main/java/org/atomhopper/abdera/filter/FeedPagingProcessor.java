@@ -50,13 +50,13 @@ public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
         final Map<String, List<String>> parameters = getParameterMap(rc);
 
         // Add current link
-        if (linkNotSet(f, Link.REL_CURRENT)) {
-            f.addLink(StringUtils.join(new String[]{self, mapToParameters(parameters)}), Link.REL_CURRENT);
+        if (linkNotSet(f, Link.REL_SELF)) {
+            f.addLink(StringUtils.join(new String[]{self, mapToParameters(parameters)}), Link.REL_SELF);
         }
 
         // Add self link
-        if (linkNotSet(f, Link.REL_SELF)) {
-            f.addLink(self).setRel(Link.REL_SELF);
+        if (linkNotSet(f, Link.REL_CURRENT)) {
+            f.addLink(self).setRel(Link.REL_CURRENT);
         }
     }
 
