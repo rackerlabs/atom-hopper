@@ -147,7 +147,7 @@ public class HibernateFeedRepository implements FeedRepository {
 
                 switch (direction) {
                     case FORWARD:
-                        criteria.add(Restrictions.ge(DATE_LAST_UPDATED, markerEntry.getCreationDate())).addOrder(Order.asc(DATE_LAST_UPDATED));
+                        criteria.add(Restrictions.gt(DATE_LAST_UPDATED, markerEntry.getCreationDate())).addOrder(Order.asc(DATE_LAST_UPDATED));
                         feedPage.addAll(criteria.list());
                         Collections.reverse(feedPage);
                         break;
@@ -267,6 +267,27 @@ public class HibernateFeedRepository implements FeedRepository {
                 
                 
                 return lastPage;
+            }
+        });
+    }
+
+    @Override
+    public List<PersistedEntry> getNextMarker(final PersistedEntry persistedEntry, final String feedName) {
+        return performComplexAction(new ComplexSessionAction<List<PersistedEntry>>() {
+
+            @Override
+            public List<PersistedEntry> perform(Session liveSession) {
+
+                final LinkedList<PersistedEntry> page = new LinkedList<PersistedEntry>();
+
+                page.addAll(liveSession.createCriteria(PersistedEntry.class)
+                        .add(Restrictions.eq(FEED_NAME, feedName))
+                        .add(Restrictions.lt(DATE_LAST_UPDATED, persistedEntry.getCreationDate()))
+                        .addOrder(Order.desc(DATE_LAST_UPDATED))
+                        .setMaxResults(1).list());
+
+
+                return page;
             }
         });
     }
