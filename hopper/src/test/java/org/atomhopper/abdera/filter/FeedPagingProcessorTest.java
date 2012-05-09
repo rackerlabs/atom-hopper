@@ -44,12 +44,12 @@ public class FeedPagingProcessorTest {
             String lastEntryId = Integer.toString(TOTAL_FEED_ENTRIES);
 
             assertThat("Should set current link", feed.getLink(REL_CURRENT), notNullValue());
-            assertThat("Should match self (current link)", feed.getLink(REL_CURRENT).getHref().toString(), equalTo(CURRENT_URL));
+            assertThat("Should match current link", feed.getLink(REL_CURRENT).getHref().toString(), equalTo(CURRENT_URL));
 
             assertThat("Should set updated element", feed.getUpdated(), notNullValue());
 
             assertThat("Should set self link", feed.getLink(REL_SELF), notNullValue());
-            assertThat("Should match self (self link)", feed.getLink(REL_SELF).getHref().toString(), equalTo(SELF_URL));
+            assertThat("Should match self link", feed.getLink(REL_SELF).getHref().toString(), equalTo(SELF_URL));
         }
     }
 
