@@ -1,5 +1,6 @@
 package org.atomhopper.hibernate;
 
+import java.util.ArrayList;
 import org.atomhopper.adapter.jpa.PersistedCategory;
 import org.atomhopper.adapter.jpa.PersistedEntry;
 import org.atomhopper.adapter.jpa.PersistedFeed;
@@ -28,7 +29,6 @@ import java.util.Set;
 public class HibernateFeedRepository implements FeedRepository {
 
     private static final Logger LOG = LoggerFactory.getLogger(HibernateFeedRepository.class);
-
     private final HibernateSessionManager sessionManager;
     private static final String DATE_LAST_UPDATED = "dateLastUpdated";
     private static final String FEED_NAME = "feed.name";
@@ -133,7 +133,8 @@ public class HibernateFeedRepository implements FeedRepository {
     }
 
     @Override
-    public List<PersistedEntry> getFeedPage(final String feedName, final PersistedEntry markerEntry, final PageDirection direction, final CategoryCriteriaGenerator criteriaGenerator, final int pageSize) {
+    public List<PersistedEntry> getFeedPage(final String feedName, final PersistedEntry markerEntry, final PageDirection direction,
+    final CategoryCriteriaGenerator criteriaGenerator, final int pageSize) {
         return performComplexAction(new ComplexSessionAction<List<PersistedEntry>>() {
 
             @Override
@@ -146,16 +147,13 @@ public class HibernateFeedRepository implements FeedRepository {
 
                 switch (direction) {
                     case FORWARD:
-                        criteria.add(Restrictions.gt(DATE_LAST_UPDATED, markerEntry.getCreationDate()))
-                                .addOrder(Order.asc(DATE_LAST_UPDATED));
+                        criteria.add(Restrictions.gt(DATE_LAST_UPDATED, markerEntry.getCreationDate())).addOrder(Order.asc(DATE_LAST_UPDATED));
                         feedPage.addAll(criteria.list());
                         Collections.reverse(feedPage);
                         break;
 
                     case BACKWARD:
-                        criteria.add(Restrictions.lt(DATE_LAST_UPDATED, markerEntry.getCreationDate()))
-                                .addOrder(Order.desc(DATE_LAST_UPDATED));
-                        feedPage.add(markerEntry);
+                        criteria.add(Restrictions.le(DATE_LAST_UPDATED, markerEntry.getCreationDate())).addOrder(Order.desc(DATE_LAST_UPDATED));
                         feedPage.addAll(criteria.list());
                         break;
                 }
@@ -185,7 +183,8 @@ public class HibernateFeedRepository implements FeedRepository {
                 final Set<PersistedCategory> updatedCategories = new HashSet<PersistedCategory>();
 
                 for (PersistedCategory entryCategory : categories) {
-                    PersistedCategory liveCategory = (PersistedCategory) liveSession.createCriteria(PersistedCategory.class).add(Restrictions.idEq(entryCategory.getTerm())).uniqueResult();
+                    PersistedCategory liveCategory = (PersistedCategory) liveSession.createCriteria(PersistedCategory.class)
+                            .add(Restrictions.idEq(entryCategory.getTerm())).uniqueResult();
 
                     if (liveCategory == null) {
                         liveCategory = new PersistedCategory(entryCategory.getTerm());
@@ -236,9 +235,7 @@ public class HibernateFeedRepository implements FeedRepository {
             @Override
             public PersistedEntry perform(Session liveSession) {
                 return (PersistedEntry) liveSession.createCriteria(PersistedEntry.class)
-                        .add(Restrictions.idEq(entryId))
-                        .add(Restrictions.eq("feed.name", feedName))
-                        .uniqueResult();
+                        .add(Restrictions.idEq(entryId)).add(Restrictions.eq("feed.name", feedName)).uniqueResult();
             }
         });
     }
@@ -255,15 +252,42 @@ public class HibernateFeedRepository implements FeedRepository {
     }
 
     @Override
-    public PersistedEntry getLastEntry(final String feedName) {
-        return performComplexAction(new ComplexSessionAction<PersistedEntry>() {
+    public List<PersistedEntry> getLastPage(final String feedName, final int pageSize) {
+        return performComplexAction(new ComplexSessionAction<List<PersistedEntry>>() {
 
             @Override
-            public PersistedEntry perform(Session liveSession) {
-                return (PersistedEntry) liveSession.createCriteria(PersistedEntry.class)
+            public List<PersistedEntry> perform(Session liveSession) {
+
+                final LinkedList<PersistedEntry> lastPage = new LinkedList<PersistedEntry>();
+                
+                lastPage.addAll(liveSession.createCriteria(PersistedEntry.class)
                         .add(Restrictions.eq(FEED_NAME, feedName))
                         .addOrder(Order.asc(DATE_LAST_UPDATED))
-                        .setMaxResults(1).uniqueResult();
+                        .setMaxResults(pageSize).list());
+                
+                
+                return lastPage;
+            }
+        });
+    }
+
+    @Override
+    public List<PersistedEntry> getNextMarker(final PersistedEntry persistedEntry, final String feedName) {
+        return performComplexAction(new ComplexSessionAction<List<PersistedEntry>>() {
+
+            @Override
+            public List<PersistedEntry> perform(Session liveSession) {
+
+                final LinkedList<PersistedEntry> page = new LinkedList<PersistedEntry>();
+
+                page.addAll(liveSession.createCriteria(PersistedEntry.class)
+                        .add(Restrictions.eq(FEED_NAME, feedName))
+                        .add(Restrictions.lt(DATE_LAST_UPDATED, persistedEntry.getCreationDate()))
+                        .addOrder(Order.desc(DATE_LAST_UPDATED))
+                        .setMaxResults(1).list());
+
+
+                return page;
             }
         });
     }

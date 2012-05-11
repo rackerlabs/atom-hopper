@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.atomhopper</groupId>
         <artifactId>parent</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.0.3-SNAPSHOT</version>
     </parent>
 
     <groupId>org.atomhopper</groupId>
@@ -19,7 +19,7 @@
             <groupId>org.atomhopper</groupId>
             <artifactId>test-util</artifactId>
         </dependency>
-                
+
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-web-api</artifactId>
@@ -29,11 +29,6 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
         </dependency>
-        
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-c3p0</artifactId>
-        </dependency>          
 
         <dependency>
             <groupId>org.javassist</groupId>
@@ -109,7 +104,7 @@
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>

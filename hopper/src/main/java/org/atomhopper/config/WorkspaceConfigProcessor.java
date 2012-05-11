@@ -23,7 +23,8 @@ import java.util.List;
 /**
  * I eat configurations.
  *
- * TODO: Sanitize configured workspace and feed resource paths for regex insertion
+ * TODO: Sanitize configured workspace and feed resource paths for regex
+ * insertion
  */
 public class WorkspaceConfigProcessor {
 
@@ -47,12 +48,15 @@ public class WorkspaceConfigProcessor {
     }
 
     public List<WorkspaceHandler> toHandler() {
-        final List<WorkspaceHandler> workspaces = new LinkedList<WorkspaceHandler>();        
+        final List<WorkspaceHandler> workspaces = new LinkedList<WorkspaceHandler>();
 
         for (TargetAwareAbstractCollectionAdapter collectionAdapter : assembleFeeds(config.getFeed())) {
             final WorkspaceHandler workspace = new WorkspaceHandler(config);
-            workspace.addCollectionAdapter(collectionAdapter.getTarget(), collectionAdapter);
-            
+            workspace.addCollectionAdapter(new StringBuilder()
+                    .append(config.getResource())
+                    .append(collectionAdapter
+                    .getTarget()).toString(), collectionAdapter);
+
             LOG.info("Loading Workspace: " + collectionAdapter.getTarget());
             workspaces.add(workspace);
         }
@@ -91,7 +95,7 @@ public class WorkspaceConfigProcessor {
                 resolvedReference = adapterGetter.getByClassDefinition(Class.forName(className), expectedClass);
             } catch (ClassNotFoundException cnfe) {
                 LOG.error("Unable to find specified default adapter class: " + className, cnfe);
-                
+
                 throw new ConfigurationException("Unable to find specified default adapter class: " + className, cnfe);
             }
         }
@@ -102,7 +106,7 @@ public class WorkspaceConfigProcessor {
 //    private Map<String, String> adapterParametersToMap(List<AdapterParameter> paramters) {
 //        final Map<String, String> paramterMap = new HashMap<String, String>();
 //    }
-    
+
     public <T> T getAdapter(AdapterDescriptor descriptor, Class<T> expectedClass) {
 //        final Map<String, String> parameters = descriptorParametersToMap(descriptor.getParameter());
 

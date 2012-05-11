@@ -14,6 +14,9 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import static java.net.URLEncoder.encode;
+import org.apache.abdera.model.Link;
+import org.atomhopper.util.uri.template.EnumKeyedTemplateParameters;
+import org.atomhopper.util.uri.template.URITemplate;
 
 /**
  *
@@ -21,10 +24,11 @@ import static java.net.URLEncoder.encode;
  */
 public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
 
-    private static final String NEXT_LINK = "next";
-    private static final String CURRENT_LINK = "current";
     private static final String DIRECTION = "direction";
-    private static final String SELF_LINK = "self";
+    private static final String MARKER = "marker";
+    private static final String AMP = "amp;";
+    private static final String EMPTY_STRING = "";
+    private static final String UTF8 = "UTF-8";
 
     @Override
     public void process(RequestContext rc, AdapterResponse<Feed> adapterResponse) {
@@ -46,28 +50,13 @@ public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
         final Map<String, List<String>> parameters = getParameterMap(rc);
 
         // Add current link
-        if (linkNotSet(f, CURRENT_LINK)) {
-            f.addLink(StringUtils.join(new String[]{self, mapToParameters(parameters)}), CURRENT_LINK);
+        if (linkNotSet(f, Link.REL_CURRENT)) {
+            f.addLink(StringUtils.join(new String[]{self, mapToParameters(parameters)}), Link.REL_CURRENT);
         }
 
-        // Add self link (same as current link)
-        if (linkNotSet(f, SELF_LINK)) {
-            f.addLink(StringUtils.join(new String[]{self, mapToParameters(parameters)}), SELF_LINK);
-        }
-
-        // If the feed source hasn't already defined this link
-        if (linkNotSet(f, NEXT_LINK)) {
-            String id = f.getEntries().get(f.getEntries().size() - 1).getId().toString();
-
-            if (parameters.containsKey(DIRECTION)) {
-                if (parameters.get(DIRECTION).get(0).equalsIgnoreCase("forward")) {
-                    id = f.getEntries().get(0).getId().toString();
-                }
-            }
-            List<String> markerList = new ArrayList<String>();
-            markerList.add(id);
-            parameters.put("marker", markerList);
-            f.addLink(StringUtils.join(new String[]{self, mapToParameters(parameters)}), NEXT_LINK);
+        // Add self link
+        if (linkNotSet(f, Link.REL_SELF)) {
+            f.addLink(self).setRel(Link.REL_SELF);
         }
     }
 
@@ -80,9 +69,9 @@ public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
         for (String parameter : rc.getParameterNames()) {
             ArrayList<String> values = new ArrayList<String>();
             for (String value : rc.getParameters(parameter)) {
-                values.add(value.replace("amp;", ""));
+                values.add(value.replace(AMP, EMPTY_STRING));
             }
-            parameters.put(parameter.toLowerCase().replace("amp;", ""), values);
+            parameters.put(parameter.toLowerCase().replace(AMP, EMPTY_STRING), values);
         }
 
         return parameters;
@@ -91,20 +80,19 @@ public class FeedPagingProcessor implements AdapterResponseInterceptor<Feed> {
     public static String mapToParameters(Map<String, List<String>> parameters) {
         try {
             List<String> result = new ArrayList<String>();
-            String queryString = "";
 
             // Combine the keys into a key=value list
             for (String key : parameters.keySet()) {
                 //The key isn't unique, and we might end up with an array of multiple parameters
                 for (String value : parameters.get(key)) {
-                    result.add(encode(key, "UTF-8") + '=' + encode(value, "UTF-8"));
+                    result.add(encode(key, UTF8) + '=' + encode(value, UTF8));
                 }
             }
 
-            queryString = StringUtils.join(result.toArray(), "&");
+            String queryString = StringUtils.join(result.toArray(), "&");
 
             if (queryString == null || queryString.isEmpty()) {
-                return "";
+                return EMPTY_STRING;
             }
 
             queryString = "?" + queryString;

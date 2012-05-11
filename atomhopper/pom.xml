@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.atomhopper</groupId>
         <artifactId>parent</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.0.3-SNAPSHOT</version>
     </parent>
 
     <groupId>org.atomhopper</groupId>
@@ -31,8 +31,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-c3p0</artifactId>
+            <groupId>org.atomhopper.adapter</groupId>
+            <artifactId>mongodb-adapter</artifactId>
         </dependency>
 
     </dependencies>
@@ -196,7 +196,7 @@
                                     <username>tomcat</username>
                                     <groupname>tomcat</groupname>
                                     <!-- Modify file permissions as needed -->
-                                    <filemode>644</filemode>
+                                    <filemode>755</filemode>
                                     <configuration>false</configuration>
                                     <directoryIncluded>true</directoryIncluded>
                                     <sources>

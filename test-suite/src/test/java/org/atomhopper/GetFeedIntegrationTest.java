@@ -97,12 +97,12 @@ public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
 
             Document doc = xml.toDOM(getFeedMethod.getResponseBodyAsString());
             XPath xPath = XPathFactory.newInstance().newXPath();
-            String linkUrl = xPath.evaluate("/feed/link[@rel='next']/@href", doc);
+            String linkUrl = xPath.evaluate("/feed/link[@rel='previous']/@href", doc);
             String linkUrlOldestEntry = xPath.evaluate("/feed/link[@rel='last']/@href", doc);
 
             assertNotNull("The returned XML should not be null", doc);
             xml.assertHasValue(doc, "/feed/link[@rel='current']/@href", urlAndPort + "/namespace/feed");
-            xml.assertHasValue(doc, "/feed/link[@rel='next']/@href", linkUrl);
+            xml.assertHasValue(doc, "/feed/link[@rel='previous']/@href", linkUrl);
             xml.assertHasValue(doc, "/feed/link[@rel='last']/@href", linkUrlOldestEntry);
         }
 
@@ -114,12 +114,12 @@ public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
 
             Document doc = xml.toDOM(getFeedMethod.getResponseBodyAsString());
             XPath xPath = XPathFactory.newInstance().newXPath();
-            String linkUrl = xPath.evaluate("/feed/link[@rel='next']/@href", doc);
+            String linkUrl = xPath.evaluate("/feed/link[@rel='previous']/@href", doc);
             String linkUrlOldestEntry = xPath.evaluate("/feed/link[@rel='last']/@href", doc);
             System.out.println("=================================================");
 
             xml.assertHasValue(doc, "/feed/link[@rel='current']/@href", "http://localhost:24156/namespace/feed?awesome=bar&awesome=foo");
-            xml.assertHasValue(doc, "/feed/link[@rel='next']/@href", linkUrl);
+            xml.assertHasValue(doc, "/feed/link[@rel='previous']/@href", linkUrl);
             xml.assertHasValue(doc, "/feed/link[@rel='last']/@href", linkUrlOldestEntry);
         }
 

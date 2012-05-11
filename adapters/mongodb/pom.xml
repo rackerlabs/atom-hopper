@@ -10,10 +10,10 @@
     </parent>
 
     <groupId>org.atomhopper.adapter</groupId>
-    <artifactId>hibernate-adapter</artifactId>
+    <artifactId>mongodb-adapter</artifactId>
     <packaging>jar</packaging>
 
-    <name>ATOM Hopper - Hibernate Adapter</name>
+    <name>ATOM Hopper - MongoDB Adapter</name>
 
     <dependencies>
         <dependency>
@@ -22,18 +22,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
         </dependency>
 
         <dependency>
@@ -52,6 +42,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-mongodb</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
         </dependency>
@@ -61,16 +56,5 @@
             <artifactId>junit</artifactId>
         </dependency>
     </dependencies>
-
-    <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources/ddl</directory>
-                <excludes>
-                    <exclude>**/*.sql</exclude>
-                </excludes>
-            </resource>
-        </resources>
-    </build>
 </project>
 

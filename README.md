@@ -9,15 +9,15 @@
 
 #ATOM Hopper - A Java ATOMPub Server#
 
-Atom Hopper is a framework for accessing, processing, aggregating and indexing Atom formatted events. Atom Hopper was designed to make it easy to build both generalized and specialized persistence mechanisms for Atom XML data, based on the Atom Syndication Format and the Atom Publishing Protocol.
+[Atom Hopper](http://atomhopper.org) is a framework for accessing, processing, aggregating and indexing Atom formatted events. Atom Hopper was designed to make it easy to build both generalized and specialized persistence mechanisms for Atom XML data, based on the Atom Syndication Format and the Atom Publishing Protocol.
 
 Benefits:
 
 * Simple. Atom Hopper is easy to use. It can be used out-of-the-box as an executable JAR (running within an embedded Jetty Server). For more flexibility, it can be deployed as a WAR file into any Servlet container (ie: Tomcat, Jetty, etc.). Most applications can use Atom Hopper with minimal configuration to specify the Atom Workspaces and the Content storage.
 * Scalable. Atom Hopper is very scalable because it is designed to be stateless, allowing state to be distributed across the web.
 * Layered. Atom Hopper allows any number of intermediaries, such as proxies, gateways, and firewalls so one can easily layer aspects such as Security, Compression, etc. on an as needed basis.
-* Built on a strong foundation. It is built on top of several open source projects such as [Apache Abdera](http://abdera.apache.org/) (a Java-based Atom Publishing framework) and [Hibernate](http://www.hibernate.org/).
-* Flexible. Atom Hopper currently supports the following relational databases: [H2](http://www.h2database.com/), [PostgresSQL](http://www.postgresql.org/), and [MySQL](http://www.mysql.com/) (plus others that work with Hibernate).
+* Built on a strong foundation. It is built on top of several open source projects such as [Apache Abdera](http://abdera.apache.org/) (a Java-based Atom Publishing framework), [Hibernate](http://www.hibernate.org/), and [MongoDB](http://www.mongodb.org/).
+* Flexible. Atom Hopper currently supports the following relational databases: [H2](http://www.h2database.com/), [PostgresSQL](http://www.postgresql.org/), and [MySQL](http://www.mysql.com/) (plus others that work with Hibernate) as well as the NoSQL database [MongoDB](http://www.mongodb.org/).
 * High performance. Atom Hopper can handle high loads with high accuracy.
 * Improving. Atom Hopper is under development and actively being worked on.
 * Atom Hopper is currently being used at [Rackspace Hosting](http://www.rackspace.com/).
