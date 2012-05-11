@@ -67,16 +67,17 @@ public class HibernateFeedSource implements FeedSource {
                     .append("&direction=forward").toString()).setRel(Link.REL_PREVIOUS);
 
 
-            final List<PersistedEntry> nextPersistedEntries = feedRepository.getNextMarker(persistedEntries.get(persistedEntries.size() - 1), getFeedRequest.getFeedName().toString());
+            final PersistedEntry nextPersistedEntry = feedRepository.getNextMarker(persistedEntries.get(persistedEntries.size() - 1),
+                    getFeedRequest.getFeedName().toString(), new SimpleCategoryCriteriaGenerator(searchString));
 
             // If limit > actual number of entries in the database, there
             // is not a next link
-            if (nextPersistedEntries.size() > 0) {
+            if (nextPersistedEntry != null) {
                 // Set the next link
                 hyrdatedFeed.addLink(new StringBuilder()
                         .append(BASE_FEED_URI)
                         .append("?marker=")
-                        .append(nextPersistedEntries.get(0).getEntryId())
+                        .append(nextPersistedEntry.getEntryId())
                         .append("&limit=")
                         .append(String.valueOf(pageSize))
                         .append("&search=")
@@ -151,7 +152,15 @@ public class HibernateFeedSource implements FeedSource {
             Feed hyrdatedFeed = hydrateFeed(abdera, persistedEntries, getFeedRequest, pageSize);
             // Set the last link in the feed head
             final String BASE_FEED_URI = decode(getFeedRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
-            final List<PersistedEntry> lastPersistedEntries = feedRepository.getLastPage(feedName, pageSize);
+
+            final int totalFeedEntryCount = feedRepository.getFeedCount(feedName, new SimpleCategoryCriteriaGenerator(searchString));
+            int lastPageSize = totalFeedEntryCount % pageSize;
+
+            if (lastPageSize == 0) {
+                lastPageSize = pageSize;
+            }
+
+            final List<PersistedEntry> lastPersistedEntries = feedRepository.getLastPage(feedName, lastPageSize, new SimpleCategoryCriteriaGenerator(searchString));
 
             if (!(lastPersistedEntries.isEmpty())) {
                 hyrdatedFeed.addLink(new StringBuilder()
@@ -159,7 +168,7 @@ public class HibernateFeedSource implements FeedSource {
                         .append("?marker=")
                         .append(lastPersistedEntries.get(lastPersistedEntries.size() - 1).getEntryId())
                         .append("&limit=")
-                        .append(String.valueOf(pageSize))
+                        .append(String.valueOf(lastPageSize))
                         .append("&search=")
                         .append(searchString)
                         .append("&direction=backward").toString())
