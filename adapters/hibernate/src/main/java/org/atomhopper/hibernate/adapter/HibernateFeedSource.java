@@ -162,7 +162,7 @@ public class HibernateFeedSource implements FeedSource {
 
             final List<PersistedEntry> lastPersistedEntries = feedRepository.getLastPage(feedName, lastPageSize, new SimpleCategoryCriteriaGenerator(searchString));
 
-            if (!(lastPersistedEntries.isEmpty())) {
+            if (lastPersistedEntries != null && !(lastPersistedEntries.isEmpty())) {
                 hyrdatedFeed.addLink(new StringBuilder()
                         .append(BASE_FEED_URI)
                         .append("?marker=")
