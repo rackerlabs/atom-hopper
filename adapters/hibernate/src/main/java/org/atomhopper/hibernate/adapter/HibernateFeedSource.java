@@ -168,7 +168,7 @@ public class HibernateFeedSource implements FeedSource {
                         .append("?marker=")
                         .append(lastPersistedEntries.get(lastPersistedEntries.size() - 1).getEntryId())
                         .append("&limit=")
-                        .append(String.valueOf(lastPageSize))
+                        .append(String.valueOf(pageSize))
                         .append("&search=")
                         .append(searchString)
                         .append("&direction=backward").toString())
