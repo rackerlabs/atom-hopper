@@ -31,7 +31,6 @@ public class HibernateFeedSource implements FeedSource {
     private static final int PAGE_SIZE = 25;
     private FeedRepository feedRepository;
     private static final String LAST_ENTRY = "last";
-    private static final String UTF8 = "utf-8";
 
     public void setFeedRepository(FeedRepository feedRepository) {
         this.feedRepository = feedRepository;
