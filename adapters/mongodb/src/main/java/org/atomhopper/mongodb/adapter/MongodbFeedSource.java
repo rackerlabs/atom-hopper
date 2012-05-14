@@ -184,7 +184,7 @@ public class MongodbFeedSource implements FeedSource {
             lastLinkQuery.sort().on(DATE_LAST_UPDATED, Order.ASCENDING);
             final List<PersistedEntry> lastPersistedEntries = mongoTemplate.find(lastLinkQuery, PersistedEntry.class);
 
-            if (!(lastPersistedEntries.isEmpty())) {
+            if (lastPersistedEntries != null && !(lastPersistedEntries.isEmpty())) {
                 hyrdatedFeed.addLink(new StringBuilder()
                         .append(BASE_FEED_URI)
                         .append("?marker=")

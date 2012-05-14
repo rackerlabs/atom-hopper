@@ -26,11 +26,13 @@ public interface FeedRepository {
 
     PersistedEntry getEntry(String entryId, String feedName);
 
-    List<PersistedEntry> getLastPage(String feedName, int pageSize);
+    List<PersistedEntry> getLastPage(String feedName, int pageSize, CategoryCriteriaGenerator criteriaGenerator);
 
     void saveEntry(PersistedEntry entry);
 
     Set<PersistedCategory> updateCategories(Set<PersistedCategory> categories);
 
-    List<PersistedEntry> getNextMarker(PersistedEntry persistedEntry, String feedName);
+    PersistedEntry getNextMarker(PersistedEntry persistedEntry, String feedName, CategoryCriteriaGenerator criteriaGenerator);
+
+    int getFeedCount(String feedName, CategoryCriteriaGenerator criteriaGenerator);
 }
