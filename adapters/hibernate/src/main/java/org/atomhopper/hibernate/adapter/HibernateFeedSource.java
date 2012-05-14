@@ -1,9 +1,16 @@
 package org.atomhopper.hibernate.adapter;
 
+import java.io.StringReader;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import org.apache.abdera.Abdera;
+import static org.apache.abdera.i18n.text.UrlEncoding.decode;
+import static org.apache.abdera.i18n.text.UrlEncoding.encode;
 import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
+import org.apache.abdera.model.Link;
 import org.apache.commons.lang.StringUtils;
 import org.atomhopper.adapter.FeedInformation;
 import org.atomhopper.adapter.FeedSource;
@@ -18,14 +25,6 @@ import org.atomhopper.hibernate.query.SimpleCategoryCriteriaGenerator;
 import org.atomhopper.response.AdapterResponse;
 import org.atomhopper.util.uri.template.EnumKeyedTemplateParameters;
 import org.atomhopper.util.uri.template.URITemplate;
-
-import java.io.StringReader;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import static org.apache.abdera.i18n.text.UrlEncoding.decode;
-import org.apache.abdera.model.Link;
 
 public class HibernateFeedSource implements FeedSource {
 
@@ -63,7 +62,7 @@ public class HibernateFeedSource implements FeedSource {
                     .append("&limit=")
                     .append(String.valueOf(pageSize))
                     .append("&search=")
-                    .append(searchString)
+                    .append(encode(searchString).toString())
                     .append("&direction=forward").toString()).setRel(Link.REL_PREVIOUS);
 
 
@@ -81,7 +80,7 @@ public class HibernateFeedSource implements FeedSource {
                         .append("&limit=")
                         .append(String.valueOf(pageSize))
                         .append("&search=")
-                        .append(searchString)
+                        .append(encode(searchString).toString())
                         .append("&direction=backward").toString()).setRel(Link.REL_NEXT);
             }
         }
@@ -170,7 +169,7 @@ public class HibernateFeedSource implements FeedSource {
                         .append("&limit=")
                         .append(String.valueOf(pageSize))
                         .append("&search=")
-                        .append(searchString)
+                        .append(encode(searchString).toString())
                         .append("&direction=backward").toString())
                         .setRel(Link.REL_LAST);
             }
