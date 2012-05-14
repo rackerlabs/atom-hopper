@@ -25,6 +25,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.atomhopper.hibernate.query.SimpleCategoryCriteriaGenerator;
+import org.hibernate.criterion.Projections;
 
 public class HibernateFeedRepository implements FeedRepository {
 
@@ -252,43 +254,56 @@ public class HibernateFeedRepository implements FeedRepository {
     }
 
     @Override
-    public List<PersistedEntry> getLastPage(final String feedName, final int pageSize) {
-        return performComplexAction(new ComplexSessionAction<List<PersistedEntry>>() {
+    public List<PersistedEntry> getLastPage(final String feedName, final int pageSize, CategoryCriteriaGenerator criteriaGenerator) {
 
-            @Override
-            public List<PersistedEntry> perform(Session liveSession) {
+        final Session session = sessionManager.getSession();
 
-                final LinkedList<PersistedEntry> lastPage = new LinkedList<PersistedEntry>();
-                
-                lastPage.addAll(liveSession.createCriteria(PersistedEntry.class)
+        Criteria criteria = session.createCriteria(PersistedEntry.class)
                         .add(Restrictions.eq(FEED_NAME, feedName))
                         .addOrder(Order.asc(DATE_LAST_UPDATED))
-                        .setMaxResults(pageSize).list());
-                
-                
-                return lastPage;
-            }
-        });
+                        .setMaxResults(pageSize);
+
+        criteriaGenerator.enhanceCriteria(criteria);
+
+        return criteria.list().size() > 0 ? (List<PersistedEntry>) criteria.list() : null;
     }
 
     @Override
-    public List<PersistedEntry> getNextMarker(final PersistedEntry persistedEntry, final String feedName) {
-        return performComplexAction(new ComplexSessionAction<List<PersistedEntry>>() {
+    public int getFeedCount(final String feedName, final CategoryCriteriaGenerator criteriaGenerator) {
+        final Session session = sessionManager.getSession();
 
-            @Override
-            public List<PersistedEntry> perform(Session liveSession) {
+        Criteria criteria = session.createCriteria(PersistedEntry.class);
 
-                final LinkedList<PersistedEntry> page = new LinkedList<PersistedEntry>();
+        criteria.add(Restrictions.eq(FEED_NAME, feedName))
+                .setProjection(Projections.rowCount()).uniqueResult();
 
-                page.addAll(liveSession.createCriteria(PersistedEntry.class)
-                        .add(Restrictions.eq(FEED_NAME, feedName))
+        criteriaGenerator.enhanceCriteria(criteria);
+
+        return safeLongToInt((Long) criteria.list().get(0));
+    }
+
+    @Override
+    public PersistedEntry getNextMarker(final PersistedEntry persistedEntry, final String feedName, CategoryCriteriaGenerator criteriaGenerator) {
+
+        final Session session = sessionManager.getSession();
+
+        Criteria criteria = session.createCriteria(PersistedEntry.class);
+
+        criteria.add(Restrictions.eq(FEED_NAME, feedName))
                         .add(Restrictions.lt(DATE_LAST_UPDATED, persistedEntry.getCreationDate()))
                         .addOrder(Order.desc(DATE_LAST_UPDATED))
-                        .setMaxResults(1).list());
+                        .setMaxResults(1);
 
+        criteriaGenerator.enhanceCriteria(criteria);
 
-                return page;
-            }
-        });
+        return criteria.list().size() > 0 ? (PersistedEntry) criteria.list().get(0) : null;
+    }
+
+    private int safeLongToInt(long value) {
+        if (value < Integer.MIN_VALUE || value > Integer.MAX_VALUE) {
+            throw new IllegalArgumentException
+                (value + " cannot be cast to int without changing its value.");
+        }
+        return (int) value;
     }
 }
