@@ -6,6 +6,7 @@ import java.io.StringReader;
 import java.util.*;
 import org.apache.abdera.Abdera;
 import static org.apache.abdera.i18n.text.UrlEncoding.decode;
+import static org.apache.abdera.i18n.text.UrlEncoding.encode;
 import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
@@ -66,7 +67,7 @@ public class MongodbFeedSource implements FeedSource {
                     .append("&limit=")
                     .append(String.valueOf(pageSize))
                     .append("&search=")
-                    .append(searchString)
+                    .append(encode(searchString).toString())
                     .append("&direction=forward").toString())
                     .setRel(Link.REL_PREVIOUS);
 
@@ -90,7 +91,7 @@ public class MongodbFeedSource implements FeedSource {
                         .append("&limit=")
                         .append(String.valueOf(pageSize))
                         .append("&search=")
-                        .append(searchString)
+                        .append(encode(searchString).toString())
                         .append("&direction=backward").toString())
                         .setRel(Link.REL_NEXT);
             }
@@ -184,7 +185,7 @@ public class MongodbFeedSource implements FeedSource {
             lastLinkQuery.sort().on(DATE_LAST_UPDATED, Order.ASCENDING);
             final List<PersistedEntry> lastPersistedEntries = mongoTemplate.find(lastLinkQuery, PersistedEntry.class);
 
-            if (!(lastPersistedEntries.isEmpty())) {
+            if (lastPersistedEntries != null && !(lastPersistedEntries.isEmpty())) {
                 hyrdatedFeed.addLink(new StringBuilder()
                         .append(BASE_FEED_URI)
                         .append("?marker=")
@@ -192,7 +193,7 @@ public class MongodbFeedSource implements FeedSource {
                         .append("&limit=")
                         .append(String.valueOf(pageSize))
                         .append("&search=")
-                        .append(searchString)
+                        .append(encode(searchString).toString())
                         .append("&direction=backward").toString())
                         .setRel(Link.REL_LAST);
             }
