@@ -50,16 +50,16 @@
         <!--
             Use the atomhopper-url-pattern to match the url-pattern so ATOM entries
             use valid self URLs.
-            
+
             Ex: <url-pattern>/atom/*</url-pattern>
-            
+
             Map the above as:
             <param-name>atomhopper-url-pattern</param-name>
             <param-value></atom/param-value>
-            
+
             Note: There is not need for the asterix on the
             atomhopper-url-pattern param-value
-            
+
         -->
         <init-param>
             <param-name>atomhopper-url-pattern</param-name>
@@ -72,6 +72,11 @@
         <servlet-class>org.atomhopper.AtomHopperVersionServlet</servlet-class>
     </servlet>
 
+    <servlet id="atom-hopper-version">
+        <servlet-name>Atom-Hopper-Log-Test</servlet-name>
+        <servlet-class>org.atomhopper.AtomHopperLogCheckServlet</servlet-class>
+    </servlet>
+
     <servlet-mapping id="atom-hopper-mapping">
         <servlet-name>Atom-Hopper</servlet-name>
         <url-pattern>/*</url-pattern>
@@ -80,5 +85,10 @@
     <servlet-mapping id="atom-hopper-version-mapping">
         <servlet-name>Atom-Hopper-Version</servlet-name>
         <url-pattern>/buildinfo</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping id="atom-hopper-log-test-mapping">
+        <servlet-name>Atom-Hopper-Log-Test</servlet-name>
+        <url-pattern>/logtest</url-pattern>
     </servlet-mapping>
 </web-app>
