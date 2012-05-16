@@ -1,5 +1,6 @@
 package org.atomhopper.jetty;
 
+import org.atomhopper.AtomHopperLogCheckServlet;
 import org.atomhopper.AtomHopperServlet;
 import org.atomhopper.AtomHopperVersionServlet;
 import org.atomhopper.servlet.ServletInitParameter;
@@ -27,10 +28,12 @@ public class AtomHopperJettyServerBuilder {
 
         final ServletHolder atomHopServer = new ServletHolder(AtomHopperServlet.class);
         final ServletHolder versionServlet = new ServletHolder(AtomHopperVersionServlet.class);
+        final ServletHolder loggingTestServlet = new ServletHolder(AtomHopperLogCheckServlet.class);
         atomHopServer.setInitParameter(ServletInitParameter.CONTEXT_ADAPTER_CLASS.toString(), ServletSpringContext.class.getName());
         atomHopServer.setInitParameter(ServletInitParameter.CONFIGURATION_LOCATION.toString(), "classpath:/META-INF/atom-server.cfg.xml");
 
         rootContext.addServlet(versionServlet, "/buildinfo");
+        rootContext.addServlet(loggingTestServlet, "/logtest");
         rootContext.addServlet(atomHopServer, "/*");
 
         return jettyServerReference;
