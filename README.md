@@ -22,6 +22,12 @@ Benefits:
 * Improving. Atom Hopper is under development and actively being worked on.
 * Atom Hopper is currently being used at [Rackspace Hosting](http://www.rackspace.com/).
 
+Atom Hopper works well with [Repose](http://openrepose.org/) especially if you need:
+* Authentication and Authorization
+* Rate Limiting
+* Versioning
+* HTTP Logging
+
 To find out how to install and run Atom Hopper please see the [Atom Hopper Wiki](https://github.com/rackspace/atom-hopper/wiki)
 
 ###Notes Regarding licensing###
