@@ -71,6 +71,13 @@
           <testFilesExcluded>
             <excludeJMeterTestFile>empty-skeleton.jmx</excludeJMeterTestFile>
           </testFilesExcluded>
+          <propertiesUser>
+            <some.property.name>value</some.property.name>
+          </propertiesUser>
+          <reportConfig>
+            <!-- <enable>true</enable> -->
+            <xsltFile>functional-report.xsl</xsltFile>
+          </reportConfig>
         </configuration>
       </plugin>
     </plugins>
