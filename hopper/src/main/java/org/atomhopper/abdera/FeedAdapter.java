@@ -37,10 +37,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import org.atomhopper.adapter.request.adapter.impl.*;
 
 public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
 
-    private static final int ERROR_CODE = 422;
     private final ResponseHandler<EmptyBody> emptyBodyResponseHandler;
     private final ResponseHandler<Feed> feedResponseHandler;
     private final ResponseHandler<Entry> entryResponseHandler;
@@ -156,7 +156,9 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
             final AdapterResponse<Entry> response = feedPublisher.postEntry(new PostEntryRequestImpl(request));
             return entryResponseHandler.handleResponse(request, response);
         } catch (ParseException ex) {
-            return ProviderHelper.createErrorResponse(Abdera.getInstance(), ERROR_CODE, ex.getMessage(), ex);
+            return ProviderHelper.createErrorResponse(Abdera.getInstance(), HttpStatus.UNPROCESSABLE_ENTITY.value(), ex.getMessage(), ex);
+        } catch (RequestParsingException rpex) {
+            return ProviderHelper.createErrorResponse(Abdera.getInstance(), HttpStatus.UNPROCESSABLE_ENTITY.value(), "The POST did not contain valid ATOM XML", rpex);
         } catch (Exception ex) {
             return ProviderHelper.servererror(request, ex.getMessage(), ex);
         }
