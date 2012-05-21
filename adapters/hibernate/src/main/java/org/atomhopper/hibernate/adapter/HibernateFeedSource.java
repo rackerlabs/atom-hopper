@@ -30,7 +30,6 @@ public class HibernateFeedSource implements FeedSource {
 
     private static final int PAGE_SIZE = 25;
     private FeedRepository feedRepository;
-    private static final String LAST_ENTRY = "last";
 
     public void setFeedRepository(FeedRepository feedRepository) {
         this.feedRepository = feedRepository;
@@ -47,10 +46,26 @@ public class HibernateFeedSource implements FeedSource {
 
     private Feed hydrateFeed(Abdera abdera, List<PersistedEntry> persistedEntries, GetFeedRequest getFeedRequest, final int pageSize) {
         final Feed hyrdatedFeed = abdera.newFeed();
+        final String BASE_FEED_URI = decode(getFeedRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
+        final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
+
+        // Set the feed current link
+        hyrdatedFeed.addLink(BASE_FEED_URI, Link.REL_CURRENT);
+
+        // Set the feed self link
+        hyrdatedFeed.addLink(new StringBuilder()
+                .append(BASE_FEED_URI)
+                .append("?marker=")
+                .append(persistedEntries.get(0).getEntryId())
+                .append("&limit=")
+                .append(String.valueOf(pageSize))
+                .append("&search=")
+                .append(encode(searchString).toString())
+                .append("&direction=")
+                .append(getFeedRequest.getDirection()).toString())
+                .setRel(Link.REL_SELF);
 
         if (!(persistedEntries.isEmpty())) {
-            final String BASE_FEED_URI = decode(getFeedRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
-            final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
 
             hyrdatedFeed.setId(UUID.randomUUID().toString());
             hyrdatedFeed.setTitle(getFeedRequest.getFeedName().toString());
@@ -191,7 +206,6 @@ public class HibernateFeedSource implements FeedSource {
             return ResponseBuilder.badRequest("Marker must have a page direction specified as either \"forward\" or \"backward\"");
         }
 
-        final PersistedFeed persistedFeed = feedRepository.getFeed(getFeedRequest.getFeedName());
         final PersistedEntry markerEntry = feedRepository.getEntry(marker, getFeedRequest.getFeedName());
 
         if (markerEntry != null) {

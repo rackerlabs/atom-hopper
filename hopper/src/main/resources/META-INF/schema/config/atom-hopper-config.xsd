@@ -47,6 +47,15 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
+
+        <xs:attribute name="scheme" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>
+                    <xhtml:p>
+                    </xhtml:p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
 
     <xs:complexType name="WorkspaceConfiguration">
@@ -62,7 +71,7 @@
         <xs:sequence>
             <xs:element name="defaults" type="hopcfg:ConfigurationDefaults" minOccurs="0" maxOccurs="1" />
             <xs:element name="categories-descriptor" type="hopcfg:AdapterDescriptor" minOccurs="0" maxOccurs="1" />
-            
+
             <xs:element name="feed" type="hopcfg:FeedConfiguration" minOccurs="1" maxOccurs="unbounded" />
         </xs:sequence>
 
@@ -90,7 +99,7 @@
     <xs:complexType name="FeedConfiguration">
         <xs:sequence>
             <xs:element name="author" type="hopcfg:Author" minOccurs="0" maxOccurs="1" />
-            
+
             <xs:element name="feed-source" type="hopcfg:AdapterDescriptor" minOccurs="0" maxOccurs="1" />
             <xs:element name="publisher" type="hopcfg:AdapterDescriptor" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
@@ -124,7 +133,7 @@
         <xs:sequence>
             <xs:element name="parameter" type="hopcfg:AdapterParameter" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
-        
+
         <xs:attribute name="reference" type="xs:string" use="optional">
             <xs:annotation>
                 <xs:documentation>
