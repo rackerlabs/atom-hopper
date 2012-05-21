@@ -5,7 +5,7 @@
         <author name="Atom Hopper" />
     </defaults>
 
-    <host domain="localhost:8080" />
+    <host domain="localhost:8080" scheme="http" />
 
     <workspace title="Testing Namespace" resource="/namespace/">
         <categories-descriptor reference="workspace-categories-descriptor" />

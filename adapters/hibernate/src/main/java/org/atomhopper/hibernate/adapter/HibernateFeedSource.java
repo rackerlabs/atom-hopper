@@ -1,9 +1,16 @@
 package org.atomhopper.hibernate.adapter;
 
+import java.io.StringReader;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import org.apache.abdera.Abdera;
+import static org.apache.abdera.i18n.text.UrlEncoding.decode;
+import static org.apache.abdera.i18n.text.UrlEncoding.encode;
 import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
+import org.apache.abdera.model.Link;
 import org.apache.commons.lang.StringUtils;
 import org.atomhopper.adapter.FeedInformation;
 import org.atomhopper.adapter.FeedSource;
@@ -19,19 +26,10 @@ import org.atomhopper.response.AdapterResponse;
 import org.atomhopper.util.uri.template.EnumKeyedTemplateParameters;
 import org.atomhopper.util.uri.template.URITemplate;
 
-import java.io.StringReader;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import static org.apache.abdera.i18n.text.UrlEncoding.decode;
-import org.apache.abdera.model.Link;
-
 public class HibernateFeedSource implements FeedSource {
 
     private static final int PAGE_SIZE = 25;
     private FeedRepository feedRepository;
-    private static final String LAST_ENTRY = "last";
 
     public void setFeedRepository(FeedRepository feedRepository) {
         this.feedRepository = feedRepository;
@@ -48,10 +46,26 @@ public class HibernateFeedSource implements FeedSource {
 
     private Feed hydrateFeed(Abdera abdera, List<PersistedEntry> persistedEntries, GetFeedRequest getFeedRequest, final int pageSize) {
         final Feed hyrdatedFeed = abdera.newFeed();
+        final String BASE_FEED_URI = decode(getFeedRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
+        final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
+
+        // Set the feed current link
+        hyrdatedFeed.addLink(BASE_FEED_URI, Link.REL_CURRENT);
+
+        // Set the feed self link
+        hyrdatedFeed.addLink(new StringBuilder()
+                .append(BASE_FEED_URI)
+                .append("?marker=")
+                .append(persistedEntries.get(0).getEntryId())
+                .append("&limit=")
+                .append(String.valueOf(pageSize))
+                .append("&search=")
+                .append(encode(searchString).toString())
+                .append("&direction=")
+                .append(getFeedRequest.getDirection()).toString())
+                .setRel(Link.REL_SELF);
 
         if (!(persistedEntries.isEmpty())) {
-            final String BASE_FEED_URI = decode(getFeedRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
-            final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
 
             hyrdatedFeed.setId(UUID.randomUUID().toString());
             hyrdatedFeed.setTitle(getFeedRequest.getFeedName().toString());
@@ -63,7 +77,7 @@ public class HibernateFeedSource implements FeedSource {
                     .append("&limit=")
                     .append(String.valueOf(pageSize))
                     .append("&search=")
-                    .append(searchString)
+                    .append(encode(searchString).toString())
                     .append("&direction=forward").toString()).setRel(Link.REL_PREVIOUS);
 
 
@@ -81,7 +95,7 @@ public class HibernateFeedSource implements FeedSource {
                         .append("&limit=")
                         .append(String.valueOf(pageSize))
                         .append("&search=")
-                        .append(searchString)
+                        .append(encode(searchString).toString())
                         .append("&direction=backward").toString()).setRel(Link.REL_NEXT);
             }
         }
@@ -170,7 +184,7 @@ public class HibernateFeedSource implements FeedSource {
                         .append("&limit=")
                         .append(String.valueOf(pageSize))
                         .append("&search=")
-                        .append(searchString)
+                        .append(encode(searchString).toString())
                         .append("&direction=backward").toString())
                         .setRel(Link.REL_LAST);
             }
@@ -192,7 +206,6 @@ public class HibernateFeedSource implements FeedSource {
             return ResponseBuilder.badRequest("Marker must have a page direction specified as either \"forward\" or \"backward\"");
         }
 
-        final PersistedFeed persistedFeed = feedRepository.getFeed(getFeedRequest.getFeedName());
         final PersistedEntry markerEntry = feedRepository.getEntry(marker, getFeedRequest.getFeedName());
 
         if (markerEntry != null) {

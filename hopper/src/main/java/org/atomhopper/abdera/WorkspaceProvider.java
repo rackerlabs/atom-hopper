@@ -113,17 +113,14 @@ public class WorkspaceProvider implements Provider {
     @Override
     public String urlFor(RequestContext request, Object key, Object param) {
         final Target resolvedTarget = request.getTarget();
-        
+
         if (param == null || param instanceof TemplateParameters) {
             final TemplateParameters templateParameters = param != null
                     ? (TemplateParameters) param
                     : new EnumKeyedTemplateParameters((Enum) key);
 
             templateParameters.set(URITemplateParameter.HOST_DOMAIN, hostConfiguration.getDomain());
-            
-            if (request instanceof ServletRequestContext) {
-                templateParameters.set(URITemplateParameter.HOST_SCHEME, ((ServletRequestContext)request).getRequest().getScheme());
-            }            
+            templateParameters.set(URITemplateParameter.HOST_SCHEME, hostConfiguration.getScheme());
 
             //This is what happens when you don't use enumerations :p
             if (resolvedTarget.getType() == TargetType.TYPE_SERVICE) {
