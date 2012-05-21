@@ -51,11 +51,26 @@ public class MongodbFeedSource implements FeedSource {
 
     private Feed hydrateFeed(Abdera abdera, List<PersistedEntry> persistedEntries, GetFeedRequest getFeedRequest, final int pageSize) {
         final Feed hyrdatedFeed = abdera.newFeed();
+        final String BASE_FEED_URI = decode(getFeedRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
+        final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
+
+        // Set the feed current link
+        hyrdatedFeed.addLink(BASE_FEED_URI, Link.REL_CURRENT);
+
+        // Set the feed self link
+        hyrdatedFeed.addLink(new StringBuilder()
+                .append(BASE_FEED_URI)
+                .append("?marker=")
+                .append(persistedEntries.get(0).getEntryId())
+                .append("&limit=")
+                .append(String.valueOf(pageSize))
+                .append("&search=")
+                .append(encode(searchString).toString())
+                .append("&direction=")
+                .append(getFeedRequest.getDirection()).toString())
+                .setRel(Link.REL_SELF);
 
         if (!(persistedEntries.isEmpty())) {
-            final String BASE_FEED_URI = decode(getFeedRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
-            final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
-
             hyrdatedFeed.setId(UUID_URI_SCHEME + UUID.randomUUID().toString());
             hyrdatedFeed.setTitle(persistedEntries.get(0).getFeed());
 
