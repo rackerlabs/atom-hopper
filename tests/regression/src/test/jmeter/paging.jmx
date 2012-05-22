@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jmeterTestPlan version="1.2" properties="2.3">
+<jmeterTestPlan version="1.2" properties="2.2">
   <hashTree>
     <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Paging" enabled="true">
       <stringProp name="TestPlan.comments">Test paging by following next, previous, and last links in a feed</stringProp>
@@ -1894,8 +1894,8 @@
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should not contain a &quot;current&quot; link" enabled="true">
-              <boolProp name="XPath.negate">true</boolProp>
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain a &quot;current&quot; link" enabled="true">
+              <boolProp name="XPath.negate">false</boolProp>
               <stringProp name="XPath.xpath">/feed/link[@rel=&quot;current&quot;]/@href</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
@@ -1903,8 +1903,8 @@
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should not contain a &quot;self&quot; link" enabled="true">
-              <boolProp name="XPath.negate">true</boolProp>
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain a &quot;self&quot; link" enabled="true">
+              <boolProp name="XPath.negate">false</boolProp>
               <stringProp name="XPath.xpath">/feed/link[@rel=&quot;self&quot;]/@href</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
@@ -3605,8 +3605,8 @@
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should not contain a &quot;current&quot; link" enabled="true">
-              <boolProp name="XPath.negate">true</boolProp>
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain a &quot;current&quot; link" enabled="true">
+              <boolProp name="XPath.negate">false</boolProp>
               <stringProp name="XPath.xpath">/feed/link[@rel=&quot;current&quot;]/@href</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
@@ -3614,8 +3614,8 @@
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should not contain a &quot;self&quot; link" enabled="true">
-              <boolProp name="XPath.negate">true</boolProp>
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain a &quot;self&quot; link" enabled="true">
+              <boolProp name="XPath.negate">false</boolProp>
               <stringProp name="XPath.xpath">/feed/link[@rel=&quot;self&quot;]/@href</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
