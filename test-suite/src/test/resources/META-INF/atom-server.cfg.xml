@@ -5,7 +5,7 @@
         <author name="Atom Hopper" />
     </defaults>
 
-    <host domain="domain.com" scheme="http" />
+    <host domain="localhost:24156" scheme="http" />
 
     <workspace title="Namespace" resource="/namespace/">
         <categories-descriptor reference="workspace-categories-descriptor" />

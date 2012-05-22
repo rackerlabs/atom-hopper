@@ -52,7 +52,6 @@ public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
         public void shouldReturnEmptyFeed() throws Exception {
             final HttpMethod getFeedMethod = newGetFeedMethod();
             assertEquals("Getting a feed should return a 200", HttpStatus.SC_OK, httpClient.executeMethod(getFeedMethod));
-            //System.out.println(new String(getFeedMethod.getResponseBody()));
         }
     }
 
@@ -101,14 +100,14 @@ public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
             String linkUrlOldestEntry = xPath.evaluate("/feed/link[@rel='last']/@href", doc);
 
             assertNotNull("The returned XML should not be null", doc);
-            xml.assertHasValue(doc, "/feed/link[@rel='current']/@href", urlAndPort + "/namespace/feed");
+            xml.assertHasValue(doc, "/feed/link[@rel='current']/@href", urlAndPort + "/namespace/feed/");
             xml.assertHasValue(doc, "/feed/link[@rel='previous']/@href", linkUrl);
             xml.assertHasValue(doc, "/feed/link[@rel='last']/@href", linkUrlOldestEntry);
         }
 
         @Test
         public void shouldPreserveAllLinkParameters() throws Exception {
-            final HttpMethod getFeedMethod = new GetMethod("http://localhost:24156/namespace/feed?awesome=bar&awesome=foo");
+            final HttpMethod getFeedMethod = new GetMethod(urlAndPort+ "/namespace/feed?awesome=bar&awesome=foo");
 
             assertEquals("Getting a feed should return a 200", HttpStatus.SC_OK, httpClient.executeMethod(getFeedMethod));
 
@@ -116,9 +115,8 @@ public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
             XPath xPath = XPathFactory.newInstance().newXPath();
             String linkUrl = xPath.evaluate("/feed/link[@rel='previous']/@href", doc);
             String linkUrlOldestEntry = xPath.evaluate("/feed/link[@rel='last']/@href", doc);
-            System.out.println("=================================================");
 
-            xml.assertHasValue(doc, "/feed/link[@rel='current']/@href", "http://localhost:24156/namespace/feed?awesome=bar&awesome=foo");
+            xml.assertHasValue(doc, "/feed/link[@rel='current']/@href", urlAndPort+ "/namespace/feed/");
             xml.assertHasValue(doc, "/feed/link[@rel='previous']/@href", linkUrl);
             xml.assertHasValue(doc, "/feed/link[@rel='last']/@href", linkUrlOldestEntry);
         }
@@ -126,7 +124,7 @@ public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
         @Test
         public void shouldErrorWithBadMarker() throws Exception {
 
-            final HttpMethod getFeedMethod = new GetMethod("http://localhost:24156/namespace/feed?marker=NO_BUENO");
+            final HttpMethod getFeedMethod = new GetMethod(urlAndPort+ "/namespace/feed?marker=NO_BUENO");
 
             assertEquals("Getting a feed should return a 500 with bad marker id.", HttpStatus.SC_INTERNAL_SERVER_ERROR, httpClient.executeMethod(getFeedMethod));
         }
@@ -134,7 +132,7 @@ public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
         @Test
         public void shouldDefaultToForward() throws Exception {
             final HttpMethod postMethod = newPostEntryMethod("");
-            assertEquals("Posting a feed should return a 201", HttpStatus.SC_CREATED, httpClient.executeMethod(postMethod));
+            assertEquals("Posting an entry should return a 201", HttpStatus.SC_CREATED, httpClient.executeMethod(postMethod));
             String uuid = getUuidHelper(postMethod);
             final HttpMethod getEntryMethod = newGetEntryWithMarkerMethod(uuid);
 

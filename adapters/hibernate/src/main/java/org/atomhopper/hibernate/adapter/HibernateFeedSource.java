@@ -52,20 +52,20 @@ public class HibernateFeedSource implements FeedSource {
         // Set the feed current link
         hyrdatedFeed.addLink(BASE_FEED_URI, Link.REL_CURRENT);
 
-        // Set the feed self link
-        hyrdatedFeed.addLink(new StringBuilder()
-                .append(BASE_FEED_URI)
-                .append("?marker=")
-                .append(persistedEntries.get(0).getEntryId())
-                .append("&limit=")
-                .append(String.valueOf(pageSize))
-                .append("&search=")
-                .append(encode(searchString).toString())
-                .append("&direction=")
-                .append(getFeedRequest.getDirection()).toString())
-                .setRel(Link.REL_SELF);
-
+        // TODO: We need to have a link builder method for these
         if (!(persistedEntries.isEmpty())) {
+            // Set the feed self link
+            hyrdatedFeed.addLink(new StringBuilder()
+                    .append(BASE_FEED_URI)
+                    .append("?marker=")
+                    .append(persistedEntries.get(0).getEntryId())
+                    .append("&limit=")
+                    .append(String.valueOf(pageSize))
+                    .append("&search=")
+                    .append(encode(searchString).toString())
+                    .append("&direction=")
+                    .append(getFeedRequest.getDirection()).toString())
+                    .setRel(Link.REL_SELF);
 
             hyrdatedFeed.setId(UUID.randomUUID().toString());
             hyrdatedFeed.setTitle(getFeedRequest.getFeedName().toString());
@@ -78,7 +78,8 @@ public class HibernateFeedSource implements FeedSource {
                     .append(String.valueOf(pageSize))
                     .append("&search=")
                     .append(encode(searchString).toString())
-                    .append("&direction=forward").toString()).setRel(Link.REL_PREVIOUS);
+                    .append("&direction=forward").toString())
+                    .setRel(Link.REL_PREVIOUS);
 
 
             final PersistedEntry nextPersistedEntry = feedRepository.getNextMarker(persistedEntries.get(persistedEntries.size() - 1),
@@ -98,6 +99,18 @@ public class HibernateFeedSource implements FeedSource {
                         .append(encode(searchString).toString())
                         .append("&direction=backward").toString()).setRel(Link.REL_NEXT);
             }
+        } else {
+            // Set the feed self link
+            hyrdatedFeed.addLink(new StringBuilder()
+                    .append(BASE_FEED_URI)
+                    .append("?marker=")
+                    .append("&limit=")
+                    .append(String.valueOf(pageSize))
+                    .append("&search=")
+                    .append(encode(searchString).toString())
+                    .append("&direction=")
+                    .append(getFeedRequest.getDirection()).toString())
+                    .setRel(Link.REL_SELF);
         }
 
         for (PersistedEntry persistedFeedEntry : persistedEntries) {
