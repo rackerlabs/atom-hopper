@@ -12,16 +12,17 @@ NOTE: Place this file in the following folder: /etc/atomhopper/atom-server.cfg.x
     <!--
         Make sure to put in your actual domain or IP address and
         the port number your using or the self referencing links
-        will be incorrect
+        will be incorrect.
+        Scheme should be either "http" or "https"
     -->
-    <host domain="domain.com" />
+    <host domain="domain.com" scheme="http" />
 
     <workspace title="Testing Namespace" resource="/namespace/">
         <categories-descriptor reference="workspace-categories-descriptor" />
-        
+
         <feed title="Testing Feed" resource="/feed">
-            <feed-source reference="hibernate-feed-source" />            
+            <feed-source reference="hibernate-feed-source" />
             <publisher reference="hibernate-feed-publisher" />
         </feed>
-    </workspace>  
+    </workspace>
 </atom-hopper-config>
