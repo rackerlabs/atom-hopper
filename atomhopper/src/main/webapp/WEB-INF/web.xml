@@ -55,9 +55,9 @@
 
             Map the above as:
             <param-name>atomhopper-url-pattern</param-name>
-            <param-value></atom/param-value>
+            <param-value>atom</param-value>
 
-            Note: There is not need for the asterix on the
+            Note: There is no need for the asterix on the
             atomhopper-url-pattern param-value
 
         -->
