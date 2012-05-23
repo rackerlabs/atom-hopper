@@ -3,8 +3,8 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.atomhopper.tests</groupId>
-  <artifactId>JMeterSuite</artifactId>
-  <version>0.11.1-SNAPSHOT</version>
+  <artifactId>atom-hopper-jmeter</artifactId>
+  <version>1.0.0</version>
   <name>JMeterSuite</name>
   <packaging>pom</packaging>
 
@@ -75,12 +75,36 @@
             <some.property.name>value</some.property.name>
           </propertiesUser>
           <reportConfig>
-            <!-- <enable>true</enable> -->
             <xsltFile>functional-report.xsl</xsltFile>
           </reportConfig>
         </configuration>
       </plugin>
     </plugins>
   </build>
+  
+  <profiles>
+    
+    <profile>
+      <id>mongo</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.lazerycode.jmeter</groupId>
+            <artifactId>jmeter-maven-plugin</artifactId>
+            <version>1.4.1</version>
+            <configuration>   
+              <reportConfig>
+                <enable>true</enable> 
+                <xsltFile>functional-report.xsl</xsltFile>
+                <postfix>-mongo-report.html</postfix>
+              </reportConfig>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    
+  </profiles>
+  
 </project>
 
