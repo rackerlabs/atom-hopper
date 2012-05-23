@@ -3,8 +3,8 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.atomhopper.tests</groupId>
-  <artifactId>JMeterSuite</artifactId>
-  <version>0.11.1-SNAPSHOT</version>
+  <artifactId>atom-hopper-jmeter</artifactId>
+  <version>1.0.0</version>
   <name>JMeterSuite</name>
   <packaging>pom</packaging>
 
@@ -75,7 +75,6 @@
             <some.property.name>value</some.property.name>
           </propertiesUser>
           <reportConfig>
-            <!-- <enable>true</enable> -->
             <xsltFile>functional-report.xsl</xsltFile>
           </reportConfig>
         </configuration>
