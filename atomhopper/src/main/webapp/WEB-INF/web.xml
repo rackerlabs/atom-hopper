@@ -72,7 +72,7 @@
         <servlet-class>org.atomhopper.AtomHopperVersionServlet</servlet-class>
     </servlet>
 
-    <servlet id="atom-hopper-log-text">
+    <servlet id="atom-hopper-log-test">
         <servlet-name>Atom-Hopper-Log-Test</servlet-name>
         <servlet-class>org.atomhopper.AtomHopperLogCheckServlet</servlet-class>
     </servlet>
