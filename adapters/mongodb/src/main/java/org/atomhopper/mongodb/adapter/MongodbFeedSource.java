@@ -71,6 +71,11 @@ public class MongodbFeedSource implements FeedSource {
             queryParams.append("&direction=").append(getFeedRequest.getDirection());
         } else {
             queryParams.append("&direction=backward");
+            if(queryParams.toString().equalsIgnoreCase(BASE_FEED_URI + "?limit=25&direction=backward")) {
+                // They are calling the feedhead, just use the base feed uri
+                // This keeps the validator at http://validator.w3.org/ happy
+                queryParams.delete(0, queryParams.toString().length()).append(BASE_FEED_URI);
+            }
         }
         feed.addLink(queryParams.toString()).setRel(Link.REL_SELF);
     }
