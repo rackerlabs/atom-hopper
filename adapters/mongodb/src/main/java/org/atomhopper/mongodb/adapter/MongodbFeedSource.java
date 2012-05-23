@@ -39,7 +39,6 @@ public class MongodbFeedSource implements FeedSource {
     private static final String FEED = "feed";
     private static final String ID = "_id";
     private MongoTemplate mongoTemplate;
-    private static final String UUID_URI_SCHEME = "urn:uuid:";
     private static final String PERSISTED_ENTRY_COLLECTION = "persistedentry";
 
     public void setMongoTemplate(MongoTemplate mongoTemplate) {
@@ -68,14 +67,15 @@ public class MongodbFeedSource implements FeedSource {
                 markerIsSet = true;
             }
         }
-        if(getFeedRequest.getDirection().length() > 0) {
-            if(markerIsSet) {
-                queryParams.append("&direction=").append(getFeedRequest.getDirection());
-            } else {
-                queryParams.append("&direction=backward");
-            }
+        if(markerIsSet) {
+            queryParams.append("&direction=").append(getFeedRequest.getDirection());
         } else {
             queryParams.append("&direction=backward");
+            if(queryParams.toString().equalsIgnoreCase(BASE_FEED_URI + "?limit=25&direction=backward")) {
+                // They are calling the feedhead, just use the base feed uri
+                // This keeps the validator at http://validator.w3.org/ happy
+                queryParams.delete(0, queryParams.toString().length()).append(BASE_FEED_URI);
+            }
         }
         feed.addLink(queryParams.toString()).setRel(Link.REL_SELF);
     }
@@ -86,6 +86,7 @@ public class MongodbFeedSource implements FeedSource {
 
     private Feed hydrateFeed(Abdera abdera, List<PersistedEntry> persistedEntries, GetFeedRequest getFeedRequest, final int pageSize) {
         final Feed hyrdatedFeed = abdera.newFeed();
+        final String UUID_URI_SCHEME = "urn:uuid:";
         final String BASE_FEED_URI = decode(getFeedRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
         final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
 
