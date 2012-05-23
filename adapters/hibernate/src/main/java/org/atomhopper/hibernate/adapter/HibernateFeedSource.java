@@ -44,29 +44,51 @@ public class HibernateFeedSource implements FeedSource {
     public void setParameters(Map<String, String> params) {
     }
 
+   private void addFeedSelfLink(Feed feed, final String BASE_FEED_URI,
+            final GetFeedRequest getFeedRequest,
+            final int pageSize, final String searchString) {
+
+        StringBuilder queryParams = new StringBuilder();
+        boolean markerIsSet = false;
+
+        queryParams.append(BASE_FEED_URI).append("?limit=").append(String.valueOf(pageSize));
+
+        if(searchString.length() > 0) {
+            queryParams.append("&search=").append(encode(searchString).toString());
+        }
+        if(getFeedRequest.getPageMarker() != null) {
+            if(getFeedRequest.getPageMarker().length() > 0) {
+                queryParams.append("&marker=").append(getFeedRequest.getPageMarker());
+                markerIsSet = true;
+            }
+        }
+        if(getFeedRequest.getDirection().length() > 0) {
+            if(markerIsSet) {
+                queryParams.append("&direction=").append(getFeedRequest.getDirection());
+            } else {
+                queryParams.append("&direction=backward");
+            }
+        } else {
+            queryParams.append("&direction=backward");
+        }
+        feed.addLink(queryParams.toString()).setRel(Link.REL_SELF);
+    }
+
+    private void addFeedCurrentLink(Feed hyrdatedFeed, final String BASE_FEED_URI) {
+        hyrdatedFeed.addLink(BASE_FEED_URI, Link.REL_CURRENT);
+    }
+
     private Feed hydrateFeed(Abdera abdera, List<PersistedEntry> persistedEntries, GetFeedRequest getFeedRequest, final int pageSize) {
         final Feed hyrdatedFeed = abdera.newFeed();
         final String BASE_FEED_URI = decode(getFeedRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
         final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
 
-        // Set the feed current link
-        hyrdatedFeed.addLink(BASE_FEED_URI, Link.REL_CURRENT);
+        // Set the feed links
+        addFeedCurrentLink(hyrdatedFeed, BASE_FEED_URI);
+        addFeedSelfLink(hyrdatedFeed, BASE_FEED_URI, getFeedRequest, pageSize, searchString);
 
-        // TODO: We need to have a link builder method for these
+        // TODO: We should have a link builder method for these
         if (!(persistedEntries.isEmpty())) {
-            // Set the feed self link
-            hyrdatedFeed.addLink(new StringBuilder()
-                    .append(BASE_FEED_URI)
-                    .append("?marker=")
-                    .append(persistedEntries.get(0).getEntryId())
-                    .append("&limit=")
-                    .append(String.valueOf(pageSize))
-                    .append("&search=")
-                    .append(encode(searchString).toString())
-                    .append("&direction=")
-                    .append(getFeedRequest.getDirection()).toString())
-                    .setRel(Link.REL_SELF);
-
             hyrdatedFeed.setId(UUID.randomUUID().toString());
             hyrdatedFeed.setTitle(getFeedRequest.getFeedName().toString());
 
@@ -99,18 +121,6 @@ public class HibernateFeedSource implements FeedSource {
                         .append(encode(searchString).toString())
                         .append("&direction=backward").toString()).setRel(Link.REL_NEXT);
             }
-        } else {
-            // Set the feed self link
-            hyrdatedFeed.addLink(new StringBuilder()
-                    .append(BASE_FEED_URI)
-                    .append("?marker=")
-                    .append("&limit=")
-                    .append(String.valueOf(pageSize))
-                    .append("&search=")
-                    .append(encode(searchString).toString())
-                    .append("&direction=")
-                    .append(getFeedRequest.getDirection()).toString())
-                    .setRel(Link.REL_SELF);
         }
 
         for (PersistedEntry persistedFeedEntry : persistedEntries) {
