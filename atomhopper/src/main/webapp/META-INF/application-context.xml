@@ -48,12 +48,10 @@
 
                 <!-- Start C3P0 Config -->
                 <!--
-                <entry key="hibernate.c3p0.min_size" value="5" />
+                <entry key="hibernate.c3p0.min_size" value="30" />
                 <entry key="hibernate.c3p0.max_size" value="400" />
-                <entry key="hibernate.c3p0.initialPoolSize" value="5" />
-                <entry key="hibernate.c3p0.timeout" value="1800" />
-                <entry key="hibernate.c3p0.max_statements" value="50" />
-                <entry key="hibernate.c3p0.idle_test_period" value="1000" />
+                <entry key="hibernate.c3p0.timeout" value="30" />
+                <entry key="hibernate.c3p0.idle_test_period" value="5" />
                 -->
                 <!-- End C3P0 Config -->
             </map>
