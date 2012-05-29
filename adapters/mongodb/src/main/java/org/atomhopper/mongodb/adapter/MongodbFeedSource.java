@@ -15,10 +15,11 @@ import org.apache.commons.lang.StringUtils;
 import org.atomhopper.adapter.FeedInformation;
 import org.atomhopper.adapter.FeedSource;
 import org.atomhopper.adapter.ResponseBuilder;
-import org.atomhopper.adapter.request.RequestQueryParameter;
 import org.atomhopper.adapter.request.adapter.GetEntryRequest;
 import org.atomhopper.adapter.request.adapter.GetFeedRequest;
 import org.atomhopper.dbal.PageDirection;
+import static org.atomhopper.mongodb.adapter.MongodbUtilities.formatCollectionName;
+import static org.atomhopper.mongodb.adapter.MongodbUtilities.safeLongToInt;
 import org.atomhopper.mongodb.domain.PersistedEntry;
 import org.atomhopper.mongodb.query.CategoryCriteriaGenerator;
 import org.atomhopper.mongodb.query.SimpleCategoryCriteriaGenerator;
@@ -39,7 +40,6 @@ public class MongodbFeedSource implements FeedSource {
     private static final String FEED = "feed";
     private static final String ID = "_id";
     private MongoTemplate mongoTemplate;
-    private static final String PERSISTED_ENTRY_COLLECTION = "persistedentry";
 
     public void setMongoTemplate(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
@@ -120,7 +120,8 @@ public class MongodbFeedSource implements FeedSource {
             SimpleCategoryCriteriaGenerator simpleCategoryCriteriaGenerator = new SimpleCategoryCriteriaGenerator(searchString);
             simpleCategoryCriteriaGenerator.enhanceCriteria(nextLinkQuery);
 
-            final PersistedEntry nextEntry = mongoTemplate.findOne(nextLinkQuery, PersistedEntry.class);
+            final PersistedEntry nextEntry = mongoTemplate.findOne(nextLinkQuery,
+                    PersistedEntry.class, formatCollectionName(lastEntryInCollection.getFeed()));
 
             if (nextEntry != null) {
                 // Set the next link
@@ -160,7 +161,8 @@ public class MongodbFeedSource implements FeedSource {
     @Override
     public AdapterResponse<Entry> getEntry(GetEntryRequest getEntryRequest) {
         final PersistedEntry entry = mongoTemplate.findOne(new Query(
-                Criteria.where(FEED).is(getEntryRequest.getFeedName()).andOperator(Criteria.where(ID).is(getEntryRequest.getEntryId()))), PersistedEntry.class);
+                Criteria.where(ID).is(getEntryRequest.getEntryId())),
+                PersistedEntry.class, formatCollectionName(getEntryRequest.getFeedName()));
 
 
         AdapterResponse<Entry> response = ResponseBuilder.notFound();
@@ -188,27 +190,29 @@ public class MongodbFeedSource implements FeedSource {
         if (StringUtils.isNotBlank(marker)) {
             response = getFeedPage(getFeedRequest, marker, pageSize);
         } else {
-            response = getFeedHead(getFeedRequest, getFeedRequest.getFeedName(), pageSize);
+            response = getFeedHead(getFeedRequest, pageSize);
         }
 
         return response;
     }
 
-    private AdapterResponse<Feed> getFeedHead(GetFeedRequest getFeedRequest, String feedName, int pageSize) {
+    private AdapterResponse<Feed> getFeedHead(GetFeedRequest getFeedRequest, int pageSize) {
         final Abdera abdera = getFeedRequest.getAbdera();
-        Query queryIfFeedExists = new Query(Criteria.where(FEED).is(feedName));
-        final PersistedEntry persistedEntry = mongoTemplate.findOne(queryIfFeedExists, PersistedEntry.class);
+        Query queryIfFeedExists = new Query(Criteria.where(FEED).is(getFeedRequest.getFeedName()));
+        final PersistedEntry persistedEntry = mongoTemplate.findOne(queryIfFeedExists,
+                PersistedEntry.class, formatCollectionName(getFeedRequest.getFeedName()));
 
         AdapterResponse<Feed> response = null;
 
         if (persistedEntry != null) {
             final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
-            Query queryForFeedHead = new Query(Criteria.where(FEED).is(feedName)).limit(pageSize);
+            Query queryForFeedHead = new Query(Criteria.where(FEED).is(getFeedRequest.getFeedName())).limit(pageSize);
             queryForFeedHead.sort().on(DATE_LAST_UPDATED, Order.DESCENDING);
 
             SimpleCategoryCriteriaGenerator simpleCategoryCriteriaGenerator = new SimpleCategoryCriteriaGenerator(searchString);
             simpleCategoryCriteriaGenerator.enhanceCriteria(queryForFeedHead);
-            final List<PersistedEntry> persistedEntries = mongoTemplate.find(queryForFeedHead, PersistedEntry.class);
+            final List<PersistedEntry> persistedEntries = mongoTemplate.find(queryForFeedHead,
+                    PersistedEntry.class, formatCollectionName(getFeedRequest.getFeedName()));
 
             Feed hyrdatedFeed = hydrateFeed(abdera, persistedEntries, getFeedRequest, pageSize);
             // Set the last link in the feed head
@@ -216,7 +220,7 @@ public class MongodbFeedSource implements FeedSource {
 
             Query feedQuery = new Query(Criteria.where(FEED).is(getFeedRequest.getFeedName()));
             simpleCategoryCriteriaGenerator.enhanceCriteria(feedQuery);
-            final int totalFeedEntryCount = safeLongToInt(countDocuments(PERSISTED_ENTRY_COLLECTION, feedQuery) % pageSize);
+            final int totalFeedEntryCount = safeLongToInt(countDocuments(formatCollectionName(getFeedRequest.getFeedName()), feedQuery) % pageSize);
             int lastPageSize = pageSize;
             if(totalFeedEntryCount != 0) {
                 lastPageSize = totalFeedEntryCount;
@@ -225,7 +229,8 @@ public class MongodbFeedSource implements FeedSource {
                     .limit(lastPageSize);
             simpleCategoryCriteriaGenerator.enhanceCriteria(lastLinkQuery);
             lastLinkQuery.sort().on(DATE_LAST_UPDATED, Order.ASCENDING);
-            final List<PersistedEntry> lastPersistedEntries = mongoTemplate.find(lastLinkQuery, PersistedEntry.class);
+            final List<PersistedEntry> lastPersistedEntries = mongoTemplate.find(lastLinkQuery,
+                    PersistedEntry.class, formatCollectionName(getFeedRequest.getFeedName()));
 
             if (lastPersistedEntries != null && !(lastPersistedEntries.isEmpty())) {
                 hyrdatedFeed.addLink(new StringBuilder()
@@ -256,7 +261,8 @@ public class MongodbFeedSource implements FeedSource {
             return ResponseBuilder.badRequest("Marker must have a page direction specified as either \"forward\" or \"backward\"");
         }
         final PersistedEntry markerEntry = mongoTemplate.findOne(new Query(
-                Criteria.where(FEED).is(getFeedRequest.getFeedName()).andOperator(Criteria.where(ID).is(marker))), PersistedEntry.class);
+                Criteria.where(FEED).is(getFeedRequest.getFeedName()).andOperator(Criteria.where(ID).is(marker))),
+                PersistedEntry.class, formatCollectionName(getFeedRequest.getFeedName()));
 
         if (markerEntry != null) {
             final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
@@ -286,14 +292,14 @@ public class MongodbFeedSource implements FeedSource {
             case FORWARD:
                 query.addCriteria(Criteria.where(DATE_LAST_UPDATED).gt(markerEntry.getCreationDate()));
                 query.sort().on(DATE_LAST_UPDATED, Order.ASCENDING);
-                feedPage.addAll(mongoTemplate.find(query, PersistedEntry.class));
+                feedPage.addAll(mongoTemplate.find(query, PersistedEntry.class, formatCollectionName(feedName)));
                 Collections.reverse(feedPage);
                 break;
 
             case BACKWARD:
                 query.addCriteria(Criteria.where(DATE_LAST_UPDATED).lte(markerEntry.getCreationDate()));
                 query.sort().on(DATE_LAST_UPDATED, Order.DESCENDING);
-                feedPage.addAll(mongoTemplate.find(query, PersistedEntry.class));
+                feedPage.addAll(mongoTemplate.find(query, PersistedEntry.class, formatCollectionName(feedName)));
                 break;
         }
 
@@ -315,13 +321,5 @@ public class MongodbFeedSource implements FeedSource {
                 }
             }
         );
-    }
-
-    private int safeLongToInt(long value) {
-        if (value < Integer.MIN_VALUE || value > Integer.MAX_VALUE) {
-            throw new IllegalArgumentException
-                (value + " cannot be cast to int without changing its value.");
-        }
-        return (int) value;
     }
 }

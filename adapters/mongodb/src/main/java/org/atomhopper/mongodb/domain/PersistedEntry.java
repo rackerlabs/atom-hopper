@@ -2,9 +2,7 @@ package org.atomhopper.mongodb.domain;
 
 import java.util.*;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "persistedentry")
 public class PersistedEntry {
 
     @Id
