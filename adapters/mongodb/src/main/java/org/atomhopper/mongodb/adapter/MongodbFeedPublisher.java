@@ -15,6 +15,7 @@ import org.atomhopper.adapter.ResponseBuilder;
 import org.atomhopper.adapter.request.adapter.DeleteEntryRequest;
 import org.atomhopper.adapter.request.adapter.PostEntryRequest;
 import org.atomhopper.adapter.request.adapter.PutEntryRequest;
+import static org.atomhopper.mongodb.adapter.MongodbUtilities.formatCollectionName;
 import org.atomhopper.mongodb.domain.PersistedCategory;
 import org.atomhopper.mongodb.domain.PersistedEntry;
 import org.atomhopper.response.AdapterResponse;
@@ -24,6 +25,7 @@ import org.atomhopper.util.uri.template.URITemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
+
 
 public class MongodbFeedPublisher implements FeedPublisher {
 
@@ -67,7 +69,7 @@ public class MongodbFeedPublisher implements FeedPublisher {
         abderaParsedEntry.setId(persistedEntry.getEntryId());
         abderaParsedEntry.setUpdated(persistedEntry.getDateLastUpdated());
 
-        mongoTemplate.save(persistedEntry);
+        mongoTemplate.save(persistedEntry, formatCollectionName(postEntryRequest.getFeedName()));
 
         return ResponseBuilder.created(abderaParsedEntry);
     }
