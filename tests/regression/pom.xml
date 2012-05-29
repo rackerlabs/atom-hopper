@@ -57,7 +57,7 @@
       <plugin>
         <groupId>com.lazerycode.jmeter</groupId>
         <artifactId>jmeter-maven-plugin</artifactId>
-        <version>1.4.1</version>
+        <version>1.5.0</version>
         <executions>
           <execution>
             <id>jmeter-tests</id>
@@ -91,7 +91,7 @@
           <plugin>
             <groupId>com.lazerycode.jmeter</groupId>
             <artifactId>jmeter-maven-plugin</artifactId>
-            <version>1.4.1</version>
+            <version>1.5.0</version>
             <configuration>   
               <reportConfig>
                 <enable>true</enable> 
