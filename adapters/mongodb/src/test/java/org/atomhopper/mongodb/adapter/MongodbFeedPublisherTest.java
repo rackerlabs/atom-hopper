@@ -39,6 +39,7 @@ public class MongodbFeedPublisherTest {
             mongodbFeedPublisher.setMongoTemplate(mongoTemplate);
             postEntryRequest = mock(PostEntryRequest.class);
             when(postEntryRequest.getEntry()).thenReturn(entry());
+            when(postEntryRequest.getFeedName()).thenReturn("namespace/feed");
         }
 
         @Test

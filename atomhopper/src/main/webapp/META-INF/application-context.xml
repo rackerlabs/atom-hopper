@@ -66,34 +66,21 @@
         <property name="feedRepository" ref="feed-repository-bean" />
     </bean>
 
-    <!-- MongoDB Localhost Connection -->
+    <!-- MongoDB Connection -->
     <!--
-    <mongo:mongo host="localhost" port="27017"/>
+    <mongo:db-factory  id="mongoDbFactory"
+			dbname="atomhopper"
+            username="atomhopper"
+            password="password"
+            mongo-ref="mongo"/>
 
-    <bean name="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
-        <constructor-arg ref="mongo"/>
-        <constructor-arg name="databaseName" value="atomhopper"/>
-    </bean>
-
-    <bean name="mongodb-feed-publisher" class="org.atomhopper.mongodb.adapter.MongodbFeedPublisher">
-        <property name="mongoTemplate" ref="mongoTemplate" />
-    </bean>
-
-    <bean name="mongodb-feed-source" class="org.atomhopper.mongodb.adapter.MongodbFeedSource">
-        <property name="mongoTemplate" ref="mongoTemplate" />
-    </bean>
-    -->
-
-    <!-- MongoDB Replica Set Connection -->
-    <!--
-    <mongo:mongo replica-set="192.168.0.1:27017,192.168.0.2:27017,192.168.0.3:27017">
-    <mongo:options connections-per-host="10"
-                   slave-ok="true"/>
+    <mongo:mongo replica-set="127.0.0.1:27017">
+        <mongo:options connections-per-host="10"
+                    slave-ok="true"/>
     </mongo:mongo>
 
     <bean name="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
-        <constructor-arg ref="mongo"/>
-        <constructor-arg name="databaseName" value="atomhopper"/>
+        <constructor-arg name="mongoDbFactory" ref="mongoDbFactory"/>
     </bean>
 
     <bean name="mongodb-feed-publisher" class="org.atomhopper.mongodb.adapter.MongodbFeedPublisher">
