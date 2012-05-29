@@ -70,7 +70,6 @@ public class MongodbFeedPublisher implements FeedPublisher {
         abderaParsedEntry.setUpdated(persistedEntry.getDateLastUpdated());
 
         mongoTemplate.save(persistedEntry, formatCollectionName(postEntryRequest.getFeedName()));
-        System.out.println("Creating collection: " + formatCollectionName(postEntryRequest.getFeedName()));
 
         return ResponseBuilder.created(abderaParsedEntry);
     }
