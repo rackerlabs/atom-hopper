@@ -94,7 +94,7 @@
             <collectionProp name="Arguments.arguments">
               <elementProp name="" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                <stringProp name="Argument.value">&lt;?xml version=&quot;1.0&quot;?&gt; &lt;entry xmlns=&quot;http://www.w3.org/2005/Atom&quot;&gt; &lt;title&gt;Atom Hopper Test&lt;/title&gt;&lt;content&gt;${content}&lt;/content&gt; &lt;/entry&gt;</stringProp>
+                <stringProp name="Argument.value">&lt;?xml version=&quot;1.0&quot;?&gt; &lt;entry xmlns=&quot;http://www.w3.org/2005/Atom&quot;&gt; &lt;title&gt;Atom Hopper Test&lt;/title&gt;&lt;content&gt;${content}&lt;/content&gt; &lt;category term=&quot;AtomHopperPostTest&quot; /&gt;&lt;/entry&gt;</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
                 <boolProp name="HTTPArgument.use_equals">true</boolProp>
               </elementProp>
