@@ -18,11 +18,13 @@ public class PersistedEntryTest {
         private final String ID = UUID.randomUUID().toString();
         private final String ENTRY_BODY = "body";
         private final String FEED = "namespace/feed";
+        private final String PERSISTED_CATEGORY_VALUE1 = "MyCategory1";
+        private final String PERSISTED_CATEGORY_VALUE2 = "MyCategory2";
 
         @Before
         public void setUp() throws Exception {
             persistedEntry = new PersistedEntry();
-            persistedCategory = new PersistedCategory("MyCategory1");
+            persistedCategory = new PersistedCategory(PERSISTED_CATEGORY_VALUE1);
 
             persistedEntry.setEntryId(ID);
             persistedEntry.setEntryBody(ENTRY_BODY);
@@ -58,6 +60,13 @@ public class PersistedEntryTest {
         @Test
         public void shouldContainCategories() throws Exception {
             assertNotNull(persistedEntry.getCategories());
+        }
+
+        @Test
+        public void shouldGetAndSetCategory() throws Exception {
+            assertEquals("Category should match", PERSISTED_CATEGORY_VALUE1, persistedCategory.getValue());
+            persistedCategory.setValue(PERSISTED_CATEGORY_VALUE2);
+            assertEquals("Category should match", PERSISTED_CATEGORY_VALUE2, persistedCategory.getValue());
         }
 
         @Test
