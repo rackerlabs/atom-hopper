@@ -1,10 +1,8 @@
 package org.atomhopper.adapter;
 
-import org.apache.abdera.model.Categories;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.atomhopper.response.AdapterResponse;
-import org.atomhopper.response.EmptyBody;
 import org.atomhopper.response.FeedSourceAdapterResponse;
 import org.springframework.http.HttpStatus;
 
@@ -19,11 +17,11 @@ public final class ResponseBuilder {
     public static <T> AdapterResponse<T> notImplemented(String message) {
         return new FeedSourceAdapterResponse<T>(null, HttpStatus.METHOD_NOT_ALLOWED, message);
     }
-    
+
     public static <T> AdapterResponse<T> badRequest(String message) {
         return new FeedSourceAdapterResponse<T>(null, HttpStatus.BAD_REQUEST, message);
     }
-    
+
     public static <T> AdapterResponse<T> notFound() {
         return notFound("");
     }
