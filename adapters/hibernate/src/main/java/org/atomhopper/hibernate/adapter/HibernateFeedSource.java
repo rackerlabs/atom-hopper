@@ -56,11 +56,9 @@ public class HibernateFeedSource implements FeedSource {
         if(searchString.length() > 0) {
             queryParams.append("&search=").append(encode(searchString).toString());
         }
-        if(getFeedRequest.getPageMarker() != null) {
-            if(getFeedRequest.getPageMarker().length() > 0) {
+        if(getFeedRequest.getPageMarker() != null && getFeedRequest.getPageMarker().length() > 0) {
                 queryParams.append("&marker=").append(getFeedRequest.getPageMarker());
                 markerIsSet = true;
-            }
         }
         if(markerIsSet) {
             queryParams.append("&direction=").append(getFeedRequest.getDirection());
