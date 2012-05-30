@@ -1,16 +1,9 @@
 package org.atomhopper.abdera;
 
+import java.util.*;
+import javax.security.auth.Subject;
 import org.apache.abdera.Abdera;
-import org.apache.abdera.protocol.server.CollectionAdapter;
-import org.apache.abdera.protocol.server.Filter;
-import org.apache.abdera.protocol.server.Provider;
-import org.apache.abdera.protocol.server.ProviderHelper;
-import org.apache.abdera.protocol.server.RequestContext;
-import org.apache.abdera.protocol.server.RequestProcessor;
-import org.apache.abdera.protocol.server.ResponseContext;
-import org.apache.abdera.protocol.server.Target;
-import org.apache.abdera.protocol.server.TargetType;
-import org.apache.abdera.protocol.server.Transactional;
+import org.apache.abdera.protocol.server.*;
 import org.apache.abdera.protocol.server.context.ResponseContextException;
 import org.apache.abdera.protocol.server.impl.RegexTargetResolver;
 import org.apache.abdera.protocol.server.impl.SimpleSubjectResolver;
@@ -19,7 +12,6 @@ import org.apache.abdera.protocol.server.processors.CategoriesRequestProcessor;
 import org.apache.abdera.protocol.server.processors.CollectionRequestProcessor;
 import org.apache.abdera.protocol.server.processors.EntryRequestProcessor;
 import org.apache.abdera.protocol.server.processors.ServiceRequestProcessor;
-import org.apache.abdera.protocol.server.servlet.ServletRequestContext;
 import org.atomhopper.config.v1_0.HostConfiguration;
 import org.atomhopper.util.uri.template.EnumKeyedTemplateParameters;
 import org.atomhopper.util.uri.template.TemplateParameters;
@@ -27,14 +19,6 @@ import org.atomhopper.util.uri.template.URITemplate;
 import org.atomhopper.util.uri.template.URITemplateParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.security.auth.Subject;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
 public class WorkspaceProvider implements Provider {
 
