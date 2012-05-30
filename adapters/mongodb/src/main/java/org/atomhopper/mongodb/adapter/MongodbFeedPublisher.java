@@ -39,7 +39,9 @@ public class MongodbFeedPublisher implements FeedPublisher {
     }
 
     @Override
+    @NotImplemented
     public void setParameters(Map<String, String> params) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

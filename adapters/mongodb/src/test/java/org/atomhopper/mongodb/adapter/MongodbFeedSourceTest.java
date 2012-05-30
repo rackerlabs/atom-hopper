@@ -1,5 +1,7 @@
 package org.atomhopper.mongodb.adapter;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import static junit.framework.Assert.assertEquals;
 import org.apache.abdera.Abdera;
@@ -94,6 +96,13 @@ public class MongodbFeedSourceTest {
         @Test(expected = UnsupportedOperationException.class)
         public void shouldGetFeedInformation() throws Exception {
             mongodbFeedSource.getFeedInformation();
+        }
+
+        @Test(expected = UnsupportedOperationException.class)
+        public void shouldSetParameters() throws Exception {
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("test1", "test2");
+            mongodbFeedSource.setParameters(map);
         }
     }
 }

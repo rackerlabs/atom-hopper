@@ -14,6 +14,7 @@ import org.apache.abdera.model.Link;
 import org.apache.commons.lang.StringUtils;
 import org.atomhopper.adapter.FeedInformation;
 import org.atomhopper.adapter.FeedSource;
+import org.atomhopper.adapter.NotImplemented;
 import org.atomhopper.adapter.ResponseBuilder;
 import org.atomhopper.adapter.jpa.PersistedEntry;
 import org.atomhopper.adapter.jpa.PersistedFeed;
@@ -41,7 +42,9 @@ public class HibernateFeedSource implements FeedSource {
     }
 
     @Override
+    @NotImplemented
     public void setParameters(Map<String, String> params) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
    private void addFeedSelfLink(Feed feed, final String baseFeedUri,
@@ -73,8 +76,8 @@ public class HibernateFeedSource implements FeedSource {
         feed.addLink(queryParams.toString()).setRel(Link.REL_SELF);
     }
 
-    private void addFeedCurrentLink(Feed hyrdatedFeed, final String BASE_FEED_URI) {
-        hyrdatedFeed.addLink(BASE_FEED_URI, Link.REL_CURRENT);
+    private void addFeedCurrentLink(Feed hyrdatedFeed, final String baseFeedUri) {
+        hyrdatedFeed.addLink(baseFeedUri, Link.REL_CURRENT);
     }
 
     private Feed hydrateFeed(Abdera abdera, List<PersistedEntry> persistedEntries, GetFeedRequest getFeedRequest, final int pageSize) {
