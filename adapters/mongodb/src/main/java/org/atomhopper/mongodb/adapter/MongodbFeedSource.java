@@ -14,6 +14,7 @@ import org.apache.abdera.model.Link;
 import org.apache.commons.lang.StringUtils;
 import org.atomhopper.adapter.FeedInformation;
 import org.atomhopper.adapter.FeedSource;
+import org.atomhopper.adapter.NotImplemented;
 import org.atomhopper.adapter.ResponseBuilder;
 import org.atomhopper.adapter.request.adapter.GetEntryRequest;
 import org.atomhopper.adapter.request.adapter.GetFeedRequest;
@@ -46,7 +47,9 @@ public class MongodbFeedSource implements FeedSource {
     }
 
     @Override
+    @NotImplemented
     public void setParameters(Map<String, String> params) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     private void addFeedSelfLink(Feed feed, final String baseFeedUri,
@@ -78,8 +81,8 @@ public class MongodbFeedSource implements FeedSource {
         feed.addLink(queryParams.toString()).setRel(Link.REL_SELF);
     }
 
-    private void addFeedCurrentLink(Feed hyrdatedFeed, final String BASE_FEED_URI) {
-        hyrdatedFeed.addLink(BASE_FEED_URI, Link.REL_CURRENT);
+    private void addFeedCurrentLink(Feed hyrdatedFeed, final String baseFeedUri) {
+        hyrdatedFeed.addLink(baseFeedUri, Link.REL_CURRENT);
     }
 
     private Feed hydrateFeed(Abdera abdera, List<PersistedEntry> persistedEntries, GetFeedRequest getFeedRequest, final int pageSize) {
@@ -98,7 +101,13 @@ public class MongodbFeedSource implements FeedSource {
             hyrdatedFeed.setTitle(persistedEntries.get(0).getFeed());
 
             // Set the previous link
-            hyrdatedFeed.addLink(new StringBuilder().append(baseFeedUri).append("?marker=").append(persistedEntries.get(0).getEntryId()).append("&limit=").append(String.valueOf(pageSize)).append("&search=").append(encode(searchString).toString()).append("&direction=forward").toString()).setRel(Link.REL_PREVIOUS);
+            hyrdatedFeed.addLink(new StringBuilder()
+                    .append(baseFeedUri).append("?marker=")
+                    .append(persistedEntries.get(0).getEntryId())
+                    .append("&limit=").append(String.valueOf(pageSize))
+                    .append("&search=").append(encode(searchString).toString())
+                    .append("&direction=forward").toString())
+                    .setRel(Link.REL_PREVIOUS);
 
             final PersistedEntry lastEntryInCollection = persistedEntries.get(persistedEntries.size() - 1);
             Query nextLinkQuery = new Query(Criteria.where(FEED).is(lastEntryInCollection.getFeed())).limit(1).addCriteria(Criteria.where(DATE_LAST_UPDATED).lt(lastEntryInCollection.getDateLastUpdated()));
@@ -112,7 +121,12 @@ public class MongodbFeedSource implements FeedSource {
 
             if (nextEntry != null) {
                 // Set the next link
-                hyrdatedFeed.addLink(new StringBuilder().append(baseFeedUri).append("?marker=").append(nextEntry.getEntryId()).append("&limit=").append(String.valueOf(pageSize)).append("&search=").append(encode(searchString).toString()).append("&direction=backward").toString()).setRel(Link.REL_NEXT);
+                hyrdatedFeed.addLink(new StringBuilder().append(baseFeedUri)
+                        .append("?marker=").append(nextEntry.getEntryId())
+                        .append("&limit=").append(String.valueOf(pageSize))
+                        .append("&search=").append(encode(searchString).toString())
+                        .append("&direction=backward").toString())
+                        .setRel(Link.REL_NEXT);
             }
         }
 

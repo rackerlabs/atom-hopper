@@ -1,12 +1,11 @@
 package org.atomhopper.adapter.impl;
 
+import static junit.framework.Assert.assertEquals;
 import org.atomhopper.adapter.request.feed.FeedRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
-
-import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
 /**
