@@ -1,6 +1,6 @@
 package org.atomhopper.hibernate;
 
-import java.util.ArrayList;
+import java.util.*;
 import org.atomhopper.adapter.jpa.PersistedCategory;
 import org.atomhopper.adapter.jpa.PersistedEntry;
 import org.atomhopper.adapter.jpa.PersistedFeed;
@@ -14,19 +14,10 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import org.atomhopper.hibernate.query.SimpleCategoryCriteriaGenerator;
-import org.hibernate.criterion.Projections;
 
 public class HibernateFeedRepository implements FeedRepository {
 
