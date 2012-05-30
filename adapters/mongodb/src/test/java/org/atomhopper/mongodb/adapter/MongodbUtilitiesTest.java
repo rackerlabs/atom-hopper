@@ -40,5 +40,10 @@ public class MongodbUtilitiesTest {
             long minValueForTest = (long)Integer.MIN_VALUE - (long)1;
             safeLongToInt(minValueForTest);
         }
+
+        @Test
+        public void shouldReturnConvertedValue() throws Exception {
+            assertEquals("Should return value", 1, safeLongToInt(1));
+        }
     }
 }
