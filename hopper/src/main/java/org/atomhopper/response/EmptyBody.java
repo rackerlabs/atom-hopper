@@ -10,7 +10,7 @@ public final class EmptyBody {
 
     private EmptyBody() {
     }
-    
+
     @Override
     public int hashCode() {
         return INSTANCE.hashCode();
