@@ -1,8 +1,10 @@
 package org.atomhopper.mongodb.domain;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 import java.util.UUID;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
@@ -43,6 +45,19 @@ public class PersistedEntryTest {
         }
 
         @Test
+        public void shouldSetDateFields() throws Exception {
+            final Calendar localNow = Calendar.getInstance(TimeZone.getDefault());
+            localNow.setTimeInMillis(System.currentTimeMillis());
+            Date dateToSet = localNow.getTime();
+
+            persistedEntry.setCreationDate(dateToSet);
+            assertEquals("The creation date should be able to be set and read back", dateToSet, persistedEntry.getCreationDate());
+
+            persistedEntry.setDateLastUpdated(dateToSet);
+            assertEquals("The date last updated should be able to be set and read back", dateToSet, persistedEntry.getDateLastUpdated());
+        }
+
+        @Test
         public void shouldReturnId() throws Exception {
             assertEquals("IDs should match", ID, persistedEntry.getEntryId());
         }
@@ -72,7 +87,6 @@ public class PersistedEntryTest {
         @Test
         public void shouldDisplayContentsViaToString() throws Exception {
             assertNotNull(persistedEntry.toString());
-            System.out.println(persistedEntry.toString());
         }
     }
 }
