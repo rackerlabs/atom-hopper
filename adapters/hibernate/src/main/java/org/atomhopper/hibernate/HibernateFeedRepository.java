@@ -245,49 +245,62 @@ public class HibernateFeedRepository implements FeedRepository {
     }
 
     @Override
-    public List<PersistedEntry> getLastPage(final String feedName, final int pageSize, CategoryCriteriaGenerator criteriaGenerator) {
+    public List<PersistedEntry> getLastPage(final String feedName, final int pageSize, final CategoryCriteriaGenerator criteriaGenerator) {
 
-        final Session session = sessionManager.getSession();
+        return performComplexAction(new ComplexSessionAction<List<PersistedEntry>>() {
 
-        Criteria criteria = session.createCriteria(PersistedEntry.class)
+            @Override
+            public List<PersistedEntry> perform(Session liveSession) {
+                Criteria criteria = liveSession.createCriteria(PersistedEntry.class)
                         .add(Restrictions.eq(FEED_NAME, feedName))
                         .addOrder(Order.asc(DATE_LAST_UPDATED))
                         .setMaxResults(pageSize);
 
-        criteriaGenerator.enhanceCriteria(criteria);
+                criteriaGenerator.enhanceCriteria(criteria);
 
-        return criteria.list().size() > 0 ? (List<PersistedEntry>) criteria.list() : null;
+                return criteria.list().size() > 0 ? (List<PersistedEntry>) criteria.list() : null;
+            }
+        });
     }
 
     @Override
-    public int getFeedCount(final String feedName, final CategoryCriteriaGenerator criteriaGenerator) {
-        final Session session = sessionManager.getSession();
+    public Integer getFeedCount(final String feedName, final CategoryCriteriaGenerator criteriaGenerator) {
 
-        Criteria criteria = session.createCriteria(PersistedEntry.class);
+        return performComplexAction(new ComplexSessionAction<Integer>() {
 
-        criteria.add(Restrictions.eq(FEED_NAME, feedName))
-                .setProjection(Projections.rowCount()).uniqueResult();
+            @Override
+            public Integer perform(Session liveSession) {
+                Criteria criteria = liveSession.createCriteria(PersistedEntry.class);
 
-        criteriaGenerator.enhanceCriteria(criteria);
+                criteria.add(Restrictions.eq(FEED_NAME, feedName))
+                        .setProjection(Projections.rowCount()).uniqueResult();
 
-        return safeLongToInt((Long) criteria.list().get(0));
+                criteriaGenerator.enhanceCriteria(criteria);
+
+                return safeLongToInt((Long) criteria.list().get(0));
+            }
+        });
     }
 
     @Override
-    public PersistedEntry getNextMarker(final PersistedEntry persistedEntry, final String feedName, CategoryCriteriaGenerator criteriaGenerator) {
+    public PersistedEntry getNextMarker(final PersistedEntry persistedEntry, final String feedName, final CategoryCriteriaGenerator criteriaGenerator) {
 
-        final Session session = sessionManager.getSession();
+        return performComplexAction(new ComplexSessionAction<PersistedEntry>() {
 
-        Criteria criteria = session.createCriteria(PersistedEntry.class);
+            @Override
+            public PersistedEntry perform(Session liveSession) {
+                Criteria criteria = liveSession.createCriteria(PersistedEntry.class);
 
-        criteria.add(Restrictions.eq(FEED_NAME, feedName))
-                        .add(Restrictions.lt(DATE_LAST_UPDATED, persistedEntry.getCreationDate()))
-                        .addOrder(Order.desc(DATE_LAST_UPDATED))
-                        .setMaxResults(1);
+                criteria.add(Restrictions.eq(FEED_NAME, feedName))
+                                .add(Restrictions.lt(DATE_LAST_UPDATED, persistedEntry.getCreationDate()))
+                                .addOrder(Order.desc(DATE_LAST_UPDATED))
+                                .setMaxResults(1);
 
-        criteriaGenerator.enhanceCriteria(criteria);
+                criteriaGenerator.enhanceCriteria(criteria);
 
-        return criteria.list().size() > 0 ? (PersistedEntry) criteria.list().get(0) : null;
+                return criteria.list().size() > 0 ? (PersistedEntry) criteria.list().get(0) : null;
+            }
+        });
     }
 
     private int safeLongToInt(long value) {

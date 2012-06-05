@@ -34,5 +34,5 @@ public interface FeedRepository {
 
     PersistedEntry getNextMarker(PersistedEntry persistedEntry, String feedName, CategoryCriteriaGenerator criteriaGenerator);
 
-    int getFeedCount(String feedName, CategoryCriteriaGenerator criteriaGenerator);
+    Integer getFeedCount(String feedName, CategoryCriteriaGenerator criteriaGenerator);
 }
