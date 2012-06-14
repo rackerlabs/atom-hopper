@@ -3,6 +3,10 @@ package org.atomhopper.mongodb.adapter;
 
 public class MongodbUtilities {
 
+    private MongodbUtilities() {
+        throw new AssertionError();
+    }
+
     protected static int safeLongToInt(long value) {
         if (value < Integer.MIN_VALUE || value > Integer.MAX_VALUE) {
             throw new IllegalArgumentException
@@ -16,8 +20,10 @@ public class MongodbUtilities {
         // (including the name of the db and indexes).
         // It is probably best to keep it under 80/90 chars.
         // http://www.mongodb.org/display/DOCS/Collections
-        if(collection.length() > 70) {
-            return collection.replace('/', '.').substring(0, 70);
+        final int maxCollectionNameLength = 70;
+
+        if(collection.length() > maxCollectionNameLength) {
+            return collection.replace('/', '.').substring(0, maxCollectionNameLength);
         } else {
             return collection.replace('/', '.');
         }

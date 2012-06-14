@@ -14,6 +14,7 @@ import org.apache.abdera.model.Link;
 import org.apache.commons.lang.StringUtils;
 import org.atomhopper.adapter.FeedInformation;
 import org.atomhopper.adapter.FeedSource;
+import org.atomhopper.adapter.NotImplemented;
 import org.atomhopper.adapter.ResponseBuilder;
 import org.atomhopper.adapter.request.adapter.GetEntryRequest;
 import org.atomhopper.adapter.request.adapter.GetFeedRequest;
@@ -46,75 +47,70 @@ public class MongodbFeedSource implements FeedSource {
     }
 
     @Override
+    @NotImplemented
     public void setParameters(Map<String, String> params) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    private void addFeedSelfLink(Feed feed, final String BASE_FEED_URI,
+    private void addFeedSelfLink(Feed feed, final String baseFeedUri,
             final GetFeedRequest getFeedRequest,
             final int pageSize, final String searchString) {
 
         StringBuilder queryParams = new StringBuilder();
         boolean markerIsSet = false;
 
-        queryParams.append(BASE_FEED_URI).append("?limit=").append(String.valueOf(pageSize));
+        queryParams.append(baseFeedUri).append("?limit=").append(String.valueOf(pageSize));
 
-        if(searchString.length() > 0) {
+        if (searchString.length() > 0) {
             queryParams.append("&search=").append(encode(searchString).toString());
         }
-        if(getFeedRequest.getPageMarker() != null) {
-            if(getFeedRequest.getPageMarker().length() > 0) {
+        if (getFeedRequest.getPageMarker() != null && getFeedRequest.getPageMarker().length() > 0) {
                 queryParams.append("&marker=").append(getFeedRequest.getPageMarker());
                 markerIsSet = true;
-            }
         }
-        if(markerIsSet) {
+        if (markerIsSet) {
             queryParams.append("&direction=").append(getFeedRequest.getDirection());
         } else {
             queryParams.append("&direction=backward");
-            if(queryParams.toString().equalsIgnoreCase(BASE_FEED_URI + "?limit=25&direction=backward")) {
+            if (queryParams.toString().equalsIgnoreCase(baseFeedUri + "?limit=25&direction=backward")) {
                 // They are calling the feedhead, just use the base feed uri
                 // This keeps the validator at http://validator.w3.org/ happy
-                queryParams.delete(0, queryParams.toString().length()).append(BASE_FEED_URI);
+                queryParams.delete(0, queryParams.toString().length()).append(baseFeedUri);
             }
         }
         feed.addLink(queryParams.toString()).setRel(Link.REL_SELF);
     }
 
-    private void addFeedCurrentLink(Feed hyrdatedFeed, final String BASE_FEED_URI) {
-        hyrdatedFeed.addLink(BASE_FEED_URI, Link.REL_CURRENT);
+    private void addFeedCurrentLink(Feed hyrdatedFeed, final String baseFeedUri) {
+        hyrdatedFeed.addLink(baseFeedUri, Link.REL_CURRENT);
     }
 
     private Feed hydrateFeed(Abdera abdera, List<PersistedEntry> persistedEntries, GetFeedRequest getFeedRequest, final int pageSize) {
         final Feed hyrdatedFeed = abdera.newFeed();
-        final String UUID_URI_SCHEME = "urn:uuid:";
-        final String BASE_FEED_URI = decode(getFeedRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
+        final String uuidUriScheme = "urn:uuid:";
+        final String baseFeedUri = decode(getFeedRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
         final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
 
         // Set the feed links
-        addFeedCurrentLink(hyrdatedFeed, BASE_FEED_URI);
-        addFeedSelfLink(hyrdatedFeed, BASE_FEED_URI, getFeedRequest, pageSize, searchString);
+        addFeedCurrentLink(hyrdatedFeed, baseFeedUri);
+        addFeedSelfLink(hyrdatedFeed, baseFeedUri, getFeedRequest, pageSize, searchString);
 
         // TODO: We should have a link builder method for these
         if (!(persistedEntries.isEmpty())) {
-            hyrdatedFeed.setId(UUID_URI_SCHEME + UUID.randomUUID().toString());
+            hyrdatedFeed.setId(uuidUriScheme + UUID.randomUUID().toString());
             hyrdatedFeed.setTitle(persistedEntries.get(0).getFeed());
 
             // Set the previous link
             hyrdatedFeed.addLink(new StringBuilder()
-                    .append(BASE_FEED_URI)
-                    .append("?marker=")
+                    .append(baseFeedUri).append("?marker=")
                     .append(persistedEntries.get(0).getEntryId())
-                    .append("&limit=")
-                    .append(String.valueOf(pageSize))
-                    .append("&search=")
-                    .append(encode(searchString).toString())
+                    .append("&limit=").append(String.valueOf(pageSize))
+                    .append("&search=").append(encode(searchString).toString())
                     .append("&direction=forward").toString())
                     .setRel(Link.REL_PREVIOUS);
 
             final PersistedEntry lastEntryInCollection = persistedEntries.get(persistedEntries.size() - 1);
-            Query nextLinkQuery = new Query(Criteria.where(FEED).is(lastEntryInCollection.getFeed())).limit(1)
-                    .addCriteria(Criteria.where(DATE_LAST_UPDATED)
-                    .lt(lastEntryInCollection.getDateLastUpdated()));
+            Query nextLinkQuery = new Query(Criteria.where(FEED).is(lastEntryInCollection.getFeed())).limit(1).addCriteria(Criteria.where(DATE_LAST_UPDATED).lt(lastEntryInCollection.getDateLastUpdated()));
             nextLinkQuery.sort().on(DATE_LAST_UPDATED, Order.DESCENDING);
 
             SimpleCategoryCriteriaGenerator simpleCategoryCriteriaGenerator = new SimpleCategoryCriteriaGenerator(searchString);
@@ -125,14 +121,10 @@ public class MongodbFeedSource implements FeedSource {
 
             if (nextEntry != null) {
                 // Set the next link
-                hyrdatedFeed.addLink(new StringBuilder()
-                        .append(BASE_FEED_URI)
-                        .append("?marker=")
-                        .append(nextEntry.getEntryId())
-                        .append("&limit=")
-                        .append(String.valueOf(pageSize))
-                        .append("&search=")
-                        .append(encode(searchString).toString())
+                hyrdatedFeed.addLink(new StringBuilder().append(baseFeedUri)
+                        .append("?marker=").append(nextEntry.getEntryId())
+                        .append("&limit=").append(String.valueOf(pageSize))
+                        .append("&search=").append(encode(searchString).toString())
                         .append("&direction=backward").toString())
                         .setRel(Link.REL_NEXT);
             }
@@ -216,33 +208,23 @@ public class MongodbFeedSource implements FeedSource {
 
             Feed hyrdatedFeed = hydrateFeed(abdera, persistedEntries, getFeedRequest, pageSize);
             // Set the last link in the feed head
-            final String BASE_FEED_URI = decode(getFeedRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
+            final String baseFeedUri = decode(getFeedRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
 
             Query feedQuery = new Query(Criteria.where(FEED).is(getFeedRequest.getFeedName()));
             simpleCategoryCriteriaGenerator.enhanceCriteria(feedQuery);
             final int totalFeedEntryCount = safeLongToInt(countDocuments(formatCollectionName(getFeedRequest.getFeedName()), feedQuery) % pageSize);
             int lastPageSize = pageSize;
-            if(totalFeedEntryCount != 0) {
+            if (totalFeedEntryCount != 0) {
                 lastPageSize = totalFeedEntryCount;
             }
-            Query lastLinkQuery = new Query(Criteria.where(FEED).is(getFeedRequest.getFeedName()))
-                    .limit(lastPageSize);
+            Query lastLinkQuery = new Query(Criteria.where(FEED).is(getFeedRequest.getFeedName())).limit(lastPageSize);
             simpleCategoryCriteriaGenerator.enhanceCriteria(lastLinkQuery);
             lastLinkQuery.sort().on(DATE_LAST_UPDATED, Order.ASCENDING);
             final List<PersistedEntry> lastPersistedEntries = mongoTemplate.find(lastLinkQuery,
                     PersistedEntry.class, formatCollectionName(getFeedRequest.getFeedName()));
 
             if (lastPersistedEntries != null && !(lastPersistedEntries.isEmpty())) {
-                hyrdatedFeed.addLink(new StringBuilder()
-                        .append(BASE_FEED_URI)
-                        .append("?marker=")
-                        .append(lastPersistedEntries.get(lastPersistedEntries.size() - 1).getEntryId())
-                        .append("&limit=")
-                        .append(String.valueOf(pageSize))
-                        .append("&search=")
-                        .append(encode(searchString).toString())
-                        .append("&direction=backward").toString())
-                        .setRel(Link.REL_LAST);
+                hyrdatedFeed.addLink(new StringBuilder().append(baseFeedUri).append("?marker=").append(lastPersistedEntries.get(lastPersistedEntries.size() - 1).getEntryId()).append("&limit=").append(String.valueOf(pageSize)).append("&search=").append(encode(searchString).toString()).append("&direction=backward").toString()).setRel(Link.REL_LAST);
             }
 
             response = ResponseBuilder.found(hyrdatedFeed);
@@ -311,15 +293,15 @@ public class MongodbFeedSource implements FeedSource {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    private long countDocuments( final String collection, final Query query ) {
-        return mongoTemplate.execute( collection,
-            new CollectionCallback< Long >() {
-                @Override
-                public Long doInCollection(DBCollection collection)
-                        throws MongoException, DataAccessException {
-                    return collection.count(query.getQueryObject());
-                }
-            }
-        );
+    private long countDocuments(final String collection, final Query query) {
+        return mongoTemplate.execute(collection,
+                new CollectionCallback< Long>() {
+
+                    @Override
+                    public Long doInCollection(DBCollection collection)
+                            throws MongoException, DataAccessException {
+                        return collection.count(query.getQueryObject());
+                    }
+                });
     }
 }

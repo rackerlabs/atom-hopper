@@ -1,10 +1,11 @@
 package org.atomhopper.mongodb.adapter;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import static junit.framework.Assert.assertEquals;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.parser.stax.FOMEntry;
-import org.apache.abdera.protocol.server.RequestContext;
 import org.atomhopper.adapter.request.adapter.DeleteEntryRequest;
 import org.atomhopper.adapter.request.adapter.PostEntryRequest;
 import org.atomhopper.adapter.request.adapter.PutEntryRequest;
@@ -56,6 +57,13 @@ public class MongodbFeedPublisherTest {
         @Test(expected = UnsupportedOperationException.class)
         public void shouldDeleteEntry() throws Exception {
             mongodbFeedPublisher.deleteEntry(deleteEntryRequest);
+        }
+
+        @Test(expected = UnsupportedOperationException.class)
+        public void shouldSetParameters() throws Exception {
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("test1", "test2");
+            mongodbFeedPublisher.setParameters(map);
         }
 
         public Entry entry() {
