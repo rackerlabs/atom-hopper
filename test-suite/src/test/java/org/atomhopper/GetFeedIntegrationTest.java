@@ -126,7 +126,7 @@ public class GetFeedIntegrationTest extends JettyIntegrationTestHarness {
 
             final HttpMethod getFeedMethod = new GetMethod(urlAndPort+ "/namespace/feed?marker=NO_BUENO");
 
-            assertEquals("Getting a feed should return a 500 with bad marker id.", HttpStatus.SC_INTERNAL_SERVER_ERROR, httpClient.executeMethod(getFeedMethod));
+            assertEquals("Getting a feed should return a 404 with bad marker id.", HttpStatus.SC_NOT_FOUND, httpClient.executeMethod(getFeedMethod));
         }
 
         @Test
