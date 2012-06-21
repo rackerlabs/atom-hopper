@@ -3,7 +3,7 @@
   <hashTree>
     <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Paging order" enabled="true">
       <stringProp name="TestPlan.comments">This test plan checks whether AtomHopper returns paging entries in the correct order.</stringProp>
-      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.functional_mode">true</boolProp>
       <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
       <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
         <collectionProp name="Arguments.arguments"/>
@@ -18,26 +18,14 @@
             <stringProp name="Argument.value">${__P(host,localhost)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
-          <elementProp name="path" elementType="Argument">
-            <stringProp name="Argument.name">path</stringProp>
-            <stringProp name="Argument.value">${__P(path,)}</stringProp>
-            <stringProp name="Argument.metadata">=</stringProp>
-            <stringProp name="Argument.desc">must not end with /</stringProp>
-          </elementProp>
           <elementProp name="port" elementType="Argument">
             <stringProp name="Argument.name">port</stringProp>
             <stringProp name="Argument.value">${__P(port,8080)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
-          <elementProp name="namespace" elementType="Argument">
-            <stringProp name="Argument.name">namespace</stringProp>
-            <stringProp name="Argument.value">${__P(namespace,namespace)}</stringProp>
-            <stringProp name="Argument.metadata">=</stringProp>
-            <stringProp name="Argument.desc">neither begins nor ends with /</stringProp>
-          </elementProp>
           <elementProp name="feed" elementType="Argument">
             <stringProp name="Argument.name">feed</stringProp>
-            <stringProp name="Argument.value">${__P(feed,feed)}</stringProp>
+            <stringProp name="Argument.value">${__P(feed,namespace/feed)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
             <stringProp name="Argument.desc">neither begins nor ends with /</stringProp>
           </elementProp>
@@ -77,7 +65,7 @@
         <stringProp name="HTTPSampler.response_timeout"></stringProp>
         <stringProp name="HTTPSampler.protocol"></stringProp>
         <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-        <stringProp name="HTTPSampler.path">${path}/${namespace}/${feed}</stringProp>
+        <stringProp name="HTTPSampler.path">${feed}</stringProp>
         <stringProp name="HTTPSampler.concurrentPool">4</stringProp>
       </ConfigTestElement>
       <hashTree/>
@@ -240,7 +228,7 @@ vars.put(&quot;marker&quot;, marker);
           <stringProp name="HTTPSampler.response_timeout"></stringProp>
           <stringProp name="HTTPSampler.protocol"></stringProp>
           <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">${path}/${namespace}/${feed}/entries/${marker}</stringProp>
+          <stringProp name="HTTPSampler.path">${feed}/entries/${marker}</stringProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
