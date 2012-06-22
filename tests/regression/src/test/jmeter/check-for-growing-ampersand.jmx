@@ -3,7 +3,7 @@
   <hashTree>
     <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Check for growing ampersand &quot;&amp;&quot; bug" enabled="true">
       <stringProp name="TestPlan.comments">Repeated requests for a feed&apos;s &quot;self&quot; link expands &quot;&amp;&quot; to &quot;&amp;amp;&quot; to &quot;&amp;amp;amp;&quot; etc. This should not be.</stringProp>
-      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.functional_mode">true</boolProp>
       <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
       <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
         <collectionProp name="Arguments.arguments"/>
