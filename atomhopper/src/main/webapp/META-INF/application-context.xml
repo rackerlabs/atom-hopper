@@ -47,12 +47,10 @@
                 <!-- <entry key="hibernate.show_sql" value="false" /> -->
 
                 <!-- Start C3P0 Config -->
-                <!--
-                <entry key="hibernate.c3p0.min_size" value="30" />
-                <entry key="hibernate.c3p0.max_size" value="400" />
-                <entry key="hibernate.c3p0.timeout" value="30" />
-                <entry key="hibernate.c3p0.idle_test_period" value="5" />
-                -->
+                <entry key="hibernate.c3p0.min_size" value="10" />
+                <entry key="hibernate.c3p0.max_size" value="25" />
+                <entry key="hibernate.c3p0.timeout" value="300" />
+                <entry key="hibernate.c3p0.idle_test_period" value="10" />
                 <!-- End C3P0 Config -->
             </map>
         </constructor-arg>
