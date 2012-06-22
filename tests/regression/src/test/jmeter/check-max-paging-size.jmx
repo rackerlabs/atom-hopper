@@ -18,26 +18,14 @@
             <stringProp name="Argument.value">${__P(host,localhost)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
-          <elementProp name="path" elementType="Argument">
-            <stringProp name="Argument.name">path</stringProp>
-            <stringProp name="Argument.value">${__P(path,)}</stringProp>
-            <stringProp name="Argument.metadata">=</stringProp>
-            <stringProp name="Argument.desc">must not end with /</stringProp>
-          </elementProp>
           <elementProp name="port" elementType="Argument">
             <stringProp name="Argument.name">port</stringProp>
             <stringProp name="Argument.value">${__P(port,8080)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
-          <elementProp name="namespace" elementType="Argument">
-            <stringProp name="Argument.name">namespace</stringProp>
-            <stringProp name="Argument.value">${__P(namespace,namespace)}</stringProp>
-            <stringProp name="Argument.metadata">=</stringProp>
-            <stringProp name="Argument.desc">neither begins nor ends with /</stringProp>
-          </elementProp>
           <elementProp name="feed" elementType="Argument">
             <stringProp name="Argument.name">feed</stringProp>
-            <stringProp name="Argument.value">${__P(feed,feed)}</stringProp>
+            <stringProp name="Argument.value">${__P(feed,namespace/feed)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
             <stringProp name="Argument.desc">neither begins nor ends with /</stringProp>
           </elementProp>
@@ -77,7 +65,7 @@
         <stringProp name="HTTPSampler.response_timeout"></stringProp>
         <stringProp name="HTTPSampler.protocol"></stringProp>
         <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-        <stringProp name="HTTPSampler.path">${path}/${namespace}/${feed}</stringProp>
+        <stringProp name="HTTPSampler.path">${feed}</stringProp>
         <stringProp name="HTTPSampler.concurrentPool">4</stringProp>
       </ConfigTestElement>
       <hashTree/>
