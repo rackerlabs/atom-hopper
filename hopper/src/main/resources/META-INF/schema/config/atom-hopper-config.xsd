@@ -48,7 +48,7 @@
             </xs:annotation>
         </xs:attribute>
 
-        <xs:attribute name="scheme" type="xs:string" use="required">
+        <xs:attribute name="scheme" default="http" type="xs:string" use="optional">
             <xs:annotation>
                 <xs:documentation>
                     <xhtml:p>
