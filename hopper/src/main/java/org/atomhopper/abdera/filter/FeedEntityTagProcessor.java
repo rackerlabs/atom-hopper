@@ -13,11 +13,12 @@ public class FeedEntityTagProcessor implements AdapterResponseInterceptor<Feed> 
 
     @Override
     public void process(RequestContext rc, AdapterResponse<Feed> adapterResponse) {
-        if(null == adapterResponse.getBody()) {
+        final Feed f = adapterResponse.getBody();
+
+        if(f == null) {
             return;
         }
 
-        final Feed f = adapterResponse.getBody();
         final int totalEntries = f.getEntries().size();
 
         // If there are no entries in the feed
