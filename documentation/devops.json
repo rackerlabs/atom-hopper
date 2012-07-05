@@ -1,0 +1,68 @@
+{
+    "name": "Atom Hopper",
+    "description": "An open source ATOMPub server",
+    "tags": [
+    "java",
+    "ATOM",
+    "open source",
+    "hibernate",
+    "MongoDB",
+    "Abdera"    
+    ],
+    "contacts": [
+    {
+        "team_name": "CLoud Integration",
+        "members": [
+        {
+            "name": "Theresa Huth",
+            "sso":"theresa.huth",
+            "github": "https://github.com/theresaHuth",
+            "mailto": "theresa.huth@rackspace.com"
+        },
+        {
+            "name": "Chad Lung",
+            "sso":"chad.lung",
+            "github": "https://github.com/chadlung",
+            "mailto": "chad.lung@rackspace.com"
+        },
+        {
+            "name": "Seth Brayman",
+            "sso":"seth.brayman",
+            "github": "https://github.com/sethbrayman",
+            "mailto": "seth.brayman@rackspace.com"
+        },
+        {
+            "name": "Richard Sartor",
+            "sso":"richard.sartor",
+            "github": "https://github.com/rich4632",
+            "mailto": "richard.sartor@rackspace.com"
+        }
+        ]
+    }
+    ],
+    "links": {
+        "Blog":"http://atomhopper.org",
+        "Email List": "atomhopper@lists.rackspace.com",
+        "Code": "https://github.com/rackspace/atom-hopper",
+        "Wiki":"https://github.com/rackspace/atom-hopper/wiki",
+        "Twitter": "https://twitter.com/#!/atomhopper",
+        "Implementation Plan":"https://red.rackspace.com:8443/display/misc/Atom+Hopper+Implementation+Plan"
+    },
+    "dependent_services": [
+    "Nova (Cloud Servers)",
+    "Glance",
+    "Quantum",
+    "Melange",
+    "MaaS",
+    "DBaaS",
+    "LBaaS",
+    "Legacy Cloud Servers",
+    "Cloud Files",
+    "Cloud Block Storage",
+    "Usage Service Layer",
+    "Data Warehouse",
+    "Runbook Automation (RBA) / Managed Cloud",
+    "Rack Connect",
+    "Identity/Auth"
+    ]
+}
