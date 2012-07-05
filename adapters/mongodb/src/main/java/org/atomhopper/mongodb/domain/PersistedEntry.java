@@ -2,6 +2,7 @@ package org.atomhopper.mongodb.domain;
 
 import java.util.*;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 
 public class PersistedEntry {
 
@@ -11,6 +12,7 @@ public class PersistedEntry {
     private List<PersistedCategory> categories = new ArrayList<PersistedCategory>();
     private String feed;
     private Date creationDate;
+    @Indexed(name = "dateLastUpdated", unique = false)
     private Date dateLastUpdated;
 
     public PersistedEntry() {
