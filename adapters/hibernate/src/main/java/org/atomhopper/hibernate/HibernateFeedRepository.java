@@ -85,6 +85,22 @@ public class HibernateFeedRepository implements FeedRepository {
         }
     }
 
+    public <T> T performComplexActionNonTransactionable(ComplexSessionAction<T> action) {
+        final Session session = sessionManager.getSession();
+
+        T returnable = null;
+
+        try {
+            returnable = action.perform(session);
+
+            return returnable;
+        } catch (Exception ex) {
+            throw new AtomDatabaseException("Failure performing hibernate action: " + action.toString(), ex);
+        } finally {
+            session.close();
+        }
+    }
+
     @Override
     public Set<PersistedCategory> getCategoriesForFeed(final String feedName) {
         return performComplexAction(new ComplexSessionAction<Set<PersistedCategory>>() {
@@ -107,7 +123,7 @@ public class HibernateFeedRepository implements FeedRepository {
 
     @Override
     public List<PersistedEntry> getFeedHead(final String feedName, final CategoryCriteriaGenerator criteriaGenerator, final int pageSize) {
-        return performComplexAction(new ComplexSessionAction<List<PersistedEntry>>() {
+        return performComplexActionNonTransactionable(new ComplexSessionAction<List<PersistedEntry>>() {
 
             @Override
             public List<PersistedEntry> perform(Session liveSession) {
@@ -128,7 +144,7 @@ public class HibernateFeedRepository implements FeedRepository {
     @Override
     public List<PersistedEntry> getFeedPage(final String feedName, final PersistedEntry markerEntry, final PageDirection direction,
     final CategoryCriteriaGenerator criteriaGenerator, final int pageSize) {
-        return performComplexAction(new ComplexSessionAction<List<PersistedEntry>>() {
+        return performComplexActionNonTransactionable(new ComplexSessionAction<List<PersistedEntry>>() {
 
             @Override
             public List<PersistedEntry> perform(Session liveSession) {
@@ -212,7 +228,7 @@ public class HibernateFeedRepository implements FeedRepository {
 
     @Override
     public Collection<PersistedFeed> getAllFeeds() {
-        return performComplexAction(new ComplexSessionAction<Collection<PersistedFeed>>() {
+        return performComplexActionNonTransactionable(new ComplexSessionAction<Collection<PersistedFeed>>() {
 
             @Override
             public Collection<PersistedFeed> perform(Session liveSession) {
@@ -223,7 +239,7 @@ public class HibernateFeedRepository implements FeedRepository {
 
     @Override
     public PersistedEntry getEntry(final String entryId, final String feedName) {
-        return performComplexAction(new ComplexSessionAction<PersistedEntry>() {
+        return performComplexActionNonTransactionable(new ComplexSessionAction<PersistedEntry>() {
 
             @Override
             public PersistedEntry perform(Session liveSession) {
@@ -235,7 +251,7 @@ public class HibernateFeedRepository implements FeedRepository {
 
     @Override
     public PersistedFeed getFeed(final String name) {
-        return performComplexAction(new ComplexSessionAction<PersistedFeed>() {
+        return performComplexActionNonTransactionable(new ComplexSessionAction<PersistedFeed>() {
 
             @Override
             public PersistedFeed perform(Session liveSession) {
@@ -247,7 +263,7 @@ public class HibernateFeedRepository implements FeedRepository {
     @Override
     public List<PersistedEntry> getLastPage(final String feedName, final int pageSize, final CategoryCriteriaGenerator criteriaGenerator) {
 
-        return performComplexAction(new ComplexSessionAction<List<PersistedEntry>>() {
+        return performComplexActionNonTransactionable(new ComplexSessionAction<List<PersistedEntry>>() {
 
             @Override
             public List<PersistedEntry> perform(Session liveSession) {
@@ -266,7 +282,7 @@ public class HibernateFeedRepository implements FeedRepository {
     @Override
     public Integer getFeedCount(final String feedName, final CategoryCriteriaGenerator criteriaGenerator) {
 
-        return performComplexAction(new ComplexSessionAction<Integer>() {
+        return performComplexActionNonTransactionable(new ComplexSessionAction<Integer>() {
 
             @Override
             public Integer perform(Session liveSession) {
@@ -285,7 +301,7 @@ public class HibernateFeedRepository implements FeedRepository {
     @Override
     public PersistedEntry getNextMarker(final PersistedEntry persistedEntry, final String feedName, final CategoryCriteriaGenerator criteriaGenerator) {
 
-        return performComplexAction(new ComplexSessionAction<PersistedEntry>() {
+        return performComplexActionNonTransactionable(new ComplexSessionAction<PersistedEntry>() {
 
             @Override
             public PersistedEntry perform(Session liveSession) {
