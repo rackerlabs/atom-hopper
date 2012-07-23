@@ -6,7 +6,8 @@ package org.atomhopper.servlet;
 public enum ServletInitParameter {
     
     CONTEXT_ADAPTER_CLASS("context-adapter-class"),
-    CONFIGURATION_LOCATION("config-location");
+    CONFIGURATION_LOCATION("config-location"),
+    CONFIGURATION_DIRECTORY("config-directory");
     
     private final String value;
     
