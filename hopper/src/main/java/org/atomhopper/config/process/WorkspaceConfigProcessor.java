@@ -1,4 +1,4 @@
-package org.atomhopper.config;
+package org.atomhopper.config.process;
 
 import org.apache.abdera.protocol.server.TargetType;
 import org.apache.abdera.protocol.server.impl.RegexTargetResolver;
@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.LinkedList;
 import java.util.List;
+import org.atomhopper.config.ConfigurationException;
 
 /**
  * I eat configurations.
