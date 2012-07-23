@@ -178,6 +178,10 @@
                                             <location>src/main/webapp/META-INF/template-log4j.properties</location>
                                             <destination>log4j.properties</destination>
                                         </source>
+                                        <source>
+                                            <location>src/main/webapp/META-INF/template-logback.xml</location>
+                                            <destination>logback.xml</destination>
+                                        </source>
                                     </sources>
                                 </mapping>
                                 <mapping>
