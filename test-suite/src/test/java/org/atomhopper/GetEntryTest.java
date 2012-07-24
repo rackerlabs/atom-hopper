@@ -48,7 +48,7 @@ public class GetEntryTest extends JettyIntegrationTestHarness {
         public void shouldReturnOneEntryAfterPublishing() throws Exception {
             final HttpMethod postMethod = newPostEntryMethod("");
             // POST to the first /namespace1/feed1/
-            assertEquals("Posting to a feed should return a 201", HttpStatus.SC_CREATED, httpClient.executeMethod(postMethod));
+            assertEquals("Getting a feed should return a 201", HttpStatus.SC_CREATED, httpClient.executeMethod(postMethod));
 
             Document doc = xml.toDOM(postMethod.getResponseBodyAsString());
             String uuid = getUuidHelper(postMethod);

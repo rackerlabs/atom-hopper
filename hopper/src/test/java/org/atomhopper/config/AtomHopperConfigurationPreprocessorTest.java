@@ -1,6 +1,5 @@
 package org.atomhopper.config;
 
-import org.atomhopper.config.process.AtomHopperConfigurationPreprocessor;
 import org.atomhopper.config.v1_0.Author;
 import org.atomhopper.config.v1_0.Configuration;
 import org.atomhopper.config.v1_0.ConfigurationDefaults;

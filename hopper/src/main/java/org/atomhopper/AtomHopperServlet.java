@@ -6,25 +6,30 @@ import org.apache.abdera.protocol.server.Provider;
 import org.apache.abdera.protocol.server.servlet.AbderaServlet;
 import org.apache.commons.lang.StringUtils;
 import org.atomhopper.abdera.WorkspaceProvider;
-import org.atomhopper.config.process.AtomHopperConfigurationPreprocessor;
-import org.atomhopper.config.process.WorkspaceConfigProcessor;
+import org.atomhopper.config.AtomHopperConfigurationPreprocessor;
+import org.atomhopper.config.WorkspaceConfigProcessor;
 import org.atomhopper.config.v1_0.Configuration;
 import org.atomhopper.config.v1_0.ConfigurationDefaults;
 import org.atomhopper.config.v1_0.HostConfiguration;
 import org.atomhopper.config.v1_0.WorkspaceConfiguration;
 import org.atomhopper.exceptions.ContextAdapterResolutionException;
+import org.atomhopper.exceptions.ServletInitException;
 import org.atomhopper.servlet.ApplicationContextAdapter;
 import org.atomhopper.servlet.DefaultEmptyContext;
 import org.atomhopper.servlet.ServletInitParameter;
+import org.atomhopper.util.config.ConfigurationParser;
 import org.atomhopper.util.config.ConfigurationParserException;
+import org.atomhopper.util.config.jaxb.JAXBConfigurationParser;
+import org.atomhopper.util.config.resource.file.FileConfigurationResource;
+import org.atomhopper.util.config.resource.uri.URIConfigurationResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
-import org.atomhopper.config.ConfigurationManager;
-import org.atomhopper.servlet.context.AtomHopperContextParameterKeys;
 
 /**
  * This class is the entry point for the atom server application. This servlet is
@@ -38,19 +43,38 @@ public final class AtomHopperServlet extends AbderaServlet {
 
     private static final Logger LOG = LoggerFactory.getLogger(AtomHopperServlet.class);
 
+    private static final String DEFAULT_CONFIGURATION_LOCATION = "/etc/atomhopper/atom-server.cfg.xml";
+
+    private final ConfigurationParser<Configuration> configurationParser;
     private ApplicationContextAdapter applicationContextAdapter;
     private Abdera abderaReference;
     private Configuration configuration;
 
     public AtomHopperServlet() {
+        //TODO: One day I'm going to integrate Power API's configuration framework into this but until this, this'll do
+        configurationParser = new JAXBConfigurationParser<Configuration>(Configuration.class, org.atomhopper.config.v1_0.ObjectFactory.class);
     }
 
     @Override
     public void init() throws ServletException {
         abderaReference = getAbdera();
 
-        final ConfigurationManager<Configuration> cfgManager = (ConfigurationManager<Configuration>)getServletContext().getAttribute(AtomHopperContextParameterKeys.CFG_MANAGER);
-        configuration = cfgManager.getConfiguration();
+        final String configLocation = getConfigurationLocation();
+        LOG.info("Reading configuration: " + configLocation);
+
+        try {
+            try {
+                configurationParser.setConfigurationResource(new URIConfigurationResource(new URI(configLocation)));
+            } catch (URISyntaxException ex) {
+                configurationParser.setConfigurationResource(new FileConfigurationResource(configLocation));
+            }
+
+            configuration = configurationParser.read();
+        } catch (ConfigurationParserException cpe) {
+            LOG.error("Failed to read configuration file: " + configLocation, cpe);
+
+            throw new ServletInitException(cpe.getMessage(), cpe);
+        }
 
         applicationContextAdapter = getContextAdapter();
         applicationContextAdapter.usingServletContext(getServletContext());
@@ -80,6 +104,13 @@ public final class AtomHopperServlet extends AbderaServlet {
 
         throw new ContextAdapterResolutionException("Unknown application context adapter class: " + adapterClass);
     }
+
+    protected String getConfigurationLocation() {
+        final String configLocation = getInitParameter(ServletInitParameter.CONFIGURATION_LOCATION.toString());
+
+        return !StringUtils.isBlank(configLocation) ? configLocation : DEFAULT_CONFIGURATION_LOCATION;
+    }
+
     @Override
     protected Provider createProvider() {
         final WorkspaceProvider workspaceProvider = new WorkspaceProvider(getHostConfiguration());

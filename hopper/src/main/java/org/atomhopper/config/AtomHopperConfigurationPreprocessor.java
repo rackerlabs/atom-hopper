@@ -1,4 +1,4 @@
-package org.atomhopper.config.process;
+package org.atomhopper.config;
 
 import org.apache.commons.lang.StringUtils;
 import org.atomhopper.config.v1_0.Author;

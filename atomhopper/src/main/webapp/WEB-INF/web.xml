@@ -20,12 +20,10 @@
         <param-name>log4jConfigLocation</param-name>
         <param-value>file:///etc/atomhopper/log4j.properties</param-value>
     </context-param>
-    
     <context-param><!--This causes it to check once a second for changes to the log4j.properties file.-->
         <param-name>log4jRefreshInterval</param-name>
         <param-value>1000</param-value>
     </context-param>
-    
     <listener><!--This listener must come before any other listeners in this file.-->
         <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
     </listener>
@@ -34,16 +32,6 @@
     <listener>
         <display-name>Spring Context Loader</display-name>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-    </listener>
-
-    <listener>
-        <display-name>Services Context Listener</display-name>
-        <listener-class>org.atomhopper.servlet.context.ServiceContextListener</listener-class>
-    </listener>
-
-    <listener>
-        <display-name>Configuration Context Listener</display-name>
-        <listener-class>org.atomhopper.servlet.context.ConfigurationContextListener</listener-class>
     </listener>
 
     <servlet id="atom-hopper">
