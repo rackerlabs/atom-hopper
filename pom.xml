@@ -5,7 +5,7 @@
     <groupId>org.atomhopper</groupId>
     <artifactId>parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.1.6-SNAPSHOT</version>
+    <version>1.1.9-SNAPSHOT</version>
     <name>ATOM Hopper - ATOMpub Server Collection</name>
 
     <url>http://atomhopper.org/</url>
@@ -243,24 +243,6 @@
                 <artifactId>junit</artifactId>
                 <version>4.8.2</version>
                 <scope>test</scope>
-            </dependency>
-            
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-classic</artifactId>
-                <version>1.0.4</version>
-            </dependency>
-        
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-core</artifactId>
-                <version>1.0.4</version>
-            </dependency>
-        
-            <dependency>
-                <groupId>me.moocar</groupId>
-                <artifactId>logback-gelf</artifactId>
-                <version>0.9.6</version>
             </dependency>
 
         </dependencies>
