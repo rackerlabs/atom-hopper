@@ -14,6 +14,10 @@
         -->
         <param-value>file:///etc/atomhopper/application-context.xml</param-value>
     </context-param>
+    
+    <listener>
+        <listener-class>org.atomhopper.ExternalConfigLoaderContextListener</listener-class>
+    </listener>
 
     <listener>
         <display-name>Spring Context Loader</display-name>
@@ -83,4 +87,8 @@
         <env-entry-type>java.lang.String</env-entry-type>
         <env-entry-value>file:///etc/atomhopper/logback.xml</env-entry-value>
     </env-entry>
+    
+    <listener>
+        <listener-class>ch.qos.logback.classic.selector.servlet.ContextDetachingSCL</listener-class>
+    </listener>
 </web-app>
