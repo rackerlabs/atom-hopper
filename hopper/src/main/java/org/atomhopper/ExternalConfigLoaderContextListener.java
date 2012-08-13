@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Simple utility listener to load certain properties before Spring Starts up.
+ * 
+ * This code is from https://bowerstudios.com/node/896
  */
 public class ExternalConfigLoaderContextListener implements ServletContextListener {
 

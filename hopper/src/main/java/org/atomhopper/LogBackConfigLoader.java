@@ -13,7 +13,7 @@ import ch.qos.logback.core.joran.spi.JoranException;
 /**
  * Simple Utility class for loading an external config file for logback
  *
- * @author daniel
+ * This code is from https://bowerstudios.com/node/896
  */
 public class LogBackConfigLoader {
 
