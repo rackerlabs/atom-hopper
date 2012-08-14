@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Simple utility listener to load certain properties before Spring Starts up.
  * 
- * This code is from https://bowerstudios.com/node/896
+ * This code is modified from https://bowerstudios.com/node/896
  */
 public class ExternalConfigLoaderContextListener implements ServletContextListener {
 
@@ -17,10 +17,7 @@ public class ExternalConfigLoaderContextListener implements ServletContextListen
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        String configLocation = sce.getServletContext().getInitParameter("CONFIGDIR");
-        if (configLocation == null) {
-            configLocation = "/etc/atomhopper/";
-        }
+        final String configLocation = "/etc/atomhopper/";
 
         try {
             new LogBackConfigLoader(configLocation + "logback.xml");

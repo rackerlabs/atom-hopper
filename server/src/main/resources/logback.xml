@@ -1,15 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
 
-<configuration scan="true" debug="true"> 
-
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender"> 
-    <!-- encoders are  by default assigned the type
-         ch.qos.logback.classic.encoder.PatternLayoutEncoder -->
+<!-- For assistance related to logback-translator or configuration  -->
+<!-- files in general, please contact the logback user mailing list -->
+<!-- at http://www.qos.ch/mailman/listinfo/logback-user             -->
+<!--                                                                -->
+<!-- For professional support please see                            -->
+<!--    http://www.qos.ch/shop/products/professionalSupport         -->
+<!--                                                                -->
+<configuration scan="true">
+    <appender name="defaultFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+        <File>/var/log/atomhopper/atomhopper-logback.log</File>
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:s} %-4r [%t] %-5p %c %x - %m%n</pattern>
         </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <maxIndex>100</maxIndex>
+            <FileNamePattern>/var/log/atomhopper/atomhopper-logback.log.%i</FileNamePattern>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>100MB</MaxFileSize>
+        </triggeringPolicy>
     </appender>
-
-    <root level="debug">
-        <appender-ref ref="STDOUT" />
+    <root level="WARN">
+        <appender-ref ref="defaultFile"/>
     </root>
 </configuration>
