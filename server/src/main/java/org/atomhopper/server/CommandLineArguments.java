@@ -5,7 +5,7 @@ import org.kohsuke.args4j.Option;
 
 class CommandLineArguments {
 
-    private static final String DEFAULT_PORT_INFO = "(Default is port 8080, range is 1024 to 49150)";
+    private static final String DEFAULT_PORT_INFO = "(Default listen port is 8080, default listen for shutdown port is 8818 (acceptable range is 1024 to 49150)";
     static final String ACTION_START = "start";
     static final String ACTION_STOP = "stop";
     private static final int PORT = 8080;
