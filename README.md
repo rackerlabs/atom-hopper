@@ -20,7 +20,7 @@ Benefits:
 * Flexible. Atom Hopper currently supports the following relational databases: [H2](http://www.h2database.com/), [PostgresSQL](http://www.postgresql.org/), and [MySQL](http://www.mysql.com/) (plus others that work with Hibernate) as well as the NoSQL database [MongoDB](http://www.mongodb.org/).
 * High performance. Atom Hopper can handle high loads with high accuracy.
 * Improving. Atom Hopper is under development and actively being worked on.
-* Atom Hopper is currently being used at [Rackspace Hosting](http://www.rackspace.com/).
+* Atom Hopper is currently being used at [Rackspace](http://www.rackspace.com/) in conjunction with [OpenStack](http://openstack.org).
 
 Atom Hopper works well with [Repose](http://openrepose.org/) especially if you need:
 * Authentication and Authorization
