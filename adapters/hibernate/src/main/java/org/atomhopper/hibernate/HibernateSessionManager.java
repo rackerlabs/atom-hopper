@@ -4,24 +4,19 @@ import java.util.Map;
 import org.atomhopper.adapter.jpa.PersistedCategory;
 import org.atomhopper.adapter.jpa.PersistedEntry;
 import org.atomhopper.adapter.jpa.PersistedFeed;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.service.ServiceRegistry;
-import org.hibernate.service.ServiceRegistryBuilder;
-
 
 public class HibernateSessionManager {
 
-    private static SessionFactory sessionFactory;
-    private static ServiceRegistry serviceRegistry;
+    private final SessionFactory sessionFactory;
 
     public HibernateSessionManager(Map<String, String> parameters) {
-        sessionFactory = configureSessionFactory(parameters);
+        sessionFactory = buildSessionFactory(parameters);
     }
 
-    private static SessionFactory configureSessionFactory(Map<String, String> parameters) throws HibernateException {
+    private static SessionFactory buildSessionFactory(Map<String, String> parameters) {
         final Configuration hibernateConfiguration = new Configuration()
                 .addAnnotatedClass(PersistedFeed.class)
                 .addAnnotatedClass(PersistedEntry.class)
@@ -31,10 +26,7 @@ public class HibernateSessionManager {
             hibernateConfiguration.setProperty(userParameter.getKey(), userParameter.getValue());
         }
 
-        serviceRegistry = new ServiceRegistryBuilder().applySettings(hibernateConfiguration.getProperties()).buildServiceRegistry();
-        sessionFactory = hibernateConfiguration.buildSessionFactory(serviceRegistry);
-
-        return sessionFactory;
+        return hibernateConfiguration.buildSessionFactory();
     }
 
     public Session getSession() {
