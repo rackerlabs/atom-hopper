@@ -64,6 +64,12 @@
                 <artifactId>mongodb-adapter</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            
+            <dependency>
+                <groupId>org.atomhopper.adapter</groupId>
+                <artifactId>postgres-adapter</artifactId>
+                <version>${project.version}</version>
+            </dependency>            
 
             <dependency>
                 <groupId>org.hibernate</groupId>
