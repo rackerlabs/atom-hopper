@@ -60,11 +60,11 @@
     <bean id="postgres-datasource-bean" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.postgresql.Driver" />
         <property name="url" value="jdbc:postgresql://localhost:5432/atomhopper" />
-        <property name="username" value="admin" />
+        <property name="username" value="postgres" />
         <property name="password" value="password" />
     </bean>
 
-    <bean name="postgres-feed-source" class="org.atomhopper.postgres.adapter.PostgresFeedPublisher">
+    <bean name="postgres-feed-publisher" class="org.atomhopper.postgres.adapter.PostgresFeedPublisher">
         <property name="dataSource" ref="postgres-datasource-bean" />
     </bean>
 

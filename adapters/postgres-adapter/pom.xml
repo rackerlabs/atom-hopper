@@ -10,7 +10,7 @@
         <relativePath>./../../pom.xml</relativePath>
     </parent>
 
-    <groupId>org.atomhopper</groupId>
+    <groupId>org.atomhopper.adapter</groupId>
     <artifactId>postgres-adapter</artifactId>
     <packaging>jar</packaging>
 

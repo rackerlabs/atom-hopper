@@ -1,30 +1,29 @@
 package org.atomhopper.postgres.adapter;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import javax.sql.DataSource;
+import static org.apache.abdera.i18n.text.UrlEncoding.decode;
+import org.apache.abdera.model.Entry;
 import org.atomhopper.adapter.FeedPublisher;
 import org.atomhopper.adapter.NotImplemented;
 import org.atomhopper.adapter.PublicationException;
 import org.atomhopper.adapter.ResponseBuilder;
-import org.atomhopper.adapter.jpa.PersistedFeed;
 import org.atomhopper.adapter.request.adapter.DeleteEntryRequest;
 import org.atomhopper.adapter.request.adapter.PostEntryRequest;
 import org.atomhopper.adapter.request.adapter.PutEntryRequest;
+import org.atomhopper.postgres.model.PersistedEntry;
 import org.atomhopper.response.AdapterResponse;
 import org.atomhopper.response.EmptyBody;
 import org.atomhopper.util.uri.template.EnumKeyedTemplateParameters;
 import org.atomhopper.util.uri.template.URITemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.sql.DataSource;
 import org.springframework.jdbc.core.JdbcTemplate;
-
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.*;
-import javax.sql.DataSource;
-
-import static org.apache.abdera.i18n.text.UrlEncoding.decode;
-import org.apache.abdera.model.Entry;
-import org.atomhopper.postgres.model.PersistedEntry;
 
 public class PostgresFeedPublisher implements FeedPublisher {
 
