@@ -12,7 +12,7 @@
 
         <feed title="Testing Feed" resource="/feed">
             <publisher reference="hibernate-feed-publisher" />
-            <feed-source reference="hibernate-feed-source" />
+            <feed-source reference="postgres-feed-source" />
         </feed>
     </workspace>
 </atom-hopper-config>

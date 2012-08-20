@@ -1,16 +1,27 @@
-package org.atomhopper.postgres.adapter.models;
+package org.atomhopper.postgres.model;
 
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.TimeZone;
 
 
-public class Entry {
-    
+public class PersistedEntry {
+
     private String entryId;
-    private String feedName;
+    private String feed;
     private String entryBody;
     private Date creationDate;
     private Date dateLastUpdated;
     private String[] categories;
+
+    public PersistedEntry() {
+        final Calendar localNow = Calendar.getInstance(TimeZone.getDefault());
+        localNow.setTimeInMillis(System.currentTimeMillis());
+
+        creationDate = localNow.getTime();
+        dateLastUpdated = localNow.getTime();
+    }
 
     public String getEntryId() {
         return entryId;
@@ -20,12 +31,12 @@ public class Entry {
         this.entryId = entryId;
     }
 
-    public String getFeedName() {
-        return feedName;
+    public String getFeed() {
+        return feed;
     }
 
-    public void setFeedName(String feedName) {
-        this.feedName = feedName;
+    public void setFeed(String feedName) {
+        this.feed = feed;
     }
 
     public String getEntryBody() {
