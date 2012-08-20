@@ -68,7 +68,7 @@ public class PostgresFeedPublisher implements FeedPublisher {
 
         insert.update("INSERT INTO entries (entryid, creationdate, datelastupdated, entrybody, feed, categories) VALUES (?, ?, ?, ?, ?, ?)", new Object[]{
             persistedEntry.getEntryId(), persistedEntry.getCreationDate(), persistedEntry.getDateLastUpdated(),
-            persistedEntry.getEntryBody(), persistedEntry.getFeed(), persistedEntry.getCategories()
+            persistedEntry.getEntryBody(), persistedEntry.getFeed(), new PostgreSQLTextArray(persistedEntry.getCategories())
         });
 
         return ResponseBuilder.created(abderaParsedEntry);

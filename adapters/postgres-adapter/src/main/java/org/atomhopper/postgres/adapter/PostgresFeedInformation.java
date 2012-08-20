@@ -18,8 +18,7 @@ public class PostgresFeedInformation implements FeedInformation {
 
     @Override
     public String getId(FeedRequest feedRequest) {
-        return "TODO";
-        //return feedRepository.getFeed(feedRequest.getFeedName()).getFeedId();
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

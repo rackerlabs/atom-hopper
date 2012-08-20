@@ -1,7 +1,6 @@
 package org.atomhopper.postgres.model;
 
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -35,7 +34,7 @@ public class PersistedEntry {
         return feed;
     }
 
-    public void setFeed(String feedName) {
+    public void setFeed(String feed) {
         this.feed = feed;
     }
 
