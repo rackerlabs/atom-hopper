@@ -24,13 +24,20 @@ import org.atomhopper.util.uri.template.URITemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly=false)
 public class PostgresFeedPublisher implements FeedPublisher {
 
     private static final Logger LOG = LoggerFactory.getLogger(PostgresFeedPublisher.class);
     private static final String UUID_URI_SCHEME = "urn:uuid:";
     private static final String LINKREL_SELF = "self";
     private DataSource dataSource;
+    private JdbcTemplate jdbcTemplate;
+
+    public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -47,7 +54,8 @@ public class PostgresFeedPublisher implements FeedPublisher {
     public AdapterResponse<Entry> postEntry(PostEntryRequest postEntryRequest) {
         final Entry abderaParsedEntry = postEntryRequest.getEntry();
         final PersistedEntry persistedEntry = new PersistedEntry();
-        JdbcTemplate insert = new JdbcTemplate(dataSource);
+        final String insertSQL = "INSERT INTO entries (entryid, creationdate, datelastupdated, entrybody, feed, categories) VALUES (?, ?, ?, ?, ?, ?)";
+        //JdbcTemplate insert = new JdbcTemplate(dataSource);
 
         // Generate an ID for this entry
         persistedEntry.setEntryId(UUID_URI_SCHEME + UUID.randomUUID().toString());
@@ -66,7 +74,7 @@ public class PostgresFeedPublisher implements FeedPublisher {
         abderaParsedEntry.setId(persistedEntry.getEntryId());
         abderaParsedEntry.setUpdated(persistedEntry.getDateLastUpdated());
 
-        insert.update("INSERT INTO entries (entryid, creationdate, datelastupdated, entrybody, feed, categories) VALUES (?, ?, ?, ?, ?, ?)", new Object[]{
+        jdbcTemplate.update(insertSQL, new Object[]{
             persistedEntry.getEntryId(), persistedEntry.getCreationDate(), persistedEntry.getDateLastUpdated(),
             persistedEntry.getEntryBody(), persistedEntry.getFeed(), new PostgreSQLTextArray(persistedEntry.getCategories())
         });
