@@ -67,7 +67,7 @@ public class HibernateFeedSource implements FeedSource {
             queryParams.append("&direction=").append(getFeedRequest.getDirection());
         } else {
             queryParams.append("&direction=backward");
-            if(queryParams.toString().equalsIgnoreCase(baseFeedUri + "?limit="+pageSize+"&direction=backward")) {
+            if(queryParams.toString().equalsIgnoreCase(baseFeedUri + "?limit=" + pageSize + "&direction=backward")) {
                 // They are calling the feedhead, just use the base feed uri
                 // This keeps the validator at http://validator.w3.org/ happy
                 queryParams.delete(0, queryParams.toString().length()).append(baseFeedUri);
