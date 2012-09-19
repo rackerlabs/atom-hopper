@@ -30,7 +30,7 @@
           <collectionProp name="Arguments.arguments">
             <elementProp name="port" elementType="Argument">
               <stringProp name="Argument.name">port</stringProp>
-              <stringProp name="Argument.value">443</stringProp>
+              <stringProp name="Argument.value">8080</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
             <elementProp name="buildinfo.version" elementType="Argument">
@@ -55,7 +55,7 @@
             </elementProp>
             <elementProp name="notification.author" elementType="Argument">
               <stringProp name="Argument.name">notification.author</stringProp>
-              <stringProp name="Argument.value">JV Test</stringProp>
+              <stringProp name="Argument.value">Test</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
             <elementProp name="notification.content" elementType="Argument">
@@ -68,11 +68,6 @@
               <stringProp name="Argument.value">AtomHopperPost Test</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
-            <elementProp name="token-nova" elementType="Argument">
-              <stringProp name="Argument.name">token-nova</stringProp>
-              <stringProp name="Argument.value">13f6449e-cfa8-4460-9d67-af90b8411213</stringProp>
-              <stringProp name="Argument.metadata">=</stringProp>
-            </elementProp>
           </collectionProp>
         </Arguments>
         <hashTree/>
@@ -80,22 +75,22 @@
           <collectionProp name="Arguments.arguments">
             <elementProp name="auth-url" elementType="Argument">
               <stringProp name="Argument.name">auth-url</stringProp>
-              <stringProp name="Argument.value">staging.identity-internal.api.rackspacecloud.com</stringProp>
+              <stringProp name="Argument.value">auth.com</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
             <elementProp name="auth-user" elementType="Argument">
               <stringProp name="Argument.name">auth-user</stringProp>
-              <stringProp name="Argument.value">usageuser</stringProp>
+              <stringProp name="Argument.value">username</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
             <elementProp name="auth-pass" elementType="Argument">
               <stringProp name="Argument.name">auth-pass</stringProp>
-              <stringProp name="Argument.value">auth123</stringProp>
+              <stringProp name="Argument.value">password</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
             <elementProp name="auth-key" elementType="Argument">
               <stringProp name="Argument.name">auth-key</stringProp>
-              <stringProp name="Argument.value">0f97f489c848438090250d50c7e1ea88</stringProp>
+              <stringProp name="Argument.value">apikey0123456789</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
             <elementProp name="protocol" elementType="Argument">
@@ -115,12 +110,12 @@
           <collectionProp name="Arguments.arguments">
             <elementProp name="host_1" elementType="Argument">
               <stringProp name="Argument.name">host_1</stringProp>
-              <stringProp name="Argument.value">atom.staging.ord1.us.ci.rackspace.net</stringProp>
+              <stringProp name="Argument.value">atom1.org</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
             <elementProp name="host_2" elementType="Argument">
               <stringProp name="Argument.name">host_2</stringProp>
-              <stringProp name="Argument.value">atom.staging.ord1.uk.ci.rackspace.net</stringProp>
+              <stringProp name="Argument.value">atom2.org</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
           </collectionProp>
@@ -130,32 +125,27 @@
           <collectionProp name="Arguments.arguments">
             <elementProp name="feed_1" elementType="Argument">
               <stringProp name="Argument.name">feed_1</stringProp>
-              <stringProp name="Argument.value">quantum/events</stringProp>
+              <stringProp name="Argument.value">usage1/events</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
             <elementProp name="feed_2" elementType="Argument">
               <stringProp name="Argument.name">feed_2</stringProp>
-              <stringProp name="Argument.value">melange/events</stringProp>
+              <stringProp name="Argument.value">usage2/events</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
             <elementProp name="feed_3" elementType="Argument">
               <stringProp name="Argument.name">feed_3</stringProp>
-              <stringProp name="Argument.value">lbaas/events</stringProp>
+              <stringProp name="Argument.value">usage3/events</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
             <elementProp name="feed_4" elementType="Argument">
               <stringProp name="Argument.name">feed_4</stringProp>
-              <stringProp name="Argument.value">servers/events</stringProp>
+              <stringProp name="Argument.value">usage4/events</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
             <elementProp name="feed_5" elementType="Argument">
               <stringProp name="Argument.name">feed_5</stringProp>
-              <stringProp name="Argument.value">files/events</stringProp>
-              <stringProp name="Argument.metadata">=</stringProp>
-            </elementProp>
-            <elementProp name="feed_6" elementType="Argument">
-              <stringProp name="Argument.name">feed_6</stringProp>
-              <stringProp name="Argument.value">demo/events</stringProp>
+              <stringProp name="Argument.value">usage5/events</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
           </collectionProp>
