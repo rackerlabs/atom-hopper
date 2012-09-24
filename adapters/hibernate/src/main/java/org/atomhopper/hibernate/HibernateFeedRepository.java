@@ -143,7 +143,7 @@ public class HibernateFeedRepository implements FeedRepository {
 
     @Override
     public List<PersistedEntry> getFeedPage(final String feedName, final PersistedEntry markerEntry, final PageDirection direction,
-    final CategoryCriteriaGenerator criteriaGenerator, final int pageSize) {
+                                            final CategoryCriteriaGenerator criteriaGenerator, final int pageSize) {
         return performComplexActionNonTransactionable(new ComplexSessionAction<List<PersistedEntry>>() {
 
             @Override
@@ -274,7 +274,9 @@ public class HibernateFeedRepository implements FeedRepository {
 
                 criteriaGenerator.enhanceCriteria(criteria);
 
-                return criteria.list().size() > 0 ? (List<PersistedEntry>) criteria.list() : null;
+                List<PersistedEntry> entries = criteria.list();
+
+                return entries.size() > 0 ? entries : null;
             }
         });
     }
@@ -289,11 +291,11 @@ public class HibernateFeedRepository implements FeedRepository {
                 Criteria criteria = liveSession.createCriteria(PersistedEntry.class);
 
                 criteria.add(Restrictions.eq(FEED_NAME, feedName))
-                        .setProjection(Projections.rowCount()).uniqueResult();
+                        .setProjection(Projections.rowCount());
 
                 criteriaGenerator.enhanceCriteria(criteria);
 
-                return safeLongToInt((Long) criteria.list().get(0));
+                return safeLongToInt((Long) criteria.uniqueResult());
             }
         });
     }
@@ -308,13 +310,15 @@ public class HibernateFeedRepository implements FeedRepository {
                 Criteria criteria = liveSession.createCriteria(PersistedEntry.class);
 
                 criteria.add(Restrictions.eq(FEED_NAME, feedName))
-                                .add(Restrictions.lt(DATE_LAST_UPDATED, persistedEntry.getCreationDate()))
-                                .addOrder(Order.desc(DATE_LAST_UPDATED))
-                                .setMaxResults(1);
+                        .add(Restrictions.lt(DATE_LAST_UPDATED, persistedEntry.getCreationDate()))
+                        .addOrder(Order.desc(DATE_LAST_UPDATED))
+                        .setMaxResults(1);
 
                 criteriaGenerator.enhanceCriteria(criteria);
 
-                return criteria.list().size() > 0 ? (PersistedEntry) criteria.list().get(0) : null;
+                List<PersistedEntry> entries = criteria.list();
+
+                return entries.size() > 0 ? (PersistedEntry) entries.get(0) : null;
             }
         });
     }
@@ -322,7 +326,7 @@ public class HibernateFeedRepository implements FeedRepository {
     private int safeLongToInt(long value) {
         if (value < Integer.MIN_VALUE || value > Integer.MAX_VALUE) {
             throw new IllegalArgumentException
-                (value + " cannot be cast to int without changing its value.");
+                    (value + " cannot be cast to int without changing its value.");
         }
         return (int) value;
     }
