@@ -1,3 +1,6 @@
+## intellij stuff
+.idea/
+
 ## java specific
 !.gitignore
 *.iml
