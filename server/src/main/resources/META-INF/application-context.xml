@@ -3,11 +3,14 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+       xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation=
           "http://www.springframework.org/schema/context
           http://www.springframework.org/schema/context/spring-context-3.0.xsd
           http://www.springframework.org/schema/data/mongo
           http://www.springframework.org/schema/data/mongo/spring-mongo-1.0.xsd
+          http://www.springframework.org/schema/tx
+          http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
           http://www.springframework.org/schema/beans
           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
@@ -55,6 +58,44 @@
 
     <bean name="hibernate-feed-publisher" class="org.atomhopper.hibernate.adapter.HibernateFeedPublisher">
         <property name="feedRepository" ref="feed-repository-bean" />
+    </bean>
+
+    <!-- Postgres specific data adapter -->
+    <tx:annotation-driven transaction-manager="transactionManager" />
+    <!--
+    <bean id="postgres-datasource-bean" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="driverClassName" value="org.postgresql.Driver" />
+        <property name="url" value="jdbc:postgresql://localhost:5432/atomhopper" />
+        <property name="username" value="postgres" />
+        <property name="password" value="password" />
+    </bean>
+
+    <bean name="postgres-feed-publisher" class="org.atomhopper.postgres.adapter.PostgresFeedPublisher">
+        <property name="dataSource" ref="postgres-datasource-bean" />
+    </bean>
+    -->
+    <!-- test... -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="org.postgresql.Driver" />
+        <property name="url" value="jdbc:postgresql://localhost:5432/atomhopper" />
+        <property name="username" value="postgres" />
+        <property name="password" value="password" />
+        <property name="minIdle" value="10" />
+        <property name="maxIdle" value="25" />
+        <property name="initialSize" value="10" />
+        <property name="maxActive" value="50" />
+    </bean>
+
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+    <bean id="postgres-feed-publisher" name="postgres-feed-publisher" class="org.atomhopper.postgres.adapter.PostgresFeedPublisher">
+        <property name="jdbcTemplate" ref="jdbcTemplate"></property>
     </bean>
 
     <!-- MongoDB Connection -->
