@@ -23,6 +23,11 @@
             <stringProp name="Argument.value">8080</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
+          <elementProp name="protocol" elementType="Argument">
+            <stringProp name="Argument.name">protocol</stringProp>
+            <stringProp name="Argument.value">http</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
           <elementProp name="allowPost" elementType="Argument">
             <stringProp name="Argument.name">allowPost</stringProp>
             <stringProp name="Argument.value">true</stringProp>
@@ -40,7 +45,7 @@
           </elementProp>
           <elementProp name="feed_2" elementType="Argument">
             <stringProp name="Argument.name">feed_2</stringProp>
-            <stringProp name="Argument.value">namespace-p/feed</stringProp>
+            <stringProp name="Argument.value">namespace2/feed</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
         </collectionProp>
@@ -88,7 +93,7 @@
             <stringProp name="HTTPSampler.port">${port}</stringProp>
             <stringProp name="HTTPSampler.connect_timeout"></stringProp>
             <stringProp name="HTTPSampler.response_timeout"></stringProp>
-            <stringProp name="HTTPSampler.protocol"></stringProp>
+            <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
             <stringProp name="HTTPSampler.contentEncoding"></stringProp>
             <stringProp name="HTTPSampler.path">${feed}</stringProp>
             <stringProp name="HTTPSampler.concurrentPool">4</stringProp>
@@ -146,10 +151,14 @@
                     <boolProp name="HTTPArgument.always_encode">false</boolProp>
                     <stringProp name="Argument.value">&lt;?xml version=&quot;1.0&quot;?&gt;&#xd;
 &lt;entry xmlns=&quot;http://www.w3.org/2005/Atom&quot;&gt;&#xd;
-&lt;title&gt;Atom Hopper Test&lt;/title&gt;&#xd;
-&lt;author&gt;&lt;name&gt;Atom Hopper Team&lt;/name&gt;&lt;/author&gt;&#xd;
-&lt;content&gt;This is a test of Atom Hopper functionality from the status codes test file.&lt;/content&gt;&#xd;
-&lt;/entry&gt;</stringProp>
+  &lt;title&gt;Atom Hopper Test&lt;/title&gt;&#xd;
+  &lt;author&gt;&#xd;
+    &lt;name&gt;Atom Hopper Team&lt;/name&gt;&#xd;
+  &lt;/author&gt;&#xd;
+  &lt;content type=&quot;text&quot;&gt;This is a test of Atom Hopper functionality&#xd;
+  from the status codes test file.&lt;/content&gt;&#xd;
+&lt;/entry&gt;&#xd;
+</stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
                   </elementProp>
                 </collectionProp>
@@ -318,13 +327,23 @@
             </hashTree>
           </hashTree>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST to non-existent feed" enabled="true">
-            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
               <collectionProp name="Arguments.arguments">
                 <elementProp name="" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                  <stringProp name="Argument.value">&lt;?xml version=&quot;1.0&quot;?&gt;&lt;entry xmlns=&quot;http://www.w3.org/2005/Atom&quot;&gt;&lt;title&gt;Atom-Powered Robots Run Amok&lt;/title&gt;&lt;id&gt;urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a&lt;/id&gt;&lt;updated&gt;2003-12-13T18:30:02Z&lt;/updated&gt;&lt;author&gt;&lt;name&gt;John Doe&lt;/name&gt;&lt;/author&gt;&lt;content&gt;Some text.&lt;/content&gt;&lt;/entry&gt;</stringProp>
+                  <stringProp name="Argument.value">&lt;?xml version=&quot;1.0&quot;?&gt;&#xd;
+&lt;entry xmlns=&quot;http://www.w3.org/2005/Atom&quot;&gt;&#xd;
+  &lt;title&gt;Atom Hopper Test&lt;/title&gt;&#xd;
+  &lt;id&gt;urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a&lt;/id&gt;&#xd;
+  &lt;updated&gt;2003-12-13T18:30:02Z&lt;/updated&gt;&#xd;
+  &lt;author&gt;&#xd;
+    &lt;name&gt;Atom Hopper Team&lt;/name&gt;&#xd;
+  &lt;/author&gt;&#xd;
+  &lt;content type=&quot;text&quot;&gt;Some text.&lt;/content&gt;&#xd;
+&lt;/entry&gt;&#xd;
+</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
-                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 </elementProp>
               </collectionProp>
             </elementProp>
@@ -386,13 +405,22 @@
             <hashTree/>
           </hashTree>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="PUT Request" enabled="true">
-            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
               <collectionProp name="Arguments.arguments">
                 <elementProp name="" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                  <stringProp name="Argument.value">&lt;?xml version=&quot;1.0&quot;?&gt;&lt;entry xmlns=&quot;http://www.w3.org/2005/Atom&quot;&gt;&lt;title&gt;Atom-Powered Robots Run Amok&lt;/title&gt;&lt;updated&gt;${date()}&lt;/updated&gt;&lt;author&gt;&lt;name&gt;John Doe&lt;/name&gt;&lt;/author&gt;&lt;content&gt;New Test&lt;/content&gt;&lt;/entry&gt;</stringProp>
+                  <stringProp name="Argument.value">&lt;?xml version=&quot;1.0&quot;?&gt;&#xd;
+&lt;entry xmlns=&quot;http://www.w3.org/2005/Atom&quot;&gt;&#xd;
+  &lt;title&gt;Atom Hopper Test&lt;/title&gt;&#xd;
+  &lt;updated&gt;${date()}&lt;/updated&gt;&#xd;
+  &lt;author&gt;&#xd;
+    &lt;name&gt;Atom Hopper Team&lt;/name&gt;&#xd;
+  &lt;/author&gt;&#xd;
+  &lt;content type=&quot;text&quot;&gt;New Test&lt;/content&gt;&#xd;
+&lt;/entry&gt;&#xd;
+</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
-                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 </elementProp>
               </collectionProp>
             </elementProp>
@@ -431,9 +459,14 @@
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
                   <stringProp name="Argument.value">&lt;?xml version=&quot;1.0&quot;?&gt;&#xd;
 &lt;entry xmlns=&quot;http://www.w3.org/2005/Atom&quot;&gt;&#xd;
-&lt;title&gt;Atom Hopper Test&lt;/title&gt;&#xd;
-&lt;author&gt;&lt;name&gt;Atom Hopper Team&lt;/name&gt;&lt;/author&gt;&#xd;
-&lt;content&gt;This is a test of Atom Hopper functionality from the status codes test file.&lt;/content&gt;</stringProp>
+  &lt;title&gt;Atom Hopper Test&lt;/title&gt;&#xd;
+  &lt;author&gt;&#xd;
+    &lt;name&gt;Atom Hopper Team&lt;/name&gt;&#xd;
+  &lt;/author&gt;&#xd;
+  &lt;content type=&quot;text&quot;&gt;This is a test of Atom Hopper functionality&#xd;
+  from the status codes test file.&lt;/content&gt;&#xd;
+&lt;/entry&gt;&#xd;
+</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                 </elementProp>
               </collectionProp>
@@ -473,8 +506,9 @@
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
                   <stringProp name="Argument.value">&lt;?xml version=&quot;1.0&quot;?&gt;&#xd;
 &lt;item&gt;&#xd;
-&lt;name&gt;This is the name&lt;/name&gt;&#xd;
-&lt;/item&gt;</stringProp>
+  &lt;name&gt;This is the name&lt;/name&gt;&#xd;
+&lt;/item&gt;&#xd;
+</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                 </elementProp>
               </collectionProp>
@@ -513,9 +547,8 @@
                 <elementProp name="" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
                   <stringProp name="Argument.value">&lt;?xml version=&quot;1.0&quot;?&gt;&#xd;
-&lt;entry xmlns=&quot;http://www.w3.org/2005/Atom&quot;&gt;&#xd;
-This is a test of Atom Hopper functionality from the status codes test file.&#xd;
-&lt;/entry&gt;</stringProp>
+&lt;entry xmlns=&quot;http://www.w3.org/2005/Atom&quot;&gt;This is a test of Atom Hopper functionality from the status codes test file.&lt;/entry&gt;&#xd;
+</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                 </elementProp>
               </collectionProp>
@@ -549,8 +582,15 @@ This is a test of Atom Hopper functionality from the status codes test file.&#xd
             <hashTree/>
           </hashTree>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST with empty request body" enabled="true">
-            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-              <collectionProp name="Arguments.arguments"/>
+            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value"></stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
             </elementProp>
             <stringProp name="HTTPSampler.domain"></stringProp>
             <stringProp name="HTTPSampler.port"></stringProp>
