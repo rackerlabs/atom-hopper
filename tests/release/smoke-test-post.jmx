@@ -48,9 +48,9 @@
               <stringProp name="Argument.value">AtomHopperPostTest</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
-            <elementProp name="" elementType="Argument">
-              <stringProp name="Argument.name"></stringProp>
-              <stringProp name="Argument.value"></stringProp>
+            <elementProp name="protocol" elementType="Argument">
+              <stringProp name="Argument.name">protocol</stringProp>
+              <stringProp name="Argument.value">http</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
           </collectionProp>
@@ -63,8 +63,8 @@
               <stringProp name="Argument.value">example.org</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
-            <elementProp name="host_2" elementType="Argument">
-              <stringProp name="Argument.name">host_2</stringProp>
+            <elementProp name="host_1" elementType="Argument">
+              <stringProp name="Argument.name">host_1</stringProp>
               <stringProp name="Argument.value">example.com</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
@@ -80,7 +80,7 @@
             </elementProp>
             <elementProp name="feed_2" elementType="Argument">
               <stringProp name="Argument.name">feed_2</stringProp>
-              <stringProp name="Argument.value">namespace-p/feed</stringProp>
+              <stringProp name="Argument.value">namespace2/feed</stringProp>
               <stringProp name="Argument.metadata">=</stringProp>
             </elementProp>
           </collectionProp>
@@ -116,7 +116,7 @@
                     <stringProp name="Argument.value">&lt;?xml version=&quot;1.0&quot;?&gt;&#xd;
 &lt;entry xmlns=&quot;http://www.w3.org/2005/Atom&quot;&gt;&#xd;
   &lt;title&gt;${notification.title}&lt;/title&gt;&#xd;
-  &lt;content&gt;${notification.content}&lt;/content&gt;&#xd;
+  &lt;content type=&quot;text&quot;&gt;${notification.content}&lt;/content&gt;&#xd;
   &lt;category term=&quot;${notification.category}&quot; /&gt;&#xd;
 &lt;/entry&gt;</stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
@@ -127,7 +127,7 @@
               <stringProp name="HTTPSampler.port">${port}</stringProp>
               <stringProp name="HTTPSampler.connect_timeout"></stringProp>
               <stringProp name="HTTPSampler.response_timeout"></stringProp>
-              <stringProp name="HTTPSampler.protocol"></stringProp>
+              <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
               <stringProp name="HTTPSampler.contentEncoding"></stringProp>
               <stringProp name="HTTPSampler.path">${feed}</stringProp>
               <stringProp name="HTTPSampler.method">POST</stringProp>

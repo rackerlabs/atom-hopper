@@ -18,6 +18,11 @@
             <stringProp name="Argument.value">8080</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
+          <elementProp name="protocol" elementType="Argument">
+            <stringProp name="Argument.name">protocol</stringProp>
+            <stringProp name="Argument.value">http</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
           <elementProp name="host" elementType="Argument">
             <stringProp name="Argument.name">host</stringProp>
             <stringProp name="Argument.value">example.org</stringProp>
@@ -83,7 +88,7 @@
             <stringProp name="HTTPSampler.port">${port}</stringProp>
             <stringProp name="HTTPSampler.connect_timeout"></stringProp>
             <stringProp name="HTTPSampler.response_timeout"></stringProp>
-            <stringProp name="HTTPSampler.protocol"></stringProp>
+            <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
             <stringProp name="HTTPSampler.contentEncoding"></stringProp>
             <stringProp name="HTTPSampler.path">${feed}</stringProp>
             <stringProp name="HTTPSampler.concurrentPool">4</stringProp>
@@ -190,9 +195,8 @@
   &lt;author&gt;&#xd;
     &lt;name&gt;Atom Hopper Team&lt;/name&gt;&#xd;
   &lt;/author&gt;&#xd;
-  &lt;content&gt;This is entry 1&lt;/content&gt;&#xd;
-&lt;/entry&gt;&#xd;
-</stringProp>
+  &lt;content type=&quot;text&quot;&gt;This is entry 1&lt;/content&gt;&#xd;
+&lt;/entry&gt;&#xd; </stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
                   </elementProp>
                 </collectionProp>
@@ -201,7 +205,7 @@
               <stringProp name="HTTPSampler.port"></stringProp>
               <stringProp name="HTTPSampler.connect_timeout"></stringProp>
               <stringProp name="HTTPSampler.response_timeout"></stringProp>
-              <stringProp name="HTTPSampler.protocol"></stringProp>
+              <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
               <stringProp name="HTTPSampler.contentEncoding"></stringProp>
               <stringProp name="HTTPSampler.path"></stringProp>
               <stringProp name="HTTPSampler.method">POST</stringProp>
@@ -245,9 +249,9 @@
   &lt;author&gt;&#xd;
     &lt;name&gt;Atom Hopper Team&lt;/name&gt;&#xd;
   &lt;/author&gt;&#xd;
-  &lt;content&gt;This is entry 2&lt;/content&gt;&#xd;
+  &lt;content type=&quot;text&quot;&gt;This is entry 2&lt;/content&gt;&#xd;
 &lt;/entry&gt;&#xd;
-</stringProp>
+ </stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
                   </elementProp>
                 </collectionProp>
@@ -256,7 +260,7 @@
               <stringProp name="HTTPSampler.port"></stringProp>
               <stringProp name="HTTPSampler.connect_timeout"></stringProp>
               <stringProp name="HTTPSampler.response_timeout"></stringProp>
-              <stringProp name="HTTPSampler.protocol"></stringProp>
+              <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
               <stringProp name="HTTPSampler.contentEncoding"></stringProp>
               <stringProp name="HTTPSampler.path"></stringProp>
               <stringProp name="HTTPSampler.method">POST</stringProp>
@@ -300,9 +304,9 @@
   &lt;author&gt;&#xd;
     &lt;name&gt;Atom Hopper Team&lt;/name&gt;&#xd;
   &lt;/author&gt;&#xd;
-  &lt;content&gt;This is entry 3&lt;/content&gt;&#xd;
+  &lt;content type=&quot;text&quot;&gt;This is entry 3&lt;/content&gt;&#xd;
 &lt;/entry&gt;&#xd;
-</stringProp>
+ </stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
                   </elementProp>
                 </collectionProp>
@@ -311,7 +315,7 @@
               <stringProp name="HTTPSampler.port"></stringProp>
               <stringProp name="HTTPSampler.connect_timeout"></stringProp>
               <stringProp name="HTTPSampler.response_timeout"></stringProp>
-              <stringProp name="HTTPSampler.protocol"></stringProp>
+              <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
               <stringProp name="HTTPSampler.contentEncoding"></stringProp>
               <stringProp name="HTTPSampler.path"></stringProp>
               <stringProp name="HTTPSampler.method">POST</stringProp>
@@ -355,9 +359,9 @@
   &lt;author&gt;&#xd;
     &lt;name&gt;Atom Hopper Team&lt;/name&gt;&#xd;
   &lt;/author&gt;&#xd;
-  &lt;content&gt;This is entry 4&lt;/content&gt;&#xd;
+  &lt;content type=&quot;text&quot;&gt;This is entry 4&lt;/content&gt;&#xd;
 &lt;/entry&gt;&#xd;
-</stringProp>
+ </stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
                   </elementProp>
                 </collectionProp>
@@ -366,7 +370,7 @@
               <stringProp name="HTTPSampler.port"></stringProp>
               <stringProp name="HTTPSampler.connect_timeout"></stringProp>
               <stringProp name="HTTPSampler.response_timeout"></stringProp>
-              <stringProp name="HTTPSampler.protocol"></stringProp>
+              <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
               <stringProp name="HTTPSampler.contentEncoding"></stringProp>
               <stringProp name="HTTPSampler.path"></stringProp>
               <stringProp name="HTTPSampler.method">POST</stringProp>
@@ -410,9 +414,9 @@
   &lt;author&gt;&#xd;
     &lt;name&gt;Atom Hopper Team&lt;/name&gt;&#xd;
   &lt;/author&gt;&#xd;
-  &lt;content&gt;This is entry 5&lt;/content&gt;&#xd;
+  &lt;content type=&quot;text&quot;&gt;This is entry 5&lt;/content&gt;&#xd;
 &lt;/entry&gt;&#xd;
-</stringProp>
+ </stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
                   </elementProp>
                 </collectionProp>
@@ -421,7 +425,7 @@
               <stringProp name="HTTPSampler.port"></stringProp>
               <stringProp name="HTTPSampler.connect_timeout"></stringProp>
               <stringProp name="HTTPSampler.response_timeout"></stringProp>
-              <stringProp name="HTTPSampler.protocol"></stringProp>
+              <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
               <stringProp name="HTTPSampler.contentEncoding"></stringProp>
               <stringProp name="HTTPSampler.path"></stringProp>
               <stringProp name="HTTPSampler.method">POST</stringProp>
@@ -465,9 +469,9 @@
   &lt;author&gt;&#xd;
     &lt;name&gt;Atom Hopper Team&lt;/name&gt;&#xd;
   &lt;/author&gt;&#xd;
-  &lt;content&gt;This is entry 6&lt;/content&gt;&#xd;
+  &lt;content type=&quot;text&quot;&gt;This is entry 6&lt;/content&gt;&#xd;
 &lt;/entry&gt;&#xd;
-</stringProp>
+ </stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
                   </elementProp>
                 </collectionProp>
@@ -476,7 +480,7 @@
               <stringProp name="HTTPSampler.port"></stringProp>
               <stringProp name="HTTPSampler.connect_timeout"></stringProp>
               <stringProp name="HTTPSampler.response_timeout"></stringProp>
-              <stringProp name="HTTPSampler.protocol"></stringProp>
+              <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
               <stringProp name="HTTPSampler.contentEncoding"></stringProp>
               <stringProp name="HTTPSampler.path"></stringProp>
               <stringProp name="HTTPSampler.method">POST</stringProp>
@@ -520,9 +524,9 @@
   &lt;author&gt;&#xd;
     &lt;name&gt;Atom Hopper Team&lt;/name&gt;&#xd;
   &lt;/author&gt;&#xd;
-  &lt;content&gt;This is entry 7&lt;/content&gt;&#xd;
+  &lt;content type=&quot;text&quot;&gt;This is entry 7&lt;/content&gt;&#xd;
 &lt;/entry&gt;&#xd;
-</stringProp>
+ </stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
                   </elementProp>
                 </collectionProp>
@@ -531,7 +535,7 @@
               <stringProp name="HTTPSampler.port"></stringProp>
               <stringProp name="HTTPSampler.connect_timeout"></stringProp>
               <stringProp name="HTTPSampler.response_timeout"></stringProp>
-              <stringProp name="HTTPSampler.protocol"></stringProp>
+              <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
               <stringProp name="HTTPSampler.contentEncoding"></stringProp>
               <stringProp name="HTTPSampler.path"></stringProp>
               <stringProp name="HTTPSampler.method">POST</stringProp>
@@ -575,9 +579,9 @@
   &lt;author&gt;&#xd;
     &lt;name&gt;Atom Hopper Team&lt;/name&gt;&#xd;
   &lt;/author&gt;&#xd;
-  &lt;content&gt;This is entry 8&lt;/content&gt;&#xd;
+  &lt;content type=&quot;text&quot;&gt;This is entry 8&lt;/content&gt;&#xd;
 &lt;/entry&gt;&#xd;
-</stringProp>
+ </stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
                   </elementProp>
                 </collectionProp>
@@ -586,7 +590,7 @@
               <stringProp name="HTTPSampler.port"></stringProp>
               <stringProp name="HTTPSampler.connect_timeout"></stringProp>
               <stringProp name="HTTPSampler.response_timeout"></stringProp>
-              <stringProp name="HTTPSampler.protocol"></stringProp>
+              <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
               <stringProp name="HTTPSampler.contentEncoding"></stringProp>
               <stringProp name="HTTPSampler.path"></stringProp>
               <stringProp name="HTTPSampler.method">POST</stringProp>
@@ -630,9 +634,9 @@
   &lt;author&gt;&#xd;
     &lt;name&gt;Atom Hopper Team&lt;/name&gt;&#xd;
   &lt;/author&gt;&#xd;
-  &lt;content&gt;This is entry 9&lt;/content&gt;&#xd;
+  &lt;content type=&quot;text&quot;&gt;This is entry 9&lt;/content&gt;&#xd;
 &lt;/entry&gt;&#xd;
-</stringProp>
+ </stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
                   </elementProp>
                 </collectionProp>
@@ -641,7 +645,7 @@
               <stringProp name="HTTPSampler.port"></stringProp>
               <stringProp name="HTTPSampler.connect_timeout"></stringProp>
               <stringProp name="HTTPSampler.response_timeout"></stringProp>
-              <stringProp name="HTTPSampler.protocol"></stringProp>
+              <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
               <stringProp name="HTTPSampler.contentEncoding"></stringProp>
               <stringProp name="HTTPSampler.path"></stringProp>
               <stringProp name="HTTPSampler.method">POST</stringProp>
@@ -685,9 +689,9 @@
   &lt;author&gt;&#xd;
     &lt;name&gt;Atom Hopper Team&lt;/name&gt;&#xd;
   &lt;/author&gt;&#xd;
-  &lt;content&gt;This is entry 10&lt;/content&gt;&#xd;
+  &lt;content type=&quot;text&quot;&gt;This is entry 10&lt;/content&gt;&#xd;
 &lt;/entry&gt;&#xd;
-</stringProp>
+ </stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
                   </elementProp>
                 </collectionProp>
@@ -696,7 +700,7 @@
               <stringProp name="HTTPSampler.port"></stringProp>
               <stringProp name="HTTPSampler.connect_timeout"></stringProp>
               <stringProp name="HTTPSampler.response_timeout"></stringProp>
-              <stringProp name="HTTPSampler.protocol"></stringProp>
+              <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
               <stringProp name="HTTPSampler.contentEncoding"></stringProp>
               <stringProp name="HTTPSampler.path"></stringProp>
               <stringProp name="HTTPSampler.method">POST</stringProp>
@@ -8325,9 +8329,9 @@
   &lt;author&gt;&#xd;
     &lt;name&gt;Atom Hopper Team&lt;/name&gt;&#xd;
   &lt;/author&gt;&#xd;
-  &lt;content&gt;This is entry 11&lt;/content&gt;&#xd;
+  &lt;content type=&quot;text&quot;&gt;This is entry 11&lt;/content&gt;&#xd;
 &lt;/entry&gt;&#xd;
-</stringProp>
+ </stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
                   </elementProp>
                 </collectionProp>
@@ -8336,7 +8340,7 @@
               <stringProp name="HTTPSampler.port"></stringProp>
               <stringProp name="HTTPSampler.connect_timeout"></stringProp>
               <stringProp name="HTTPSampler.response_timeout"></stringProp>
-              <stringProp name="HTTPSampler.protocol"></stringProp>
+              <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
               <stringProp name="HTTPSampler.contentEncoding"></stringProp>
               <stringProp name="HTTPSampler.path"></stringProp>
               <stringProp name="HTTPSampler.method">POST</stringProp>
@@ -9747,7 +9751,7 @@
   &lt;author&gt;&#xd;
     &lt;name&gt;Atom Hopper Team&lt;/name&gt;&#xd;
   &lt;/author&gt;&#xd;
-  &lt;content&gt;This is entry 12&lt;/content&gt;&#xd;
+  &lt;content type=&quot;text&quot;&gt;This is entry 12&lt;/content&gt;&#xd;
   &lt;category term=&quot;Category A&quot; /&gt;&#xd;
 &lt;/entry&gt;</stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
@@ -9758,7 +9762,7 @@
               <stringProp name="HTTPSampler.port"></stringProp>
               <stringProp name="HTTPSampler.connect_timeout"></stringProp>
               <stringProp name="HTTPSampler.response_timeout"></stringProp>
-              <stringProp name="HTTPSampler.protocol"></stringProp>
+              <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
               <stringProp name="HTTPSampler.contentEncoding"></stringProp>
               <stringProp name="HTTPSampler.path"></stringProp>
               <stringProp name="HTTPSampler.method">POST</stringProp>
@@ -9802,10 +9806,11 @@
   &lt;author&gt;&#xd;
     &lt;name&gt;Atom Hopper Team&lt;/name&gt;&#xd;
   &lt;/author&gt;&#xd;
-  &lt;content&gt;This is entry 13&lt;/content&gt;&#xd;
+  &lt;content type=&quot;text&quot;&gt;This is entry 13&lt;/content&gt;&#xd;
   &lt;category term=&quot;Category A&quot; /&gt;&#xd;
   &lt;category term=&quot;Category B&quot; /&gt;&#xd;
-&lt;/entry&gt;</stringProp>
+&lt;/entry&gt;&#xd;
+</stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
                   </elementProp>
                 </collectionProp>
@@ -9814,7 +9819,7 @@
               <stringProp name="HTTPSampler.port"></stringProp>
               <stringProp name="HTTPSampler.connect_timeout"></stringProp>
               <stringProp name="HTTPSampler.response_timeout"></stringProp>
-              <stringProp name="HTTPSampler.protocol"></stringProp>
+              <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
               <stringProp name="HTTPSampler.contentEncoding"></stringProp>
               <stringProp name="HTTPSampler.path"></stringProp>
               <stringProp name="HTTPSampler.method">POST</stringProp>
@@ -9858,10 +9863,11 @@
   &lt;author&gt;&#xd;
     &lt;name&gt;Atom Hopper Team&lt;/name&gt;&#xd;
   &lt;/author&gt;&#xd;
-  &lt;content&gt;This is entry 14&lt;/content&gt;&#xd;
+  &lt;content type=&quot;text&quot;&gt;This is entry 14&lt;/content&gt;&#xd;
   &lt;category term=&quot;Category A&quot; /&gt;&#xd;
   &lt;category term=&quot;Category B&quot; /&gt;&#xd;
-&lt;/entry&gt;</stringProp>
+&lt;/entry&gt;&#xd;
+</stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
                   </elementProp>
                 </collectionProp>
@@ -9870,7 +9876,7 @@
               <stringProp name="HTTPSampler.port"></stringProp>
               <stringProp name="HTTPSampler.connect_timeout"></stringProp>
               <stringProp name="HTTPSampler.response_timeout"></stringProp>
-              <stringProp name="HTTPSampler.protocol"></stringProp>
+              <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
               <stringProp name="HTTPSampler.contentEncoding"></stringProp>
               <stringProp name="HTTPSampler.path"></stringProp>
               <stringProp name="HTTPSampler.method">POST</stringProp>
@@ -9914,9 +9920,10 @@
   &lt;author&gt;&#xd;
     &lt;name&gt;Atom Hopper Team&lt;/name&gt;&#xd;
   &lt;/author&gt;&#xd;
-  &lt;content&gt;This is entry 15&lt;/content&gt;&#xd;
+  &lt;content type=&quot;text&quot;&gt;This is entry 15&lt;/content&gt;&#xd;
   &lt;category term=&quot;Category B&quot; /&gt;&#xd;
-&lt;/entry&gt;</stringProp>
+&lt;/entry&gt;&#xd;
+</stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
                   </elementProp>
                 </collectionProp>
@@ -9925,7 +9932,7 @@
               <stringProp name="HTTPSampler.port"></stringProp>
               <stringProp name="HTTPSampler.connect_timeout"></stringProp>
               <stringProp name="HTTPSampler.response_timeout"></stringProp>
-              <stringProp name="HTTPSampler.protocol"></stringProp>
+              <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
               <stringProp name="HTTPSampler.contentEncoding"></stringProp>
               <stringProp name="HTTPSampler.path"></stringProp>
               <stringProp name="HTTPSampler.method">POST</stringProp>
@@ -9969,7 +9976,7 @@
   &lt;author&gt;&#xd;
     &lt;name&gt;Atom Hopper Team&lt;/name&gt;&#xd;
   &lt;/author&gt;&#xd;
-  &lt;content&gt;This is entry 16&lt;/content&gt;&#xd;
+  &lt;content type=&quot;text&quot;&gt;This is entry 16&lt;/content&gt;&#xd;
   &lt;category term=&quot;Category A&quot; /&gt;&#xd;
 &lt;/entry&gt;</stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
@@ -9980,7 +9987,7 @@
               <stringProp name="HTTPSampler.port"></stringProp>
               <stringProp name="HTTPSampler.connect_timeout"></stringProp>
               <stringProp name="HTTPSampler.response_timeout"></stringProp>
-              <stringProp name="HTTPSampler.protocol"></stringProp>
+              <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
               <stringProp name="HTTPSampler.contentEncoding"></stringProp>
               <stringProp name="HTTPSampler.path"></stringProp>
               <stringProp name="HTTPSampler.method">POST</stringProp>
@@ -10024,9 +10031,10 @@
   &lt;author&gt;&#xd;
     &lt;name&gt;Atom Hopper Team&lt;/name&gt;&#xd;
   &lt;/author&gt;&#xd;
-  &lt;content&gt;This is entry 17&lt;/content&gt;&#xd;
+  &lt;content type=&quot;text&quot;&gt;This is entry 17&lt;/content&gt;&#xd;
   &lt;category term=&quot;Category B&quot; /&gt;&#xd;
-&lt;/entry&gt;</stringProp>
+&lt;/entry&gt;&#xd;
+</stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
                   </elementProp>
                 </collectionProp>
@@ -10035,7 +10043,7 @@
               <stringProp name="HTTPSampler.port"></stringProp>
               <stringProp name="HTTPSampler.connect_timeout"></stringProp>
               <stringProp name="HTTPSampler.response_timeout"></stringProp>
-              <stringProp name="HTTPSampler.protocol"></stringProp>
+              <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
               <stringProp name="HTTPSampler.contentEncoding"></stringProp>
               <stringProp name="HTTPSampler.path"></stringProp>
               <stringProp name="HTTPSampler.method">POST</stringProp>
@@ -10079,10 +10087,11 @@
   &lt;author&gt;&#xd;
     &lt;name&gt;Atom Hopper Team&lt;/name&gt;&#xd;
   &lt;/author&gt;&#xd;
-  &lt;content&gt;This is entry 18&lt;/content&gt;&#xd;
+  &lt;content type=&quot;text&quot;&gt;This is entry 18&lt;/content&gt;&#xd;
   &lt;category term=&quot;Category A&quot; /&gt;&#xd;
   &lt;category term=&quot;Category B&quot; /&gt;&#xd;
-&lt;/entry&gt;</stringProp>
+&lt;/entry&gt;&#xd;
+</stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
                   </elementProp>
                 </collectionProp>
@@ -10091,7 +10100,7 @@
               <stringProp name="HTTPSampler.port"></stringProp>
               <stringProp name="HTTPSampler.connect_timeout"></stringProp>
               <stringProp name="HTTPSampler.response_timeout"></stringProp>
-              <stringProp name="HTTPSampler.protocol"></stringProp>
+              <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
               <stringProp name="HTTPSampler.contentEncoding"></stringProp>
               <stringProp name="HTTPSampler.path"></stringProp>
               <stringProp name="HTTPSampler.method">POST</stringProp>
@@ -10131,13 +10140,14 @@
                     <boolProp name="HTTPArgument.always_encode">false</boolProp>
                     <stringProp name="Argument.value">&lt;?xml version=&quot;1.0&quot;?&gt;&#xd;
 &lt;entry xmlns=&quot;http://www.w3.org/2005/Atom&quot;&gt;&#xd;
-  &lt;title&gt;Paging Test - Entry 19&lt;/title&gt;&#xd;
+  &lt;title&gt;Paging Test - Entry 17&lt;/title&gt;&#xd;
   &lt;author&gt;&#xd;
     &lt;name&gt;Atom Hopper Team&lt;/name&gt;&#xd;
   &lt;/author&gt;&#xd;
-  &lt;content&gt;This is entry 19&lt;/content&gt;&#xd;
+  &lt;content type=&quot;text&quot;&gt;This is entry 17&lt;/content&gt;&#xd;
   &lt;category term=&quot;Category B&quot; /&gt;&#xd;
-&lt;/entry&gt;</stringProp>
+&lt;/entry&gt;&#xd;
+</stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
                   </elementProp>
                 </collectionProp>
@@ -10146,7 +10156,7 @@
               <stringProp name="HTTPSampler.port"></stringProp>
               <stringProp name="HTTPSampler.connect_timeout"></stringProp>
               <stringProp name="HTTPSampler.response_timeout"></stringProp>
-              <stringProp name="HTTPSampler.protocol"></stringProp>
+              <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
               <stringProp name="HTTPSampler.contentEncoding"></stringProp>
               <stringProp name="HTTPSampler.path"></stringProp>
               <stringProp name="HTTPSampler.method">POST</stringProp>
@@ -10190,10 +10200,11 @@
   &lt;author&gt;&#xd;
     &lt;name&gt;Atom Hopper Team&lt;/name&gt;&#xd;
   &lt;/author&gt;&#xd;
-  &lt;content&gt;This is entry 20&lt;/content&gt;&#xd;
+  &lt;content type=&quot;text&quot;&gt;This is entry 20&lt;/content&gt;&#xd;
   &lt;category term=&quot;Category A&quot; /&gt;&#xd;
   &lt;category term=&quot;Category B&quot; /&gt;&#xd;
-&lt;/entry&gt;</stringProp>
+&lt;/entry&gt;&#xd;
+</stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
                   </elementProp>
                 </collectionProp>
@@ -10202,7 +10213,7 @@
               <stringProp name="HTTPSampler.port"></stringProp>
               <stringProp name="HTTPSampler.connect_timeout"></stringProp>
               <stringProp name="HTTPSampler.response_timeout"></stringProp>
-              <stringProp name="HTTPSampler.protocol"></stringProp>
+              <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
               <stringProp name="HTTPSampler.contentEncoding"></stringProp>
               <stringProp name="HTTPSampler.path"></stringProp>
               <stringProp name="HTTPSampler.method">POST</stringProp>
@@ -10246,7 +10257,7 @@
   &lt;author&gt;&#xd;
     &lt;name&gt;Atom Hopper Team&lt;/name&gt;&#xd;
   &lt;/author&gt;&#xd;
-  &lt;content&gt;This is entry 21&lt;/content&gt;&#xd;
+  &lt;content type=&quot;text&quot;&gt;This is entry 21&lt;/content&gt;&#xd;
   &lt;category term=&quot;Category A&quot; /&gt;&#xd;
 &lt;/entry&gt;</stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
@@ -10257,7 +10268,7 @@
               <stringProp name="HTTPSampler.port"></stringProp>
               <stringProp name="HTTPSampler.connect_timeout"></stringProp>
               <stringProp name="HTTPSampler.response_timeout"></stringProp>
-              <stringProp name="HTTPSampler.protocol"></stringProp>
+              <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
               <stringProp name="HTTPSampler.contentEncoding"></stringProp>
               <stringProp name="HTTPSampler.path"></stringProp>
               <stringProp name="HTTPSampler.method">POST</stringProp>
