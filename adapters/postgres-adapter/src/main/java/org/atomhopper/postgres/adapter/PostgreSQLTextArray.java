@@ -38,7 +38,7 @@ public class PostgreSQLTextArray implements java.sql.Array {
      * This static method can be used to convert an string array to string
      * representation of PostgreSQL text array.
      *
-     * @param a source String array
+     * @param stringArray source String array
      * @return string representation of a given text array
      */
     public static String stringArrayToPostgreSQLTextArray(String[] stringArray) {
