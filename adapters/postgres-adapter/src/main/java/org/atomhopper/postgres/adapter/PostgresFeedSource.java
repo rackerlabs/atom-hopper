@@ -102,7 +102,7 @@ public class PostgresFeedSource implements FeedSource {
             final PersistedEntry lastEntryInCollection = persistedEntries.get(persistedEntries.size() - 1);
             final String nextLinkSQL = "SELECT * FROM entries where feed = ? and datelastupdated > ? ORDER BY datelastupdated LIMIT 1";
             final String nextLinkWithCatsSQL =
-                    "SELECT * FROM entries where feed = ? and datelastupdated > ? AND categories = ? ORDER BY datelastupdated LIMIT 1";
+                    "SELECT * FROM entries where feed = ? and datelastupdated > ? AND categories @> ? ORDER BY datelastupdated LIMIT 1";
 
             PersistedEntry nextEntry;
             if (searchString.length() > 0) {
@@ -211,7 +211,7 @@ public class PostgresFeedSource implements FeedSource {
             final String stringArraySQL = PostgreSQLTextArray.stringArrayToPostgreSQLTextArray((String[]) getFeedRequest.getCategories().toArray());
             final String searchString = stringArraySQL != null ? stringArraySQL : "";
             final String getFeedHeadSQL = "SELECT * FROM entries WHERE feed = ? LIMIT ?";
-            final String getFeedHeadWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND categories = ? LIMIT ?";
+            final String getFeedHeadWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND categories @> ? LIMIT ?";
 
 /*   TODO: ADD CATEGORIES √
             Query queryForFeedHead = new Query(Criteria.where(FEED).is(getFeedRequest.getFeedName())).limit(pageSize);
@@ -240,7 +240,7 @@ public class PostgresFeedSource implements FeedSource {
 */
 
             final String totalFeedEntryCountSQL = "SELECT COUNT(*) FROM entries WHERE feed = ?";
-            final String totalFeedEntryCountWithCatsSQL = "SELECT COUNT(*) FROM entries WHERE feed = ? AND categories = ?";
+            final String totalFeedEntryCountWithCatsSQL = "SELECT COUNT(*) FROM entries WHERE feed = ? AND categories @> ?";
 
             int totalFeedEntryCount;
             if (searchString.length() > 0) {
@@ -259,7 +259,7 @@ public class PostgresFeedSource implements FeedSource {
             }
 
             final String lastLinkQuerySQL = "SELECT * FROM entries WHERE feed = ? ORDER BY datelastupdated ASC LIMIT ?";
-            final String lastLinkQueryWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND categories = ? ORDER BY datelastupdated ASC LIMIT ?";
+            final String lastLinkQueryWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND categories @> ? ORDER BY datelastupdated ASC LIMIT ?";
 
             List<PersistedEntry> lastPersistedEntries;
             if (searchString.length() > 0) {
@@ -341,7 +341,7 @@ public class PostgresFeedSource implements FeedSource {
 
                 final String forwardSQL = "SELECT * FROM entries WHERE feed = ? AND datelastupdated > ? ORDER BY datelastupdated ASC LIMIT ?";
                 final String forwardWithCatsSQL =
-                        "SELECT * FROM entries WHERE feed = ? AND datelastupdated > ? AND categories = ? ORDER BY datelastupdated ASC LIMIT ?";
+                        "SELECT * FROM entries WHERE feed = ? AND datelastupdated > ? AND categories @> ? ORDER BY datelastupdated ASC LIMIT ?";
 
                 if (searchString.length() > 0) {
                     feedPage = jdbcTemplate.queryForList(forwardWithCatsSQL, new Object[]{feedName, markerEntry.getCreationDate(), searchString, pageSize},
@@ -363,7 +363,7 @@ public class PostgresFeedSource implements FeedSource {
 
                 final String backwardSQL = "SELECT * FROM entries WHERE feed = ? AND datelastupdated > ? ORDER BY datelastupdated DESC LIMIT ?";
                 final String backwardWithCatsSQL =
-                        "SELECT * FROM entries WHERE feed = ? AND datelastupdated > ? AND categories = ? ORDER BY datelastupdated DESC LIMIT ?";
+                        "SELECT * FROM entries WHERE feed = ? AND datelastupdated > ? AND categories @> ? ORDER BY datelastupdated DESC LIMIT ?";
 
                 if (searchString.length() > 0) {
                     feedPage = jdbcTemplate.queryForList(backwardWithCatsSQL, new Object[]{feedName, markerEntry.getCreationDate(), searchString, pageSize},
