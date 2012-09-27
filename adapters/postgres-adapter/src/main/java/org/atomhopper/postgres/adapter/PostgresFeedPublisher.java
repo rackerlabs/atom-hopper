@@ -17,6 +17,7 @@ import org.atomhopper.adapter.request.adapter.DeleteEntryRequest;
 import org.atomhopper.adapter.request.adapter.PostEntryRequest;
 import org.atomhopper.adapter.request.adapter.PutEntryRequest;
 import org.atomhopper.postgres.model.PersistedEntry;
+import org.atomhopper.postgres.query.PostgreSQLTextArray;
 import org.atomhopper.response.AdapterResponse;
 import org.atomhopper.response.EmptyBody;
 import org.atomhopper.util.uri.template.EnumKeyedTemplateParameters;

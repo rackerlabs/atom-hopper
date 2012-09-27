@@ -1,4 +1,4 @@
-package org.atomhopper.postgres.adapter;
+package org.atomhopper.postgres.query;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,6 +1,8 @@
-package org.atomhopper.postgres.adapter;
+package org.atomhopper.postgres.query;
 
 import static org.junit.Assert.*;
+
+import org.atomhopper.postgres.query.PostgreSQLTextArray;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
