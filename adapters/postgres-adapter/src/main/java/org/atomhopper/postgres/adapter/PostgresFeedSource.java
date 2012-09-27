@@ -287,8 +287,8 @@ public class PostgresFeedSource implements FeedSource {
 
             case BACKWARD:
 
-                final String backwardSQL = "SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? ORDER BY datelastupdated DESC LIMIT ?";
-                final String backwardWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? AND categories @> ?::varchar[] ORDER BY datelastupdated DESC LIMIT ?";
+                final String backwardSQL = "SELECT * FROM entries WHERE feed = ? AND datelastupdated <= ? ORDER BY datelastupdated DESC LIMIT ?";
+                final String backwardWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND datelastupdated <= ? AND categories @> ?::varchar[] ORDER BY datelastupdated DESC LIMIT ?";
 
                 if (searchString.length() > 0) {
                     feedPage = jdbcTemplate
@@ -313,6 +313,7 @@ public class PostgresFeedSource implements FeedSource {
         PersistedEntry entry = (PersistedEntry) jdbcTemplate
                 .queryForObject(entrySQL, new EntryRowMapper(),
                                 feedName, entryId);
+        LOG.error("getentry date =" + entry.getDateLastUpdated());
         return entry;
     }
 
@@ -335,8 +336,8 @@ public class PostgresFeedSource implements FeedSource {
 
     private List<PersistedEntry> getFeedHead(final String feedName, final int pageSize, final String searchString) {
 
-        final String getFeedHeadSQL = "SELECT * FROM entries WHERE feed = ? LIMIT ?";
-        final String getFeedHeadWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND categories @> ?::varchar[] LIMIT ?";
+        final String getFeedHeadSQL = "SELECT * FROM entries WHERE feed = ? ORDER BY datelastupdated DESC LIMIT ?";
+        final String getFeedHeadWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND categories @> ?::varchar[] ORDER BY datelastupdated DESC LIMIT ?";
 
         List<PersistedEntry> persistedEntries;
         if (searchString.length() > 0) {
@@ -368,25 +369,29 @@ public class PostgresFeedSource implements FeedSource {
                     .query(lastLinkQuerySQL, new Object[]{feedName, pageSize},
                            new EntryRowMapper());
         }
+        Collections.reverse(lastPersistedEntries);
         return lastPersistedEntries;
     }
 
     private PersistedEntry getNextMarker(final PersistedEntry persistedEntry, final String feedName, final String searchString) {
-        final String nextLinkSQL = "SELECT * FROM entries where feed = ? and datelastupdated > ? ORDER BY datelastupdated LIMIT 1";
-        final String nextLinkWithCatsSQL = "SELECT * FROM entries where feed = ? and datelastupdated > ? AND categories @> ?::varchar[] ORDER BY datelastupdated LIMIT 1";
+        final String nextLinkSQL = "SELECT * FROM entries where feed = ? and datelastupdated < ? ORDER BY datelastupdated DESC LIMIT 1";
+        final String nextLinkWithCatsSQL = "SELECT * FROM entries where feed = ? and datelastupdated < ? AND categories @> ?::varchar[] ORDER BY datelastupdated DESC LIMIT 1";
 
-        PersistedEntry nextEntry;
+        List<PersistedEntry> nextEntry;
         if (searchString.length() > 0) {
-            nextEntry = (PersistedEntry) jdbcTemplate
-                    .queryForObject(nextLinkWithCatsSQL, new EntryRowMapper(), feedName,
-                                    persistedEntry.getDateLastUpdated(),
-                                    CategoryStringGenerator.getPostgresCategoryString(searchString));
+
+            nextEntry =  jdbcTemplate
+                    .query(nextLinkWithCatsSQL, new Object[]{feedName,
+                            persistedEntry.getDateLastUpdated(),
+                            CategoryStringGenerator.getPostgresCategoryString(searchString)}, new EntryRowMapper());
         } else {
-            nextEntry = (PersistedEntry) jdbcTemplate
-                    .queryForObject(nextLinkSQL, new EntryRowMapper(), feedName,
-                                    persistedEntry.getDateLastUpdated());
+
+            nextEntry =  jdbcTemplate
+                    .query(nextLinkSQL, new Object[]{feedName,
+                            persistedEntry.getDateLastUpdated()}, new EntryRowMapper());
         }
-        return nextEntry;
+
+        return nextEntry.size() > 0 ? nextEntry.get(0) : null;
     }
 }
 
