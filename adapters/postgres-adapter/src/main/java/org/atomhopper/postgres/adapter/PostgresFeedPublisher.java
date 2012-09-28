@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import javax.sql.DataSource;
 import static org.apache.abdera.i18n.text.UrlEncoding.decode;
 import org.apache.abdera.model.Entry;
 import org.atomhopper.adapter.FeedPublisher;
@@ -26,10 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-<<<<<<< HEAD
-=======
 
->>>>>>> Remove transactions
 public class PostgresFeedPublisher implements FeedPublisher {
 
     private static final Logger LOG = LoggerFactory.getLogger(PostgresFeedPublisher.class);
