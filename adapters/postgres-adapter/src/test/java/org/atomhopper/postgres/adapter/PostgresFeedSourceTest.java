@@ -1,19 +1,20 @@
 package org.atomhopper.postgres.adapter;
 
-import java.util.UUID;
-import static junit.framework.Assert.assertEquals;
 import org.apache.abdera.Abdera;
 import org.atomhopper.adapter.request.adapter.GetEntryRequest;
 import org.atomhopper.adapter.request.adapter.GetFeedRequest;
 import org.atomhopper.postgres.model.PersistedEntry;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import java.util.HashMap;
+import java.util.UUID;
+
 import static org.mockito.Mockito.*;
 
 @RunWith(Enclosed.class)
@@ -29,6 +30,10 @@ public class PostgresFeedSourceTest {
     private final String ENTRY_BODY = "<entry xmlns='http://www.w3.org/2005/Atom'></entry>";
     private final String FEED_NAME = "namespace/feed";
     private final String COLLECTION_NAME = "namespace.feed";
+
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
+
 
     @Before
     public void setUp() throws Exception {
@@ -61,5 +66,11 @@ public class PostgresFeedSourceTest {
         PostgresFeedSource tempPostgresFeedSource = mock(PostgresFeedSource.class);
         tempPostgresFeedSource.setJdbcTemplate(jdbcTemplate);
         verify(tempPostgresFeedSource).setJdbcTemplate(jdbcTemplate);
+    }
+
+    @Test
+    public void setParametersShouldThrowUnsupportedError() throws Exception {
+        exception.expect(UnsupportedOperationException.class);
+        postgresFeedSource.setParameters(new HashMap<String, String>());
     }
 }
