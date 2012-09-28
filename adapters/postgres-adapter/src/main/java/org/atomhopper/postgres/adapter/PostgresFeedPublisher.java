@@ -25,23 +25,16 @@ import org.atomhopper.util.uri.template.URITemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly=false)
 public class PostgresFeedPublisher implements FeedPublisher {
 
     private static final Logger LOG = LoggerFactory.getLogger(PostgresFeedPublisher.class);
     private static final String UUID_URI_SCHEME = "urn:uuid:";
     private static final String LINKREL_SELF = "self";
-    private DataSource dataSource;
     private JdbcTemplate jdbcTemplate;
 
     public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-    }
-
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
     }
 
     @Override
