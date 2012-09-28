@@ -369,7 +369,6 @@ public class PostgresFeedSource implements FeedSource {
                     .query(lastLinkQuerySQL, new Object[]{feedName, pageSize},
                            new EntryRowMapper());
         }
-        Collections.reverse(lastPersistedEntries);
         return lastPersistedEntries;
     }
 
