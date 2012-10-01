@@ -113,20 +113,8 @@ public class PostgresFeedSource implements FeedSource {
                     .setRel(Link.REL_PREVIOUS);
 
             final PersistedEntry lastEntryInCollection = persistedEntries.get(persistedEntries.size() - 1);
-            final String nextLinkSQL = "SELECT * FROM entries where feed = ? and datelastupdated > ? ORDER BY datelastupdated LIMIT 1";
-            final String nextLinkWithCatsSQL = "SELECT * FROM entries where feed = ? and datelastupdated > ? AND categories @> ?::varchar[] ORDER BY datelastupdated LIMIT 1";
 
-            PersistedEntry nextEntry;
-            if (searchString.length() > 0) {
-                nextEntry = (PersistedEntry) jdbcTemplate
-                        .queryForObject(nextLinkWithCatsSQL, new EntryRowMapper(), getFeedRequest.getFeedName(),
-                                        lastEntryInCollection.getDateLastUpdated(),
-                                        CategoryStringGenerator.getPostgresCategoryString(searchString));
-            } else {
-                nextEntry = (PersistedEntry) jdbcTemplate
-                        .queryForObject(nextLinkSQL, new EntryRowMapper(), getFeedRequest.getFeedName(),
-                                        lastEntryInCollection.getDateLastUpdated());
-            }
+            PersistedEntry nextEntry = getNextMarker(lastEntryInCollection, getFeedRequest.getFeedName(), searchString);
 
             if (nextEntry != null) {
                 // Set the next link
@@ -164,10 +152,7 @@ public class PostgresFeedSource implements FeedSource {
     @Override
     public AdapterResponse<Entry> getEntry(GetEntryRequest getEntryRequest) {
 
-        final String getEntrySQL = "SELECT * FROM entries WHERE entryid = ?";
-
-        final PersistedEntry entry = (PersistedEntry) jdbcTemplate.queryForObject(
-                getEntrySQL, new EntryRowMapper(), getEntryRequest.getEntryId());
+        final PersistedEntry entry = getEntry(getEntryRequest.getEntryId(), getEntryRequest.getFeedName());
 
         AdapterResponse<Entry> response = ResponseBuilder.notFound();
 
@@ -204,23 +189,9 @@ public class PostgresFeedSource implements FeedSource {
                                               int pageSize) {
         final Abdera abdera = getFeedRequest.getAbdera();
 
-        AdapterResponse<Feed> response = null;
-
         final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
-        final String getFeedHeadSQL = "SELECT * FROM entries WHERE feed = ? LIMIT ?";
-        final String getFeedHeadWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND categories @> ?::varchar[] LIMIT ?";
 
-        List<PersistedEntry> persistedEntries;
-        if (searchString.length() > 0) {
-            persistedEntries = jdbcTemplate
-                    .query(getFeedHeadWithCatsSQL, new Object[]{getFeedRequest.getFeedName(),
-                            CategoryStringGenerator.getPostgresCategoryString(searchString), pageSize},
-                           new EntryRowMapper());
-        } else {
-            persistedEntries = jdbcTemplate
-                    .query(getFeedHeadSQL, new Object[]{getFeedRequest.getFeedName(), pageSize},
-                           new EntryRowMapper());
-        }
+        List<PersistedEntry> persistedEntries = getFeedHead(getFeedRequest.getFeedName(), pageSize, searchString);
 
         Feed hyrdatedFeed = hydrateFeed(abdera, persistedEntries, getFeedRequest, pageSize);
 
@@ -228,39 +199,14 @@ public class PostgresFeedSource implements FeedSource {
         final String baseFeedUri = decode(getFeedRequest.urlFor(
                 new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
 
-        final String totalFeedEntryCountSQL = "SELECT COUNT(*) FROM entries WHERE feed = ?";
-        final String totalFeedEntryCountWithCatsSQL = "SELECT COUNT(*) FROM entries WHERE feed = ? AND categories @> ?::varchar[]";
-
-        int totalFeedEntryCount;
-
-        if (searchString.length() > 0) {
-            totalFeedEntryCount = jdbcTemplate
-                    .queryForInt(totalFeedEntryCountWithCatsSQL, getFeedRequest.getFeedName(),
-                                 CategoryStringGenerator.getPostgresCategoryString(searchString));
-        } else {
-            totalFeedEntryCount = jdbcTemplate
-                    .queryForInt(totalFeedEntryCountSQL, getFeedRequest.getFeedName());
-        }
+        int totalFeedEntryCount = getFeedCount(getFeedRequest.getFeedName(), searchString);
 
         int lastPageSize = totalFeedEntryCount % pageSize;
         if (lastPageSize == 0) {
             lastPageSize = pageSize;
         }
 
-        final String lastLinkQuerySQL = "SELECT * FROM entries WHERE feed = ? ORDER BY datelastupdated ASC LIMIT ?";
-        final String lastLinkQueryWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND categories @> ?::varchar[] ORDER BY datelastupdated ASC LIMIT ?";
-
-        List<PersistedEntry> lastPersistedEntries;
-        if (searchString.length() > 0) {
-            lastPersistedEntries = jdbcTemplate
-                    .query(lastLinkQueryWithCatsSQL, new Object[]{getFeedRequest.getFeedName(),
-                            CategoryStringGenerator.getPostgresCategoryString(searchString), lastPageSize},
-                           new EntryRowMapper());
-        } else {
-            lastPersistedEntries = jdbcTemplate
-                    .query(lastLinkQuerySQL, new Object[]{getFeedRequest.getFeedName(), lastPageSize},
-                           new EntryRowMapper());
-        }
+        List<PersistedEntry> lastPersistedEntries = getLastPage(getFeedRequest.getFeedName(), lastPageSize, searchString);
 
         if (lastPersistedEntries != null && !(lastPersistedEntries.isEmpty())) {
             hyrdatedFeed.addLink(
@@ -289,10 +235,7 @@ public class PostgresFeedSource implements FeedSource {
                     "Marker must have a page direction specified as either \"forward\" or \"backward\"");
         }
 
-        final String markerEntrySQL = "SELECT * FROM entries WHERE feed = ? AND entryid = ?";
-        final PersistedEntry markerEntry = (PersistedEntry) jdbcTemplate
-                .queryForObject(markerEntrySQL, new EntryRowMapper(),
-                                getFeedRequest.getFeedName(), marker);
+        final PersistedEntry markerEntry = getEntry(marker, getFeedRequest.getFeedName());
 
         if (markerEntry != null) {
             final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
@@ -308,6 +251,11 @@ public class PostgresFeedSource implements FeedSource {
         }
 
         return response;
+    }
+
+    @Override
+    public FeedInformation getFeedInformation() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     private List<PersistedEntry> enhancedGetFeedPage(final String feedName, final PersistedEntry markerEntry,
@@ -339,8 +287,8 @@ public class PostgresFeedSource implements FeedSource {
 
             case BACKWARD:
 
-                final String backwardSQL = "SELECT * FROM entries WHERE feed = ? AND datelastupdated > ? ORDER BY datelastupdated DESC LIMIT ?";
-                final String backwardWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND datelastupdated > ? AND categories @> ?::varchar[] ORDER BY datelastupdated DESC LIMIT ?";
+                final String backwardSQL = "SELECT * FROM entries WHERE feed = ? AND datelastupdated <= ? ORDER BY datelastupdated DESC LIMIT ?";
+                final String backwardWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND datelastupdated <= ? AND categories @> ?::varchar[] ORDER BY datelastupdated DESC LIMIT ?";
 
                 if (searchString.length() > 0) {
                     feedPage = jdbcTemplate
@@ -360,9 +308,89 @@ public class PostgresFeedSource implements FeedSource {
         return feedPage;
     }
 
-    @Override
-    public FeedInformation getFeedInformation() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    private PersistedEntry getEntry(final String entryId, final String feedName) {
+        final String entrySQL = "SELECT * FROM entries WHERE feed = ? AND entryid = ?";
+        PersistedEntry entry = (PersistedEntry) jdbcTemplate
+                .queryForObject(entrySQL, new EntryRowMapper(),
+                                feedName, entryId);
+        LOG.error("getentry date =" + entry.getDateLastUpdated());
+        return entry;
+    }
+
+    private Integer getFeedCount(final String feedName, final String searchString) {
+        final String totalFeedEntryCountSQL = "SELECT COUNT(*) FROM entries WHERE feed = ?";
+        final String totalFeedEntryCountWithCatsSQL = "SELECT COUNT(*) FROM entries WHERE feed = ? AND categories @> ?::varchar[]";
+
+        int totalFeedEntryCount;
+
+        if (searchString.length() > 0) {
+            totalFeedEntryCount = jdbcTemplate
+                    .queryForInt(totalFeedEntryCountWithCatsSQL, feedName,
+                                 CategoryStringGenerator.getPostgresCategoryString(searchString));
+        } else {
+            totalFeedEntryCount = jdbcTemplate
+                    .queryForInt(totalFeedEntryCountSQL, feedName);
+        }
+        return totalFeedEntryCount;
+    }
+
+    private List<PersistedEntry> getFeedHead(final String feedName, final int pageSize, final String searchString) {
+
+        final String getFeedHeadSQL = "SELECT * FROM entries WHERE feed = ? ORDER BY datelastupdated DESC LIMIT ?";
+        final String getFeedHeadWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND categories @> ?::varchar[] ORDER BY datelastupdated DESC LIMIT ?";
+
+        List<PersistedEntry> persistedEntries;
+        if (searchString.length() > 0) {
+            persistedEntries = jdbcTemplate
+                    .query(getFeedHeadWithCatsSQL, new Object[]{feedName,
+                            CategoryStringGenerator.getPostgresCategoryString(searchString), pageSize},
+                           new EntryRowMapper());
+        } else {
+            persistedEntries = jdbcTemplate
+                    .query(getFeedHeadSQL, new Object[]{feedName, pageSize},
+                           new EntryRowMapper());
+        }
+        return persistedEntries;
+    }
+
+    private List<PersistedEntry> getLastPage(final String feedName, final int pageSize, final String searchString) {
+
+        final String lastLinkQuerySQL = "SELECT * FROM entries WHERE feed = ? ORDER BY datelastupdated ASC LIMIT ?";
+        final String lastLinkQueryWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND categories @> ?::varchar[] ORDER BY datelastupdated ASC LIMIT ?";
+
+        List<PersistedEntry> lastPersistedEntries;
+        if (searchString.length() > 0) {
+            lastPersistedEntries = jdbcTemplate
+                    .query(lastLinkQueryWithCatsSQL, new Object[]{feedName,
+                            CategoryStringGenerator.getPostgresCategoryString(searchString), pageSize},
+                           new EntryRowMapper());
+        } else {
+            lastPersistedEntries = jdbcTemplate
+                    .query(lastLinkQuerySQL, new Object[]{feedName, pageSize},
+                           new EntryRowMapper());
+        }
+        return lastPersistedEntries;
+    }
+
+    private PersistedEntry getNextMarker(final PersistedEntry persistedEntry, final String feedName, final String searchString) {
+        final String nextLinkSQL = "SELECT * FROM entries where feed = ? and datelastupdated < ? ORDER BY datelastupdated DESC LIMIT 1";
+        final String nextLinkWithCatsSQL = "SELECT * FROM entries where feed = ? and datelastupdated < ? AND categories @> ?::varchar[] ORDER BY datelastupdated DESC LIMIT 1";
+
+        List<PersistedEntry> nextEntry;
+        if (searchString.length() > 0) {
+
+            nextEntry =  jdbcTemplate
+                    .query(nextLinkWithCatsSQL, new Object[]{feedName,
+                            persistedEntry.getDateLastUpdated(),
+                            CategoryStringGenerator.getPostgresCategoryString(searchString)}, new EntryRowMapper());
+        } else {
+
+            nextEntry =  jdbcTemplate
+                    .query(nextLinkSQL, new Object[]{feedName,
+                            persistedEntry.getDateLastUpdated()}, new EntryRowMapper());
+        }
+
+        return nextEntry.size() > 0 ? nextEntry.get(0) : null;
     }
 }
 
