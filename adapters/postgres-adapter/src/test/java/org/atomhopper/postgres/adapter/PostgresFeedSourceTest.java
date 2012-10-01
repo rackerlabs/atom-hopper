@@ -84,16 +84,28 @@ public class PostgresFeedSourceTest {
 
         @Test
         public void shouldNotGetFeedWithMarkerDirectionForward() throws Exception {
+            Abdera localAbdera = new Abdera();
+            when(getFeedRequest.getAbdera()).thenReturn(localAbdera);
             when(getFeedRequest.getPageMarker()).thenReturn(MARKER_ID);
             when(getFeedRequest.getDirection()).thenReturn("FORWARD");
+            when(jdbcTemplate.queryForObject(any(String.class),
+                                             any(EntryRowMapper.class),
+                                             any(String.class),
+                                             any(String.class))).thenReturn(null);
             assertEquals("Should get a 404 response", HttpStatus.NOT_FOUND,
                          postgresFeedSource.getFeed(getFeedRequest).getResponseStatus());
         }
 
         @Test
         public void shouldNotGetFeedWithMarkerDirectionBackward() throws Exception {
+            Abdera localAbdera = new Abdera();
+            when(getFeedRequest.getAbdera()).thenReturn(localAbdera);
             when(getFeedRequest.getPageMarker()).thenReturn(MARKER_ID);
             when(getFeedRequest.getDirection()).thenReturn("BACKWARD");
+            when(jdbcTemplate.queryForObject(any(String.class),
+                                             any(EntryRowMapper.class),
+                                             any(String.class),
+                                             any(String.class))).thenReturn(null);
             assertEquals("Should get a 404 response", HttpStatus.NOT_FOUND,
                          postgresFeedSource.getFeed(getFeedRequest).getResponseStatus());
         }
@@ -259,6 +271,8 @@ public class PostgresFeedSourceTest {
 
         @Test
         public void shouldNotGetEntry() throws Exception {
+            Abdera localAbdera = new Abdera();
+            when(getEntryRequest.getAbdera()).thenReturn(localAbdera);
             when(jdbcTemplate.queryForObject(any(String.class), any(Class.class),
                                              any(String.class), any(String.class))).thenReturn(null);
             assertEquals("Should get a 404 response", HttpStatus.NOT_FOUND,
