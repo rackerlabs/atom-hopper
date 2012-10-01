@@ -22,7 +22,7 @@
             <MaxFileSize>100MB</MaxFileSize>
         </triggeringPolicy>
     </appender>
-    <root level="WARN">
+    <root level="DEBUG">
         <appender-ref ref="defaultFile"/>
     </root>
 </configuration>

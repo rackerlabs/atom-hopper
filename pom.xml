@@ -29,6 +29,7 @@
         <module>server</module>
         <module>adapters/hibernate</module>
         <module>adapters/mongodb</module>
+        <module>adapters/postgres-adapter</module>
         <module>test-util</module>
         <module>documentation</module>
         <module>atomhopper</module>
@@ -62,6 +63,12 @@
             <dependency>
                 <groupId>org.atomhopper.adapter</groupId>
                 <artifactId>mongodb-adapter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.atomhopper.adapter</groupId>
+                <artifactId>postgres-adapter</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -169,6 +176,12 @@
             </dependency>
 
             <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-jdbc</artifactId>
+                <version>${org.springframework.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.springframework.data</groupId>
                 <artifactId>spring-data-mongodb</artifactId>
                 <version>1.0.1.RELEASE</version>
@@ -238,19 +251,19 @@
                 <version>4.8.2</version>
                 <scope>test</scope>
             </dependency>
-            
+
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
                 <version>1.0.4</version>
             </dependency>
-        
+
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-core</artifactId>
                 <version>1.0.4</version>
             </dependency>
-        
+
             <dependency>
                 <groupId>me.moocar</groupId>
                 <artifactId>logback-gelf</artifactId>
