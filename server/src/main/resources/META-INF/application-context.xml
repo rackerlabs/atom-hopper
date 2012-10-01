@@ -63,19 +63,31 @@
         <property name="feedRepository" ref="feed-repository-bean" />
     </bean>
 
-    <bean id="postgres-datasource-bean"
-           class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+    <!-- Postgres (Perfromance) Data Adapter -->
+    <!--
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="org.postgresql.Driver" />
-        <property name="url"
-                   value="jdbc:postgresql://localhost:5432/atomhopper" />
+        <property name="url" value="jdbc:postgresql://localhost:5432/atomhopper" />
         <property name="username" value="postgres" />
         <property name="password" value="password" />
+        <property name="minIdle" value="10" />
+        <property name="maxIdle" value="25" />
+        <property name="initialSize" value="10" />
+        <property name="maxActive" value="50" />
     </bean>
 
-    <bean name="postgres-feed-publisher"
-           class="org.atomhopper.postgres.adapter.PostgresFeedPublisher">
-        <property name="dataSource" ref="postgres-datasource-bean" />
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"></property>
     </bean>
+
+    <bean id="postgres-feed-publisher" name="postgres-feed-publisher" class="org.atomhopper.postgres.adapter.PostgresFeedPublisher">
+        <property name="jdbcTemplate" ref="jdbcTemplate"></property>
+    </bean>
+
+    <bean id="postgres-feed-source" name="postgres-feed-source" class="org.atomhopper.postgres.adapter.PostgresFeedSource">
+        <property name="jdbcTemplate" ref="jdbcTemplate"></property>
+    </bean>
+    -->
 
      <!-- MongoDB Connection -->
      <!--
