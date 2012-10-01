@@ -313,7 +313,6 @@ public class PostgresFeedSource implements FeedSource {
         PersistedEntry entry = (PersistedEntry) jdbcTemplate
                 .queryForObject(entrySQL, new EntryRowMapper(),
                                 feedName, entryId);
-        LOG.error("getentry date =" + entry.getDateLastUpdated());
         return entry;
     }
 
