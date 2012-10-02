@@ -35,6 +35,15 @@ public class PostgresFeedSource implements FeedSource {
     private static final Logger LOG = LoggerFactory.getLogger(
             PostgresFeedSource.class);
 
+    private final String MARKER_EQ = "?marker=";
+    private final String LIMIT_EQ = "?limit=";
+    private final String AND_SEARCH_EQ = "&search=";
+    private final String AND_LIMIT_EQ = "&limit=";
+    private final String AND_MARKER_EQ = "&marker=";
+    private final String AND_DIRECTION_EQ = "&direction=";
+    private final String AND_DIRECTION_EQ_BACKWARD = "&direction=backward";
+    private final String AND_DIRECTION_EQ_FORWARD = "&direction=forward";
+
     private static final int PAGE_SIZE = 25;
     private JdbcTemplate jdbcTemplate;
 
@@ -55,22 +64,22 @@ public class PostgresFeedSource implements FeedSource {
         StringBuilder queryParams = new StringBuilder();
         boolean markerIsSet = false;
 
-        queryParams.append(baseFeedUri).append("?limit=").append(
+        queryParams.append(baseFeedUri).append(LIMIT_EQ).append(
                 String.valueOf(pageSize));
 
         if (searchString.length() > 0) {
-            queryParams.append("&search=").append(encode(searchString));
+            queryParams.append(AND_SEARCH_EQ).append(encode(searchString));
         }
         if (getFeedRequest.getPageMarker() != null && getFeedRequest.getPageMarker().length() > 0) {
-            queryParams.append("&marker=").append(getFeedRequest.getPageMarker());
+            queryParams.append(AND_MARKER_EQ).append(getFeedRequest.getPageMarker());
             markerIsSet = true;
         }
         if (markerIsSet) {
-            queryParams.append("&direction=").append(getFeedRequest.getDirection());
+            queryParams.append(AND_DIRECTION_EQ).append(getFeedRequest.getDirection());
         } else {
-            queryParams.append("&direction=backward");
+            queryParams.append(AND_DIRECTION_EQ_BACKWARD);
             if (queryParams.toString().equalsIgnoreCase(
-                    baseFeedUri + "?limit=25&direction=backward")) {
+                    baseFeedUri + LIMIT_EQ + "25" + AND_DIRECTION_EQ_BACKWARD)) {
                 // They are calling the feedhead, just use the base feed uri
                 // This keeps the validator at http://validator.w3.org/ happy
                 queryParams.delete(0, queryParams.toString().length()).append(
@@ -105,11 +114,11 @@ public class PostgresFeedSource implements FeedSource {
 
             // Set the previous link
             hyrdatedFeed.addLink(new StringBuilder()
-                                         .append(baseFeedUri).append("?marker=")
+                                         .append(baseFeedUri).append(MARKER_EQ)
                                          .append(persistedEntries.get(0).getEntryId())
-                                         .append("&limit=").append(String.valueOf(pageSize))
-                                         .append("&search=").append(encode(searchString))
-                                         .append("&direction=forward").toString())
+                                         .append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
+                                         .append(AND_SEARCH_EQ).append(encode(searchString))
+                                         .append(AND_DIRECTION_EQ_FORWARD).toString())
                     .setRel(Link.REL_PREVIOUS);
 
             final PersistedEntry lastEntryInCollection = persistedEntries.get(persistedEntries.size() - 1);
@@ -119,10 +128,10 @@ public class PostgresFeedSource implements FeedSource {
             if (nextEntry != null) {
                 // Set the next link
                 hyrdatedFeed.addLink(new StringBuilder().append(baseFeedUri)
-                                             .append("?marker=").append(nextEntry.getEntryId())
-                                             .append("&limit=").append(String.valueOf(pageSize))
-                                             .append("&search=").append(encode(searchString))
-                                             .append("&direction=backward").toString())
+                                             .append(MARKER_EQ).append(nextEntry.getEntryId())
+                                             .append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
+                                             .append(AND_SEARCH_EQ).append(encode(searchString))
+                                             .append(AND_DIRECTION_EQ_BACKWARD).toString())
                         .setRel(Link.REL_NEXT);
             }
         }
@@ -211,11 +220,11 @@ public class PostgresFeedSource implements FeedSource {
         if (lastPersistedEntries != null && !(lastPersistedEntries.isEmpty())) {
             hyrdatedFeed.addLink(
                     new StringBuilder().append(baseFeedUri)
-                            .append("?marker=").append(
+                            .append(MARKER_EQ).append(
                             lastPersistedEntries.get(lastPersistedEntries.size() - 1).getEntryId())
-                            .append("&limit=").append(String.valueOf(pageSize))
-                            .append("&search=").append(encode(searchString))
-                            .append("&direction=backward").toString())
+                            .append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
+                            .append(AND_SEARCH_EQ).append(encode(searchString))
+                            .append(AND_DIRECTION_EQ_BACKWARD).toString())
                     .setRel(Link.REL_LAST);
         }
 
@@ -231,6 +240,7 @@ public class PostgresFeedSource implements FeedSource {
             final String pageDirectionValue = getFeedRequest.getDirection();
             pageDirection = PageDirection.valueOf(pageDirectionValue.toUpperCase());
         } catch (Exception iae) {
+            LOG.warn("Marker must have a page direction specified as either \"forward\" or \"backward\"");
             return ResponseBuilder.badRequest(
                     "Marker must have a page direction specified as either \"forward\" or \"backward\"");
         }

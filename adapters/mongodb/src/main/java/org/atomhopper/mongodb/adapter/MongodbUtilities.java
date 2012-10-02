@@ -1,7 +1,7 @@
 
 package org.atomhopper.mongodb.adapter;
 
-public class MongodbUtilities {
+public final class MongodbUtilities {
 
     private MongodbUtilities() {
         throw new AssertionError();

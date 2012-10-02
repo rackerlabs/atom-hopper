@@ -23,9 +23,12 @@ public class PostgreSQLTextArray implements java.sql.Array {
      * @param stringArray
      */
     public PostgreSQLTextArray(String[] stringArray) {
-        this.stringArray = stringArray;
+        if (stringArray != null) {
+            this.stringArray = Arrays.copyOf(stringArray, stringArray.length);
+        } else {
+            this.stringArray = null;
+        }
         this.stringValue = stringArrayToPostgreSQLTextArray(this.stringArray);
-
     }
 
     @Override
@@ -45,9 +48,14 @@ public class PostgreSQLTextArray implements java.sql.Array {
         final int arrayLength;
         if (stringArray == null) {
             return NULL;
-        } else if ((arrayLength = stringArray.length) == 0) {
+        }
+
+        arrayLength = stringArray.length;
+
+        if (arrayLength == 0) {
             return "{}";
         }
+
         // count the string length and if need to quote
         int neededBufferLentgh = 2; // count the beginning '{' and the ending '}' brackets
         boolean[] shouldQuoteArray = new boolean[stringArray.length];
