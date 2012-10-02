@@ -35,14 +35,14 @@ public class PostgresFeedSource implements FeedSource {
     private static final Logger LOG = LoggerFactory.getLogger(
             PostgresFeedSource.class);
 
-    private final String MARKER_EQ = "?marker=";
-    private final String LIMIT_EQ = "?limit=";
-    private final String AND_SEARCH_EQ = "&search=";
-    private final String AND_LIMIT_EQ = "&limit=";
-    private final String AND_MARKER_EQ = "&marker=";
-    private final String AND_DIRECTION_EQ = "&direction=";
-    private final String AND_DIRECTION_EQ_BACKWARD = "&direction=backward";
-    private final String AND_DIRECTION_EQ_FORWARD = "&direction=forward";
+    private static final String MARKER_EQ = "?marker=";
+    private static final String LIMIT_EQ = "?limit=";
+    private static final String AND_SEARCH_EQ = "&search=";
+    private static final String AND_LIMIT_EQ = "&limit=";
+    private static final String AND_MARKER_EQ = "&marker=";
+    private static final String AND_DIRECTION_EQ = "&direction=";
+    private static final String AND_DIRECTION_EQ_BACKWARD = "&direction=backward";
+    private static final String AND_DIRECTION_EQ_FORWARD = "&direction=forward";
 
     private static final int PAGE_SIZE = 25;
     private JdbcTemplate jdbcTemplate;
