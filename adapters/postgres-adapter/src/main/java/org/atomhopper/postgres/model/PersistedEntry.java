@@ -1,5 +1,6 @@
 package org.atomhopper.postgres.model;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -67,6 +68,8 @@ public class PersistedEntry {
     }
 
     public void setCategories(String[] categories) {
-        this.categories = categories;
+        if (categories != null) {
+            this.categories = Arrays.copyOf(categories, categories.length);
+        }
     }
 }
