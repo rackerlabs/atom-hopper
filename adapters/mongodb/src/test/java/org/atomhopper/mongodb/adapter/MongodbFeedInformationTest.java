@@ -29,7 +29,7 @@ public class MongodbFeedInformationTest {
             feedRequest = mock(FeedRequest.class);
             getCategoriesRequest = mock(GetCategoriesRequest.class);
 
-            mongodbFeedInformation = new MongodbFeedInformation(mongoTemplate);
+            mongodbFeedInformation = new MongodbFeedInformation();
         }
 
         @Test

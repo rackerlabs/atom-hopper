@@ -3,9 +3,6 @@ package org.atomhopper.postgres.query;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
 
 import org.atomhopper.postgres.model.PersistedEntry;
 

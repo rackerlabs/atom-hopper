@@ -3,10 +3,14 @@ package org.atomhopper.postgres.query;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CategoryStringGenerator {
+public final class CategoryStringGenerator {
 
     private static final char INCLUSIVE_OPERATOR = '+', ESCAPE_OPERATOR = '\\';
     private static final char[] OPERATORS = {INCLUSIVE_OPERATOR, ESCAPE_OPERATOR};
+
+    private CategoryStringGenerator() {
+        throw new AssertionError();
+    }
 
     public static String getPostgresCategoryString(String searchString) {
 
