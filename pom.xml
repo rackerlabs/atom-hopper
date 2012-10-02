@@ -109,6 +109,12 @@
             </dependency>
 
             <dependency>
+                <groupId>org.apache.servicemix.bundles</groupId>
+                <artifactId>org.apache.servicemix.bundles.commons-dbcp</artifactId>
+                <version>1.4_3</version>
+            </dependency>
+
+            <dependency>
                 <groupId>javax</groupId>
                 <artifactId>javaee-web-api</artifactId>
                 <version>6.0</version>
