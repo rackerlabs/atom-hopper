@@ -1,6 +1,7 @@
 package org.atomhopper.hibernate.adapter;
 
 import org.apache.abdera.model.Entry;
+import org.apache.commons.lang.StringUtils;
 import org.atomhopper.adapter.FeedPublisher;
 import org.atomhopper.adapter.NotImplemented;
 import org.atomhopper.adapter.PublicationException;
@@ -21,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -35,10 +37,21 @@ public class HibernateFeedPublisher implements FeedPublisher {
     private static final String UUID_URI_SCHEME = "urn:uuid:";
     private static final String LINKREL_SELF = "self";
 
+    private boolean allowOverrideId = false;
+    private boolean allowOverrideDate = false;
+
     private FeedRepository feedRepository;
 
     public void setFeedRepository(FeedRepository feedRepository) {
         this.feedRepository = feedRepository;
+    }
+
+    public void setAllowOverrideId(boolean allowOverrideId) {
+        this.allowOverrideId = allowOverrideId;
+    }
+
+    public void setAllowOverrideDate(boolean allowOverrideDate) {
+        this.allowOverrideDate = allowOverrideDate;
     }
 
     @Override
@@ -57,11 +70,31 @@ public class HibernateFeedPublisher implements FeedPublisher {
         final Set<PersistedCategory> entryCategories = feedRepository.updateCategories(processCategories(abderaParsedEntry.getCategories()));
         persistedEntry.setCategories(entryCategories);
 
-        // Generate an ID for this entry
-        persistedEntry.setEntryId(UUID_URI_SCHEME + UUID.randomUUID().toString());
+        boolean entryIdSent = abderaParsedEntry.getId() != null;
 
-        // Make sure the persisted xml has the right id
-        abderaParsedEntry.setId(persistedEntry.getEntryId());
+        // Generate an ID for this entry
+        if (allowOverrideId && entryIdSent) {
+            String entryId = abderaParsedEntry.getId().toString();
+            // Check to see if entry with this id already exists
+            PersistedEntry exists = feedRepository.getEntry(entryId, postEntryRequest.getFeedName());
+            if (exists != null) {
+                String errMsg = String.format("Unable to persist entry. Reason: entryId (%s) not unique.", entryId);
+                throw new PublicationException(errMsg);
+            }
+            persistedEntry.setEntryId(abderaParsedEntry.getId().toString());
+        } else {
+            persistedEntry.setEntryId(UUID_URI_SCHEME + UUID.randomUUID().toString());
+            abderaParsedEntry.setId(persistedEntry.getEntryId());
+        }
+
+        if (allowOverrideDate) {
+            Date updated = abderaParsedEntry.getUpdated();
+
+            if (updated != null) {
+                persistedEntry.setDateLastUpdated(updated);
+                persistedEntry.setCreationDate(updated);
+            }
+        }
 
         abderaParsedEntry.addLink(decode(postEntryRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)))
                                           + "entries/" + persistedEntry.getEntryId()).setRel(LINKREL_SELF);
@@ -71,7 +104,6 @@ public class HibernateFeedPublisher implements FeedPublisher {
         persistedEntry.setFeed(feedRef);
         persistedEntry.setEntryBody(entryToString(abderaParsedEntry));
 
-        abderaParsedEntry.setId(persistedEntry.getEntryId());
         abderaParsedEntry.setUpdated(persistedEntry.getDateLastUpdated());
 
         feedRepository.saveEntry(persistedEntry);

@@ -1,7 +1,6 @@
 package org.atomhopper.migration.adapter;
 
 import org.apache.abdera.model.Entry;
-import org.atomhopper.adapter.FeedInformation;
 import org.atomhopper.adapter.FeedPublisher;
 import org.atomhopper.adapter.NotImplemented;
 import org.atomhopper.adapter.jpa.PersistedEntry;
@@ -23,19 +22,36 @@ public class MigrationFeedPublisher implements FeedPublisher {
     private static final Logger LOG = LoggerFactory.getLogger(MigrationFeedPublisher.class);
     private static final String UUID_URI_SCHEME = "urn:uuid:";
 
-    private final FeedPublisher oldFeedPublisher;
-    private final FeedPublisher newFeedPublisher;
-    private final MigrationWriteTo writeTo;
-    private final MigrationReadFrom readFrom;
+    private FeedPublisher oldFeedPublisher;
+    private FeedPublisher newFeedPublisher;
+    private MigrationWriteTo writeTo;
+    private MigrationReadFrom readFrom;
 
-    public MigrationFeedPublisher(FeedPublisher oldFeedPublisher,
-                                  FeedPublisher newFeedPublisher,
-                                  MigrationWriteTo writeTo,
-                                  MigrationReadFrom readFrom) {
+    private boolean allowOverrideId = false;
+    private boolean allowOverrideDate = false;
+
+    public void setOldFeedPublisher(FeedPublisher oldFeedPublisher) {
         this.oldFeedPublisher = oldFeedPublisher;
+    }
+
+    public void setNewFeedPublisher(FeedPublisher newFeedPublisher) {
         this.newFeedPublisher = newFeedPublisher;
+    }
+
+    public void setWriteTo(MigrationWriteTo writeTo) {
         this.writeTo = writeTo;
+    }
+
+    public void setReadFrom(MigrationReadFrom readFrom) {
         this.readFrom = readFrom;
+    }
+
+    public void setAllowOverrideId(boolean allowOverrideId) {
+        this.allowOverrideId = allowOverrideId;
+    }
+
+    public void setAllowOverrideDate(boolean allowOverrideDate) {
+        this.allowOverrideDate = allowOverrideDate;
     }
 
     @Override
@@ -43,14 +59,30 @@ public class MigrationFeedPublisher implements FeedPublisher {
 
         PersistedEntry entry = new PersistedEntry();
 
-        postEntryRequest.getEntry().setId(UUID_URI_SCHEME + UUID.randomUUID().toString());
-        postEntryRequest.getEntry().setPublished(entry.getDateLastUpdated());
-        postEntryRequest.getEntry().setUpdated(entry.getDateLastUpdated());
+        // If allowOverrideId is false then set the Id
+        // Also set the id if allowOverrideId is true, but no Id was sent in the entry
+        if (!allowOverrideId || postEntryRequest.getEntry().getId() == null) {
+            postEntryRequest.getEntry().setId(UUID_URI_SCHEME + UUID.randomUUID().toString());
+        }
 
-        //TODO: More Here
+        // If allowOverrideDate is false then set the DateLastUpdated
+        // Also set the DateLastUpdated if allowOverrideDate is true, but no DateLastUpdated was sent in the entry
+        if (!allowOverrideDate || postEntryRequest.getEntry().getUpdated() == null) {
+            postEntryRequest.getEntry().setUpdated(entry.getDateLastUpdated());
+        }
 
+        switch (writeTo) {
+            case OLD:
+                return oldFeedPublisher.postEntry(postEntryRequest);
+            case NEW:
+                return newFeedPublisher.postEntry(postEntryRequest);
+            case BOTH:
+            default:
+                AdapterResponse<Entry> oldEntry = oldFeedPublisher.postEntry(postEntryRequest);
+                AdapterResponse<Entry> newEntry = newFeedPublisher.postEntry(postEntryRequest);
 
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+                return readFrom == MigrationReadFrom.NEW ? newEntry : oldEntry;
+        }
     }
 
     @Override

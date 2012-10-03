@@ -9,16 +9,19 @@ import org.atomhopper.migration.domain.MigrationReadFrom;
 
 public class MigrationFeedInformation implements FeedInformation {
 
-    private final FeedInformation oldFeedInformation;
-    private final FeedInformation newFeedInformation;
-    private final MigrationReadFrom readFrom;
+    private FeedInformation oldFeedInformation;
+    private FeedInformation newFeedInformation;
+    private MigrationReadFrom readFrom;
 
-    public MigrationFeedInformation(FeedInformation oldFeedInformation,
-                                    FeedInformation newFeedInformation,
-                                    MigrationReadFrom readFrom) {
-
+    public void setOldFeedInformation(FeedInformation oldFeedInformation) {
         this.oldFeedInformation = oldFeedInformation;
+    }
+
+    public void setNewFeedInformation(FeedInformation newFeedInformation) {
         this.newFeedInformation = newFeedInformation;
+    }
+
+    public void setReadFrom(MigrationReadFrom readFrom) {
         this.readFrom = readFrom;
     }
 

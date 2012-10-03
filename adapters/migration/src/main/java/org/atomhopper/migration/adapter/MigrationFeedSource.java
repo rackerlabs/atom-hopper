@@ -14,13 +14,19 @@ import java.util.Map;
 
 public class MigrationFeedSource implements FeedSource {
 
-    private final FeedSource oldFeedSource;
-    private final FeedSource newFeedSource;
-    private final MigrationReadFrom readFrom;
+    private FeedSource oldFeedSource;
+    private FeedSource newFeedSource;
+    private MigrationReadFrom readFrom;
 
-    public MigrationFeedSource(FeedSource oldFeedSource, FeedSource newFeedSource, MigrationReadFrom readFrom) {
+    public void setOldFeedSource(FeedSource oldFeedSource) {
         this.oldFeedSource = oldFeedSource;
+    }
+
+    public void setNewFeedSource(FeedSource newFeedSource) {
         this.newFeedSource = newFeedSource;
+    }
+
+    public void setReadFrom(MigrationReadFrom readFrom) {
         this.readFrom = readFrom;
     }
 

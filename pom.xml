@@ -30,6 +30,7 @@
         <module>adapters/hibernate</module>
         <module>adapters/mongodb</module>
         <module>adapters/postgres-adapter</module>
+        <module>adapters/migration</module>
         <module>test-util</module>
         <module>documentation</module>
         <module>atomhopper</module>
