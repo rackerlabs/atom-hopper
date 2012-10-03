@@ -1,18 +1,16 @@
-package org.atomhopper.mongodb.adapter;
+package org.atomhopper.postgres.adapter;
 
 import org.apache.abdera.model.Categories;
 import org.atomhopper.adapter.FeedInformation;
 import org.atomhopper.adapter.NotImplemented;
 import org.atomhopper.adapter.request.adapter.GetCategoriesRequest;
 import org.atomhopper.adapter.request.feed.FeedRequest;
-import org.springframework.data.mongodb.core.MongoTemplate;
 
-public class MongodbFeedInformation implements FeedInformation {
+public class PostgresFeedInformation implements FeedInformation {
+    //private DataSource dataSource;
 
-    //private MongoTemplate mongoTemplate;
-
-    //public MongodbFeedInformation(MongoTemplate mongoTemplate) {
-    //    this.mongoTemplate = mongoTemplate;
+    //public void setDataSource(DataSource dataSource) {
+    //    this.dataSource = dataSource;
     //}
 
     @Override
@@ -20,7 +18,8 @@ public class MongodbFeedInformation implements FeedInformation {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Override @NotImplemented
+    @Override
+    @NotImplemented
     public Categories getCategories(GetCategoriesRequest getCategoriesRequest) {
         throw new UnsupportedOperationException("Not supported yet.");
     }

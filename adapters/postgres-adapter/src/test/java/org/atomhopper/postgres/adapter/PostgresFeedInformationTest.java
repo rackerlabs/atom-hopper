@@ -1,50 +1,49 @@
-package org.atomhopper.mongodb.adapter;
+package org.atomhopper.postgres.adapter;
 
 import org.atomhopper.adapter.request.adapter.GetCategoriesRequest;
 import org.atomhopper.adapter.request.feed.FeedRequest;
-import org.springframework.data.mongodb.core.MongoTemplate;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 
-
 @RunWith(Enclosed.class)
-public class MongodbFeedInformationTest {
+public class PostgresFeedInformationTest {
 
     public static class WhenGettingMongodbFeedInformation {
 
-        private MongoTemplate mongoTemplate;
+        private JdbcTemplate jbdcTemplate;
         private FeedRequest feedRequest;
         private GetCategoriesRequest getCategoriesRequest;
-        private MongodbFeedInformation mongodbFeedInformation;
+        private PostgresFeedInformation postgresFeedInformation;
 
         @Before
         public void setUp() throws Exception {
-            mongoTemplate = mock(MongoTemplate.class);
+            jbdcTemplate = mock(JdbcTemplate.class);
             feedRequest = mock(FeedRequest.class);
             getCategoriesRequest = mock(GetCategoriesRequest.class);
 
-            mongodbFeedInformation = new MongodbFeedInformation();
+            postgresFeedInformation = new PostgresFeedInformation();
         }
 
         @Test
-        public void shouldCreateHibernateFeedInformation() throws Exception {
-            assertNotNull(mongodbFeedInformation);
+        public void shouldCreatePostgresFeedInformation() throws Exception {
+            assertNotNull(postgresFeedInformation);
         }
 
         @Test(expected=UnsupportedOperationException.class)
         public void shouldReturnId() throws Exception {
-            mongodbFeedInformation.getId(feedRequest);
+            postgresFeedInformation.getId(feedRequest);
         }
 
         @Test(expected=UnsupportedOperationException.class)
         public void shouldReturnCategories() throws Exception {
-            mongodbFeedInformation.getCategories(getCategoriesRequest);
+            postgresFeedInformation.getCategories(getCategoriesRequest);
         }
     }
 }
