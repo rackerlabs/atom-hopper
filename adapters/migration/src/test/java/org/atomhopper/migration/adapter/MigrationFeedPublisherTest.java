@@ -87,8 +87,6 @@ public class MigrationFeedPublisherTest {
             assertEquals("Should return HTTP 201 (Created)", HttpStatus.CREATED, adapterResponse.getResponseStatus());
         }
 
-
-
         @Test(expected = UnsupportedOperationException.class)
         public void shouldPutEntry() throws Exception {
             migrationFeedPublisher.putEntry(putEntryRequest);

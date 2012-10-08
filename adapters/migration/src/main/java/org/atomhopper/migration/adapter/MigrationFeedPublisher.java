@@ -78,10 +78,32 @@ public class MigrationFeedPublisher implements FeedPublisher {
                 return newFeedPublisher.postEntry(postEntryRequest);
             case BOTH:
             default:
-                AdapterResponse<Entry> oldEntry = oldFeedPublisher.postEntry(postEntryRequest);
-                AdapterResponse<Entry> newEntry = newFeedPublisher.postEntry(postEntryRequest);
+                switch (readFrom) {
+                    case NEW:
 
-                return readFrom == MigrationReadFrom.NEW ? newEntry : oldEntry;
+                        AdapterResponse<Entry> newEntry = newFeedPublisher.postEntry(postEntryRequest);
+
+                        try {
+                            oldFeedPublisher.postEntry(postEntryRequest);
+                        } catch (Exception ex) {
+                            LOG.error("Error writing entry to OLD feed. EntryId=" + postEntryRequest.getEntry().getId());
+                        }
+
+                        return newEntry;
+
+                    case OLD:
+                    default:
+                        AdapterResponse<Entry> oldEntry = oldFeedPublisher.postEntry(postEntryRequest);
+
+                        try {
+                            newFeedPublisher.postEntry(postEntryRequest);
+                        } catch (Exception ex) {
+                            LOG.error("Error writing entry to NEW feed. EntryId=" + postEntryRequest.getEntry().getId());
+                        }
+
+                        return oldEntry;
+                }
+
         }
     }
 

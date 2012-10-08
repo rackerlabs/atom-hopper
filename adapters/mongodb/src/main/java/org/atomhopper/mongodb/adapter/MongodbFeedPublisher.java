@@ -73,7 +73,7 @@ public class MongodbFeedPublisher implements FeedPublisher {
             PersistedEntry exists = getEntry(entryId, postEntryRequest.getFeedName());
             if (exists != null) {
                 String errMsg = String.format("Unable to persist entry. Reason: entryId (%s) not unique.", entryId);
-                return ResponseBuilder.error(errMsg);
+                throw new PublicationException(errMsg);
             }
             persistedEntry.setEntryId(abderaParsedEntry.getId().toString());
         } else {
