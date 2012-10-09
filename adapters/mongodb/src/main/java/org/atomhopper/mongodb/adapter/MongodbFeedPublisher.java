@@ -2,6 +2,7 @@ package org.atomhopper.mongodb.adapter;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -25,17 +26,31 @@ import org.atomhopper.util.uri.template.URITemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 
 
 public class MongodbFeedPublisher implements FeedPublisher {
 
     private static final Logger LOG = LoggerFactory.getLogger(MongodbFeedPublisher.class);
+    private static final String ID = "_id";
     private static final String UUID_URI_SCHEME = "urn:uuid:";
     private static final String LINKREL_SELF = "self";
     private MongoTemplate mongoTemplate;
 
+    private boolean allowOverrideId = false;
+    private boolean allowOverrideDate = false;
+
     public void setMongoTemplate(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
+    }
+
+    public void setAllowOverrideId(boolean allowOverrideId) {
+        this.allowOverrideId = allowOverrideId;
+    }
+
+    public void setAllowOverrideDate(boolean allowOverrideDate) {
+        this.allowOverrideDate = allowOverrideDate;
     }
 
     @Override
@@ -49,11 +64,31 @@ public class MongodbFeedPublisher implements FeedPublisher {
         final Entry abderaParsedEntry = postEntryRequest.getEntry();
         final PersistedEntry persistedEntry = new PersistedEntry();
 
-        // Generate an ID for this entry
-        persistedEntry.setEntryId(UUID_URI_SCHEME + UUID.randomUUID().toString());
+        boolean entryIdSent = abderaParsedEntry.getId() != null;
 
-        // Make sure the persisted xml has the right id
-        abderaParsedEntry.setId(persistedEntry.getEntryId());
+        // Generate an ID for this entry
+        if (allowOverrideId && entryIdSent) {
+            String entryId = abderaParsedEntry.getId().toString();
+            // Check to see if entry with this id already exists
+            PersistedEntry exists = getEntry(entryId, postEntryRequest.getFeedName());
+            if (exists != null) {
+                String errMsg = String.format("Unable to persist entry. Reason: entryId (%s) not unique.", entryId);
+                throw new PublicationException(errMsg);
+            }
+            persistedEntry.setEntryId(abderaParsedEntry.getId().toString());
+        } else {
+            persistedEntry.setEntryId(UUID_URI_SCHEME + UUID.randomUUID().toString());
+            abderaParsedEntry.setId(persistedEntry.getEntryId());
+        }
+
+        if (allowOverrideDate) {
+            Date updated = abderaParsedEntry.getUpdated();
+
+            if (updated != null) {
+                persistedEntry.setDateLastUpdated(updated);
+                persistedEntry.setCreationDate(updated);
+            }
+        }
 
         abderaParsedEntry.addLink(new StringBuilder()
                 .append(decode(postEntryRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED))))
@@ -100,5 +135,11 @@ public class MongodbFeedPublisher implements FeedPublisher {
     @NotImplemented
     public AdapterResponse<EmptyBody> deleteEntry(DeleteEntryRequest deleteEntryRequest) {
         throw new UnsupportedOperationException("Not supported.");
+    }
+
+    private PersistedEntry getEntry(String entryId, String feedName) {
+        final PersistedEntry entry = mongoTemplate.findOne(new Query(
+                Criteria.where(ID).is(entryId)),PersistedEntry.class, formatCollectionName(feedName));
+        return entry;
     }
 }
