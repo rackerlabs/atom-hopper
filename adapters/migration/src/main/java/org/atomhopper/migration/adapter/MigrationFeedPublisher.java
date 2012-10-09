@@ -86,7 +86,7 @@ public class MigrationFeedPublisher implements FeedPublisher {
                         try {
                             oldFeedPublisher.postEntry(postEntryRequest);
                         } catch (Exception ex) {
-                            LOG.error("Error writing entry to OLD feed. EntryId=" + postEntryRequest.getEntry().getId());
+                            LOG.error("Error writing entry to OLD feed:" + postEntryRequest.getFeedName() + " EntryId=" + postEntryRequest.getEntry().getId());
                         }
 
                         return newEntry;
@@ -98,7 +98,7 @@ public class MigrationFeedPublisher implements FeedPublisher {
                         try {
                             newFeedPublisher.postEntry(postEntryRequest);
                         } catch (Exception ex) {
-                            LOG.error("Error writing entry to NEW feed. EntryId=" + postEntryRequest.getEntry().getId());
+                            LOG.error("Error writing entry to NEW feed:" + postEntryRequest.getFeedName() + " EntryId=" + postEntryRequest.getEntry().getId());
                         }
 
                         return oldEntry;
