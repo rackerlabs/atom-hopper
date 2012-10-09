@@ -15,7 +15,7 @@ import static org.mockito.Mockito.mock;
 @RunWith(Enclosed.class)
 public class PostgresFeedInformationTest {
 
-    public static class WhenGettingMongodbFeedInformation {
+    public static class WhenGettingPostgresFeedInformation {
 
         private JdbcTemplate jbdcTemplate;
         private FeedRequest feedRequest;

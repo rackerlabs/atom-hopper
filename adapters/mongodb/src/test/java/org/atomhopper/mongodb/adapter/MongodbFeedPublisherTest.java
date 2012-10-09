@@ -6,17 +6,23 @@ import java.util.UUID;
 import static junit.framework.Assert.assertEquals;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.parser.stax.FOMEntry;
+import org.atomhopper.adapter.PublicationException;
 import org.atomhopper.adapter.request.adapter.DeleteEntryRequest;
 import org.atomhopper.adapter.request.adapter.PostEntryRequest;
 import org.atomhopper.adapter.request.adapter.PutEntryRequest;
+import org.atomhopper.mongodb.domain.PersistedEntry;
 import org.atomhopper.response.AdapterResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
 
 @RunWith(Enclosed.class)
@@ -30,9 +36,21 @@ public class MongodbFeedPublisherTest {
         private PostEntryRequest postEntryRequest;
         private MongoTemplate mongoTemplate;
 
+        private PersistedEntry persistedEntry;
+
+        private final String MARKER_ID = UUID.randomUUID().toString();
+        private final String ENTRY_BODY = "<entry xmlns='http://www.w3.org/2005/Atom'></entry>";
+        private final String FEED_NAME = "namespace/feed";
+        private final String COLLECTION_NAME = "namespace.feed";
+
 
         @Before
         public void setUp() throws Exception {
+            persistedEntry = new PersistedEntry();
+            persistedEntry.setFeed(FEED_NAME);
+            persistedEntry.setEntryId(MARKER_ID);
+            persistedEntry.setEntryBody(ENTRY_BODY);
+
             putEntryRequest = mock(PutEntryRequest.class);
             deleteEntryRequest = mock(DeleteEntryRequest.class);
             mongoTemplate = mock(MongoTemplate.class);
@@ -47,6 +65,13 @@ public class MongodbFeedPublisherTest {
         public void shouldReturnHTTPCreated() throws Exception {
             AdapterResponse<Entry> adapterResponse = mongodbFeedPublisher.postEntry(postEntryRequest);
             assertEquals("Should return HTTP 201 (Created)", HttpStatus.CREATED, adapterResponse.getResponseStatus());
+        }
+
+        @Test(expected = PublicationException.class)
+        public void shouldThrowErrorForEntryIdAlreadyExists() throws Exception {
+            mongodbFeedPublisher.setAllowOverrideId(true);
+            when(mongoTemplate.findOne(any(Query.class), any(Class.class), eq(COLLECTION_NAME))).thenReturn(persistedEntry);
+            AdapterResponse<Entry> adapterResponse = mongodbFeedPublisher.postEntry(postEntryRequest);
         }
 
         @Test(expected = UnsupportedOperationException.class)

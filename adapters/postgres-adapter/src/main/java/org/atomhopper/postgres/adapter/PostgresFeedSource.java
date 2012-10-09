@@ -320,10 +320,9 @@ public class PostgresFeedSource implements FeedSource {
 
     private PersistedEntry getEntry(final String entryId, final String feedName) {
         final String entrySQL = "SELECT * FROM entries WHERE feed = ? AND entryid = ?";
-        PersistedEntry entry = (PersistedEntry) jdbcTemplate
-                .queryForObject(entrySQL, new EntryRowMapper(),
-                                feedName, entryId);
-        return entry;
+        List<PersistedEntry> entry = jdbcTemplate
+                .query(entrySQL, new Object[]{feedName, entryId}, new EntryRowMapper());
+        return entry.size() > 0 ? entry.get(0) : null;
     }
 
     private Integer getFeedCount(final String feedName, final String searchString) {

@@ -36,6 +36,7 @@ public class PostgresFeedSourceTest {
         private GetEntryRequest getEntryRequest;
         private PersistedEntry persistedEntry;
         private List<PersistedEntry> entryList;
+        private List<PersistedEntry> emptyList;
         private Abdera abdera;
         private final String MARKER_ID = UUID.randomUUID().toString();
         private final String ENTRY_BODY = "<entry xmlns='http://www.w3.org/2005/Atom'></entry>";
@@ -52,6 +53,8 @@ public class PostgresFeedSourceTest {
             persistedEntry.setFeed(FEED_NAME);
             persistedEntry.setEntryId(MARKER_ID);
             persistedEntry.setEntryBody(ENTRY_BODY);
+
+            emptyList = new ArrayList<PersistedEntry>();
 
             entryList = new ArrayList<PersistedEntry>();
             entryList.add(persistedEntry);
@@ -273,8 +276,7 @@ public class PostgresFeedSourceTest {
         public void shouldNotGetEntry() throws Exception {
             Abdera localAbdera = new Abdera();
             when(getEntryRequest.getAbdera()).thenReturn(localAbdera);
-            when(jdbcTemplate.queryForObject(any(String.class), any(Class.class),
-                                             any(String.class), any(String.class))).thenReturn(null);
+            when(jdbcTemplate.query(any(String.class), any(Object[].class), any(EntryRowMapper.class))).thenReturn(emptyList);
             assertEquals("Should get a 404 response", HttpStatus.NOT_FOUND,
                          postgresFeedSource.getEntry(getEntryRequest).getResponseStatus());
 
@@ -283,10 +285,7 @@ public class PostgresFeedSourceTest {
         @Test
         public void shouldGetEntry() throws Exception {
             Abdera localAbdera = new Abdera();
-            when(jdbcTemplate.queryForObject(any(String.class),
-                                             any(EntryRowMapper.class),
-                                             any(String.class),
-                                             any(String.class))).thenReturn(persistedEntry);
+            when(jdbcTemplate.query(any(String.class), any(Object[].class), any(EntryRowMapper.class))).thenReturn(entryList);
             when(getEntryRequest.getAbdera()).thenReturn(localAbdera);
             assertEquals("Should get a 200 response", HttpStatus.OK,
                          postgresFeedSource.getEntry(getEntryRequest).getResponseStatus());
