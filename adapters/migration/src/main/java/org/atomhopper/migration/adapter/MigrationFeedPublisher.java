@@ -62,7 +62,7 @@ public class MigrationFeedPublisher implements FeedPublisher {
 
         // If allowOverrideId is false then set the Id
         // Also set the id if allowOverrideId is true, but no Id was sent in the entry
-        if (!allowOverrideId || (postEntryRequest.getEntry().getId() == null && StringUtils.isNotBlank(postEntryRequest.getEntry().getId().toString().trim()))) {
+        if (!allowOverrideId || postEntryRequest.getEntry().getId() == null || StringUtils.isBlank(postEntryRequest.getEntry().getId().toString().trim())) {
             postEntryRequest.getEntry().setId(UUID_URI_SCHEME + UUID.randomUUID().toString());
         }
 
