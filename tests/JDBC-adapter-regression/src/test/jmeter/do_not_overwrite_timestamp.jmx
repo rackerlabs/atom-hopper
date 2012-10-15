@@ -86,7 +86,7 @@
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.value">&lt;?xml version=&quot;1.0&quot;?&gt;&#xd;
 &lt;entry xmlns=&quot;http://www.w3.org/2005/Atom&quot;&gt;&#xd;
-  &lt;title&gt;PaDo not overwrite timestampging Test - Entry 1&lt;/title&gt;&#xd;
+  &lt;title&gt;Do not overwrite timestamp Test - Entry 1&lt;/title&gt;&#xd;
   &lt;author&gt;&#xd;
     &lt;name&gt;Atom Hopper Team&lt;/name&gt;&#xd;
   &lt;/author&gt;&#xd;
@@ -170,11 +170,11 @@
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.value">&lt;?xml version=&quot;1.0&quot;?&gt;&#xd;
 &lt;entry xmlns=&quot;http://www.w3.org/2005/Atom&quot;&gt;&#xd;
-  &lt;title&gt;Overwrite timestamp Test - Entry 2&lt;/title&gt;&#xd;
+  &lt;title&gt;Do not overwrite timestamp Test - Entry 2&lt;/title&gt;&#xd;
   &lt;author&gt;&#xd;
     &lt;name&gt;Atom Hopper Team&lt;/name&gt;&#xd;
   &lt;/author&gt;&#xd;
-  &lt;content&gt;Overwrite timestamp entry 2&lt;/content&gt;&#xd;
+  &lt;content&gt;Do not overwrite timestamp entry 2&lt;/content&gt;&#xd;
   &lt;updated&gt;2012-10-10T21:16:35.470Z&lt;/updated&gt;&#xd;
   &lt;created&gt;2012-10-10T21:16:35.470Z&lt;/created&gt;&#xd;
 &lt;/entry&gt;&#xd;
@@ -218,11 +218,11 @@
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.value">&lt;?xml version=&quot;1.0&quot;?&gt;&#xd;
 &lt;entry xmlns=&quot;http://www.w3.org/2005/Atom&quot;&gt;&#xd;
-  &lt;title&gt;Overwrite timestamp Test - Entry 3&lt;/title&gt;&#xd;
+  &lt;title&gt;Do not overwrite timestamp Test - Entry 3&lt;/title&gt;&#xd;
   &lt;author&gt;&#xd;
     &lt;name&gt;Atom Hopper Team&lt;/name&gt;&#xd;
   &lt;/author&gt;&#xd;
-  &lt;content&gt;Overwrite timestamp entry 3&lt;/content&gt;&#xd;
+  &lt;content&gt;Do not overwrite timestamp entry 3&lt;/content&gt;&#xd;
   &lt;updated&gt;&lt;/updated&gt;&#xd;
   &lt;created&gt;&lt;/created&gt;&#xd;
 &lt;/entry&gt;&#xd;
