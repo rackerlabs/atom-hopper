@@ -1,6 +1,7 @@
 package org.atomhopper.migration.adapter;
 
 import org.apache.abdera.model.Entry;
+import org.apache.commons.lang.StringUtils;
 import org.atomhopper.adapter.FeedPublisher;
 import org.atomhopper.adapter.NotImplemented;
 import org.atomhopper.adapter.jpa.PersistedEntry;
@@ -61,7 +62,7 @@ public class MigrationFeedPublisher implements FeedPublisher {
 
         // If allowOverrideId is false then set the Id
         // Also set the id if allowOverrideId is true, but no Id was sent in the entry
-        if (!allowOverrideId || postEntryRequest.getEntry().getId() == null) {
+        if (!allowOverrideId || postEntryRequest.getEntry().getId() == null || StringUtils.isBlank(postEntryRequest.getEntry().getId().toString().trim())) {
             postEntryRequest.getEntry().setId(UUID_URI_SCHEME + UUID.randomUUID().toString());
         }
 

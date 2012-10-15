@@ -9,6 +9,7 @@ import java.util.UUID;
 import static org.apache.abdera.i18n.text.UrlEncoding.decode;
 import org.apache.abdera.model.Category;
 import org.apache.abdera.model.Entry;
+import org.apache.commons.lang.StringUtils;
 import org.atomhopper.adapter.FeedPublisher;
 import org.atomhopper.adapter.NotImplemented;
 import org.atomhopper.adapter.PublicationException;
@@ -67,7 +68,7 @@ public class MongodbFeedPublisher implements FeedPublisher {
         boolean entryIdSent = abderaParsedEntry.getId() != null;
 
         // Generate an ID for this entry
-        if (allowOverrideId && entryIdSent) {
+        if (allowOverrideId && entryIdSent && StringUtils.isNotBlank(abderaParsedEntry.getId().toString().trim())) {
             String entryId = abderaParsedEntry.getId().toString();
             // Check to see if entry with this id already exists
             PersistedEntry exists = getEntry(entryId, postEntryRequest.getFeedName());
