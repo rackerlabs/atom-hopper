@@ -153,6 +153,7 @@ public class PostgresFeedSource implements FeedSource {
         if (hydratedEntryDocument != null) {
             entry = hydratedEntryDocument.getRoot();
             entry.setUpdated(persistedEntry.getDateLastUpdated());
+            entry.setPublished(persistedEntry.getCreationDate());
         }
 
         return entry;
