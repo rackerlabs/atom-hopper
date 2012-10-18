@@ -73,7 +73,7 @@ public class HibernateFeedPublisher implements FeedPublisher {
         boolean entryIdSent = abderaParsedEntry.getId() != null;
 
         // Generate an ID for this entry
-        if (allowOverrideId && entryIdSent) {
+        if (allowOverrideId && entryIdSent && StringUtils.isNotBlank(abderaParsedEntry.getId().toString().trim())) {
             String entryId = abderaParsedEntry.getId().toString();
             // Check to see if entry with this id already exists
             PersistedEntry exists = feedRepository.getEntry(entryId, postEntryRequest.getFeedName());
