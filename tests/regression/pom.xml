@@ -68,9 +68,6 @@
           </execution>
         </executions>
         <configuration>   
-          <testFilesExcluded>
-            <excludeJMeterTestFile>empty-skeleton.jmx</excludeJMeterTestFile>
-          </testFilesExcluded>
           <propertiesUser>
             <some.property.name>value</some.property.name>
           </propertiesUser>
