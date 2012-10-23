@@ -21,23 +21,13 @@ import org.atomhopper.adapter.impl.DisabledFeedSource;
 import org.atomhopper.adapter.impl.DisabledPublisher;
 import org.atomhopper.adapter.request.adapter.GetCategoriesRequest;
 import org.atomhopper.adapter.request.adapter.GetFeedRequest;
-import org.atomhopper.adapter.request.adapter.impl.DeleteEntryRequestImpl;
-import org.atomhopper.adapter.request.adapter.impl.GetCategoriesRequestImpl;
-import org.atomhopper.adapter.request.adapter.impl.GetEntryRequestImpl;
-import org.atomhopper.adapter.request.adapter.impl.GetFeedRequestImpl;
-import org.atomhopper.adapter.request.adapter.impl.PostEntryRequestImpl;
-import org.atomhopper.adapter.request.adapter.impl.PutEntryRequestImpl;
+import org.atomhopper.adapter.request.adapter.impl.*;
 import org.atomhopper.config.v1_0.FeedConfiguration;
 import org.atomhopper.response.AdapterResponse;
 import org.atomhopper.response.EmptyBody;
 import org.springframework.http.HttpStatus;
 
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import org.atomhopper.adapter.request.adapter.impl.*;
+import java.util.*;
 
 public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
 
@@ -102,7 +92,8 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
         final GetCategoriesRequest getCategoriesRequest = new GetCategoriesRequestImpl(request);
 
         try {
-            return ProviderHelper.returnBase(feedSource.getFeedInformation().getCategories(getCategoriesRequest), HttpStatus.OK.value(), Calendar.getInstance().getTime());
+            return ProviderHelper
+                    .returnBase(feedSource.getFeedInformation().getCategories(getCategoriesRequest), HttpStatus.OK.value(), Calendar.getInstance().getTime());
         } catch (Exception ex) {
             return ProviderHelper.servererror(request, ex.getMessage(), ex);
         }
@@ -135,8 +126,8 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
         try {
             final String pageSizeString = getFeedRequest.getPageSize();
 
-            if(StringUtils.isNotBlank(pageSizeString)) {
-                if((Integer.parseInt(pageSizeString) < minLimit) || (Integer.parseInt(pageSizeString) > maxLimit)) {
+            if (StringUtils.isNotBlank(pageSizeString)) {
+                if ((Integer.parseInt(pageSizeString) < minLimit) || (Integer.parseInt(pageSizeString) > maxLimit)) {
                     return ProviderHelper.badrequest(request, limitErrorMessage);
                 }
             }
@@ -159,7 +150,10 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
         } catch (ParseException ex) {
             return ProviderHelper.createErrorResponse(Abdera.getInstance(), HttpStatus.UNPROCESSABLE_ENTITY.value(), ex.getMessage(), ex);
         } catch (RequestParsingException rpex) {
-            return ProviderHelper.createErrorResponse(Abdera.getInstance(), HttpStatus.UNPROCESSABLE_ENTITY.value(), "The POST did not contain valid ATOM XML", rpex);
+            return ProviderHelper
+                    .createErrorResponse(Abdera.getInstance(), HttpStatus.UNPROCESSABLE_ENTITY.value(), "The POST did not contain valid ATOM XML", rpex);
+        } catch (IllegalArgumentException iae) {
+            return ProviderHelper.badrequest(request, iae.getMessage());
         } catch (Exception ex) {
             return ProviderHelper.servererror(request, ex.getMessage(), ex);
         }
