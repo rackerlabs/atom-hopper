@@ -396,10 +396,10 @@
         <hashTree>
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Should return a 400 response code" enabled="true">
             <collectionProp name="Asserion.test_strings">
-              <stringProp name="1975191516">400 Created</stringProp>
+              <stringProp name="-954221496">400 Bad Request</stringProp>
             </collectionProp>
             <stringProp name="Assertion.test_field">Assertion.response_headers</stringProp>
-            <boolProp name="Assertion.assume_success">false</boolProp>
+            <boolProp name="Assertion.assume_success">true</boolProp>
             <intProp name="Assertion.test_type">2</intProp>
           </ResponseAssertion>
           <hashTree/>
