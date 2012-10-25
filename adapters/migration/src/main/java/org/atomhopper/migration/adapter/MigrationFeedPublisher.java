@@ -1,6 +1,5 @@
 package org.atomhopper.migration.adapter;
 
-import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Entry;
 import org.apache.commons.lang.StringUtils;
 import org.atomhopper.adapter.FeedPublisher;
@@ -16,9 +15,6 @@ import org.atomhopper.response.EmptyBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.Map;
 import java.util.UUID;
 
