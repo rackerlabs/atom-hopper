@@ -96,8 +96,10 @@ public class HibernateFeedPublisher implements FeedPublisher {
             }
         }
 
-        abderaParsedEntry.addLink(decode(postEntryRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)))
+        if (abderaParsedEntry.getSelfLink() == null) {
+            abderaParsedEntry.addLink(decode(postEntryRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)))
                                           + "entries/" + persistedEntry.getEntryId()).setRel(LINKREL_SELF);
+        }
 
         final PersistedFeed feedRef = new PersistedFeed(postEntryRequest.getFeedName(), UUID_URI_SCHEME + UUID.randomUUID().toString());
 

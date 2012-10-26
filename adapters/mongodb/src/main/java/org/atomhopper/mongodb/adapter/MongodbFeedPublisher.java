@@ -91,10 +91,12 @@ public class MongodbFeedPublisher implements FeedPublisher {
             }
         }
 
-        abderaParsedEntry.addLink(new StringBuilder()
+        if (abderaParsedEntry.getSelfLink() == null) {
+            abderaParsedEntry.addLink(new StringBuilder()
                 .append(decode(postEntryRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED))))
                 .append("entries/")
                 .append(persistedEntry.getEntryId()).toString()).setRel(LINKREL_SELF);
+        }
 
         persistedEntry.setFeed(postEntryRequest.getFeedName());
 

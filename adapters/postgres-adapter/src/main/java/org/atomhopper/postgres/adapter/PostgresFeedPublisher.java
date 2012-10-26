@@ -90,8 +90,10 @@ public class PostgresFeedPublisher implements FeedPublisher {
         // Set the categories
         persistedEntry.setCategories(processCategories(abderaParsedEntry.getCategories()));
 
-        abderaParsedEntry.addLink(decode(postEntryRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)))
+        if (abderaParsedEntry.getSelfLink() == null) {
+            abderaParsedEntry.addLink(decode(postEntryRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)))
                 + "entries/" + persistedEntry.getEntryId()).setRel(LINKREL_SELF);
+        }
 
         persistedEntry.setFeed(postEntryRequest.getFeedName());
         persistedEntry.setEntryBody(entryToString(abderaParsedEntry));
