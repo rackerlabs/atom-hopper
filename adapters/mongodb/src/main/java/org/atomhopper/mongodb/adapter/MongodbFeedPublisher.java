@@ -1,12 +1,5 @@
 package org.atomhopper.mongodb.adapter;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import static org.apache.abdera.i18n.text.UrlEncoding.decode;
 import org.apache.abdera.model.Category;
 import org.apache.abdera.model.Entry;
 import org.apache.commons.lang.StringUtils;
@@ -17,7 +10,6 @@ import org.atomhopper.adapter.ResponseBuilder;
 import org.atomhopper.adapter.request.adapter.DeleteEntryRequest;
 import org.atomhopper.adapter.request.adapter.PostEntryRequest;
 import org.atomhopper.adapter.request.adapter.PutEntryRequest;
-import static org.atomhopper.mongodb.adapter.MongodbUtilities.formatCollectionName;
 import org.atomhopper.mongodb.domain.PersistedCategory;
 import org.atomhopper.mongodb.domain.PersistedEntry;
 import org.atomhopper.response.AdapterResponse;
@@ -29,6 +21,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import static org.apache.abdera.i18n.text.UrlEncoding.decode;
+import static org.atomhopper.mongodb.adapter.MongodbUtilities.formatCollectionName;
 
 
 public class MongodbFeedPublisher implements FeedPublisher {
@@ -108,6 +110,7 @@ public class MongodbFeedPublisher implements FeedPublisher {
 
         abderaParsedEntry.setId(persistedEntry.getEntryId());
         abderaParsedEntry.setUpdated(persistedEntry.getDateLastUpdated());
+        abderaParsedEntry.setPublished(persistedEntry.getCreationDate());
 
         mongoTemplate.save(persistedEntry, formatCollectionName(postEntryRequest.getFeedName()));
 

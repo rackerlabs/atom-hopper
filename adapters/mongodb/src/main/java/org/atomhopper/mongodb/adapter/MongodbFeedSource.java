@@ -145,6 +145,7 @@ public class MongodbFeedSource implements FeedSource {
             entry = hydratedEntryDocument.getRoot();
 
             entry.setUpdated(persistedEntry.getDateLastUpdated());
+            entry.setPublished(persistedEntry.getCreationDate());
         }
 
         return entry;
