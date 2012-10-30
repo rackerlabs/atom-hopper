@@ -81,7 +81,6 @@ public class MigrationFeedPublisher implements FeedPublisher {
             default:
                 switch (readFrom) {
                     case NEW:
-
                         AdapterResponse<Entry> newEntry = newFeedPublisher.postEntry(postEntryRequest);
 
                         try {
