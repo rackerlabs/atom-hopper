@@ -1,10 +1,5 @@
 package org.atomhopper.postgres.adapter;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.*;
-
-import static org.apache.abdera.i18n.text.UrlEncoding.decode;
 import org.apache.abdera.model.Entry;
 import org.apache.commons.lang.StringUtils;
 import org.atomhopper.adapter.FeedPublisher;
@@ -24,6 +19,12 @@ import org.atomhopper.util.uri.template.URITemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.*;
+
+import static org.apache.abdera.i18n.text.UrlEncoding.decode;
 
 
 public class PostgresFeedPublisher implements FeedPublisher {
@@ -90,13 +91,16 @@ public class PostgresFeedPublisher implements FeedPublisher {
         // Set the categories
         persistedEntry.setCategories(processCategories(abderaParsedEntry.getCategories()));
 
-        abderaParsedEntry.addLink(decode(postEntryRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)))
+        if (abderaParsedEntry.getSelfLink() == null) {
+            abderaParsedEntry.addLink(decode(postEntryRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)))
                 + "entries/" + persistedEntry.getEntryId()).setRel(LINKREL_SELF);
+        }
 
         persistedEntry.setFeed(postEntryRequest.getFeedName());
         persistedEntry.setEntryBody(entryToString(abderaParsedEntry));
 
         abderaParsedEntry.setUpdated(persistedEntry.getDateLastUpdated());
+        abderaParsedEntry.setPublished(persistedEntry.getCreationDate());
 
         jdbcTemplate.update(insertSQL, new Object[]{
             persistedEntry.getEntryId(), persistedEntry.getCreationDate(), persistedEntry.getDateLastUpdated(),

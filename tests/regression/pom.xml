@@ -81,9 +81,9 @@
   </build>
   
   <profiles>
-    
+
     <profile>
-      <id>mongo</id>
+      <id>custom-suffix</id>
       <build>
         <plugins>
           <plugin>
@@ -94,33 +94,14 @@
               <reportConfig>
                 <enable>true</enable> 
                 <xsltFile>functional-report.xsl</xsltFile>
-                <postfix>-mongo-report.html</postfix>
+                <postfix>-${suffix}-report.html</postfix>
               </reportConfig>
             </configuration>
           </plugin>
         </plugins>
       </build>
     </profile>
-    
-    <profile>
-      <id>postgresql</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>com.lazerycode.jmeter</groupId>
-            <artifactId>jmeter-maven-plugin</artifactId>
-            <version>1.5.0</version>
-            <configuration>   
-              <reportConfig>
-                <enable>true</enable> 
-                <xsltFile>functional-report.xsl</xsltFile>
-                <postfix>-postgresql-report.html</postfix>
-              </reportConfig>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
+
   </profiles>
   
 </project>
