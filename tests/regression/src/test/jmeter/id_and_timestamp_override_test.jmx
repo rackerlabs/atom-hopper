@@ -293,63 +293,6 @@
             <boolProp name="XPath.namespace">false</boolProp>
           </XPathAssertion>
           <hashTree/>
-          <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should return overwritten created timestamp value" enabled="false">
-            <boolProp name="XPath.negate">false</boolProp>
-            <stringProp name="XPath.xpath">/entry/created/text()=&quot;2012-10-10T21:16:35.470Z&quot;</stringProp>
-            <boolProp name="XPath.validate">false</boolProp>
-            <boolProp name="XPath.whitespace">false</boolProp>
-            <boolProp name="XPath.tolerant">false</boolProp>
-            <boolProp name="XPath.namespace">false</boolProp>
-          </XPathAssertion>
-          <hashTree/>
-        </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Add entry with timestamps that already exist" enabled="false">
-          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
-            <collectionProp name="Arguments.arguments">
-              <elementProp name="" elementType="HTTPArgument">
-                <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                <stringProp name="Argument.value">&lt;?xml version=&quot;1.0&quot;?&gt;&#xd;
-&lt;entry xmlns=&quot;http://www.w3.org/2005/Atom&quot;&gt;&#xd;
-  &lt;title&gt;Overwrite timestamp Test - Entry 2&lt;/title&gt;&#xd;
-  &lt;author&gt;&#xd;
-    &lt;name&gt;Atom Hopper Team&lt;/name&gt;&#xd;
-  &lt;/author&gt;&#xd;
-  &lt;content&gt;Overwrite timestamp entry 2&lt;/content&gt;&#xd;
-  &lt;updated&gt;2012-10-10T21:16:35.470Z&lt;/updated&gt;&#xd;
-  &lt;created&gt;2012-10-10T21:16:35.470Z&lt;/created&gt;&#xd;
-&lt;/entry&gt;&#xd;
-</stringProp>
-                <stringProp name="Argument.metadata">=</stringProp>
-              </elementProp>
-            </collectionProp>
-          </elementProp>
-          <stringProp name="HTTPSampler.domain"></stringProp>
-          <stringProp name="HTTPSampler.port"></stringProp>
-          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
-          <stringProp name="HTTPSampler.response_timeout"></stringProp>
-          <stringProp name="HTTPSampler.protocol"></stringProp>
-          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path"></stringProp>
-          <stringProp name="HTTPSampler.method">POST</stringProp>
-          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
-          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
-          <stringProp name="HTTPSampler.implementation">Java</stringProp>
-          <boolProp name="HTTPSampler.monitor">false</boolProp>
-          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
-        </HTTPSamplerProxy>
-        <hashTree>
-          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Should not return a 201 response code" enabled="false">
-            <collectionProp name="Asserion.test_strings">
-              <stringProp name="-533327525">201 Created</stringProp>
-            </collectionProp>
-            <stringProp name="Assertion.test_field">Assertion.response_headers</stringProp>
-            <boolProp name="Assertion.assume_success">false</boolProp>
-            <intProp name="Assertion.test_type">6</intProp>
-          </ResponseAssertion>
-          <hashTree/>
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Add entry with blank timestamp" enabled="true">
           <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
@@ -669,15 +612,6 @@
             <stringProp name="RegexExtractor.match_number">1</stringProp>
           </RegexExtractor>
           <hashTree/>
-          <RegexExtractor guiclass="RegexExtractorGui" testclass="RegexExtractor" testname="Get the created date" enabled="false">
-            <stringProp name="RegexExtractor.useHeaders">false</stringProp>
-            <stringProp name="RegexExtractor.refname">created_1</stringProp>
-            <stringProp name="RegexExtractor.regex">&lt;created&gt;(.*)&lt;/created&gt;</stringProp>
-            <stringProp name="RegexExtractor.template">$1$</stringProp>
-            <stringProp name="RegexExtractor.default">null</stringProp>
-            <stringProp name="RegexExtractor.match_number">1</stringProp>
-          </RegexExtractor>
-          <hashTree/>
           <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should not return overwritten updated timestamp value" enabled="true">
             <boolProp name="XPath.negate">false</boolProp>
             <stringProp name="XPath.xpath">/entry/updated/text()!=&quot;2012-10-10T21:16:35.470Z&quot;</stringProp>
@@ -686,63 +620,6 @@
             <boolProp name="XPath.tolerant">false</boolProp>
             <boolProp name="XPath.namespace">false</boolProp>
           </XPathAssertion>
-          <hashTree/>
-          <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should not return overwritten created timestamp value" enabled="false">
-            <boolProp name="XPath.negate">false</boolProp>
-            <stringProp name="XPath.xpath">/entry/created/text()!=&quot;2012-10-10T21:16:35.470Z&quot;</stringProp>
-            <boolProp name="XPath.validate">false</boolProp>
-            <boolProp name="XPath.whitespace">false</boolProp>
-            <boolProp name="XPath.tolerant">false</boolProp>
-            <boolProp name="XPath.namespace">false</boolProp>
-          </XPathAssertion>
-          <hashTree/>
-        </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Add entry with timestamps that already exist" enabled="false">
-          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
-            <collectionProp name="Arguments.arguments">
-              <elementProp name="" elementType="HTTPArgument">
-                <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                <stringProp name="Argument.value">&lt;?xml version=&quot;1.0&quot;?&gt;&#xd;
-&lt;entry xmlns=&quot;http://www.w3.org/2005/Atom&quot;&gt;&#xd;
-  &lt;title&gt;Overwrite timestamp Test - Entry 2&lt;/title&gt;&#xd;
-  &lt;author&gt;&#xd;
-    &lt;name&gt;Atom Hopper Team&lt;/name&gt;&#xd;
-  &lt;/author&gt;&#xd;
-  &lt;content&gt;Overwrite timestamp entry 2&lt;/content&gt;&#xd;
-  &lt;updated&gt;${updated_1}&lt;/updated&gt;&#xd;
-  &lt;created&gt;${created_1}&lt;/created&gt;&#xd;
-&lt;/entry&gt;&#xd;
-</stringProp>
-                <stringProp name="Argument.metadata">=</stringProp>
-              </elementProp>
-            </collectionProp>
-          </elementProp>
-          <stringProp name="HTTPSampler.domain"></stringProp>
-          <stringProp name="HTTPSampler.port"></stringProp>
-          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
-          <stringProp name="HTTPSampler.response_timeout"></stringProp>
-          <stringProp name="HTTPSampler.protocol"></stringProp>
-          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path"></stringProp>
-          <stringProp name="HTTPSampler.method">POST</stringProp>
-          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
-          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
-          <stringProp name="HTTPSampler.implementation">Java</stringProp>
-          <boolProp name="HTTPSampler.monitor">false</boolProp>
-          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
-        </HTTPSamplerProxy>
-        <hashTree>
-          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Should not return a 201 response code" enabled="true">
-            <collectionProp name="Asserion.test_strings">
-              <stringProp name="-533327525">201 Created</stringProp>
-            </collectionProp>
-            <stringProp name="Assertion.test_field">Assertion.response_headers</stringProp>
-            <boolProp name="Assertion.assume_success">false</boolProp>
-            <intProp name="Assertion.test_type">6</intProp>
-          </ResponseAssertion>
           <hashTree/>
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Add entry with blank timestamp" enabled="true">
@@ -795,15 +672,6 @@
           <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should return generated timestamp value" enabled="true">
             <boolProp name="XPath.negate">true</boolProp>
             <stringProp name="XPath.xpath">/entry/updated/text()=null</stringProp>
-            <boolProp name="XPath.validate">false</boolProp>
-            <boolProp name="XPath.whitespace">false</boolProp>
-            <boolProp name="XPath.tolerant">false</boolProp>
-            <boolProp name="XPath.namespace">false</boolProp>
-          </XPathAssertion>
-          <hashTree/>
-          <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should return generated timestamp value" enabled="false">
-            <boolProp name="XPath.negate">false</boolProp>
-            <stringProp name="XPath.xpath">/entry/created/text()!=null</stringProp>
             <boolProp name="XPath.validate">false</boolProp>
             <boolProp name="XPath.whitespace">false</boolProp>
             <boolProp name="XPath.tolerant">false</boolProp>
