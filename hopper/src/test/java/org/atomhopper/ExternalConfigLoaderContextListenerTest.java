@@ -1,6 +1,5 @@
 package org.atomhopper;
 
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
@@ -16,13 +15,7 @@ public class ExternalConfigLoaderContextListenerTest {
 
     public static class WhenInitializingContext {
 
-        String someFakeFileLocation;
         ExternalConfigLoaderContextListener externalConfigLoaderContextListener;
-
-        @Before
-        public void setUp() throws Exception {
-            someFakeFileLocation = "/noSuchLocation";
-        }
 
         @Rule
         public ExpectedException exception = ExpectedException.none();
