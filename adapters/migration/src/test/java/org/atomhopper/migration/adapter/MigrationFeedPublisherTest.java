@@ -45,6 +45,8 @@ public class MigrationFeedPublisherTest {
             migrationFeedPublisher = new MigrationFeedPublisher();
             migrationFeedPublisher.setNewFeedPublisher(newFeedPublisher);
             migrationFeedPublisher.setOldFeedPublisher(oldFeedPublisher);
+            migrationFeedPublisher.setAllowOverrideDate(false);
+            migrationFeedPublisher.setAllowOverrideId(false);
 
             AdapterResponse<Entry> response = ResponseBuilder.created(entry());
 
@@ -76,11 +78,47 @@ public class MigrationFeedPublisherTest {
         }
 
         @Test
-        public void shouldReturnCreatedForWriteToBoth() throws Exception {
+        public void shouldReturnCreatedForWriteToBothReadFromOld() throws Exception {
             migrationFeedPublisher.setWriteTo(MigrationWriteTo.BOTH);
             migrationFeedPublisher.setReadFrom(MigrationReadFrom.OLD);
 
             when(oldFeedPublisher.postEntry(postEntryRequest)).thenReturn(ResponseBuilder.created(entry()));
+            when(newFeedPublisher.postEntry(postEntryRequest)).thenReturn(ResponseBuilder.created(entry()));
+
+            AdapterResponse<Entry> adapterResponse = migrationFeedPublisher.postEntry(postEntryRequest);
+            assertEquals("Should return HTTP 201 (Created)", HttpStatus.CREATED, adapterResponse.getResponseStatus());
+        }
+
+        @Test
+        public void shouldReturnCreatedForWriteToBothReadFromNew() throws Exception {
+            migrationFeedPublisher.setWriteTo(MigrationWriteTo.BOTH);
+            migrationFeedPublisher.setReadFrom(MigrationReadFrom.NEW);
+
+            when(oldFeedPublisher.postEntry(postEntryRequest)).thenReturn(ResponseBuilder.created(entry()));
+            when(newFeedPublisher.postEntry(postEntryRequest)).thenReturn(ResponseBuilder.created(entry()));
+
+            AdapterResponse<Entry> adapterResponse = migrationFeedPublisher.postEntry(postEntryRequest);
+            assertEquals("Should return HTTP 201 (Created)", HttpStatus.CREATED, adapterResponse.getResponseStatus());
+        }
+
+        @Test
+        public void shouldReturnCreatedForWriteToBothReadFromOldThrowError() throws Exception {
+            migrationFeedPublisher.setWriteTo(MigrationWriteTo.BOTH);
+            migrationFeedPublisher.setReadFrom(MigrationReadFrom.OLD);
+
+            when(oldFeedPublisher.postEntry(postEntryRequest)).thenReturn(ResponseBuilder.created(entry()));
+            when(newFeedPublisher.postEntry(postEntryRequest)).thenThrow(new RuntimeException());
+
+            AdapterResponse<Entry> adapterResponse = migrationFeedPublisher.postEntry(postEntryRequest);
+            assertEquals("Should return HTTP 201 (Created)", HttpStatus.CREATED, adapterResponse.getResponseStatus());
+        }
+
+        @Test
+        public void shouldReturnCreatedForWriteToBothReadFromNewThrowError() throws Exception {
+            migrationFeedPublisher.setWriteTo(MigrationWriteTo.BOTH);
+            migrationFeedPublisher.setReadFrom(MigrationReadFrom.NEW);
+
+            when(oldFeedPublisher.postEntry(postEntryRequest)).thenThrow(new RuntimeException());
             when(newFeedPublisher.postEntry(postEntryRequest)).thenReturn(ResponseBuilder.created(entry()));
 
             AdapterResponse<Entry> adapterResponse = migrationFeedPublisher.postEntry(postEntryRequest);
