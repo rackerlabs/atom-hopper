@@ -102,13 +102,8 @@ public class WorkspaceConfigProcessor {
 
         return resolvedReference;
     }
-//
-//    private Map<String, String> adapterParametersToMap(List<AdapterParameter> paramters) {
-//        final Map<String, String> paramterMap = new HashMap<String, String>();
-//    }
 
     public <T> T getAdapter(AdapterDescriptor descriptor, Class<T> expectedClass) {
-//        final Map<String, String> parameters = descriptorParametersToMap(descriptor.getParameter());
 
         return descriptor != null
                 ? getFromApplicationContext(descriptor.getReference(), descriptor.getClazz(), expectedClass)

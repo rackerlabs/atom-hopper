@@ -7,11 +7,6 @@ import org.atomhopper.adapter.request.adapter.GetCategoriesRequest;
 import org.atomhopper.adapter.request.feed.FeedRequest;
 
 public class PostgresFeedInformation implements FeedInformation {
-    //private DataSource dataSource;
-
-    //public void setDataSource(DataSource dataSource) {
-    //    this.dataSource = dataSource;
-    //}
 
     @Override
     public String getId(FeedRequest feedRequest) {

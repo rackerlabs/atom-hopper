@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ExternalConfigLoaderContextListener implements ServletContextListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(ExternalConfigLoaderContextListener.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExternalConfigLoaderContextListener.class);
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
@@ -22,7 +22,7 @@ public class ExternalConfigLoaderContextListener implements ServletContextListen
         try {
             new LogBackConfigLoader(configLocation + "logback.xml");
         } catch (Exception e) {
-            logger.error("Unable to read config file", e);
+            LOGGER.error("Unable to read config file", e);
         }
     }
 
