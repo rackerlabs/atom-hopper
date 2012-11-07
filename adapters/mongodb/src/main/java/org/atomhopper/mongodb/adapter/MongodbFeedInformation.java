@@ -9,12 +9,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 
 public class MongodbFeedInformation implements FeedInformation {
 
-    //private MongoTemplate mongoTemplate;
-
-    //public MongodbFeedInformation(MongoTemplate mongoTemplate) {
-    //    this.mongoTemplate = mongoTemplate;
-    //}
-
     @Override
     public String getId(FeedRequest feedRequest) {
         throw new UnsupportedOperationException("Not supported yet.");
