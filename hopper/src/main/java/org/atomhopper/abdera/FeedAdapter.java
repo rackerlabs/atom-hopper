@@ -99,13 +99,6 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
         }
     }
 
-//  TODO: Implement this?
-//
-//    @Override
-//    public CategoriesInfo[] getCategoriesInfo(RequestContext request) {
-//        return super.getCategoriesInfo(request);
-//    }
-
     @Override
     public String getId(RequestContext request) {
         return feedSource.getFeedInformation().getId(new GetFeedRequestImpl(request));
