@@ -27,17 +27,16 @@ public final class ReflectionTools {
     private ReflectionTools() {
     }
 
-    public static <T> T construct(Class<T> c, Object... parameters) {
+    public static <T> T construct(Class<T> c, Object... parameters) throws NoSuchMethodException {
         try {
             final Constructor<T> constructor = getConstructor(c, toClassArray(parameters));
 
-            if (constructor != null) {
                 return constructor.newInstance(parameters);
-            }
 
+        } catch (NoSuchMethodException nsme) {
             throw new NoSuchMethodException("No constructors for class " + c.getCanonicalName() + " answer to given parameter list");
-        } catch (Exception instanciationException) {
-            throw new ReflectionException("Failed to create new instance of class: " + c.getCanonicalName() + ". Pump cause for more detaisl.", instanciationException);
+        } catch (Exception instantiationException) {
+            throw new ReflectionException("Failed to create new instance of class: " + c.getCanonicalName() + ". Pump cause for more details.", instantiationException);
         }
     }
 
