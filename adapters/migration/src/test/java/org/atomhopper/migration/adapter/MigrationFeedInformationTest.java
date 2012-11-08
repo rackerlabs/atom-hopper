@@ -48,8 +48,16 @@ public class MigrationFeedInformationTest {
             assertNotNull(migrationFeedInformation);
         }
 
-        public void shouldReturnId() throws Exception {
+        @Test
+        public void shouldReturnIdFromOld() throws Exception {
             when(oldFeedInformation.getId(feedRequest)).thenReturn("");
+            migrationFeedInformation.getId(feedRequest);
+        }
+
+        @Test
+        public void shouldReturnIdFromNew() throws Exception {
+            migrationFeedInformation.setReadFrom(MigrationReadFrom.NEW);
+            when(newFeedInformation.getId(feedRequest)).thenReturn("");
             migrationFeedInformation.getId(feedRequest);
         }
 
