@@ -46,6 +46,7 @@ public class PostgreSQLTextArray implements java.sql.Array {
      */
     public static String stringArrayToPostgreSQLTextArray(String[] stringArray) {
         final int arrayLength;
+        final int bufferAddition = 4;
         if (stringArray == null) {
             return NULL;
         }
@@ -69,7 +70,7 @@ public class PostgreSQLTextArray implements java.sql.Array {
             boolean shouldQuote;
             final String s = stringArray[si];
             if (s == null) {
-                neededBufferLength += 4;
+                neededBufferLength += bufferAddition;
                 shouldQuote = false;
             } else {
                 final int l = s.length();
