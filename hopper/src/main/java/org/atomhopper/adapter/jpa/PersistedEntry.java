@@ -75,19 +75,19 @@ public class PersistedEntry implements Serializable {
     }
 
     public Date getCreationDate() {
-        return creationDate;
+        return (Date) creationDate.clone();
     }
 
     public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
+        this.creationDate = (Date) creationDate.clone();
     }
 
     public Date getDateLastUpdated() {
-        return dateLastUpdated;
+        return (Date) dateLastUpdated.clone();
     }
 
     public void setDateLastUpdated(Date dateLastUpdated) {
-        this.dateLastUpdated = dateLastUpdated;
+        this.dateLastUpdated = (Date) dateLastUpdated.clone();
     }
 
     public Set<PersistedCategory> getCategories() {

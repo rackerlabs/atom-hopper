@@ -36,6 +36,9 @@ public final class CategoryStringGenerator {
                 case INCLUSIVE_OPERATOR:
                     categories.add(searchTermBuilder.toString());
                     break;
+
+                default:
+                    break;
             }
         }
 
