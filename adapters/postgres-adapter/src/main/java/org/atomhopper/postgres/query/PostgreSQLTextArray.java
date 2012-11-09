@@ -23,10 +23,10 @@ public class PostgreSQLTextArray implements java.sql.Array {
      * @param stringArray
      */
     public PostgreSQLTextArray(String[] stringArray) {
-        if (stringArray != null) {
-            this.stringArray = Arrays.copyOf(stringArray, stringArray.length);
-        } else {
+        if (stringArray == null) {
             this.stringArray = null;
+        } else {
+            this.stringArray = Arrays.copyOf(stringArray, stringArray.length);
         }
         this.stringValue = stringArrayToPostgreSQLTextArray(this.stringArray);
     }
