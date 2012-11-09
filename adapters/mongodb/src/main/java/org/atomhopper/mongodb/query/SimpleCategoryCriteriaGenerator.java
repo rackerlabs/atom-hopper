@@ -40,6 +40,9 @@ public class SimpleCategoryCriteriaGenerator implements CategoryCriteriaGenerato
                     hasTerms = true;
                     inclusionTerms.add(searchTermBuilder.toString());
                     break;
+
+                default:
+                    break;
             }
         }
     }
