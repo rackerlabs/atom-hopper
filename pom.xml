@@ -23,6 +23,7 @@
         </license>
     </licenses>
 
+    <!--
     <modules>
         <module>hopper</module>
         <module>test-suite</module>
@@ -34,6 +35,7 @@
         <module>test-util</module>
         <module>atomhopper</module>
     </modules>
+    -->
 
     <scm>
         <connection>scm:git:ssh://git@github.com/rackspace/atom-hopper.git</connection>
@@ -362,6 +364,25 @@
     </build>
 
     <profiles>
+        <profile>
+            <id>main</id>
+            <modules>
+                <module>hopper</module>
+                <module>server</module>
+                <module>adapters/hibernate</module>
+                <module>adapters/mongodb</module>
+                <module>adapters/postgres-adapter</module>
+                <module>adapters/migration</module>
+                <module>atomhopper</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>tests</id>
+            <modules>
+                <module>test-suite</module>
+                <module>test-util</module>
+            </modules>
+        </profile>
         <profile>
             <id>docs</id>
             <modules>
