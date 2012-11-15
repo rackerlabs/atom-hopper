@@ -32,7 +32,6 @@
         <module>adapters/postgres-adapter</module>
         <module>adapters/migration</module>
         <module>test-util</module>
-        <module>documentation</module>
         <module>atomhopper</module>
     </modules>
 
@@ -364,17 +363,9 @@
 
     <profiles>
         <profile>
-            <id>no-docs</id>
+            <id>docs</id>
             <modules>
-                <module>hopper</module>
-                <module>test-suite</module>
-                <module>server</module>
-                <module>adapters/hibernate</module>
-                <module>adapters/mongodb</module>
-                <module>adapters/postgres-adapter</module>
-                <module>adapters/migration</module>
-                <module>test-util</module>
-                <module>atomhopper</module>
+                <module>documentation</module>
             </modules>
         </profile>
     </profiles>
