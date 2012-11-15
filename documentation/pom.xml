@@ -25,38 +25,17 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>batik-maven-plugin</artifactId>
-                <version>1.0-beta-1</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>rasterize</goal>
-                        </goals>
-                        <configuration>
-                            <!-- identify locations of figures -->
-                            <srcDir>${basedir}/src/resources/figures</srcDir>
-                            <destDir>${basedir}/target/docbkx/webhelp/ah/content/figures</destDir>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <!-- plugin for RACKBOOK (Rackspace + DocBook) document formatting
-                  talk to Rose Coste if you need help -->
-            <plugin>
                 <groupId>com.rackspace.cloud.api</groupId>
                 <artifactId>clouddocs-maven-plugin</artifactId>
                 <!-- this <version> relates only to the *plugin* used for document formatting
                     the version of the *software* that is the subject of the document is indicated within each document:
                     look for <releaseinfo> near <pubdate>, both in the <info> section
                     1.1.0 of the plugin is compatible with Maven 2 for inclusion in the Jenkins build & color-formats sample code -->
-                <version>1.1.0</version>
+                <version>1.6.0</version>
                 <executions>
                     <execution>
                         <id>doc</id>
                         <goals>
-                            <!-- 2 output formats: PDF for print; HTML for online -->
-                            <goal>generate-pdf</goal>
                             <goal>generate-webhelp</goal>
                         </goals>
                         <phase>generate-sources</phase>
@@ -83,11 +62,12 @@
                             <!-- look here for the .xml and everything to include such as samples and figures -->
                             <sourceDirectory>src/resources</sourceDirectory>
                             <!-- highlightSource bolds some elements of sample code but disables linewrapping -->
-                            <highlightSource>true</highlightSource>
+                            <highlightSource>false</highlightSource>
                             <!-- enable callouts to label samples -->
                             <useExtensions>1</useExtensions>
                             <calloutsExtension>1</calloutsExtension>
                             <textinsertExtension>1</textinsertExtension>
+			    <useLatestSuffixInPdfUrl>0</useLatestSuffixInPdfUrl>
                             <!-- use this .XML as the source for the books to be generated as .PDF & .HTML
                                  if not specified, generate for all
                             <includes>ah-intro.xml</includes> -->
@@ -105,14 +85,6 @@
                         </configuration>
                     </execution>
                 </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.docbook</groupId>
-                        <artifactId>docbook-xml</artifactId>
-                        <version>4.4</version>
-                        <scope>runtime</scope>
-                    </dependency>
-                </dependencies>
             </plugin>
         </plugins>
     </build>
