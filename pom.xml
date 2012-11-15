@@ -361,4 +361,21 @@
             </plugins>
         </pluginManagement>
     </build>
+
+    <profiles>
+        <profile>
+            <id>no-docs</id>
+            <modules>
+                <module>hopper</module>
+                <module>test-suite</module>
+                <module>server</module>
+                <module>adapters/hibernate</module>
+                <module>adapters/mongodb</module>
+                <module>adapters/postgres-adapter</module>
+                <module>adapters/migration</module>
+                <module>test-util</module>
+                <module>atomhopper</module>
+            </modules>
+        </profile>
+    </profiles>
 </project>
