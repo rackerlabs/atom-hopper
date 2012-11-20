@@ -99,13 +99,6 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
         }
     }
 
-//  TODO: Implement this?
-//
-//    @Override
-//    public CategoriesInfo[] getCategoriesInfo(RequestContext request) {
-//        return super.getCategoriesInfo(request);
-//    }
-
     @Override
     public String getId(RequestContext request) {
         return feedSource.getFeedInformation().getId(new GetFeedRequestImpl(request));
@@ -126,10 +119,8 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
         try {
             final String pageSizeString = getFeedRequest.getPageSize();
 
-            if (StringUtils.isNotBlank(pageSizeString)) {
-                if ((Integer.parseInt(pageSizeString) < minLimit) || (Integer.parseInt(pageSizeString) > maxLimit)) {
-                    return ProviderHelper.badrequest(request, limitErrorMessage);
-                }
+            if ((StringUtils.isNotBlank(pageSizeString)) && ((Integer.parseInt(pageSizeString) < minLimit) || (Integer.parseInt(pageSizeString) > maxLimit))) {
+                return ProviderHelper.badrequest(request, limitErrorMessage);
             }
         } catch (NumberFormatException nfe) {
             return ProviderHelper.badrequest(request, limitErrorMessage);

@@ -23,10 +23,10 @@ public class PostgreSQLTextArray implements java.sql.Array {
      * @param stringArray
      */
     public PostgreSQLTextArray(String[] stringArray) {
-        if (stringArray != null) {
-            this.stringArray = Arrays.copyOf(stringArray, stringArray.length);
-        } else {
+        if (stringArray == null) {
             this.stringArray = null;
+        } else {
+            this.stringArray = Arrays.copyOf(stringArray, stringArray.length);
         }
         this.stringValue = stringArrayToPostgreSQLTextArray(this.stringArray);
     }
@@ -46,6 +46,7 @@ public class PostgreSQLTextArray implements java.sql.Array {
      */
     public static String stringArrayToPostgreSQLTextArray(String[] stringArray) {
         final int arrayLength;
+        final int bufferAddition = 4;
         if (stringArray == null) {
             return NULL;
         }
@@ -57,22 +58,23 @@ public class PostgreSQLTextArray implements java.sql.Array {
         }
 
         // count the string length and if need to quote
-        int neededBufferLentgh = 2; // count the beginning '{' and the ending '}' brackets
+        int neededBufferLength = 2;
+        // count the beginning '{' and the ending '}' brackets
         boolean[] shouldQuoteArray = new boolean[stringArray.length];
         for (int si = 0; si < arrayLength; si++) {
             // count the comma after the first element
             if (si > 0) {
-                neededBufferLentgh++;
+                neededBufferLength++;
             }
 
             boolean shouldQuote;
             final String s = stringArray[si];
             if (s == null) {
-                neededBufferLentgh += 4;
+                neededBufferLength += bufferAddition;
                 shouldQuote = false;
             } else {
                 final int l = s.length();
-                neededBufferLentgh += l;
+                neededBufferLength += l;
                 if (l == 0 || s.equalsIgnoreCase(NULL)) {
                     shouldQuote = true;
                 } else {
@@ -85,7 +87,7 @@ public class PostgreSQLTextArray implements java.sql.Array {
                             case '\\':
                                 shouldQuote = true;
                                 // we will escape these characters
-                                neededBufferLentgh++;
+                                neededBufferLength++;
                                 break;
                             case ',':
                             case '\'':
@@ -103,14 +105,14 @@ public class PostgreSQLTextArray implements java.sql.Array {
                 }
                 // count the quotes
                 if (shouldQuote) {
-                    neededBufferLentgh += 2;
+                    neededBufferLength += 2;
                 }
             }
             shouldQuoteArray[si] = shouldQuote;
         }
 
         // construct the String
-        final StringBuilder sb = new StringBuilder(neededBufferLentgh);
+        final StringBuilder sb = new StringBuilder(neededBufferLength);
         sb.append('{');
         for (int si = 0; si < arrayLength; si++) {
             final String s = stringArray[si];
@@ -137,7 +139,7 @@ public class PostgreSQLTextArray implements java.sql.Array {
             }
         }
         sb.append('}');
-        assert sb.length() == neededBufferLentgh;
+        assert sb.length() == neededBufferLength;
         return sb.toString();
     }
 

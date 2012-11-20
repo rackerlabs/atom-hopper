@@ -25,7 +25,7 @@
           </elementProp>
           <elementProp name="feed" elementType="Argument">
             <stringProp name="Argument.name">feed</stringProp>
-            <stringProp name="Argument.value">${__P(paging.feed,atomhopper-1.2.0-SNAPSHOT/namespace/feed)}</stringProp>
+            <stringProp name="Argument.value">${__P(paging.feed,namespace/feed)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="protocol" elementType="Argument">

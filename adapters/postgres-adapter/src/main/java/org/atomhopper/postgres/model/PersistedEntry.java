@@ -48,23 +48,23 @@ public class PersistedEntry {
     }
 
     public Date getCreationDate() {
-        return creationDate;
+        return (Date) creationDate.clone();
     }
 
     public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
+        this.creationDate = (Date) creationDate.clone();
     }
 
     public Date getDateLastUpdated() {
-        return dateLastUpdated;
+        return (Date) dateLastUpdated.clone();
     }
 
     public void setDateLastUpdated(Date dateLastUpdated) {
-        this.dateLastUpdated = dateLastUpdated;
+        this.dateLastUpdated = (Date) dateLastUpdated.clone();
     }
 
     public String[] getCategories() {
-        return categories;
+        return categories.clone();
     }
 
     public void setCategories(String[] categories) {

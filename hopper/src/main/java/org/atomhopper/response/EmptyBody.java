@@ -18,6 +18,10 @@ public final class EmptyBody {
 
     @Override
     public boolean equals(Object obj) {
-        return obj.hashCode() == hashCode();
+        if (obj != null) {
+            return obj.hashCode() == hashCode();
+        } else {
+            return false;
+        }
     }
 }
