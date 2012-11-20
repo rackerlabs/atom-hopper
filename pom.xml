@@ -33,6 +33,7 @@
         <module>test-util</module>
         <module>atomhopper</module>
         <module>test-suite</module>
+        <module>documentation</module>
     </modules>
 
     <scm>
@@ -360,13 +361,4 @@
             </plugins>
         </pluginManagement>
     </build>
-
-    <profiles>
-        <profile>
-            <id>docs</id>
-            <modules>
-                <module>documentation</module>
-            </modules>
-        </profile>
-    </profiles>
 </project>
