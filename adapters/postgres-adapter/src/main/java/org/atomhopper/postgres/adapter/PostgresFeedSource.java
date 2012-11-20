@@ -279,7 +279,7 @@ public class PostgresFeedSource implements FeedSource {
             case FORWARD:
 
                 final String forwardSQL = "SELECT * FROM entries WHERE feed = ? AND datelastupdated > ? ORDER BY datelastupdated ASC LIMIT ?";
-                final String forwardWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND datelastupdated > ? AND categories @> ?::varchar[] ORDER BY datelastupdated ASC LIMIT ?";
+                final String forwardWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND datelastupdated > ? AND categories && ?::varchar[] ORDER BY datelastupdated ASC LIMIT ?";
 
                 if (searchString.length() > 0) {
                     feedPage = jdbcTemplate
@@ -299,7 +299,7 @@ public class PostgresFeedSource implements FeedSource {
             case BACKWARD:
 
                 final String backwardSQL = "SELECT * FROM entries WHERE feed = ? AND datelastupdated <= ? ORDER BY datelastupdated DESC LIMIT ?";
-                final String backwardWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND datelastupdated <= ? AND categories @> ?::varchar[] ORDER BY datelastupdated DESC LIMIT ?";
+                final String backwardWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND datelastupdated <= ? AND categories && ?::varchar[] ORDER BY datelastupdated DESC LIMIT ?";
 
                 if (searchString.length() > 0) {
                     feedPage = jdbcTemplate
@@ -328,7 +328,7 @@ public class PostgresFeedSource implements FeedSource {
 
     private Integer getFeedCount(final String feedName, final String searchString) {
         final String totalFeedEntryCountSQL = "SELECT COUNT(*) FROM entries WHERE feed = ?";
-        final String totalFeedEntryCountWithCatsSQL = "SELECT COUNT(*) FROM entries WHERE feed = ? AND categories @> ?::varchar[]";
+        final String totalFeedEntryCountWithCatsSQL = "SELECT COUNT(*) FROM entries WHERE feed = ? AND categories && ?::varchar[]";
 
         int totalFeedEntryCount;
 
@@ -346,7 +346,7 @@ public class PostgresFeedSource implements FeedSource {
     private List<PersistedEntry> getFeedHead(final String feedName, final int pageSize, final String searchString) {
 
         final String getFeedHeadSQL = "SELECT * FROM entries WHERE feed = ? ORDER BY datelastupdated DESC LIMIT ?";
-        final String getFeedHeadWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND categories @> ?::varchar[] ORDER BY datelastupdated DESC LIMIT ?";
+        final String getFeedHeadWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND categories && ?::varchar[] ORDER BY datelastupdated DESC LIMIT ?";
 
         List<PersistedEntry> persistedEntries;
         if (searchString.length() > 0) {
@@ -365,7 +365,7 @@ public class PostgresFeedSource implements FeedSource {
     private List<PersistedEntry> getLastPage(final String feedName, final int pageSize, final String searchString) {
 
         final String lastLinkQuerySQL = "SELECT * FROM entries WHERE feed = ? ORDER BY datelastupdated ASC LIMIT ?";
-        final String lastLinkQueryWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND categories @> ?::varchar[] ORDER BY datelastupdated ASC LIMIT ?";
+        final String lastLinkQueryWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND categories && ?::varchar[] ORDER BY datelastupdated ASC LIMIT ?";
 
         List<PersistedEntry> lastPersistedEntries;
         if (searchString.length() > 0) {
@@ -383,7 +383,7 @@ public class PostgresFeedSource implements FeedSource {
 
     private PersistedEntry getNextMarker(final PersistedEntry persistedEntry, final String feedName, final String searchString) {
         final String nextLinkSQL = "SELECT * FROM entries where feed = ? and datelastupdated < ? ORDER BY datelastupdated DESC LIMIT 1";
-        final String nextLinkWithCatsSQL = "SELECT * FROM entries where feed = ? and datelastupdated < ? AND categories @> ?::varchar[] ORDER BY datelastupdated DESC LIMIT 1";
+        final String nextLinkWithCatsSQL = "SELECT * FROM entries where feed = ? and datelastupdated < ? AND categories && ?::varchar[] ORDER BY datelastupdated DESC LIMIT 1";
 
         List<PersistedEntry> nextEntry;
         if (searchString.length() > 0) {
