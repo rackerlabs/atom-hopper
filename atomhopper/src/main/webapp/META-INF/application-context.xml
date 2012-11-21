@@ -75,6 +75,9 @@
         <property name="maxIdle" value="25" />
         <property name="initialSize" value="10" />
         <property name="maxActive" value="50" />
+        <property name="validationQuery" value="SELECT 1" />
+        <property name="testWhileIdle" value="true" />
+        <property name="timeBetweenEvitctionRunsMillis" value="10000" />
     </bean>
 
     <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
