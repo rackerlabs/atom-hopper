@@ -149,7 +149,7 @@ Date.prototype.toString = function () {return isNaN (this) ? &apos;NaN&apos; : [
 var now = new Date();
 var month = now.getMonth() + 1;
 var day = now.getDate();
-var hours  = now.getHours() + 6;
+var hours  = now.getHours();
 var minutes = now.getMinutes();
 var seconds = now.getSeconds();
 
@@ -166,7 +166,7 @@ if (seconds &lt; 10)
 
 //var dateString =  now.getFullYear() + &quot;-&quot; +month + &quot;-&quot; + day + &quot;T&quot;+ hours+ &quot;:&quot; +minutes+ &quot;:&quot; + seconds;
 //var dateString =  now.getFullYear()+ &quot;-&quot; +month;  
-var dateString =  now.getFullYear() + &quot;-&quot; +month + &quot;-&quot; + day + &quot;T&quot;+ hours+ &quot;:&quot; +minutes;
+var dateString =  now.getFullYear() + &quot;-&quot; +month + &quot;-&quot; + day 
 
 vars.put(&quot;date_post&quot;, dateString)</stringProp>
                 <stringProp name="scriptLanguage">javascript</stringProp>
@@ -297,7 +297,7 @@ Date.prototype.toString = function () {return isNaN (this) ? &apos;NaN&apos; : [
 var now = new Date();
 var month = now.getMonth() + 1;
 var day = now.getDate();
-var hours  = now.getHours() + 6;
+var hours  = now.getHours();
 var minutes = now.getMinutes();
 var seconds = now.getSeconds();
 
@@ -314,7 +314,7 @@ if (seconds &lt; 10)
 
 //var dateString =  now.getFullYear() + &quot;-&quot; +month + &quot;-&quot; + day + &quot;T&quot;+ hours+ &quot;:&quot; +minutes+ &quot;:&quot; + seconds;
 //var dateString =  now.getFullYear()+ &quot;-&quot; +month;  
-var dateString =  now.getFullYear() + &quot;-&quot; +month + &quot;-&quot; + day + &quot;T&quot;+ hours+ &quot;:&quot; +minutes;
+var dateString =  now.getFullYear() + &quot;-&quot; +month + &quot;-&quot; + day 
 
 vars.put(&quot;date_post&quot;, dateString)</stringProp>
                 <stringProp name="scriptLanguage">javascript</stringProp>
@@ -436,7 +436,7 @@ Date.prototype.toString = function () {return isNaN (this) ? &apos;NaN&apos; : [
 var now = new Date();
 var month = now.getMonth() + 1;
 var day = now.getDate();
-var hours  = now.getHours() + 6;
+var hours  = now.getHours();
 var minutes = now.getMinutes();
 var seconds = now.getSeconds();
 
@@ -453,7 +453,7 @@ if (seconds &lt; 10)
 
 //var dateString =  now.getFullYear() + &quot;-&quot; +month + &quot;-&quot; + day + &quot;T&quot;+ hours+ &quot;:&quot; +minutes+ &quot;:&quot; + seconds;
 //var dateString =  now.getFullYear()+ &quot;-&quot; +month;  
-var dateString =  now.getFullYear() + &quot;-&quot; +month + &quot;-&quot; + day + &quot;T&quot;+ hours+ &quot;:&quot; +minutes;
+var dateString =  now.getFullYear() + &quot;-&quot; +month + &quot;-&quot; + day
 
 vars.put(&quot;date_post&quot;, dateString)</stringProp>
                 <stringProp name="scriptLanguage">javascript</stringProp>
