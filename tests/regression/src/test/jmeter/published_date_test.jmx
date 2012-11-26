@@ -63,6 +63,36 @@
         <stringProp name="HTTPSampler.concurrentPool">4</stringProp>
       </ConfigTestElement>
       <hashTree/>
+      <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="post.title" elementType="Argument">
+            <stringProp name="Argument.name">post.title</stringProp>
+            <stringProp name="Argument.value">Atom Hopper Test - negative</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="post.author" elementType="Argument">
+            <stringProp name="Argument.name">post.author</stringProp>
+            <stringProp name="Argument.value">Atom Hopper Test Team</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="post.content" elementType="Argument">
+            <stringProp name="Argument.name">post.content</stringProp>
+            <stringProp name="Argument.value">This is a test of Atom Hopper negative test verify-atom-entry.jmx (you shouldn&apos;t see this).</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="post.category" elementType="Argument">
+            <stringProp name="Argument.name">post.category</stringProp>
+            <stringProp name="Argument.value">negativetest</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="post.published" elementType="Argument">
+            <stringProp name="Argument.name">post.published</stringProp>
+            <stringProp name="Argument.value">2012-10-13 00:00:00.000</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
+      </Arguments>
+      <hashTree/>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Run Test" enabled="true">
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
