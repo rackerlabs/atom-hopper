@@ -166,7 +166,7 @@ if (seconds &lt; 10)
 
 //var dateString =  now.getFullYear() + &quot;-&quot; +month + &quot;-&quot; + day + &quot;T&quot;+ hours+ &quot;:&quot; +minutes+ &quot;:&quot; + seconds;
 //var dateString =  now.getFullYear()+ &quot;-&quot; +month;  
-var dateString =  now.getFullYear() + &quot;-&quot; +month + &quot;-&quot; + day + &quot;T&quot;+ hours
+var dateString =  now.getFullYear() + &quot;-&quot; +month + &quot;-&quot; + day 
 
 vars.put(&quot;date_post&quot;, dateString)</stringProp>
                 <stringProp name="scriptLanguage">javascript</stringProp>
@@ -314,7 +314,7 @@ if (seconds &lt; 10)
 
 //var dateString =  now.getFullYear() + &quot;-&quot; +month + &quot;-&quot; + day + &quot;T&quot;+ hours+ &quot;:&quot; +minutes+ &quot;:&quot; + seconds;
 //var dateString =  now.getFullYear()+ &quot;-&quot; +month;  
-var dateString =  now.getFullYear() + &quot;-&quot; +month + &quot;-&quot; + day + &quot;T&quot;+ hours
+var dateString =  now.getFullYear() + &quot;-&quot; +month + &quot;-&quot; + day 
 
 vars.put(&quot;date_post&quot;, dateString)</stringProp>
                 <stringProp name="scriptLanguage">javascript</stringProp>
@@ -453,7 +453,7 @@ if (seconds &lt; 10)
 
 //var dateString =  now.getFullYear() + &quot;-&quot; +month + &quot;-&quot; + day + &quot;T&quot;+ hours+ &quot;:&quot; +minutes+ &quot;:&quot; + seconds;
 //var dateString =  now.getFullYear()+ &quot;-&quot; +month;  
-var dateString =  now.getFullYear() + &quot;-&quot; +month + &quot;-&quot; + day + &quot;T&quot;+ hours
+var dateString =  now.getFullYear() + &quot;-&quot; +month + &quot;-&quot; + day
 
 vars.put(&quot;date_post&quot;, dateString)</stringProp>
                 <stringProp name="scriptLanguage">javascript</stringProp>
