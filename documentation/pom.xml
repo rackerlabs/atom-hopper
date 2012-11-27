@@ -31,7 +31,7 @@
                     the version of the *software* that is the subject of the document is indicated within each document:
                     look for <releaseinfo> near <pubdate>, both in the <info> section
                     1.1.0 of the plugin is compatible with Maven 2 for inclusion in the Jenkins build & color-formats sample code -->
-                <version>1.1.0</version>
+                <version>1.6.1</version>
                 <executions>
                     <execution>
                         <id>doc</id>
@@ -67,7 +67,7 @@
                             <useExtensions>1</useExtensions>
                             <calloutsExtension>1</calloutsExtension>
                             <textinsertExtension>1</textinsertExtension>
-			    <useLatestSuffixInPdfUrl>0</useLatestSuffixInPdfUrl>
+			                <useLatestSuffixInPdfUrl>0</useLatestSuffixInPdfUrl>
                             <!-- use this .XML as the source for the books to be generated as .PDF & .HTML
                                  if not specified, generate for all
                             <includes>ah-intro.xml</includes> -->
