@@ -137,7 +137,11 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
     public ResponseContext postEntry(RequestContext request) {
         try {
             final AdapterResponse<Entry> response = feedPublisher.postEntry(new PostEntryRequestImpl(request));
-            return entryResponseHandler.handleResponse(request, response);
+            if (response.getBody() != null && response.getBody().getSelfLinkResolvedHref() != null) {
+                return entryResponseHandler.handleResponse(request, response).addHeader("Location", response.getBody().getSelfLinkResolvedHref().toString());
+            } else {
+                return entryResponseHandler.handleResponse(request, response);
+            }
         } catch (ParseException ex) {
             return ProviderHelper.createErrorResponse(Abdera.getInstance(), HttpStatus.UNPROCESSABLE_ENTITY.value(), ex.getMessage(), ex);
         } catch (RequestParsingException rpex) {
