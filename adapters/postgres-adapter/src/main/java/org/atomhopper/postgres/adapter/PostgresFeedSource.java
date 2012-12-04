@@ -24,6 +24,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.*;
 
 import static org.apache.abdera.i18n.text.UrlEncoding.decode;
@@ -117,7 +119,7 @@ public class PostgresFeedSource implements FeedSource {
                                          .append(baseFeedUri).append(MARKER_EQ)
                                          .append(persistedEntries.get(0).getEntryId())
                                          .append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
-                                         .append(AND_SEARCH_EQ).append(encode(searchString))
+                                         .append(AND_SEARCH_EQ).append(urlEncode(searchString))
                                          .append(AND_DIRECTION_EQ_FORWARD).toString())
                     .setRel(Link.REL_PREVIOUS);
 
@@ -130,7 +132,7 @@ public class PostgresFeedSource implements FeedSource {
                 hyrdatedFeed.addLink(new StringBuilder().append(baseFeedUri)
                                              .append(MARKER_EQ).append(nextEntry.getEntryId())
                                              .append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
-                                             .append(AND_SEARCH_EQ).append(encode(searchString))
+                                             .append(AND_SEARCH_EQ).append(urlEncode(searchString))
                                              .append(AND_DIRECTION_EQ_BACKWARD).toString())
                         .setRel(Link.REL_NEXT);
             }
@@ -224,7 +226,7 @@ public class PostgresFeedSource implements FeedSource {
                             .append(MARKER_EQ).append(
                             lastPersistedEntries.get(lastPersistedEntries.size() - 1).getEntryId())
                             .append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
-                            .append(AND_SEARCH_EQ).append(encode(searchString))
+                            .append(AND_SEARCH_EQ).append(urlEncode(searchString))
                             .append(AND_DIRECTION_EQ_BACKWARD).toString())
                     .setRel(Link.REL_LAST);
         }
@@ -400,6 +402,15 @@ public class PostgresFeedSource implements FeedSource {
         }
 
         return nextEntry.size() > 0 ? nextEntry.get(0) : null;
+    }
+
+    private String urlEncode(String searchString)  {
+        try {
+            return URLEncoder.encode(searchString, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            //noop - should never get here
+            return "";
+        }
     }
 }
 

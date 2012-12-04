@@ -1,6 +1,8 @@
 package org.atomhopper.hibernate.adapter;
 
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -57,7 +59,7 @@ public class HibernateFeedSource implements FeedSource {
         queryParams.append(baseFeedUri).append("?limit=").append(String.valueOf(pageSize));
 
         if(searchString.length() > 0) {
-            queryParams.append("&search=").append(encode(searchString).toString());
+            queryParams.append("&search=").append(urlEncode(searchString).toString());
         }
         if(getFeedRequest.getPageMarker() != null && getFeedRequest.getPageMarker().length() > 0) {
                 queryParams.append("&marker=").append(getFeedRequest.getPageMarker());
@@ -102,7 +104,7 @@ public class HibernateFeedSource implements FeedSource {
                     .append("&limit=")
                     .append(String.valueOf(pageSize))
                     .append("&search=")
-                    .append(encode(searchString).toString())
+                    .append(urlEncode(searchString).toString())
                     .append("&direction=forward").toString())
                     .setRel(Link.REL_PREVIOUS);
 
@@ -121,7 +123,7 @@ public class HibernateFeedSource implements FeedSource {
                         .append("&limit=")
                         .append(String.valueOf(pageSize))
                         .append("&search=")
-                        .append(encode(searchString).toString())
+                        .append(urlEncode(searchString).toString())
                         .append("&direction=backward").toString()).setRel(Link.REL_NEXT);
             }
         }
@@ -211,7 +213,7 @@ public class HibernateFeedSource implements FeedSource {
                         .append("&limit=")
                         .append(String.valueOf(pageSize))
                         .append("&search=")
-                        .append(encode(searchString).toString())
+                        .append(urlEncode(searchString).toString())
                         .append("&direction=backward").toString())
                         .setRel(Link.REL_LAST);
             }
@@ -247,5 +249,14 @@ public class HibernateFeedSource implements FeedSource {
         }
 
         return response;
+    }
+
+    private String urlEncode(String searchString)  {
+        try {
+            return URLEncoder.encode(searchString, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            //noop - should never get here
+            return "";
+        }
     }
 }
