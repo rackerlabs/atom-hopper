@@ -3,6 +3,8 @@ package org.atomhopper.mongodb.adapter;
 import com.mongodb.DBCollection;
 import com.mongodb.MongoException;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.*;
 import org.apache.abdera.Abdera;
 import static org.apache.abdera.i18n.text.UrlEncoding.decode;
@@ -62,7 +64,7 @@ public class MongodbFeedSource implements FeedSource {
         queryParams.append(baseFeedUri).append("?limit=").append(String.valueOf(pageSize));
 
         if (searchString.length() > 0) {
-            queryParams.append("&search=").append(encode(searchString).toString());
+            queryParams.append("&search=").append(urlEncode(searchString).toString());
         }
         if (getFeedRequest.getPageMarker() != null && getFeedRequest.getPageMarker().length() > 0) {
                 queryParams.append("&marker=").append(getFeedRequest.getPageMarker());
@@ -105,7 +107,7 @@ public class MongodbFeedSource implements FeedSource {
                     .append(baseFeedUri).append("?marker=")
                     .append(persistedEntries.get(0).getEntryId())
                     .append("&limit=").append(String.valueOf(pageSize))
-                    .append("&search=").append(encode(searchString).toString())
+                    .append("&search=").append(urlEncode(searchString).toString())
                     .append("&direction=forward").toString())
                     .setRel(Link.REL_PREVIOUS);
 
@@ -124,7 +126,7 @@ public class MongodbFeedSource implements FeedSource {
                 hyrdatedFeed.addLink(new StringBuilder().append(baseFeedUri)
                         .append("?marker=").append(nextEntry.getEntryId())
                         .append("&limit=").append(String.valueOf(pageSize))
-                        .append("&search=").append(encode(searchString).toString())
+                        .append("&search=").append(urlEncode(searchString).toString())
                         .append("&direction=backward").toString())
                         .setRel(Link.REL_NEXT);
             }
@@ -225,7 +227,7 @@ public class MongodbFeedSource implements FeedSource {
                     PersistedEntry.class, formatCollectionName(getFeedRequest.getFeedName()));
 
             if (lastPersistedEntries != null && !(lastPersistedEntries.isEmpty())) {
-                hyrdatedFeed.addLink(new StringBuilder().append(baseFeedUri).append("?marker=").append(lastPersistedEntries.get(lastPersistedEntries.size() - 1).getEntryId()).append("&limit=").append(String.valueOf(pageSize)).append("&search=").append(encode(searchString).toString()).append("&direction=backward").toString()).setRel(Link.REL_LAST);
+                hyrdatedFeed.addLink(new StringBuilder().append(baseFeedUri).append("?marker=").append(lastPersistedEntries.get(lastPersistedEntries.size() - 1).getEntryId()).append("&limit=").append(String.valueOf(pageSize)).append("&search=").append(urlEncode(searchString).toString()).append("&direction=backward").toString()).setRel(Link.REL_LAST);
             }
 
             response = ResponseBuilder.found(hyrdatedFeed);
@@ -304,5 +306,14 @@ public class MongodbFeedSource implements FeedSource {
                         return collection.count(query.getQueryObject());
                     }
                 });
+    }
+
+    private String urlEncode(String searchString)  {
+        try {
+            return URLEncoder.encode(searchString, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            //noop - should never get here
+            return "";
+        }
     }
 }
