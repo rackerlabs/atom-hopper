@@ -286,13 +286,13 @@ public class PostgresFeedSource implements FeedSource {
                 if (searchString.length() > 0) {
                     feedPage = jdbcTemplate
                             .query(forwardWithCatsSQL,
-                                   new Object[]{feedName, markerEntry.getCreationDate(),
+                                   new Object[]{feedName, markerEntry.getDateLastUpdated(),
                                            CategoryStringGenerator.getPostgresCategoryString(searchString), pageSize},
                                    new EntryRowMapper());
                 } else {
                     feedPage = jdbcTemplate
                             .query(forwardSQL,
-                                   new Object[]{feedName, markerEntry.getCreationDate(), pageSize},
+                                   new Object[]{feedName, markerEntry.getDateLastUpdated(), pageSize},
                                    new EntryRowMapper());
                 }
                 Collections.reverse(feedPage);
@@ -306,13 +306,13 @@ public class PostgresFeedSource implements FeedSource {
                 if (searchString.length() > 0) {
                     feedPage = jdbcTemplate
                             .query(backwardWithCatsSQL,
-                                   new Object[]{feedName, markerEntry.getCreationDate(),
+                                   new Object[]{feedName, markerEntry.getDateLastUpdated(),
                                            CategoryStringGenerator.getPostgresCategoryString(searchString), pageSize},
                                    new EntryRowMapper());
                 } else {
                     feedPage = jdbcTemplate
                             .query(backwardSQL,
-                                   new Object[]{feedName, markerEntry.getCreationDate(), pageSize},
+                                   new Object[]{feedName, markerEntry.getDateLastUpdated(), pageSize},
                                    new EntryRowMapper());
                 }
                 break;
