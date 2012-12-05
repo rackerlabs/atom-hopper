@@ -280,8 +280,8 @@ public class PostgresFeedSource implements FeedSource {
         switch (direction) {
             case FORWARD:
 
-                final String forwardSQL = "SELECT * FROM entries WHERE feed = ? AND datelastupdated > ? ORDER BY datelastupdated ASC, entryid ASC LIMIT ?";
-                final String forwardWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND datelastupdated > ? AND categories && ?::varchar[] ORDER BY datelastupdated ASC, entryid ASC LIMIT ?";
+                final String forwardSQL = "SELECT * FROM entries WHERE feed = ? AND datelastupdated >= ? ORDER BY datelastupdated ASC, entryid ASC LIMIT ? OFFSET 1";
+                final String forwardWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND datelastupdated >= ? AND categories && ?::varchar[] ORDER BY datelastupdated ASC, entryid ASC LIMIT ? OFFSET 1";
 
                 if (searchString.length() > 0) {
                     feedPage = jdbcTemplate
@@ -384,8 +384,8 @@ public class PostgresFeedSource implements FeedSource {
     }
 
     private PersistedEntry getNextMarker(final PersistedEntry persistedEntry, final String feedName, final String searchString) {
-        final String nextLinkSQL = "SELECT * FROM entries where feed = ? and datelastupdated < ? ORDER BY datelastupdated DESC, entryid DESC LIMIT 1";
-        final String nextLinkWithCatsSQL = "SELECT * FROM entries where feed = ? and datelastupdated < ? AND categories && ?::varchar[] ORDER BY datelastupdated DESC, entryid DESC LIMIT 1";
+        final String nextLinkSQL = "SELECT * FROM entries where feed = ? and datelastupdated <= ? ORDER BY datelastupdated DESC, entryid DESC LIMIT 1 OFFSET 1";
+        final String nextLinkWithCatsSQL = "SELECT * FROM entries where feed = ? and datelastupdated <= ? AND categories && ?::varchar[] ORDER BY datelastupdated DESC, entryid DESC LIMIT 1 OFFSET 1";
 
         List<PersistedEntry> nextEntry;
         if (searchString.length() > 0) {
