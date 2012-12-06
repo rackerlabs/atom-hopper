@@ -51,6 +51,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.atomhopper.adapter</groupId>
+            <artifactId>jdbc-adapter</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>postgresql</groupId>
             <artifactId>postgresql</artifactId>
         </dependency>
