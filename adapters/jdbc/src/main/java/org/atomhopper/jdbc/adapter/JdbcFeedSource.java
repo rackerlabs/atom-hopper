@@ -366,7 +366,7 @@ public class JdbcFeedSource implements FeedSource {
 
     private List<PersistedEntry> getLastPage(final String feedName, final int pageSize, final String searchString) {
 
-        final String lastLinkQuerySQL = "SELECT * FROM entries WHERE feed = ? ORDER BY id ASC ASC LIMIT ?";
+        final String lastLinkQuerySQL = "SELECT * FROM entries WHERE feed = ? ORDER BY id ASC LIMIT ?";
         final String lastLinkQueryWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND categories && ?::varchar[] ORDER BY id ASC LIMIT ?";
 
         List<PersistedEntry> lastPersistedEntries;
