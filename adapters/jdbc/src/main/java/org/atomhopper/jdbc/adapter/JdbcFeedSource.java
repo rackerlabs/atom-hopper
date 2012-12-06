@@ -280,8 +280,8 @@ public class JdbcFeedSource implements FeedSource {
         switch (direction) {
             case FORWARD:
 
-                final String forwardSQL = "SELECT * FROM entries WHERE feed = ? AND id > ? ORDER BY id ASC LIMIT ?";
-                final String forwardWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND id > ? AND categories && ?::varchar[] ORDER BY id ASC LIMIT ?";
+                final String forwardSQL = "SELECT * FROM entries WHERE feed = ? AND id > ? ORDER BY datelastupdated ASC, id ASC LIMIT ?";
+                final String forwardWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND id > ? AND categories && ?::varchar[] ORDER BY datelastupdated ASC, id ASC LIMIT ?";
 
                 if (searchString.length() > 0) {
                     feedPage = jdbcTemplate
@@ -300,8 +300,8 @@ public class JdbcFeedSource implements FeedSource {
 
             case BACKWARD:
 
-                final String backwardSQL = "SELECT * FROM entries WHERE feed = ? AND id <= ? ORDER BY id DESC LIMIT ?";
-                final String backwardWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND id <= ? AND categories && ?::varchar[] ORDER BY id DESC LIMIT ?";
+                final String backwardSQL = "SELECT * FROM entries WHERE feed = ? AND id <= ? ORDER BY datelastupdated DESC, id DESC LIMIT ?";
+                final String backwardWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND id <= ? AND categories && ?::varchar[] ORDER BY datelastupdated DESC, id DESC LIMIT ?";
 
                 if (searchString.length() > 0) {
                     feedPage = jdbcTemplate
@@ -347,8 +347,8 @@ public class JdbcFeedSource implements FeedSource {
 
     private List<PersistedEntry> getFeedHead(final String feedName, final int pageSize, final String searchString) {
 
-        final String getFeedHeadSQL = "SELECT * FROM entries WHERE feed = ? ORDER BY id DESC LIMIT ?";
-        final String getFeedHeadWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND categories && ?::varchar[] ORDER BY id DESC LIMIT ?";
+        final String getFeedHeadSQL = "SELECT * FROM entries WHERE feed = ? ORDER BY datelastupdated DESC, id DESC LIMIT ?";
+        final String getFeedHeadWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND categories && ?::varchar[] ORDER BY datelastupdated DESC, id DESC LIMIT ?";
 
         List<PersistedEntry> persistedEntries;
         if (searchString.length() > 0) {
@@ -366,8 +366,8 @@ public class JdbcFeedSource implements FeedSource {
 
     private List<PersistedEntry> getLastPage(final String feedName, final int pageSize, final String searchString) {
 
-        final String lastLinkQuerySQL = "SELECT * FROM entries WHERE feed = ? ORDER BY id ASC LIMIT ?";
-        final String lastLinkQueryWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND categories && ?::varchar[] ORDER BY id ASC LIMIT ?";
+        final String lastLinkQuerySQL = "SELECT * FROM entries WHERE feed = ? ORDER BY datelastupdated ASC, id ASC LIMIT ?";
+        final String lastLinkQueryWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND categories && ?::varchar[] ORDER BY datelastupdated ASC, id ASC LIMIT ?";
 
         List<PersistedEntry> lastPersistedEntries;
         if (searchString.length() > 0) {
@@ -384,8 +384,8 @@ public class JdbcFeedSource implements FeedSource {
     }
 
     private PersistedEntry getNextMarker(final PersistedEntry persistedEntry, final String feedName, final String searchString) {
-        final String nextLinkSQL = "SELECT * FROM entries where feed = ? and id < ? ORDER BY id DESC LIMIT 1";
-        final String nextLinkWithCatsSQL = "SELECT * FROM entries where feed = ? and id < ? AND categories && ?::varchar[] ORDER BY id DESC LIMIT 1";
+        final String nextLinkSQL = "SELECT * FROM entries where feed = ? and id < ? ORDER BY datelastupdated DESC, id DESC LIMIT 1";
+        final String nextLinkWithCatsSQL = "SELECT * FROM entries where feed = ? and id < ? AND categories && ?::varchar[] ORDER BY datelastupdated DESC, id DESC LIMIT 1";
 
         List<PersistedEntry> nextEntry;
         if (searchString.length() > 0) {
