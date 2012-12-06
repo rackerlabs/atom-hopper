@@ -1,4 +1,4 @@
-package org.atomhopper.postgres.adapter;
+package org.atomhopper.jdbc.adapter;
 
 import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Document;
@@ -13,9 +13,9 @@ import org.atomhopper.adapter.ResponseBuilder;
 import org.atomhopper.adapter.request.adapter.GetEntryRequest;
 import org.atomhopper.adapter.request.adapter.GetFeedRequest;
 import org.atomhopper.dbal.PageDirection;
-import org.atomhopper.postgres.model.PersistedEntry;
-import org.atomhopper.postgres.query.CategoryStringGenerator;
-import org.atomhopper.postgres.query.EntryRowMapper;
+import org.atomhopper.jdbc.model.PersistedEntry;
+import org.atomhopper.jdbc.query.CategoryStringGenerator;
+import org.atomhopper.jdbc.query.EntryRowMapper;
 import org.atomhopper.response.AdapterResponse;
 import org.atomhopper.util.uri.template.EnumKeyedTemplateParameters;
 import org.atomhopper.util.uri.template.URITemplate;
@@ -32,10 +32,10 @@ import static org.apache.abdera.i18n.text.UrlEncoding.decode;
 import static org.apache.abdera.i18n.text.UrlEncoding.encode;
 
 
-public class PostgresFeedSource implements FeedSource {
+public class JdbcFeedSource implements FeedSource {
 
     private static final Logger LOG = LoggerFactory.getLogger(
-            PostgresFeedSource.class);
+            JdbcFeedSource.class);
 
     private static final String MARKER_EQ = "?marker=";
     private static final String LIMIT_EQ = "?limit=";
@@ -280,19 +280,19 @@ public class PostgresFeedSource implements FeedSource {
         switch (direction) {
             case FORWARD:
 
-                final String forwardSQL = "SELECT * FROM entries WHERE feed = ? AND datelastupdated > ? ORDER BY datelastupdated ASC LIMIT ?";
-                final String forwardWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND datelastupdated > ? AND categories && ?::varchar[] ORDER BY datelastupdated ASC LIMIT ?";
+                final String forwardSQL = "SELECT * FROM entries WHERE feed = ? AND id > ? ORDER BY id ASC LIMIT ?";
+                final String forwardWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND id > ? AND categories && ?::varchar[] ORDER BY id ASC LIMIT ?";
 
                 if (searchString.length() > 0) {
                     feedPage = jdbcTemplate
                             .query(forwardWithCatsSQL,
-                                   new Object[]{feedName, markerEntry.getDateLastUpdated(),
+                                   new Object[]{feedName, markerEntry.getSqlId(),
                                            CategoryStringGenerator.getPostgresCategoryString(searchString), pageSize},
                                    new EntryRowMapper());
                 } else {
                     feedPage = jdbcTemplate
                             .query(forwardSQL,
-                                   new Object[]{feedName, markerEntry.getDateLastUpdated(), pageSize},
+                                   new Object[]{feedName, markerEntry.getSqlId(), pageSize},
                                    new EntryRowMapper());
                 }
                 Collections.reverse(feedPage);
@@ -300,19 +300,19 @@ public class PostgresFeedSource implements FeedSource {
 
             case BACKWARD:
 
-                final String backwardSQL = "SELECT * FROM entries WHERE feed = ? AND datelastupdated <= ? ORDER BY datelastupdated DESC LIMIT ?";
-                final String backwardWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND datelastupdated <= ? AND categories && ?::varchar[] ORDER BY datelastupdated DESC LIMIT ?";
+                final String backwardSQL = "SELECT * FROM entries WHERE feed = ? AND id <= ? ORDER BY id DESC LIMIT ?";
+                final String backwardWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND id <= ? AND categories && ?::varchar[] ORDER BY id DESC LIMIT ?";
 
                 if (searchString.length() > 0) {
                     feedPage = jdbcTemplate
                             .query(backwardWithCatsSQL,
-                                   new Object[]{feedName, markerEntry.getDateLastUpdated(),
+                                   new Object[]{feedName, markerEntry.getSqlId(),
                                            CategoryStringGenerator.getPostgresCategoryString(searchString), pageSize},
                                    new EntryRowMapper());
                 } else {
                     feedPage = jdbcTemplate
                             .query(backwardSQL,
-                                   new Object[]{feedName, markerEntry.getDateLastUpdated(), pageSize},
+                                   new Object[]{feedName, markerEntry.getSqlId(), pageSize},
                                    new EntryRowMapper());
                 }
                 break;
@@ -347,8 +347,8 @@ public class PostgresFeedSource implements FeedSource {
 
     private List<PersistedEntry> getFeedHead(final String feedName, final int pageSize, final String searchString) {
 
-        final String getFeedHeadSQL = "SELECT * FROM entries WHERE feed = ? ORDER BY datelastupdated DESC LIMIT ?";
-        final String getFeedHeadWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND categories && ?::varchar[] ORDER BY datelastupdated DESC LIMIT ?";
+        final String getFeedHeadSQL = "SELECT * FROM entries WHERE feed = ? ORDER BY id DESC LIMIT ?";
+        final String getFeedHeadWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND categories && ?::varchar[] ORDER BY id DESC LIMIT ?";
 
         List<PersistedEntry> persistedEntries;
         if (searchString.length() > 0) {
@@ -366,8 +366,8 @@ public class PostgresFeedSource implements FeedSource {
 
     private List<PersistedEntry> getLastPage(final String feedName, final int pageSize, final String searchString) {
 
-        final String lastLinkQuerySQL = "SELECT * FROM entries WHERE feed = ? ORDER BY datelastupdated ASC LIMIT ?";
-        final String lastLinkQueryWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND categories && ?::varchar[] ORDER BY datelastupdated ASC LIMIT ?";
+        final String lastLinkQuerySQL = "SELECT * FROM entries WHERE feed = ? ORDER BY id ASC ASC LIMIT ?";
+        final String lastLinkQueryWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND categories && ?::varchar[] ORDER BY id ASC LIMIT ?";
 
         List<PersistedEntry> lastPersistedEntries;
         if (searchString.length() > 0) {
@@ -384,21 +384,21 @@ public class PostgresFeedSource implements FeedSource {
     }
 
     private PersistedEntry getNextMarker(final PersistedEntry persistedEntry, final String feedName, final String searchString) {
-        final String nextLinkSQL = "SELECT * FROM entries where feed = ? and datelastupdated < ? ORDER BY datelastupdated DESC LIMIT 1";
-        final String nextLinkWithCatsSQL = "SELECT * FROM entries where feed = ? and datelastupdated < ? AND categories && ?::varchar[] ORDER BY datelastupdated DESC LIMIT 1";
+        final String nextLinkSQL = "SELECT * FROM entries where feed = ? and id < ? ORDER BY id DESC LIMIT 1";
+        final String nextLinkWithCatsSQL = "SELECT * FROM entries where feed = ? and id < ? AND categories && ?::varchar[] ORDER BY id DESC LIMIT 1";
 
         List<PersistedEntry> nextEntry;
         if (searchString.length() > 0) {
 
             nextEntry =  jdbcTemplate
                     .query(nextLinkWithCatsSQL, new Object[]{feedName,
-                            persistedEntry.getDateLastUpdated(),
+                            persistedEntry.getSqlId(),
                             CategoryStringGenerator.getPostgresCategoryString(searchString)}, new EntryRowMapper());
         } else {
 
             nextEntry =  jdbcTemplate
                     .query(nextLinkSQL, new Object[]{feedName,
-                            persistedEntry.getDateLastUpdated()}, new EntryRowMapper());
+                            persistedEntry.getSqlId()}, new EntryRowMapper());
         }
 
         return nextEntry.size() > 0 ? nextEntry.get(0) : null;
