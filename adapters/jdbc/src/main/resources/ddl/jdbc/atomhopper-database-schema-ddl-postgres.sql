@@ -27,6 +27,7 @@ CREATE INDEX datelastupdated_idx on entries(datelastupdated);
 CREATE INDEX categories_idx on entries(categories);
 CREATE INDEX feed_idx on entries(feed);
 CREATE INDEX feed_id_idx on entries(feed, id);
+CREATE INDEX datelastupdated_id_idx on entries(datelastupdated,id);
 
 REVOKE ALL ON SCHEMA public FROM PUBLIC;
 REVOKE ALL ON SCHEMA public FROM postgres;
