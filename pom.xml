@@ -30,6 +30,7 @@
         <module>adapters/mongodb</module>
         <module>adapters/postgres-adapter</module>
         <module>adapters/migration</module>
+        <module>adapters/jdbc</module>
         <module>test-util</module>
         <module>atomhopper</module>
         <module>test-suite</module>
@@ -76,6 +77,12 @@
             <dependency>
                 <groupId>org.atomhopper.adapter</groupId>
                 <artifactId>migration-adapter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.atomhopper.adapter</groupId>
+                <artifactId>jdbc-adapter</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
