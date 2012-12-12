@@ -13,19 +13,19 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 CREATE TABLE entries (
-    entryid text CONSTRAINT entries_pkey PRIMARY KEY,
+    entryid text NOT NULL,
     creationdate timestamp without time zone NOT NULL,
     datelastupdated timestamp without time zone NOT NULL,
     entrybody text,
     feed text,
-    categories character varying[]
+    categories character varying[],
+    PRIMARY KEY(datelastupdated, entryid)
 );
 ALTER TABLE public.entries OWNER TO atomschema;
-CREATE INDEX datelastupdated_idx on entries(datelastupdated);
+CREATE INDEX entryid_idx on entries(entryid);
 CREATE INDEX categories_idx on entries(categories);
 CREATE INDEX feed_idx on entries(feed);
 CREATE INDEX feed_entryid_idx on entries(feed, entryid);
-CREATE INDEX datelastupdated_entryid_idx on entries(datelastupdated, entryid);
 
 REVOKE ALL ON SCHEMA public FROM PUBLIC;
 REVOKE ALL ON SCHEMA public FROM postgres;
