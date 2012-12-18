@@ -70,7 +70,7 @@ public class JdbcFeedSource implements FeedSource {
                 String.valueOf(pageSize));
 
         if (searchString.length() > 0) {
-            queryParams.append(AND_SEARCH_EQ).append(encode(searchString));
+            queryParams.append(AND_SEARCH_EQ).append(urlEncode(searchString));
         }
         if (getFeedRequest.getPageMarker() != null && getFeedRequest.getPageMarker().length() > 0) {
             queryParams.append(AND_MARKER_EQ).append(getFeedRequest.getPageMarker());
