@@ -223,7 +223,7 @@
                                                 If you already have a ROOT.war and wish to keeo it
                                                 then remove the following destination completely
                                             -->
-                                            <destination>ROOT.war</destination>
+                                            <destination>ATOMHOPPER.war</destination>
                                         </source>
                                     </sources>
                                 </mapping>
