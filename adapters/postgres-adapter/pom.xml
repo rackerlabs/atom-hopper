@@ -60,5 +60,10 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.yammer.metrics</groupId>
+            <artifactId>metrics-core</artifactId>
+        </dependency>
     </dependencies>
 </project>
