@@ -24,10 +24,12 @@ public class FeedResponseHandler extends AbstractResponseHandler<Feed> {
 
         switch (adapterResponse.getResponseStatus()) {
             case OK:
-                if (entityTagMatches(rc.getIfNoneMatch(), adapterResponse.getEntityTag())) {
-                    return ProviderHelper.notmodified(rc);
-                }
-                ResponseContext responseContext = ProviderHelper.returnBase(adapterResponse.getBody(), adapterResponse.getResponseStatus().value(), lastUpdated);
+            	ResponseContext responseContext;
+            	if (entityTagMatches(rc.getIfNoneMatch(), adapterResponse.getEntityTag())) {
+            		responseContext = ProviderHelper.notmodified(rc);
+                }else{
+                	responseContext = ProviderHelper.returnBase(adapterResponse.getBody(), adapterResponse.getResponseStatus().value(), lastUpdated);	
+                }            	
                 responseContext.setEntityTag(adapterResponse.getEntityTag());
                 return responseContext;
             case NOT_FOUND:
