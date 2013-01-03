@@ -168,7 +168,7 @@ public class JdbcFeedPublisher implements FeedPublisher {
         if (!counterMap.containsKey(feedName)) {
             synchronized (counterMap) {
                 if (!counterMap.containsKey(feedName)) {
-                    Counter counter = Metrics.newCounter(JdbcFeedPublisher.class, "events-created-for-" + feedName);
+                    Counter counter = Metrics.newCounter(JdbcFeedPublisher.class, "entries-created-for-" + feedName);
                     counterMap.put(feedName, counter);
                 }
             }
