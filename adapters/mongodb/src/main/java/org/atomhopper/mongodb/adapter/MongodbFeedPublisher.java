@@ -1,5 +1,7 @@
 package org.atomhopper.mongodb.adapter;
 
+import com.yammer.metrics.Metrics;
+import com.yammer.metrics.core.Counter;
 import org.apache.abdera.model.Category;
 import org.apache.abdera.model.Entry;
 import org.apache.commons.lang.StringUtils;
@@ -24,10 +26,7 @@ import org.springframework.data.mongodb.core.query.Query;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static org.apache.abdera.i18n.text.UrlEncoding.decode;
 import static org.atomhopper.mongodb.adapter.MongodbUtilities.formatCollectionName;
@@ -43,6 +42,8 @@ public class MongodbFeedPublisher implements FeedPublisher {
 
     private boolean allowOverrideId = false;
     private boolean allowOverrideDate = false;
+
+    private Map<String, Counter> counterMap = Collections.synchronizedMap(new HashMap<String, Counter>());
 
     public void setMongoTemplate(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
@@ -114,6 +115,8 @@ public class MongodbFeedPublisher implements FeedPublisher {
 
         mongoTemplate.save(persistedEntry, formatCollectionName(postEntryRequest.getFeedName()));
 
+        incrementCounterForFeed(postEntryRequest.getFeedName());
+
         return ResponseBuilder.created(abderaParsedEntry);
     }
 
@@ -147,5 +150,19 @@ public class MongodbFeedPublisher implements FeedPublisher {
         final PersistedEntry entry = mongoTemplate.findOne(new Query(
                 Criteria.where(ID).is(entryId)),PersistedEntry.class, formatCollectionName(feedName));
         return entry;
+    }
+
+    private void incrementCounterForFeed(String feedName) {
+
+        if (!counterMap.containsKey(feedName)) {
+            synchronized (counterMap) {
+                if (!counterMap.containsKey(feedName)) {
+                    Counter counter = Metrics.newCounter(MongodbFeedPublisher.class, "events-created-for-" + feedName);
+                    counterMap.put(feedName, counter);
+                }
+            }
+        }
+
+        counterMap.get(feedName).inc();
     }
 }

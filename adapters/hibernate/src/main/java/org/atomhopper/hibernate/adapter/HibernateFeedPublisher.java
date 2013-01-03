@@ -24,6 +24,9 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.*;
 
+import com.yammer.metrics.Metrics;
+import com.yammer.metrics.core.Counter;
+
 import static org.apache.abdera.i18n.text.UrlEncoding.decode;
 
 
@@ -34,6 +37,8 @@ public class HibernateFeedPublisher implements FeedPublisher {
 
     private boolean allowOverrideId = false;
     private boolean allowOverrideDate = false;
+
+    private Map<String, Counter> counterMap = Collections.synchronizedMap(new HashMap<String, Counter>());
 
     private FeedRepository feedRepository;
 
@@ -106,6 +111,8 @@ public class HibernateFeedPublisher implements FeedPublisher {
 
         feedRepository.saveEntry(persistedEntry);
 
+        incrementCounterForFeed(postEntryRequest.getFeedName());
+
         return ResponseBuilder.created(abderaParsedEntry);
     }
 
@@ -143,5 +150,19 @@ public class HibernateFeedPublisher implements FeedPublisher {
     @NotImplemented
     public AdapterResponse<EmptyBody> deleteEntry(DeleteEntryRequest deleteEntryRequest) {
         throw new UnsupportedOperationException("Not supported.");
+    }
+
+    private void incrementCounterForFeed(String feedName) {
+
+        if (!counterMap.containsKey(feedName)) {
+            synchronized (counterMap) {
+                if (!counterMap.containsKey(feedName)) {
+                    Counter counter = Metrics.newCounter(HibernateFeedPublisher.class, "events-created-for-" + feedName);
+                    counterMap.put(feedName, counter);
+                }
+            }
+        }
+
+        counterMap.get(feedName).inc();
     }
 }

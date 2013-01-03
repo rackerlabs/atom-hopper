@@ -24,6 +24,9 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.*;
 
+import com.yammer.metrics.Metrics;
+import com.yammer.metrics.core.Counter;
+
 import static org.apache.abdera.i18n.text.UrlEncoding.decode;
 
 
@@ -36,6 +39,8 @@ public class PostgresFeedPublisher implements FeedPublisher {
 
     private boolean allowOverrideId = false;
     private boolean allowOverrideDate = false;
+
+    private Map<String, Counter> counterMap = Collections.synchronizedMap(new HashMap<String, Counter>());
 
     public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -107,6 +112,8 @@ public class PostgresFeedPublisher implements FeedPublisher {
             persistedEntry.getEntryBody(), persistedEntry.getFeed(), new PostgreSQLTextArray(persistedEntry.getCategories())
         });
 
+        incrementCounterForFeed(postEntryRequest.getFeedName());
+
         return ResponseBuilder.created(abderaParsedEntry);
     }
 
@@ -154,5 +161,19 @@ public class PostgresFeedPublisher implements FeedPublisher {
         List<PersistedEntry> entry = jdbcTemplate
                 .query(entrySQL, new Object[]{feedName, entryId}, new EntryRowMapper());
         return entry.size() > 0 ? entry.get(0) : null;
+    }
+
+    private void incrementCounterForFeed(String feedName) {
+
+        if (!counterMap.containsKey(feedName)) {
+            synchronized (counterMap) {
+                if (!counterMap.containsKey(feedName)) {
+                    Counter counter = Metrics.newCounter(PostgresFeedPublisher.class, "events-created-for-" + feedName);
+                    counterMap.put(feedName, counter);
+                }
+            }
+        }
+
+        counterMap.get(feedName).inc();
     }
 }
