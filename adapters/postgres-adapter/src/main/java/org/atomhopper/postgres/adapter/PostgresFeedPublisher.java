@@ -168,7 +168,7 @@ public class PostgresFeedPublisher implements FeedPublisher {
         if (!counterMap.containsKey(feedName)) {
             synchronized (counterMap) {
                 if (!counterMap.containsKey(feedName)) {
-                    Counter counter = Metrics.newCounter(PostgresFeedPublisher.class, "events-created-for-" + feedName);
+                    Counter counter = Metrics.newCounter(PostgresFeedPublisher.class, "entries-created-for-" + feedName);
                     counterMap.put(feedName, counter);
                 }
             }

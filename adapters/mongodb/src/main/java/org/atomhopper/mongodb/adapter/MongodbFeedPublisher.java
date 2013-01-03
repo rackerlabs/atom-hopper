@@ -157,7 +157,7 @@ public class MongodbFeedPublisher implements FeedPublisher {
         if (!counterMap.containsKey(feedName)) {
             synchronized (counterMap) {
                 if (!counterMap.containsKey(feedName)) {
-                    Counter counter = Metrics.newCounter(MongodbFeedPublisher.class, "events-created-for-" + feedName);
+                    Counter counter = Metrics.newCounter(MongodbFeedPublisher.class, "entries-created-for-" + feedName);
                     counterMap.put(feedName, counter);
                 }
             }
