@@ -14,6 +14,7 @@ public class EntryResultSetExtractor implements ResultSetExtractor {
     public Object extractData(ResultSet rs) throws SQLException {
 
         PersistedEntry entry = new PersistedEntry();
+        entry.setId(rs.getLong("id"));
         entry.setFeed(rs.getString("feed"));
         entry.setCreationDate(rs.getTimestamp("creationdate"));
         entry.setDateLastUpdated(rs.getTimestamp("datelastupdated"));
