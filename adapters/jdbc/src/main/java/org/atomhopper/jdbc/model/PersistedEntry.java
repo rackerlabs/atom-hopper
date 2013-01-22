@@ -9,6 +9,7 @@ import java.util.TimeZone;
 
 public class PersistedEntry {
 
+    private long id;
     private String entryId;
     private String feed;
     private String entryBody;
@@ -22,6 +23,14 @@ public class PersistedEntry {
 
         creationDate = localNow.getTime();
         dateLastUpdated = creationDate;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getEntryId() {
