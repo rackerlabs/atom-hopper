@@ -76,7 +76,7 @@ public class JdbcFeedPublisher implements FeedPublisher {
             PersistedEntry exists = getEntry(entryId, postEntryRequest.getFeedName());
             if (exists != null) {
                 String errMsg = String.format("Unable to persist entry. Reason: entryId (%s) not unique.", entryId);
-                throw new PublicationException(errMsg);
+                return ResponseBuilder.badRequest(errMsg);
             }
             persistedEntry.setEntryId(abderaParsedEntry.getId().toString());
         } else {
