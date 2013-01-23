@@ -280,24 +280,24 @@ public class JdbcFeedSource implements FeedSource {
         switch (direction) {
             case FORWARD:
 
-                // Params: feed, date, entryid, feed, date, limit, limit
+                // Params: feed, date, id, feed, date, limit, limit
                 final String forwardSQL = new StringBuilder()
-                        .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND entryid > ?)")
+                        .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id > ?)")
                         .append(" UNION ALL ")
-                        .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated > ? ORDER BY datelastupdated ASC, entryid ASC LIMIT ?)")
-                        .append(" ORDER BY datelastupdated ASC, entryid ASC LIMIT ?").toString();
+                        .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated > ? ORDER BY datelastupdated ASC, id ASC LIMIT ?)")
+                        .append(" ORDER BY datelastupdated ASC, id ASC LIMIT ?").toString();
 
-                // Params: feed, date, entryid, categories, feed, date, categories, limit, limit
+                // Params: feed, date, id, categories, feed, date, categories, limit, limit
                 final String forwardWithCatsSQL = new StringBuilder()
-                        .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND entryid > ? AND categories && ?::varchar[])")
+                        .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id > ? AND categories && ?::varchar[])")
                         .append(" UNION ALL ")
-                        .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated > ? AND categories && ?::varchar[] ORDER BY datelastupdated ASC, entryid ASC LIMIT ?)")
-                        .append(" ORDER BY datelastupdated ASC, entryid ASC LIMIT ?").toString();
+                        .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated > ? AND categories && ?::varchar[] ORDER BY datelastupdated ASC, id ASC LIMIT ?)")
+                        .append(" ORDER BY datelastupdated ASC, id ASC LIMIT ?").toString();
 
                 if (searchString.length() > 0) {
                     feedPage = jdbcTemplate
                             .query(forwardWithCatsSQL,
-                                   new Object[]{feedName, markerEntry.getDateLastUpdated(), markerEntry.getEntryId(),
+                                   new Object[]{feedName, markerEntry.getDateLastUpdated(), markerEntry.getId(),
                                            CategoryStringGenerator.getPostgresCategoryString(searchString), feedName,
                                            markerEntry.getDateLastUpdated(), CategoryStringGenerator.getPostgresCategoryString(searchString),
                                            pageSize, pageSize},
@@ -305,7 +305,7 @@ public class JdbcFeedSource implements FeedSource {
                 } else {
                     feedPage = jdbcTemplate
                             .query(forwardSQL,
-                                   new Object[]{feedName, markerEntry.getDateLastUpdated(), markerEntry.getEntryId(),
+                                   new Object[]{feedName, markerEntry.getDateLastUpdated(), markerEntry.getId(),
                                            feedName, markerEntry.getDateLastUpdated(), pageSize, pageSize},
                                    new EntryRowMapper());
                 }
@@ -314,24 +314,24 @@ public class JdbcFeedSource implements FeedSource {
 
             case BACKWARD:
 
-                // Params: feed, date, entryid, feed, date, limit, limit
+                // Params: feed, date, id, feed, date, limit, limit
                 final String backwardSQL = new StringBuilder()
-                        .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND entryid <= ?)")
+                        .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id <= ?)")
                         .append(" UNION ALL ")
-                        .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? ORDER BY datelastupdated DESC, entryid DESC LIMIT ?)")
-                        .append(" ORDER BY datelastupdated DESC, entryid DESC LIMIT ?").toString();
+                        .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? ORDER BY datelastupdated DESC, id DESC LIMIT ?)")
+                        .append(" ORDER BY datelastupdated DESC, id DESC LIMIT ?").toString();
 
-                // Params: feed, date, entryid, categories, feed, date, categories, limit, limit
+                // Params: feed, date, id, categories, feed, date, categories, limit, limit
                 final String backwardWithCatsSQL = new StringBuilder()
-                        .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND entryid <= ? AND categories && ?::varchar[])")
+                        .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id <= ? AND categories && ?::varchar[])")
                         .append(" UNION ALL ")
-                        .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? AND categories && ?::varchar[] ORDER BY datelastupdated DESC, entryid DESC LIMIT ?)")
-                        .append(" ORDER BY datelastupdated DESC, entryid DESC LIMIT ?").toString();
+                        .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? AND categories && ?::varchar[] ORDER BY datelastupdated DESC, id DESC LIMIT ?)")
+                        .append(" ORDER BY datelastupdated DESC, id DESC LIMIT ?").toString();
 
                 if (searchString.length() > 0) {
                     feedPage = jdbcTemplate
                             .query(backwardWithCatsSQL,
-                                   new Object[]{feedName, markerEntry.getDateLastUpdated(), markerEntry.getEntryId(),
+                                   new Object[]{feedName, markerEntry.getDateLastUpdated(), markerEntry.getId(),
                                            CategoryStringGenerator.getPostgresCategoryString(searchString), feedName,
                                            markerEntry.getDateLastUpdated(), CategoryStringGenerator.getPostgresCategoryString(searchString),
                                            pageSize, pageSize},
@@ -339,7 +339,7 @@ public class JdbcFeedSource implements FeedSource {
                 } else {
                     feedPage = jdbcTemplate
                             .query(backwardSQL,
-                                   new Object[]{feedName, markerEntry.getDateLastUpdated(), markerEntry.getEntryId(),
+                                   new Object[]{feedName, markerEntry.getDateLastUpdated(), markerEntry.getId(),
                                            feedName, markerEntry.getDateLastUpdated(), pageSize, pageSize},
                                    new EntryRowMapper());
                 }
@@ -375,8 +375,8 @@ public class JdbcFeedSource implements FeedSource {
 
     private List<PersistedEntry> getFeedHead(final String feedName, final int pageSize, final String searchString) {
 
-        final String getFeedHeadSQL = "SELECT * FROM entries WHERE feed = ? ORDER BY datelastupdated DESC, entryid DESC LIMIT ?";
-        final String getFeedHeadWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND categories && ?::varchar[] ORDER BY datelastupdated DESC, entryid DESC LIMIT ?";
+        final String getFeedHeadSQL = "SELECT * FROM entries WHERE feed = ? ORDER BY datelastupdated DESC, id DESC LIMIT ?";
+        final String getFeedHeadWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND categories && ?::varchar[] ORDER BY datelastupdated DESC, id DESC LIMIT ?";
 
         List<PersistedEntry> persistedEntries;
         if (searchString.length() > 0) {
@@ -394,8 +394,8 @@ public class JdbcFeedSource implements FeedSource {
 
     private List<PersistedEntry> getLastPage(final String feedName, final int pageSize, final String searchString) {
 
-        final String lastLinkQuerySQL = "SELECT * FROM entries WHERE feed = ? ORDER BY datelastupdated ASC, entryid ASC LIMIT ?";
-        final String lastLinkQueryWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND categories && ?::varchar[] ORDER BY datelastupdated ASC, entryid ASC LIMIT ?";
+        final String lastLinkQuerySQL = "SELECT * FROM entries WHERE feed = ? ORDER BY datelastupdated ASC, id ASC LIMIT ?";
+        final String lastLinkQueryWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND categories && ?::varchar[] ORDER BY datelastupdated ASC, id ASC LIMIT ?";
 
         List<PersistedEntry> lastPersistedEntries;
         if (searchString.length() > 0) {
@@ -413,32 +413,32 @@ public class JdbcFeedSource implements FeedSource {
 
     private PersistedEntry getNextMarker(final PersistedEntry persistedEntry, final String feedName, final String searchString) {
 
-        // Params: feed, date, entryid, feed, date, limit, limit
+        // Params: feed, date, id, feed, date, limit, limit
         final String nextLinkSQL = new StringBuilder()
-                .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND entryid < ?)")
+                .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id < ?)")
                 .append(" UNION ALL ")
-                .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? ORDER BY datelastupdated DESC, entryid DESC LIMIT 1)")
-                .append(" ORDER BY datelastupdated DESC, entryid DESC LIMIT 1").toString();
+                .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? ORDER BY datelastupdated DESC, id DESC LIMIT 1)")
+                .append(" ORDER BY datelastupdated DESC, id DESC LIMIT 1").toString();
 
-        // Params: feed, date, entryid, categories, feed, date, categories, limit, limit
+        // Params: feed, date, id, categories, feed, date, categories, limit, limit
         final String nextLinkWithCatsSQL = new StringBuilder()
-                .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND entryid < ? AND categories && ?::varchar[])")
+                .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id < ? AND categories && ?::varchar[])")
                 .append(" UNION ALL ")
-                .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? AND categories && ?::varchar[] ORDER BY datelastupdated DESC, entryid DESC LIMIT 1)")
-                .append(" ORDER BY datelastupdated DESC, entryid DESC LIMIT 1").toString();
+                .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? AND categories && ?::varchar[] ORDER BY datelastupdated DESC, id DESC LIMIT 1)")
+                .append(" ORDER BY datelastupdated DESC, id DESC LIMIT 1").toString();
 
         List<PersistedEntry> nextEntry;
         if (searchString.length() > 0) {
 
             nextEntry =  jdbcTemplate
-                    .query(nextLinkWithCatsSQL, new Object[]{feedName, persistedEntry.getDateLastUpdated(), persistedEntry.getEntryId(),
+                    .query(nextLinkWithCatsSQL, new Object[]{feedName, persistedEntry.getDateLastUpdated(), persistedEntry.getId(),
                             CategoryStringGenerator.getPostgresCategoryString(searchString), feedName,
                             persistedEntry.getDateLastUpdated(), CategoryStringGenerator.getPostgresCategoryString(searchString)},
                            new EntryRowMapper());
         } else {
 
             nextEntry =  jdbcTemplate
-                    .query(nextLinkSQL, new Object[]{feedName, persistedEntry.getDateLastUpdated(), persistedEntry.getEntryId(),
+                    .query(nextLinkSQL, new Object[]{feedName, persistedEntry.getDateLastUpdated(), persistedEntry.getId(),
                             feedName, persistedEntry.getDateLastUpdated()},
                            new EntryRowMapper());
         }
