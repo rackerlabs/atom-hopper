@@ -45,6 +45,7 @@ public class JdbcFeedSource implements FeedSource {
     private static final String AND_DIRECTION_EQ = "&direction=";
     private static final String AND_DIRECTION_EQ_BACKWARD = "&direction=backward";
     private static final String AND_DIRECTION_EQ_FORWARD = "&direction=forward";
+    private static final String MOCK_LAST_LINK = "mockLastLink";
 
     private static final int PAGE_SIZE = 25;
     private JdbcTemplate jdbcTemplate;
@@ -211,6 +212,18 @@ public class JdbcFeedSource implements FeedSource {
         final String baseFeedUri = decode(getFeedRequest.urlFor(
                 new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
 
+        hyrdatedFeed.addLink(
+                new StringBuilder().append(baseFeedUri)
+                        .append(MARKER_EQ).append(MOCK_LAST_LINK)
+                        .append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
+                        .append(AND_SEARCH_EQ).append(urlEncode(searchString))
+                        .append(AND_DIRECTION_EQ_BACKWARD).toString())
+                .setRel(Link.REL_LAST);
+
+        return ResponseBuilder.found(hyrdatedFeed);
+    }
+
+    private PersistedEntry lastPageMarkerEntryGenerator(GetFeedRequest getFeedRequest, int pageSize, String searchString) {
         int totalFeedEntryCount = getFeedCount(getFeedRequest.getFeedName(), searchString);
 
         int lastPageSize = totalFeedEntryCount % pageSize;
@@ -220,18 +233,7 @@ public class JdbcFeedSource implements FeedSource {
 
         List<PersistedEntry> lastPersistedEntries = getLastPage(getFeedRequest.getFeedName(), lastPageSize, searchString);
 
-        if (lastPersistedEntries != null && !(lastPersistedEntries.isEmpty())) {
-            hyrdatedFeed.addLink(
-                    new StringBuilder().append(baseFeedUri)
-                            .append(MARKER_EQ).append(
-                            lastPersistedEntries.get(lastPersistedEntries.size() - 1).getEntryId())
-                            .append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
-                            .append(AND_SEARCH_EQ).append(urlEncode(searchString))
-                            .append(AND_DIRECTION_EQ_BACKWARD).toString())
-                    .setRel(Link.REL_LAST);
-        }
-
-        return ResponseBuilder.found(hyrdatedFeed);
+        return lastPersistedEntries.get(0);
     }
 
     private AdapterResponse<Feed> getFeedPage(GetFeedRequest getFeedRequest, String marker, int pageSize) {
@@ -248,7 +250,13 @@ public class JdbcFeedSource implements FeedSource {
                     "Marker must have a page direction specified as either \"forward\" or \"backward\"");
         }
 
-        final PersistedEntry markerEntry = getEntry(marker, getFeedRequest.getFeedName());
+        final PersistedEntry markerEntry;
+
+        if (marker.equals(MOCK_LAST_LINK)) {
+            markerEntry = lastPageMarkerEntryGenerator(getFeedRequest, pageSize, getFeedRequest.getSearchQuery());
+        } else {
+            markerEntry = getEntry(marker, getFeedRequest.getFeedName());
+        }
 
         if (markerEntry != null) {
             final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
