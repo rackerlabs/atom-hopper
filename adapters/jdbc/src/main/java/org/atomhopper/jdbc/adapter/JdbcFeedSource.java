@@ -29,7 +29,6 @@ import java.net.URLEncoder;
 import java.util.*;
 
 import static org.apache.abdera.i18n.text.UrlEncoding.decode;
-import static org.apache.abdera.i18n.text.UrlEncoding.encode;
 
 
 public class JdbcFeedSource implements FeedSource {
@@ -45,7 +44,7 @@ public class JdbcFeedSource implements FeedSource {
     private static final String AND_DIRECTION_EQ = "&direction=";
     private static final String AND_DIRECTION_EQ_BACKWARD = "&direction=backward";
     private static final String AND_DIRECTION_EQ_FORWARD = "&direction=forward";
-    private static final String MOCK_LAST_LINK = "mockLastLink";
+    private static final String MOCK_LAST_MARKER = "last";
 
     private static final int PAGE_SIZE = 25;
     private JdbcTemplate jdbcTemplate;
@@ -92,9 +91,9 @@ public class JdbcFeedSource implements FeedSource {
         feed.addLink(queryParams.toString()).setRel(Link.REL_SELF);
     }
 
-    private void addFeedCurrentLink(Feed hyrdatedFeed, final String baseFeedUri) {
+    private void addFeedCurrentLink(Feed hydratedFeed, final String baseFeedUri) {
 
-        hyrdatedFeed.addLink(baseFeedUri, Link.REL_CURRENT);
+        hydratedFeed.addLink(baseFeedUri, Link.REL_CURRENT);
     }
 
     private Feed hydrateFeed(Abdera abdera, List<PersistedEntry> persistedEntries,
@@ -189,7 +188,9 @@ public class JdbcFeedSource implements FeedSource {
 
         final String marker = getFeedRequest.getPageMarker();
 
-        if (StringUtils.isNotBlank(marker)) {
+        if (StringUtils.isNotBlank(marker) && marker.equals(MOCK_LAST_MARKER)) {
+            response = getLastPage(getFeedRequest, pageSize);
+        } else if (StringUtils.isNotBlank(marker)) {
             response = getFeedPage(getFeedRequest, marker, pageSize);
         } else {
             response = getFeedHead(getFeedRequest, pageSize);
@@ -206,34 +207,21 @@ public class JdbcFeedSource implements FeedSource {
 
         List<PersistedEntry> persistedEntries = getFeedHead(getFeedRequest.getFeedName(), pageSize, searchString);
 
-        Feed hyrdatedFeed = hydrateFeed(abdera, persistedEntries, getFeedRequest, pageSize);
+        Feed hydratedFeed = hydrateFeed(abdera, persistedEntries, getFeedRequest, pageSize);
 
         // Set the last link in the feed head
         final String baseFeedUri = decode(getFeedRequest.urlFor(
                 new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
 
-        hyrdatedFeed.addLink(
+        hydratedFeed.addLink(
                 new StringBuilder().append(baseFeedUri)
-                        .append(MARKER_EQ).append(MOCK_LAST_LINK)
+                        .append(MARKER_EQ).append(MOCK_LAST_MARKER)
                         .append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
                         .append(AND_SEARCH_EQ).append(urlEncode(searchString))
                         .append(AND_DIRECTION_EQ_BACKWARD).toString())
                 .setRel(Link.REL_LAST);
 
-        return ResponseBuilder.found(hyrdatedFeed);
-    }
-
-    private PersistedEntry lastPageMarkerEntryGenerator(GetFeedRequest getFeedRequest, int pageSize, String searchString) {
-        int totalFeedEntryCount = getFeedCount(getFeedRequest.getFeedName(), searchString);
-
-        int lastPageSize = totalFeedEntryCount % pageSize;
-        if (lastPageSize == 0) {
-            lastPageSize = pageSize;
-        }
-
-        List<PersistedEntry> lastPersistedEntries = getLastPage(getFeedRequest.getFeedName(), lastPageSize, searchString);
-
-        return lastPersistedEntries.get(0);
+        return ResponseBuilder.found(hydratedFeed);
     }
 
     private AdapterResponse<Feed> getFeedPage(GetFeedRequest getFeedRequest, String marker, int pageSize) {
@@ -250,13 +238,7 @@ public class JdbcFeedSource implements FeedSource {
                     "Marker must have a page direction specified as either \"forward\" or \"backward\"");
         }
 
-        final PersistedEntry markerEntry;
-
-        if (marker.equals(MOCK_LAST_LINK)) {
-            markerEntry = lastPageMarkerEntryGenerator(getFeedRequest, pageSize, getFeedRequest.getSearchQuery());
-        } else {
-            markerEntry = getEntry(marker, getFeedRequest.getFeedName());
-        }
+        final PersistedEntry markerEntry = getEntry(marker, getFeedRequest.getFeedName());
 
         if (markerEntry != null) {
             final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
@@ -270,6 +252,26 @@ public class JdbcFeedSource implements FeedSource {
             response = ResponseBuilder.notFound(
                     "No entry with specified marker found");
         }
+
+        return response;
+    }
+
+    private AdapterResponse<Feed> getLastPage(GetFeedRequest getFeedRequest, int pageSize) {
+
+        final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
+        AdapterResponse<Feed> response;
+
+        int totalFeedEntryCount = getFeedCount(getFeedRequest.getFeedName(), searchString);
+
+        int lastPageSize = totalFeedEntryCount % pageSize;
+        if (lastPageSize == 0) {
+            lastPageSize = pageSize;
+        }
+
+        final Feed feed = hydrateFeed(getFeedRequest.getAbdera(),
+                enhancedGetLastPage(getFeedRequest.getFeedName(), lastPageSize, searchString),
+                getFeedRequest, pageSize);
+        response = ResponseBuilder.found(feed);
 
         return response;
     }
@@ -400,7 +402,7 @@ public class JdbcFeedSource implements FeedSource {
         return persistedEntries;
     }
 
-    private List<PersistedEntry> getLastPage(final String feedName, final int pageSize, final String searchString) {
+    private List<PersistedEntry> enhancedGetLastPage(final String feedName, final int pageSize, final String searchString) {
 
         final String lastLinkQuerySQL = "SELECT * FROM entries WHERE feed = ? ORDER BY datelastupdated ASC, id ASC LIMIT ?";
         final String lastLinkQueryWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND categories && ?::varchar[] ORDER BY datelastupdated ASC, id ASC LIMIT ?";
