@@ -418,6 +418,9 @@ public class JdbcFeedSource implements FeedSource {
                     .query(lastLinkQuerySQL, new Object[]{feedName, pageSize},
                            new EntryRowMapper());
         }
+
+        Collections.reverse(lastPersistedEntries);
+
         return lastPersistedEntries;
     }
 
