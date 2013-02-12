@@ -188,12 +188,12 @@ public class JdbcFeedSource implements FeedSource {
 
         final String marker = getFeedRequest.getPageMarker();
 
-        if (StringUtils.isNotBlank(marker) && marker.equals(MOCK_LAST_MARKER)) {
-            response = getLastPage(getFeedRequest, pageSize);
-        } else if (StringUtils.isNotBlank(marker)) {
-            response = getFeedPage(getFeedRequest, marker, pageSize);
-        } else {
+        if ((StringUtils.isBlank(marker))) {
             response = getFeedHead(getFeedRequest, pageSize);
+        } else if (marker.equals(MOCK_LAST_MARKER)) {
+            response = getLastPage(getFeedRequest, pageSize);
+        } else {
+            response = getFeedPage(getFeedRequest, marker, pageSize);
         }
 
         return response;
