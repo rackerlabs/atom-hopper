@@ -29,7 +29,6 @@ import java.net.URLEncoder;
 import java.util.*;
 
 import static org.apache.abdera.i18n.text.UrlEncoding.decode;
-import static org.apache.abdera.i18n.text.UrlEncoding.encode;
 
 
 public class JdbcFeedSource implements FeedSource {
@@ -45,6 +44,7 @@ public class JdbcFeedSource implements FeedSource {
     private static final String AND_DIRECTION_EQ = "&direction=";
     private static final String AND_DIRECTION_EQ_BACKWARD = "&direction=backward";
     private static final String AND_DIRECTION_EQ_FORWARD = "&direction=forward";
+    private static final String MOCK_LAST_MARKER = "last";
 
     private static final int PAGE_SIZE = 25;
     private JdbcTemplate jdbcTemplate;
@@ -91,36 +91,36 @@ public class JdbcFeedSource implements FeedSource {
         feed.addLink(queryParams.toString()).setRel(Link.REL_SELF);
     }
 
-    private void addFeedCurrentLink(Feed hyrdatedFeed, final String baseFeedUri) {
+    private void addFeedCurrentLink(Feed hydratedFeed, final String baseFeedUri) {
 
-        hyrdatedFeed.addLink(baseFeedUri, Link.REL_CURRENT);
+        hydratedFeed.addLink(baseFeedUri, Link.REL_CURRENT);
     }
 
     private Feed hydrateFeed(Abdera abdera, List<PersistedEntry> persistedEntries,
                              GetFeedRequest getFeedRequest, final int pageSize) {
 
-        final Feed hyrdatedFeed = abdera.newFeed();
+        final Feed hydratedFeed = abdera.newFeed();
         final String uuidUriScheme = "urn:uuid:";
         final String baseFeedUri = decode(getFeedRequest.urlFor(
                 new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
         final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
 
         // Set the feed links
-        addFeedCurrentLink(hyrdatedFeed, baseFeedUri);
-        addFeedSelfLink(hyrdatedFeed, baseFeedUri, getFeedRequest, pageSize, searchString);
+        addFeedCurrentLink(hydratedFeed, baseFeedUri);
+        addFeedSelfLink(hydratedFeed, baseFeedUri, getFeedRequest, pageSize, searchString);
 
         // TODO: We should have a link builder method for these
         if (!(persistedEntries.isEmpty())) {
-            hyrdatedFeed.setId(uuidUriScheme + UUID.randomUUID().toString());
-            hyrdatedFeed.setTitle(persistedEntries.get(0).getFeed());
+            hydratedFeed.setId(uuidUriScheme + UUID.randomUUID().toString());
+            hydratedFeed.setTitle(persistedEntries.get(0).getFeed());
 
             // Set the previous link
-            hyrdatedFeed.addLink(new StringBuilder()
-                                         .append(baseFeedUri).append(MARKER_EQ)
-                                         .append(persistedEntries.get(0).getEntryId())
-                                         .append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
-                                         .append(AND_SEARCH_EQ).append(urlEncode(searchString))
-                                         .append(AND_DIRECTION_EQ_FORWARD).toString())
+            hydratedFeed.addLink(new StringBuilder()
+                    .append(baseFeedUri).append(MARKER_EQ)
+                    .append(persistedEntries.get(0).getEntryId())
+                    .append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
+                    .append(AND_SEARCH_EQ).append(urlEncode(searchString))
+                    .append(AND_DIRECTION_EQ_FORWARD).toString())
                     .setRel(Link.REL_PREVIOUS);
 
             final PersistedEntry lastEntryInCollection = persistedEntries.get(persistedEntries.size() - 1);
@@ -129,20 +129,20 @@ public class JdbcFeedSource implements FeedSource {
 
             if (nextEntry != null) {
                 // Set the next link
-                hyrdatedFeed.addLink(new StringBuilder().append(baseFeedUri)
-                                             .append(MARKER_EQ).append(nextEntry.getEntryId())
-                                             .append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
-                                             .append(AND_SEARCH_EQ).append(urlEncode(searchString))
-                                             .append(AND_DIRECTION_EQ_BACKWARD).toString())
+                hydratedFeed.addLink(new StringBuilder().append(baseFeedUri)
+                        .append(MARKER_EQ).append(nextEntry.getEntryId())
+                        .append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
+                        .append(AND_SEARCH_EQ).append(urlEncode(searchString))
+                        .append(AND_DIRECTION_EQ_BACKWARD).toString())
                         .setRel(Link.REL_NEXT);
             }
         }
 
         for (PersistedEntry persistedFeedEntry : persistedEntries) {
-            hyrdatedFeed.addEntry(hydrateEntry(persistedFeedEntry, abdera));
+            hydratedFeed.addEntry(hydrateEntry(persistedFeedEntry, abdera));
         }
 
-        return hyrdatedFeed;
+        return hydratedFeed;
     }
 
     private Entry hydrateEntry(PersistedEntry persistedEntry, Abdera abderaReference) {
@@ -188,10 +188,12 @@ public class JdbcFeedSource implements FeedSource {
 
         final String marker = getFeedRequest.getPageMarker();
 
-        if (StringUtils.isNotBlank(marker)) {
-            response = getFeedPage(getFeedRequest, marker, pageSize);
-        } else {
+        if ((StringUtils.isBlank(marker))) {
             response = getFeedHead(getFeedRequest, pageSize);
+        } else if (marker.equals(MOCK_LAST_MARKER)) {
+            response = getLastPage(getFeedRequest, pageSize);
+        } else {
+            response = getFeedPage(getFeedRequest, marker, pageSize);
         }
 
         return response;
@@ -205,33 +207,21 @@ public class JdbcFeedSource implements FeedSource {
 
         List<PersistedEntry> persistedEntries = getFeedHead(getFeedRequest.getFeedName(), pageSize, searchString);
 
-        Feed hyrdatedFeed = hydrateFeed(abdera, persistedEntries, getFeedRequest, pageSize);
+        Feed hydratedFeed = hydrateFeed(abdera, persistedEntries, getFeedRequest, pageSize);
 
         // Set the last link in the feed head
         final String baseFeedUri = decode(getFeedRequest.urlFor(
                 new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
 
-        int totalFeedEntryCount = getFeedCount(getFeedRequest.getFeedName(), searchString);
+        hydratedFeed.addLink(
+                new StringBuilder().append(baseFeedUri)
+                        .append(MARKER_EQ).append(MOCK_LAST_MARKER)
+                        .append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
+                        .append(AND_SEARCH_EQ).append(urlEncode(searchString))
+                        .append(AND_DIRECTION_EQ_BACKWARD).toString())
+                .setRel(Link.REL_LAST);
 
-        int lastPageSize = totalFeedEntryCount % pageSize;
-        if (lastPageSize == 0) {
-            lastPageSize = pageSize;
-        }
-
-        List<PersistedEntry> lastPersistedEntries = getLastPage(getFeedRequest.getFeedName(), lastPageSize, searchString);
-
-        if (lastPersistedEntries != null && !(lastPersistedEntries.isEmpty())) {
-            hyrdatedFeed.addLink(
-                    new StringBuilder().append(baseFeedUri)
-                            .append(MARKER_EQ).append(
-                            lastPersistedEntries.get(lastPersistedEntries.size() - 1).getEntryId())
-                            .append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
-                            .append(AND_SEARCH_EQ).append(urlEncode(searchString))
-                            .append(AND_DIRECTION_EQ_BACKWARD).toString())
-                    .setRel(Link.REL_LAST);
-        }
-
-        return ResponseBuilder.found(hyrdatedFeed);
+        return ResponseBuilder.found(hydratedFeed);
     }
 
     private AdapterResponse<Feed> getFeedPage(GetFeedRequest getFeedRequest, String marker, int pageSize) {
@@ -262,6 +252,26 @@ public class JdbcFeedSource implements FeedSource {
             response = ResponseBuilder.notFound(
                     "No entry with specified marker found");
         }
+
+        return response;
+    }
+
+    private AdapterResponse<Feed> getLastPage(GetFeedRequest getFeedRequest, int pageSize) {
+
+        final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
+        AdapterResponse<Feed> response;
+
+        int totalFeedEntryCount = getFeedCount(getFeedRequest.getFeedName(), searchString);
+
+        int lastPageSize = totalFeedEntryCount % pageSize;
+        if (lastPageSize == 0) {
+            lastPageSize = pageSize;
+        }
+
+        final Feed feed = hydrateFeed(getFeedRequest.getAbdera(),
+                enhancedGetLastPage(getFeedRequest.getFeedName(), lastPageSize, searchString),
+                getFeedRequest, pageSize);
+        response = ResponseBuilder.found(feed);
 
         return response;
     }
@@ -392,7 +402,7 @@ public class JdbcFeedSource implements FeedSource {
         return persistedEntries;
     }
 
-    private List<PersistedEntry> getLastPage(final String feedName, final int pageSize, final String searchString) {
+    private List<PersistedEntry> enhancedGetLastPage(final String feedName, final int pageSize, final String searchString) {
 
         final String lastLinkQuerySQL = "SELECT * FROM entries WHERE feed = ? ORDER BY datelastupdated ASC, id ASC LIMIT ?";
         final String lastLinkQueryWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND categories && ?::varchar[] ORDER BY datelastupdated ASC, id ASC LIMIT ?";
@@ -408,6 +418,9 @@ public class JdbcFeedSource implements FeedSource {
                     .query(lastLinkQuerySQL, new Object[]{feedName, pageSize},
                            new EntryRowMapper());
         }
+
+        Collections.reverse(lastPersistedEntries);
+
         return lastPersistedEntries;
     }
 
