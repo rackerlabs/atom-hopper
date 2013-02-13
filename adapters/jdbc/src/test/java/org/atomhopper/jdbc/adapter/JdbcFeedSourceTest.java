@@ -48,6 +48,8 @@ public class JdbcFeedSourceTest {
         private final String BACKWARD = "backward";
         private final String SINGLE_CAT = "+Cat1";
         private final String MULTI_CAT = "+Cat1+Cat2";
+        private final String MOCK_LAST_MARKER = "last";
+
 
         @Before
         public void setUp() throws Exception {
@@ -142,9 +144,24 @@ public class JdbcFeedSourceTest {
             when(jdbcTemplate.query(any(String.class), any(Object[].class), any(EntryRowMapper.class))).thenReturn(entryList);
             when(jdbcTemplate.queryForInt(any(String.class), any(Object[].class))).thenReturn(1);
 
-            IRI iri = jdbcFeedSource.getFeed(getFeedRequest).getBody().getLink("last").getHref();
+            IRI iri = jdbcFeedSource.getFeed(getFeedRequest).getBody().getLink(MOCK_LAST_MARKER).getHref();
 
             assertTrue("Last link should contain \"marker=last\"", iri.toString().contains("marker=last"));
+        }
+
+        @Test
+        public void shouldGetFeedWithLastMarker() throws Exception {
+            when(getFeedRequest.getPageMarker()).thenReturn(MOCK_LAST_MARKER);
+            Abdera localAbdera = new Abdera();
+            when(jdbcTemplate.queryForObject(any(String.class),
+                    any(EntryRowMapper.class),
+                    any(String.class),
+                    any(String.class))).thenReturn(persistedEntry);
+            when(getFeedRequest.getAbdera()).thenReturn(localAbdera);
+            when(getEntryRequest.getAbdera()).thenReturn(localAbdera);
+            when(jdbcTemplate.query(any(String.class), any(Object[].class), any(EntryRowMapper.class))).thenReturn(entryList);
+            assertEquals("Should get a 200 response with marker of \"last\"", HttpStatus.OK,
+                    jdbcFeedSource.getFeed(getFeedRequest).getResponseStatus());
         }
 
         @Test
