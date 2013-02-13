@@ -133,6 +133,22 @@ public class JdbcFeedSourceTest {
         }
 
         @Test
+        public void shouldGetFeedHeadWithCategory() throws Exception {
+            Abdera localAbdera = new Abdera();
+            when(getFeedRequest.getSearchQuery()).thenReturn(SINGLE_CAT);
+            when(jdbcTemplate.queryForObject(any(String.class),
+                                             any(EntryRowMapper.class),
+                                             any(String.class),
+                                             any(String.class))).thenReturn(persistedEntry);
+            when(getFeedRequest.getAbdera()).thenReturn(localAbdera);
+            when(getEntryRequest.getAbdera()).thenReturn(localAbdera);
+            when(jdbcTemplate.query(any(String.class), any(Object[].class), any(EntryRowMapper.class))).thenReturn(entryList);
+            when(jdbcTemplate.queryForInt(any(String.class), any(Object[].class))).thenReturn(1);
+            assertEquals("Should get a 200 response", HttpStatus.OK,
+                    jdbcFeedSource.getFeed(getFeedRequest).getResponseStatus());
+        }
+
+        @Test
         public void shouldGetFeedHeadWithLastLinkMarker() throws Exception {
             Abdera localAbdera = new Abdera();
             when(jdbcTemplate.queryForObject(any(String.class),
@@ -150,9 +166,27 @@ public class JdbcFeedSourceTest {
         }
 
         @Test
-        public void shouldGetFeedWithLastMarker() throws Exception {
-            when(getFeedRequest.getPageMarker()).thenReturn(MOCK_LAST_MARKER);
+        public void shouldGetFeedHeadWithLastLinkMarkerAndCategory() throws Exception {
             Abdera localAbdera = new Abdera();
+            when(getFeedRequest.getSearchQuery()).thenReturn(SINGLE_CAT);
+            when(jdbcTemplate.queryForObject(any(String.class),
+                    any(EntryRowMapper.class),
+                    any(String.class),
+                    any(String.class))).thenReturn(persistedEntry);
+            when(getFeedRequest.getAbdera()).thenReturn(localAbdera);
+            when(getEntryRequest.getAbdera()).thenReturn(localAbdera);
+            when(jdbcTemplate.query(any(String.class), any(Object[].class), any(EntryRowMapper.class))).thenReturn(entryList);
+            when(jdbcTemplate.queryForInt(any(String.class), any(Object[].class))).thenReturn(1);
+
+            IRI iri = jdbcFeedSource.getFeed(getFeedRequest).getBody().getLink(MOCK_LAST_MARKER).getHref();
+
+            assertTrue("Last link should contain \"marker=last\"", iri.toString().contains("marker=last"));
+        }
+
+        @Test
+        public void shouldGetFeedWithLastMarker() throws Exception {
+            Abdera localAbdera = new Abdera();
+            when(getFeedRequest.getPageMarker()).thenReturn(MOCK_LAST_MARKER);
             when(jdbcTemplate.queryForObject(any(String.class),
                     any(EntryRowMapper.class),
                     any(String.class),
@@ -165,18 +199,18 @@ public class JdbcFeedSourceTest {
         }
 
         @Test
-        public void shouldGetFeedHeadWithCategory() throws Exception {
+        public void shouldGetFeedWithLastMarkerAndCategory() throws Exception {
             Abdera localAbdera = new Abdera();
+            when(getFeedRequest.getPageMarker()).thenReturn(MOCK_LAST_MARKER);
             when(getFeedRequest.getSearchQuery()).thenReturn(SINGLE_CAT);
             when(jdbcTemplate.queryForObject(any(String.class),
-                                             any(EntryRowMapper.class),
-                                             any(String.class),
-                                             any(String.class))).thenReturn(persistedEntry);
+                    any(EntryRowMapper.class),
+                    any(String.class),
+                    any(String.class))).thenReturn(persistedEntry);
             when(getFeedRequest.getAbdera()).thenReturn(localAbdera);
             when(getEntryRequest.getAbdera()).thenReturn(localAbdera);
             when(jdbcTemplate.query(any(String.class), any(Object[].class), any(EntryRowMapper.class))).thenReturn(entryList);
-            when(jdbcTemplate.queryForInt(any(String.class), any(Object[].class))).thenReturn(1);
-            assertEquals("Should get a 200 response", HttpStatus.OK,
+            assertEquals("Should get a 200 response with marker of \"last\"", HttpStatus.OK,
                     jdbcFeedSource.getFeed(getFeedRequest).getResponseStatus());
         }
 
