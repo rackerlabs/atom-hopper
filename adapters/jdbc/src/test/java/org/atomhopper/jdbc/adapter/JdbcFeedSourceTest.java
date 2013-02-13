@@ -7,6 +7,8 @@ import java.util.UUID;
 import static junit.framework.Assert.assertEquals;
 
 import org.apache.abdera.Abdera;
+import org.apache.abdera.i18n.iri.IRI;
+import org.apache.abdera.model.Link;
 import org.atomhopper.adapter.request.adapter.GetEntryRequest;
 import org.atomhopper.adapter.request.adapter.GetFeedRequest;
 import org.atomhopper.jdbc.model.PersistedEntry;
@@ -19,6 +21,7 @@ import org.junit.runner.RunWith;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
@@ -126,6 +129,23 @@ public class JdbcFeedSourceTest {
             when(jdbcTemplate.queryForInt(any(String.class), any(Object[].class))).thenReturn(1);
             assertEquals("Should get a 200 response", HttpStatus.OK,
                          postgresFeedSource.getFeed(getFeedRequest).getResponseStatus());
+        }
+
+        @Test
+        public void shouldGetFeedHeadWithLastLinkMarker() throws Exception {
+            Abdera localAbdera = new Abdera();
+            when(jdbcTemplate.queryForObject(any(String.class),
+                    any(EntryRowMapper.class),
+                    any(String.class),
+                    any(String.class))).thenReturn(persistedEntry);
+            when(getFeedRequest.getAbdera()).thenReturn(localAbdera);
+            when(getEntryRequest.getAbdera()).thenReturn(localAbdera);
+            when(jdbcTemplate.query(any(String.class), any(Object[].class), any(EntryRowMapper.class))).thenReturn(entryList);
+            when(jdbcTemplate.queryForInt(any(String.class), any(Object[].class))).thenReturn(1);
+
+            IRI iri = postgresFeedSource.getFeed(getFeedRequest).getBody().getLink("last").getHref();
+
+            assertTrue("Last link should contain \"marker=last\"", iri.toString().contains("marker=last"));
         }
 
         @Test
