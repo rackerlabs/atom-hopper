@@ -51,6 +51,7 @@ public class JdbcFeedSource implements FeedSource {
 
     private static final int PAGE_SIZE = 25;
     private JdbcTemplate jdbcTemplate;
+    private boolean enableMetrics = false;
 
     public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -102,27 +103,23 @@ public class JdbcFeedSource implements FeedSource {
     private Feed hydrateFeed(Abdera abdera, List<PersistedEntry> persistedEntries,
                              GetFeedRequest getFeedRequest, final int pageSize) {
 
-        final com.yammer.metrics.core.Timer timer = Metrics.newTimer(getClass(), String.format("hydrate-feed-%s", getMetricBucketForPageSize(pageSize)), TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
-        final TimerContext context = timer.time();
-
-        try {
-            final Feed hydratedFeed = abdera.newFeed();
-            final String uuidUriScheme = "urn:uuid:";
-            final String baseFeedUri = decode(getFeedRequest.urlFor(
+        final Feed hydratedFeed = abdera.newFeed();
+        final String uuidUriScheme = "urn:uuid:";
+        final String baseFeedUri = decode(getFeedRequest.urlFor(
                     new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
-            final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
+        final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
 
-            // Set the feed links
-            addFeedCurrentLink(hydratedFeed, baseFeedUri);
-            addFeedSelfLink(hydratedFeed, baseFeedUri, getFeedRequest, pageSize, searchString);
+        // Set the feed links
+        addFeedCurrentLink(hydratedFeed, baseFeedUri);
+        addFeedSelfLink(hydratedFeed, baseFeedUri, getFeedRequest, pageSize, searchString);
 
-            // TODO: We should have a link builder method for these
-            if (!(persistedEntries.isEmpty())) {
+        // TODO: We should have a link builder method for these
+        if (!(persistedEntries.isEmpty())) {
                 hydratedFeed.setId(uuidUriScheme + UUID.randomUUID().toString());
                 hydratedFeed.setTitle(persistedEntries.get(0).getFeed());
 
-                // Set the previous link
-                hydratedFeed.addLink(new StringBuilder()
+            // Set the previous link
+            hydratedFeed.addLink(new StringBuilder()
                         .append(baseFeedUri).append(MARKER_EQ)
                         .append(persistedEntries.get(0).getEntryId())
                         .append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
@@ -130,30 +127,26 @@ public class JdbcFeedSource implements FeedSource {
                         .append(AND_DIRECTION_EQ_FORWARD).toString())
                         .setRel(Link.REL_PREVIOUS);
 
-                final PersistedEntry lastEntryInCollection = persistedEntries.get(persistedEntries.size() - 1);
+            final PersistedEntry lastEntryInCollection = persistedEntries.get(persistedEntries.size() - 1);
 
-                PersistedEntry nextEntry = getNextMarker(lastEntryInCollection, getFeedRequest.getFeedName(), searchString);
+            PersistedEntry nextEntry = getNextMarker(lastEntryInCollection, getFeedRequest.getFeedName(), searchString);
 
-                if (nextEntry != null) {
-                    // Set the next link
-                    hydratedFeed.addLink(new StringBuilder().append(baseFeedUri)
+            if (nextEntry != null) {
+                // Set the next link
+                hydratedFeed.addLink(new StringBuilder().append(baseFeedUri)
                             .append(MARKER_EQ).append(nextEntry.getEntryId())
                             .append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
                             .append(AND_SEARCH_EQ).append(urlEncode(searchString))
                             .append(AND_DIRECTION_EQ_BACKWARD).toString())
                             .setRel(Link.REL_NEXT);
-                }
             }
-
-            for (PersistedEntry persistedFeedEntry : persistedEntries) {
-                hydratedFeed.addEntry(hydrateEntry(persistedFeedEntry, abdera));
-            }
-
-            return hydratedFeed;
-        } finally {
-            context.stop();
         }
 
+        for (PersistedEntry persistedFeedEntry : persistedEntries) {
+            hydratedFeed.addEntry(hydrateEntry(persistedFeedEntry, abdera));
+        }
+
+        return hydratedFeed;
     }
 
     private Entry hydrateEntry(PersistedEntry persistedEntry, Abdera abderaReference) {
@@ -318,8 +311,7 @@ public class JdbcFeedSource implements FeedSource {
                             .append(" ORDER BY datelastupdated ASC, id ASC LIMIT ?").toString();
 
                     if (searchString.length() > 0) {
-                        final com.yammer.metrics.core.Timer timer = Metrics.newTimer(getClass(), String.format("db-get-feed-page-forward-with-cats-%s", getMetricBucketForPageSize(pageSize)), TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
-                        context = timer.time();
+                        context = startTimer(String.format("db-get-feed-page-forward-with-cats-%s", getMetricBucketForPageSize(pageSize)));
                         feedPage = jdbcTemplate
                                 .query(forwardWithCatsSQL,
                                        new Object[]{feedName, markerEntry.getDateLastUpdated(), markerEntry.getId(),
@@ -328,8 +320,7 @@ public class JdbcFeedSource implements FeedSource {
                                                pageSize, pageSize},
                                        new EntryRowMapper());
                     } else {
-                        final com.yammer.metrics.core.Timer timer = Metrics.newTimer(getClass(), String.format("db-get-feed-page-forward-%s", getMetricBucketForPageSize(pageSize)), TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
-                        context = timer.time();
+                        context = startTimer(String.format("db-get-feed-page-forward-%s", getMetricBucketForPageSize(pageSize)));
                         feedPage = jdbcTemplate
                                 .query(forwardSQL,
                                        new Object[]{feedName, markerEntry.getDateLastUpdated(), markerEntry.getId(),
@@ -356,8 +347,7 @@ public class JdbcFeedSource implements FeedSource {
                             .append(" ORDER BY datelastupdated DESC, id DESC LIMIT ?").toString();
 
                     if (searchString.length() > 0) {
-                        final com.yammer.metrics.core.Timer timer = Metrics.newTimer(getClass(), String.format("db-get-feed-page-backward-with-cats-%s", getMetricBucketForPageSize(pageSize)), TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
-                        context = timer.time();
+                        context = startTimer(String.format("db-get-feed-page-backward-with-cats-%s", getMetricBucketForPageSize(pageSize)));
                         feedPage = jdbcTemplate
                                 .query(backwardWithCatsSQL,
                                        new Object[]{feedName, markerEntry.getDateLastUpdated(), markerEntry.getId(),
@@ -366,8 +356,7 @@ public class JdbcFeedSource implements FeedSource {
                                                pageSize, pageSize},
                                        new EntryRowMapper());
                     } else {
-                        final com.yammer.metrics.core.Timer timer = Metrics.newTimer(getClass(), String.format("db-get-feed-page-backward-%s", getMetricBucketForPageSize(pageSize)), TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
-                        context = timer.time();
+                        context = startTimer(String.format("db-get-feed-page-backward-%s", getMetricBucketForPageSize(pageSize)));
                         feedPage = jdbcTemplate
                                 .query(backwardSQL,
                                        new Object[]{feedName, markerEntry.getDateLastUpdated(), markerEntry.getId(),
@@ -377,7 +366,7 @@ public class JdbcFeedSource implements FeedSource {
                     break;
             }
         } finally {
-            context.stop();
+            stopTimer(context);
         }
 
         return feedPage;
@@ -398,20 +387,18 @@ public class JdbcFeedSource implements FeedSource {
         int totalFeedEntryCount;
         try {
             if (searchString.length() > 0) {
-                final com.yammer.metrics.core.Timer timer = Metrics.newTimer(getClass(), "db-get-feed-count-with-cats", TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
-                context = timer.time();
+                context = startTimer("db-get-feed-count-with-cats");
                 totalFeedEntryCount = jdbcTemplate
                         .queryForInt(totalFeedEntryCountWithCatsSQL, feedName,
                                      CategoryStringGenerator.getPostgresCategoryString(searchString));
             } else {
-                final com.yammer.metrics.core.Timer timer = Metrics.newTimer(getClass(), "db-get-feed-count", TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
-                context = timer.time();
+                context = startTimer("db-get-feed-count");
                 totalFeedEntryCount = jdbcTemplate
                         .queryForInt(totalFeedEntryCountSQL, feedName);
             }
             return totalFeedEntryCount;
         } finally {
-            context.stop();
+            stopTimer(context);
         }
     }
 
@@ -424,21 +411,19 @@ public class JdbcFeedSource implements FeedSource {
         List<PersistedEntry> persistedEntries;
         try {
             if (searchString.length() > 0) {
-                final com.yammer.metrics.core.Timer timer = Metrics.newTimer(getClass(), String.format("db-get-feed-head-with-cats-%s", getMetricBucketForPageSize(pageSize)), TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
-                context = timer.time();
+                context = startTimer(String.format("db-get-feed-head-with-cats-%s", getMetricBucketForPageSize(pageSize)));
                 persistedEntries = jdbcTemplate
                         .query(getFeedHeadWithCatsSQL, new Object[]{feedName,
                                 CategoryStringGenerator.getPostgresCategoryString(searchString), pageSize},
                                new EntryRowMapper());
             } else {
-                final com.yammer.metrics.core.Timer timer = Metrics.newTimer(getClass(), String.format("db-get-feed-head-%s", getMetricBucketForPageSize(pageSize)), TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
-                context = timer.time();
+                context = startTimer(String.format("db-get-feed-head-%s", getMetricBucketForPageSize(pageSize)));
                 persistedEntries = jdbcTemplate
                         .query(getFeedHeadSQL, new Object[]{feedName, pageSize},
                                new EntryRowMapper());
             }
         } finally {
-            context.stop();
+            stopTimer(context);
         }
         return persistedEntries;
     }
@@ -452,21 +437,19 @@ public class JdbcFeedSource implements FeedSource {
         List<PersistedEntry> lastPersistedEntries;
         try {
             if (searchString.length() > 0) {
-                final com.yammer.metrics.core.Timer timer = Metrics.newTimer(getClass(), String.format("db-get-last-page-with-cats-%s", getMetricBucketForPageSize(pageSize)), TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
-                context = timer.time();
+                context = startTimer(String.format("db-get-last-page-with-cats-%s", getMetricBucketForPageSize(pageSize)));
                 lastPersistedEntries = jdbcTemplate
                         .query(lastLinkQueryWithCatsSQL, new Object[]{feedName,
                                 CategoryStringGenerator.getPostgresCategoryString(searchString), pageSize},
                                new EntryRowMapper());
             } else {
-                final com.yammer.metrics.core.Timer timer = Metrics.newTimer(getClass(), String.format("db-get-last-page-%s", getMetricBucketForPageSize(pageSize)), TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
-                context = timer.time();
+                context = startTimer(String.format("db-get-last-page-%s", getMetricBucketForPageSize(pageSize)));
                 lastPersistedEntries = jdbcTemplate
                         .query(lastLinkQuerySQL, new Object[]{feedName, pageSize},
                                new EntryRowMapper());
             }
         } finally {
-            context.stop();
+            stopTimer(context);
         }
 
         Collections.reverse(lastPersistedEntries);
@@ -495,16 +478,14 @@ public class JdbcFeedSource implements FeedSource {
         List<PersistedEntry> nextEntry;
         try {
             if (searchString.length() > 0) {
-                final com.yammer.metrics.core.Timer timer = Metrics.newTimer(getClass(), "db-get-next-marker-with-cats", TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
-                context = timer.time();
+                context = startTimer("db-get-next-marker-with-cats");
                 nextEntry =  jdbcTemplate
                         .query(nextLinkWithCatsSQL, new Object[]{feedName, persistedEntry.getDateLastUpdated(), persistedEntry.getId(),
                                 CategoryStringGenerator.getPostgresCategoryString(searchString), feedName,
                                 persistedEntry.getDateLastUpdated(), CategoryStringGenerator.getPostgresCategoryString(searchString)},
                                new EntryRowMapper());
             } else {
-                final com.yammer.metrics.core.Timer timer = Metrics.newTimer(getClass(), "db-get-next-marker", TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
-                context = timer.time();
+                context = startTimer("db-get-next-marker");
                 nextEntry =  jdbcTemplate
                         .query(nextLinkSQL, new Object[]{feedName, persistedEntry.getDateLastUpdated(), persistedEntry.getId(),
                                 feedName, persistedEntry.getDateLastUpdated()},
@@ -513,7 +494,7 @@ public class JdbcFeedSource implements FeedSource {
 
             return nextEntry.size() > 0 ? nextEntry.get(0) : null;
         } finally {
-            context.stop();
+            stopTimer(context);
         }
     }
 
@@ -523,6 +504,22 @@ public class JdbcFeedSource implements FeedSource {
         } catch (UnsupportedEncodingException e) {
             //noop - should never get here
             return "";
+        }
+    }
+
+    private TimerContext startTimer(String name) {
+        if ( enableMetrics ) {
+            final com.yammer.metrics.core.Timer timer = Metrics.newTimer(getClass(), name, TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
+            TimerContext context = timer.time();
+            return context;
+        } else {
+            return null;
+        }
+    }
+
+    private void stopTimer(TimerContext context) {
+        if ( enableMetrics && context != null ) {
+            context.stop();
         }
     }
 

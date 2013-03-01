@@ -41,6 +41,7 @@ public class JdbcFeedPublisher implements FeedPublisher {
 
     private boolean allowOverrideId = false;
     private boolean allowOverrideDate = false;
+    private boolean enableMetrics = false;
 
     private Map<String, Counter> counterMap = Collections.synchronizedMap(new HashMap<String, Counter>());
 
@@ -65,8 +66,7 @@ public class JdbcFeedPublisher implements FeedPublisher {
 
     @Override
     public AdapterResponse<Entry> postEntry(PostEntryRequest postEntryRequest) {
-        final com.yammer.metrics.core.Timer timer = Metrics.newTimer(getClass(), "post-entry", TimeUnit.MILLISECONDS,  TimeUnit.SECONDS);
-        final TimerContext context = timer.time();
+        final TimerContext context = startTimer("post-entry");
 
         try {
             final Entry abderaParsedEntry = postEntryRequest.getEntry();
@@ -113,22 +113,21 @@ public class JdbcFeedPublisher implements FeedPublisher {
             abderaParsedEntry.setUpdated(persistedEntry.getDateLastUpdated());
             abderaParsedEntry.setPublished(persistedEntry.getCreationDate());
 
-            final com.yammer.metrics.core.Timer dbtimer = Metrics.newTimer(getClass(), "db-post-entry", TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
-            final TimerContext dbcontext = dbtimer.time();
+            final TimerContext dbcontext = startTimer("db-post-entry");
             try {
                 jdbcTemplate.update(insertSQL, new Object[]{
                     persistedEntry.getEntryId(), persistedEntry.getCreationDate(), persistedEntry.getDateLastUpdated(),
                     persistedEntry.getEntryBody(), persistedEntry.getFeed(), new PostgreSQLTextArray(persistedEntry.getCategories())
                 });
             }  finally {
-                dbcontext.stop();
+                stopTimer(dbcontext);
             }
 
             incrementCounterForFeed(postEntryRequest.getFeedName());
 
             return ResponseBuilder.created(abderaParsedEntry);
         } finally {
-            context.stop();
+            stopTimer(context);
         }
     }
 
@@ -190,5 +189,21 @@ public class JdbcFeedPublisher implements FeedPublisher {
         }
 
         counterMap.get(feedName).inc();
+    }
+
+    private TimerContext startTimer(String name) {
+        if ( enableMetrics ) {
+            final com.yammer.metrics.core.Timer timer = Metrics.newTimer(getClass(), name, TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
+            TimerContext context = timer.time();
+            return context;
+        } else {
+            return null;
+        }
+    }
+
+    private void stopTimer(TimerContext context) {
+        if ( enableMetrics && context != null ) {
+            context.stop();
+        }
     }
 }
