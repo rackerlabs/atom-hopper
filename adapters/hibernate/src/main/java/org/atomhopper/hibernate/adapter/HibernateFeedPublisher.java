@@ -24,6 +24,9 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.*;
 
+import com.yammer.metrics.Metrics;
+import com.yammer.metrics.core.Counter;
+
 import static org.apache.abdera.i18n.text.UrlEncoding.decode;
 
 
@@ -34,6 +37,8 @@ public class HibernateFeedPublisher implements FeedPublisher {
 
     private boolean allowOverrideId = false;
     private boolean allowOverrideDate = false;
+
+    private Map<String, Counter> counterMap = Collections.synchronizedMap(new HashMap<String, Counter>());
 
     private FeedRepository feedRepository;
 
@@ -74,7 +79,7 @@ public class HibernateFeedPublisher implements FeedPublisher {
             PersistedEntry exists = feedRepository.getEntry(entryId, postEntryRequest.getFeedName());
             if (exists != null) {
                 String errMsg = String.format("Unable to persist entry. Reason: entryId (%s) not unique.", entryId);
-                throw new PublicationException(errMsg);
+                return ResponseBuilder.badRequest(errMsg);
             }
             persistedEntry.setEntryId(abderaParsedEntry.getId().toString());
         } else {
@@ -105,6 +110,8 @@ public class HibernateFeedPublisher implements FeedPublisher {
         abderaParsedEntry.setPublished(persistedEntry.getCreationDate());
 
         feedRepository.saveEntry(persistedEntry);
+
+        incrementCounterForFeed(postEntryRequest.getFeedName());
 
         return ResponseBuilder.created(abderaParsedEntry);
     }
@@ -143,5 +150,19 @@ public class HibernateFeedPublisher implements FeedPublisher {
     @NotImplemented
     public AdapterResponse<EmptyBody> deleteEntry(DeleteEntryRequest deleteEntryRequest) {
         throw new UnsupportedOperationException("Not supported.");
+    }
+
+    private void incrementCounterForFeed(String feedName) {
+
+        if (!counterMap.containsKey(feedName)) {
+            synchronized (counterMap) {
+                if (!counterMap.containsKey(feedName)) {
+                    Counter counter = Metrics.newCounter(HibernateFeedPublisher.class, "entries-created-for-" + feedName);
+                    counterMap.put(feedName, counter);
+                }
+            }
+        }
+
+        counterMap.get(feedName).inc();
     }
 }

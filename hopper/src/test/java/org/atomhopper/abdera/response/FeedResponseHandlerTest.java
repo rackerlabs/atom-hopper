@@ -48,6 +48,7 @@ public class FeedResponseHandlerTest {
 
             ResponseContext responseContext = responseHandler.handleResponse(requestContext, adapterResponse);
             assertEquals("Should respond with 304", 304, responseContext.getStatus());
+            assertEquals("Should have ETag", requestEntityTag, responseContext.getEntityTag());
         }
     }
 

@@ -1,5 +1,7 @@
 package org.atomhopper.jdbc.adapter;
 
+import com.yammer.metrics.Metrics;
+import com.yammer.metrics.core.TimerContext;
 import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Entry;
@@ -27,9 +29,9 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static org.apache.abdera.i18n.text.UrlEncoding.decode;
-import static org.apache.abdera.i18n.text.UrlEncoding.encode;
 
 
 public class JdbcFeedSource implements FeedSource {
@@ -45,9 +47,11 @@ public class JdbcFeedSource implements FeedSource {
     private static final String AND_DIRECTION_EQ = "&direction=";
     private static final String AND_DIRECTION_EQ_BACKWARD = "&direction=backward";
     private static final String AND_DIRECTION_EQ_FORWARD = "&direction=forward";
+    private static final String MOCK_LAST_MARKER = "last";
 
     private static final int PAGE_SIZE = 25;
     private JdbcTemplate jdbcTemplate;
+    private boolean enableMetrics = false;
 
     public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -70,7 +74,7 @@ public class JdbcFeedSource implements FeedSource {
                 String.valueOf(pageSize));
 
         if (searchString.length() > 0) {
-            queryParams.append(AND_SEARCH_EQ).append(encode(searchString));
+            queryParams.append(AND_SEARCH_EQ).append(urlEncode(searchString));
         }
         if (getFeedRequest.getPageMarker() != null && getFeedRequest.getPageMarker().length() > 0) {
             queryParams.append(AND_MARKER_EQ).append(getFeedRequest.getPageMarker());
@@ -91,37 +95,37 @@ public class JdbcFeedSource implements FeedSource {
         feed.addLink(queryParams.toString()).setRel(Link.REL_SELF);
     }
 
-    private void addFeedCurrentLink(Feed hyrdatedFeed, final String baseFeedUri) {
+    private void addFeedCurrentLink(Feed hydratedFeed, final String baseFeedUri) {
 
-        hyrdatedFeed.addLink(baseFeedUri, Link.REL_CURRENT);
+        hydratedFeed.addLink(baseFeedUri, Link.REL_CURRENT);
     }
 
     private Feed hydrateFeed(Abdera abdera, List<PersistedEntry> persistedEntries,
                              GetFeedRequest getFeedRequest, final int pageSize) {
 
-        final Feed hyrdatedFeed = abdera.newFeed();
+        final Feed hydratedFeed = abdera.newFeed();
         final String uuidUriScheme = "urn:uuid:";
         final String baseFeedUri = decode(getFeedRequest.urlFor(
-                new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
+                    new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
         final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
 
         // Set the feed links
-        addFeedCurrentLink(hyrdatedFeed, baseFeedUri);
-        addFeedSelfLink(hyrdatedFeed, baseFeedUri, getFeedRequest, pageSize, searchString);
+        addFeedCurrentLink(hydratedFeed, baseFeedUri);
+        addFeedSelfLink(hydratedFeed, baseFeedUri, getFeedRequest, pageSize, searchString);
 
         // TODO: We should have a link builder method for these
         if (!(persistedEntries.isEmpty())) {
-            hyrdatedFeed.setId(uuidUriScheme + UUID.randomUUID().toString());
-            hyrdatedFeed.setTitle(persistedEntries.get(0).getFeed());
+                hydratedFeed.setId(uuidUriScheme + UUID.randomUUID().toString());
+                hydratedFeed.setTitle(persistedEntries.get(0).getFeed());
 
             // Set the previous link
-            hyrdatedFeed.addLink(new StringBuilder()
-                                         .append(baseFeedUri).append(MARKER_EQ)
-                                         .append(persistedEntries.get(0).getEntryId())
-                                         .append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
-                                         .append(AND_SEARCH_EQ).append(urlEncode(searchString))
-                                         .append(AND_DIRECTION_EQ_FORWARD).toString())
-                    .setRel(Link.REL_PREVIOUS);
+            hydratedFeed.addLink(new StringBuilder()
+                        .append(baseFeedUri).append(MARKER_EQ)
+                        .append(persistedEntries.get(0).getEntryId())
+                        .append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
+                        .append(AND_SEARCH_EQ).append(urlEncode(searchString))
+                        .append(AND_DIRECTION_EQ_FORWARD).toString())
+                        .setRel(Link.REL_PREVIOUS);
 
             final PersistedEntry lastEntryInCollection = persistedEntries.get(persistedEntries.size() - 1);
 
@@ -129,20 +133,20 @@ public class JdbcFeedSource implements FeedSource {
 
             if (nextEntry != null) {
                 // Set the next link
-                hyrdatedFeed.addLink(new StringBuilder().append(baseFeedUri)
-                                             .append(MARKER_EQ).append(nextEntry.getEntryId())
-                                             .append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
-                                             .append(AND_SEARCH_EQ).append(urlEncode(searchString))
-                                             .append(AND_DIRECTION_EQ_BACKWARD).toString())
-                        .setRel(Link.REL_NEXT);
+                hydratedFeed.addLink(new StringBuilder().append(baseFeedUri)
+                            .append(MARKER_EQ).append(nextEntry.getEntryId())
+                            .append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
+                            .append(AND_SEARCH_EQ).append(urlEncode(searchString))
+                            .append(AND_DIRECTION_EQ_BACKWARD).toString())
+                            .setRel(Link.REL_NEXT);
             }
         }
 
         for (PersistedEntry persistedFeedEntry : persistedEntries) {
-            hyrdatedFeed.addEntry(hydrateEntry(persistedFeedEntry, abdera));
+            hydratedFeed.addEntry(hydrateEntry(persistedFeedEntry, abdera));
         }
 
-        return hyrdatedFeed;
+        return hydratedFeed;
     }
 
     private Entry hydrateEntry(PersistedEntry persistedEntry, Abdera abderaReference) {
@@ -188,10 +192,12 @@ public class JdbcFeedSource implements FeedSource {
 
         final String marker = getFeedRequest.getPageMarker();
 
-        if (StringUtils.isNotBlank(marker)) {
-            response = getFeedPage(getFeedRequest, marker, pageSize);
-        } else {
+        if ((StringUtils.isBlank(marker))) {
             response = getFeedHead(getFeedRequest, pageSize);
+        } else if (marker.equals(MOCK_LAST_MARKER)) {
+            response = getLastPage(getFeedRequest, pageSize);
+        } else {
+            response = getFeedPage(getFeedRequest, marker, pageSize);
         }
 
         return response;
@@ -205,33 +211,21 @@ public class JdbcFeedSource implements FeedSource {
 
         List<PersistedEntry> persistedEntries = getFeedHead(getFeedRequest.getFeedName(), pageSize, searchString);
 
-        Feed hyrdatedFeed = hydrateFeed(abdera, persistedEntries, getFeedRequest, pageSize);
+        Feed hydratedFeed = hydrateFeed(abdera, persistedEntries, getFeedRequest, pageSize);
 
         // Set the last link in the feed head
         final String baseFeedUri = decode(getFeedRequest.urlFor(
                 new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
 
-        int totalFeedEntryCount = getFeedCount(getFeedRequest.getFeedName(), searchString);
+        hydratedFeed.addLink(
+                new StringBuilder().append(baseFeedUri)
+                        .append(MARKER_EQ).append(MOCK_LAST_MARKER)
+                        .append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
+                        .append(AND_SEARCH_EQ).append(urlEncode(searchString))
+                        .append(AND_DIRECTION_EQ_BACKWARD).toString())
+                .setRel(Link.REL_LAST);
 
-        int lastPageSize = totalFeedEntryCount % pageSize;
-        if (lastPageSize == 0) {
-            lastPageSize = pageSize;
-        }
-
-        List<PersistedEntry> lastPersistedEntries = getLastPage(getFeedRequest.getFeedName(), lastPageSize, searchString);
-
-        if (lastPersistedEntries != null && !(lastPersistedEntries.isEmpty())) {
-            hyrdatedFeed.addLink(
-                    new StringBuilder().append(baseFeedUri)
-                            .append(MARKER_EQ).append(
-                            lastPersistedEntries.get(lastPersistedEntries.size() - 1).getEntryId())
-                            .append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
-                            .append(AND_SEARCH_EQ).append(urlEncode(searchString))
-                            .append(AND_DIRECTION_EQ_BACKWARD).toString())
-                    .setRel(Link.REL_LAST);
-        }
-
-        return ResponseBuilder.found(hyrdatedFeed);
+        return ResponseBuilder.found(hydratedFeed);
     }
 
     private AdapterResponse<Feed> getFeedPage(GetFeedRequest getFeedRequest, String marker, int pageSize) {
@@ -266,6 +260,26 @@ public class JdbcFeedSource implements FeedSource {
         return response;
     }
 
+    private AdapterResponse<Feed> getLastPage(GetFeedRequest getFeedRequest, int pageSize) {
+
+        final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
+        AdapterResponse<Feed> response;
+
+        int totalFeedEntryCount = getFeedCount(getFeedRequest.getFeedName(), searchString);
+
+        int lastPageSize = totalFeedEntryCount % pageSize;
+        if (lastPageSize == 0) {
+            lastPageSize = pageSize;
+        }
+
+        final Feed feed = hydrateFeed(getFeedRequest.getAbdera(),
+                enhancedGetLastPage(getFeedRequest.getFeedName(), lastPageSize, searchString),
+                getFeedRequest, pageSize);
+        response = ResponseBuilder.found(feed);
+
+        return response;
+    }
+
     @Override
     public FeedInformation getFeedInformation() {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -277,45 +291,82 @@ public class JdbcFeedSource implements FeedSource {
 
         List<PersistedEntry> feedPage = new LinkedList<PersistedEntry>();
 
-        switch (direction) {
-            case FORWARD:
+        TimerContext context = null;
+        try {
+            switch (direction) {
+                case FORWARD:
 
-                final String forwardSQL = "SELECT * FROM entries WHERE feed = ? AND id > ? ORDER BY datelastupdated ASC, id ASC LIMIT ?";
-                final String forwardWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND id > ? AND categories && ?::varchar[] ORDER BY datelastupdated ASC, id ASC LIMIT ?";
+                    // Params: feed, date, id, feed, date, limit, limit
+                    final String forwardSQL = new StringBuilder()
+                            .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id > ?)")
+                            .append(" UNION ALL ")
+                            .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated > ? ORDER BY datelastupdated ASC, id ASC LIMIT ?)")
+                            .append(" ORDER BY datelastupdated ASC, id ASC LIMIT ?").toString();
 
-                if (searchString.length() > 0) {
-                    feedPage = jdbcTemplate
-                            .query(forwardWithCatsSQL,
-                                   new Object[]{feedName, markerEntry.getSqlId(),
-                                           CategoryStringGenerator.getPostgresCategoryString(searchString), pageSize},
-                                   new EntryRowMapper());
-                } else {
-                    feedPage = jdbcTemplate
-                            .query(forwardSQL,
-                                   new Object[]{feedName, markerEntry.getSqlId(), pageSize},
-                                   new EntryRowMapper());
-                }
-                Collections.reverse(feedPage);
-                break;
+                    // Params: feed, date, id, categories, feed, date, categories, limit, limit
+                    final String forwardWithCatsSQL = new StringBuilder()
+                            .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id > ? AND categories && ?::varchar[])")
+                            .append(" UNION ALL ")
+                            .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated > ? AND categories && ?::varchar[] ORDER BY datelastupdated ASC, id ASC LIMIT ?)")
+                            .append(" ORDER BY datelastupdated ASC, id ASC LIMIT ?").toString();
 
-            case BACKWARD:
+                    if (searchString.length() > 0) {
+                        context = startTimer(String.format("db-get-feed-page-forward-with-cats-%s", getMetricBucketForPageSize(pageSize)));
+                        feedPage = jdbcTemplate
+                                .query(forwardWithCatsSQL,
+                                       new Object[]{feedName, markerEntry.getDateLastUpdated(), markerEntry.getId(),
+                                               CategoryStringGenerator.getPostgresCategoryString(searchString), feedName,
+                                               markerEntry.getDateLastUpdated(), CategoryStringGenerator.getPostgresCategoryString(searchString),
+                                               pageSize, pageSize},
+                                       new EntryRowMapper());
+                    } else {
+                        context = startTimer(String.format("db-get-feed-page-forward-%s", getMetricBucketForPageSize(pageSize)));
+                        feedPage = jdbcTemplate
+                                .query(forwardSQL,
+                                       new Object[]{feedName, markerEntry.getDateLastUpdated(), markerEntry.getId(),
+                                               feedName, markerEntry.getDateLastUpdated(), pageSize, pageSize},
+                                       new EntryRowMapper());
+                    }
+                    Collections.reverse(feedPage);
+                    break;
 
-                final String backwardSQL = "SELECT * FROM entries WHERE feed = ? AND id <= ? ORDER BY datelastupdated DESC, id DESC LIMIT ?";
-                final String backwardWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND id <= ? AND categories && ?::varchar[] ORDER BY datelastupdated DESC, id DESC LIMIT ?";
+                case BACKWARD:
 
-                if (searchString.length() > 0) {
-                    feedPage = jdbcTemplate
-                            .query(backwardWithCatsSQL,
-                                   new Object[]{feedName, markerEntry.getSqlId(),
-                                           CategoryStringGenerator.getPostgresCategoryString(searchString), pageSize},
-                                   new EntryRowMapper());
-                } else {
-                    feedPage = jdbcTemplate
-                            .query(backwardSQL,
-                                   new Object[]{feedName, markerEntry.getSqlId(), pageSize},
-                                   new EntryRowMapper());
-                }
-                break;
+                    // Params: feed, date, id, feed, date, limit, limit
+                    final String backwardSQL = new StringBuilder()
+                            .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id <= ?)")
+                            .append(" UNION ALL ")
+                            .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? ORDER BY datelastupdated DESC, id DESC LIMIT ?)")
+                            .append(" ORDER BY datelastupdated DESC, id DESC LIMIT ?").toString();
+
+                    // Params: feed, date, id, categories, feed, date, categories, limit, limit
+                    final String backwardWithCatsSQL = new StringBuilder()
+                            .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id <= ? AND categories && ?::varchar[])")
+                            .append(" UNION ALL ")
+                            .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? AND categories && ?::varchar[] ORDER BY datelastupdated DESC, id DESC LIMIT ?)")
+                            .append(" ORDER BY datelastupdated DESC, id DESC LIMIT ?").toString();
+
+                    if (searchString.length() > 0) {
+                        context = startTimer(String.format("db-get-feed-page-backward-with-cats-%s", getMetricBucketForPageSize(pageSize)));
+                        feedPage = jdbcTemplate
+                                .query(backwardWithCatsSQL,
+                                       new Object[]{feedName, markerEntry.getDateLastUpdated(), markerEntry.getId(),
+                                               CategoryStringGenerator.getPostgresCategoryString(searchString), feedName,
+                                               markerEntry.getDateLastUpdated(), CategoryStringGenerator.getPostgresCategoryString(searchString),
+                                               pageSize, pageSize},
+                                       new EntryRowMapper());
+                    } else {
+                        context = startTimer(String.format("db-get-feed-page-backward-%s", getMetricBucketForPageSize(pageSize)));
+                        feedPage = jdbcTemplate
+                                .query(backwardSQL,
+                                       new Object[]{feedName, markerEntry.getDateLastUpdated(), markerEntry.getId(),
+                                               feedName, markerEntry.getDateLastUpdated(), pageSize, pageSize},
+                                       new EntryRowMapper());
+                    }
+                    break;
+            }
+        } finally {
+            stopTimer(context);
         }
 
         return feedPage;
@@ -332,17 +383,23 @@ public class JdbcFeedSource implements FeedSource {
         final String totalFeedEntryCountSQL = "SELECT COUNT(*) FROM entries WHERE feed = ?";
         final String totalFeedEntryCountWithCatsSQL = "SELECT COUNT(*) FROM entries WHERE feed = ? AND categories && ?::varchar[]";
 
+        TimerContext context = null;
         int totalFeedEntryCount;
-
-        if (searchString.length() > 0) {
-            totalFeedEntryCount = jdbcTemplate
-                    .queryForInt(totalFeedEntryCountWithCatsSQL, feedName,
-                                 CategoryStringGenerator.getPostgresCategoryString(searchString));
-        } else {
-            totalFeedEntryCount = jdbcTemplate
-                    .queryForInt(totalFeedEntryCountSQL, feedName);
+        try {
+            if (searchString.length() > 0) {
+                context = startTimer("db-get-feed-count-with-cats");
+                totalFeedEntryCount = jdbcTemplate
+                        .queryForInt(totalFeedEntryCountWithCatsSQL, feedName,
+                                     CategoryStringGenerator.getPostgresCategoryString(searchString));
+            } else {
+                context = startTimer("db-get-feed-count");
+                totalFeedEntryCount = jdbcTemplate
+                        .queryForInt(totalFeedEntryCountSQL, feedName);
+            }
+            return totalFeedEntryCount;
+        } finally {
+            stopTimer(context);
         }
-        return totalFeedEntryCount;
     }
 
     private List<PersistedEntry> getFeedHead(final String feedName, final int pageSize, final String searchString) {
@@ -350,58 +407,95 @@ public class JdbcFeedSource implements FeedSource {
         final String getFeedHeadSQL = "SELECT * FROM entries WHERE feed = ? ORDER BY datelastupdated DESC, id DESC LIMIT ?";
         final String getFeedHeadWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND categories && ?::varchar[] ORDER BY datelastupdated DESC, id DESC LIMIT ?";
 
+        TimerContext context = null;
         List<PersistedEntry> persistedEntries;
-        if (searchString.length() > 0) {
-            persistedEntries = jdbcTemplate
-                    .query(getFeedHeadWithCatsSQL, new Object[]{feedName,
-                            CategoryStringGenerator.getPostgresCategoryString(searchString), pageSize},
-                           new EntryRowMapper());
-        } else {
-            persistedEntries = jdbcTemplate
-                    .query(getFeedHeadSQL, new Object[]{feedName, pageSize},
-                           new EntryRowMapper());
+        try {
+            if (searchString.length() > 0) {
+                context = startTimer(String.format("db-get-feed-head-with-cats-%s", getMetricBucketForPageSize(pageSize)));
+                persistedEntries = jdbcTemplate
+                        .query(getFeedHeadWithCatsSQL, new Object[]{feedName,
+                                CategoryStringGenerator.getPostgresCategoryString(searchString), pageSize},
+                               new EntryRowMapper());
+            } else {
+                context = startTimer(String.format("db-get-feed-head-%s", getMetricBucketForPageSize(pageSize)));
+                persistedEntries = jdbcTemplate
+                        .query(getFeedHeadSQL, new Object[]{feedName, pageSize},
+                               new EntryRowMapper());
+            }
+        } finally {
+            stopTimer(context);
         }
         return persistedEntries;
     }
 
-    private List<PersistedEntry> getLastPage(final String feedName, final int pageSize, final String searchString) {
+    private List<PersistedEntry> enhancedGetLastPage(final String feedName, final int pageSize, final String searchString) {
 
         final String lastLinkQuerySQL = "SELECT * FROM entries WHERE feed = ? ORDER BY datelastupdated ASC, id ASC LIMIT ?";
         final String lastLinkQueryWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND categories && ?::varchar[] ORDER BY datelastupdated ASC, id ASC LIMIT ?";
 
+        TimerContext context = null;
         List<PersistedEntry> lastPersistedEntries;
-        if (searchString.length() > 0) {
-            lastPersistedEntries = jdbcTemplate
-                    .query(lastLinkQueryWithCatsSQL, new Object[]{feedName,
-                            CategoryStringGenerator.getPostgresCategoryString(searchString), pageSize},
-                           new EntryRowMapper());
-        } else {
-            lastPersistedEntries = jdbcTemplate
-                    .query(lastLinkQuerySQL, new Object[]{feedName, pageSize},
-                           new EntryRowMapper());
+        try {
+            if (searchString.length() > 0) {
+                context = startTimer(String.format("db-get-last-page-with-cats-%s", getMetricBucketForPageSize(pageSize)));
+                lastPersistedEntries = jdbcTemplate
+                        .query(lastLinkQueryWithCatsSQL, new Object[]{feedName,
+                                CategoryStringGenerator.getPostgresCategoryString(searchString), pageSize},
+                               new EntryRowMapper());
+            } else {
+                context = startTimer(String.format("db-get-last-page-%s", getMetricBucketForPageSize(pageSize)));
+                lastPersistedEntries = jdbcTemplate
+                        .query(lastLinkQuerySQL, new Object[]{feedName, pageSize},
+                               new EntryRowMapper());
+            }
+        } finally {
+            stopTimer(context);
         }
+
+        Collections.reverse(lastPersistedEntries);
+
         return lastPersistedEntries;
+
     }
 
     private PersistedEntry getNextMarker(final PersistedEntry persistedEntry, final String feedName, final String searchString) {
-        final String nextLinkSQL = "SELECT * FROM entries where feed = ? and id < ? ORDER BY datelastupdated DESC, id DESC LIMIT 1";
-        final String nextLinkWithCatsSQL = "SELECT * FROM entries where feed = ? and id < ? AND categories && ?::varchar[] ORDER BY datelastupdated DESC, id DESC LIMIT 1";
 
+        // Params: feed, date, id, feed, date, limit, limit
+        final String nextLinkSQL = new StringBuilder()
+                .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id < ?)")
+                .append(" UNION ALL ")
+                .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? ORDER BY datelastupdated DESC, id DESC LIMIT 1)")
+                .append(" ORDER BY datelastupdated DESC, id DESC LIMIT 1").toString();
+
+        // Params: feed, date, id, categories, feed, date, categories, limit, limit
+        final String nextLinkWithCatsSQL = new StringBuilder()
+                .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id < ? AND categories && ?::varchar[])")
+                .append(" UNION ALL ")
+                .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? AND categories && ?::varchar[] ORDER BY datelastupdated DESC, id DESC LIMIT 1)")
+                .append(" ORDER BY datelastupdated DESC, id DESC LIMIT 1").toString();
+
+        TimerContext context = null;
         List<PersistedEntry> nextEntry;
-        if (searchString.length() > 0) {
+        try {
+            if (searchString.length() > 0) {
+                context = startTimer("db-get-next-marker-with-cats");
+                nextEntry =  jdbcTemplate
+                        .query(nextLinkWithCatsSQL, new Object[]{feedName, persistedEntry.getDateLastUpdated(), persistedEntry.getId(),
+                                CategoryStringGenerator.getPostgresCategoryString(searchString), feedName,
+                                persistedEntry.getDateLastUpdated(), CategoryStringGenerator.getPostgresCategoryString(searchString)},
+                               new EntryRowMapper());
+            } else {
+                context = startTimer("db-get-next-marker");
+                nextEntry =  jdbcTemplate
+                        .query(nextLinkSQL, new Object[]{feedName, persistedEntry.getDateLastUpdated(), persistedEntry.getId(),
+                                feedName, persistedEntry.getDateLastUpdated()},
+                               new EntryRowMapper());
+            }
 
-            nextEntry =  jdbcTemplate
-                    .query(nextLinkWithCatsSQL, new Object[]{feedName,
-                            persistedEntry.getSqlId(),
-                            CategoryStringGenerator.getPostgresCategoryString(searchString)}, new EntryRowMapper());
-        } else {
-
-            nextEntry =  jdbcTemplate
-                    .query(nextLinkSQL, new Object[]{feedName,
-                            persistedEntry.getSqlId()}, new EntryRowMapper());
+            return nextEntry.size() > 0 ? nextEntry.get(0) : null;
+        } finally {
+            stopTimer(context);
         }
-
-        return nextEntry.size() > 0 ? nextEntry.get(0) : null;
     }
 
     private String urlEncode(String searchString)  {
@@ -410,6 +504,35 @@ public class JdbcFeedSource implements FeedSource {
         } catch (UnsupportedEncodingException e) {
             //noop - should never get here
             return "";
+        }
+    }
+
+    private TimerContext startTimer(String name) {
+        if ( enableMetrics ) {
+            final com.yammer.metrics.core.Timer timer = Metrics.newTimer(getClass(), name, TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
+            TimerContext context = timer.time();
+            return context;
+        } else {
+            return null;
+        }
+    }
+
+    private void stopTimer(TimerContext context) {
+        if ( enableMetrics && context != null ) {
+            context.stop();
+        }
+    }
+
+    private String getMetricBucketForPageSize(final int pageSize) {
+        if ( pageSize > 0 && pageSize <= 249 ) {
+            return "tiny";
+        } else if ( pageSize >= 250 && pageSize <= 499 ) {
+            return "small";
+        } else if ( pageSize >= 500 && pageSize <= 749 ) {
+            return "medium";
+        } else {
+            // 750 - 1000
+            return "large";
         }
     }
 }

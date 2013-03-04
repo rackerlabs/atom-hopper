@@ -19,7 +19,7 @@ CREATE TABLE entries (
     entrybody character varying,
     feed character varying(255),
     categories character varying[]
-)
+);
 ALTER TABLE public.entries OWNER TO atomschema;
 CREATE INDEX datelastupdated_idx on entries(datelastupdated);
 CREATE INDEX categories_idx on entries(categories);

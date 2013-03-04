@@ -71,13 +71,13 @@ public class PostgresFeedPublisherTest {
             assertEquals("Should return HTTP 201 (Created)", HttpStatus.CREATED, adapterResponse.getResponseStatus());
         }
 
-        @Test(expected = PublicationException.class)
+        @Test
         public void shouldThrowErrorForEntryIdAlreadyExists() throws Exception {
             postgresFeedPublisher.setAllowOverrideId(true);
             when(jdbcTemplate.query(any(String.class), any(Object[].class), any(EntryRowMapper.class))).thenReturn(
                     entryList);
             AdapterResponse<Entry> adapterResponse = postgresFeedPublisher.postEntry(postEntryRequest);
-            assertEquals("Should return HTTP 201 (Created)", HttpStatus.CREATED, adapterResponse.getResponseStatus());
+            assertEquals("Should return HTTP 404 (Bad Request)", HttpStatus.BAD_REQUEST, adapterResponse.getResponseStatus());
         }
 
         @Test(expected = UnsupportedOperationException.class)
