@@ -1,5 +1,6 @@
 package org.atomhopper.jdbc.adapter;
 
+import com.yammer.metrics.core.TimerContext;
 import org.apache.abdera.model.Entry;
 import org.apache.commons.lang.StringUtils;
 import org.atomhopper.adapter.FeedPublisher;
@@ -23,6 +24,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Counter;
@@ -39,6 +41,7 @@ public class JdbcFeedPublisher implements FeedPublisher {
 
     private boolean allowOverrideId = false;
     private boolean allowOverrideDate = false;
+    private boolean enableMetrics = false;
 
     private Map<String, Counter> counterMap = Collections.synchronizedMap(new HashMap<String, Counter>());
 
@@ -63,58 +66,69 @@ public class JdbcFeedPublisher implements FeedPublisher {
 
     @Override
     public AdapterResponse<Entry> postEntry(PostEntryRequest postEntryRequest) {
-        final Entry abderaParsedEntry = postEntryRequest.getEntry();
-        final PersistedEntry persistedEntry = new PersistedEntry();
-        final String insertSQL = "INSERT INTO entries (entryid, creationdate, datelastupdated, entrybody, feed, categories) VALUES (?, ?, ?, ?, ?, ?)";
+        final TimerContext context = startTimer("post-entry");
 
-        boolean entryIdSent = abderaParsedEntry.getId() != null;
+        try {
+            final Entry abderaParsedEntry = postEntryRequest.getEntry();
+            final PersistedEntry persistedEntry = new PersistedEntry();
+            final String insertSQL = "INSERT INTO entries (entryid, creationdate, datelastupdated, entrybody, feed, categories) VALUES (?, ?, ?, ?, ?, ?)";
 
-        // Generate an ID for this entry
-        if (allowOverrideId && entryIdSent && StringUtils.isNotBlank(abderaParsedEntry.getId().toString().trim())) {
-            String entryId = abderaParsedEntry.getId().toString();
-            // Check to see if entry with this id already exists
-            PersistedEntry exists = getEntry(entryId, postEntryRequest.getFeedName());
-            if (exists != null) {
-                String errMsg = String.format("Unable to persist entry. Reason: entryId (%s) not unique.", entryId);
-                return ResponseBuilder.badRequest(errMsg);
+            boolean entryIdSent = abderaParsedEntry.getId() != null;
+
+            // Generate an ID for this entry
+            if (allowOverrideId && entryIdSent && StringUtils.isNotBlank(abderaParsedEntry.getId().toString().trim())) {
+                String entryId = abderaParsedEntry.getId().toString();
+                // Check to see if entry with this id already exists
+                PersistedEntry exists = getEntry(entryId, postEntryRequest.getFeedName());
+                if (exists != null) {
+                    String errMsg = String.format("Unable to persist entry. Reason: entryId (%s) not unique.", entryId);
+                    return ResponseBuilder.badRequest(errMsg);
+                }
+                persistedEntry.setEntryId(abderaParsedEntry.getId().toString());
+            } else {
+                persistedEntry.setEntryId(UUID_URI_SCHEME + UUID.randomUUID().toString());
+                abderaParsedEntry.setId(persistedEntry.getEntryId());
             }
-            persistedEntry.setEntryId(abderaParsedEntry.getId().toString());
-        } else {
-            persistedEntry.setEntryId(UUID_URI_SCHEME + UUID.randomUUID().toString());
-            abderaParsedEntry.setId(persistedEntry.getEntryId());
-        }
 
-        if (allowOverrideDate) {
-            Date updated = abderaParsedEntry.getUpdated();
+            if (allowOverrideDate) {
+                Date updated = abderaParsedEntry.getUpdated();
 
-            if (updated != null) {
-                persistedEntry.setDateLastUpdated(updated);
-                persistedEntry.setCreationDate(updated);
+                if (updated != null) {
+                    persistedEntry.setDateLastUpdated(updated);
+                    persistedEntry.setCreationDate(updated);
+                }
             }
+
+            // Set the categories
+            persistedEntry.setCategories(processCategories(abderaParsedEntry.getCategories()));
+
+            if (abderaParsedEntry.getSelfLink() == null) {
+                abderaParsedEntry.addLink(decode(postEntryRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)))
+                    + "entries/" + persistedEntry.getEntryId()).setRel(LINKREL_SELF);
+            }
+
+            persistedEntry.setFeed(postEntryRequest.getFeedName());
+            persistedEntry.setEntryBody(entryToString(abderaParsedEntry));
+
+            abderaParsedEntry.setUpdated(persistedEntry.getDateLastUpdated());
+            abderaParsedEntry.setPublished(persistedEntry.getCreationDate());
+
+            final TimerContext dbcontext = startTimer("db-post-entry");
+            try {
+                jdbcTemplate.update(insertSQL, new Object[]{
+                    persistedEntry.getEntryId(), persistedEntry.getCreationDate(), persistedEntry.getDateLastUpdated(),
+                    persistedEntry.getEntryBody(), persistedEntry.getFeed(), new PostgreSQLTextArray(persistedEntry.getCategories())
+                });
+            }  finally {
+                stopTimer(dbcontext);
+            }
+
+            incrementCounterForFeed(postEntryRequest.getFeedName());
+
+            return ResponseBuilder.created(abderaParsedEntry);
+        } finally {
+            stopTimer(context);
         }
-
-        // Set the categories
-        persistedEntry.setCategories(processCategories(abderaParsedEntry.getCategories()));
-
-        if (abderaParsedEntry.getSelfLink() == null) {
-            abderaParsedEntry.addLink(decode(postEntryRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)))
-                + "entries/" + persistedEntry.getEntryId()).setRel(LINKREL_SELF);
-        }
-
-        persistedEntry.setFeed(postEntryRequest.getFeedName());
-        persistedEntry.setEntryBody(entryToString(abderaParsedEntry));
-
-        abderaParsedEntry.setUpdated(persistedEntry.getDateLastUpdated());
-        abderaParsedEntry.setPublished(persistedEntry.getCreationDate());
-
-        jdbcTemplate.update(insertSQL, new Object[]{
-            persistedEntry.getEntryId(), persistedEntry.getCreationDate(), persistedEntry.getDateLastUpdated(),
-            persistedEntry.getEntryBody(), persistedEntry.getFeed(), new PostgreSQLTextArray(persistedEntry.getCategories())
-        });
-
-        incrementCounterForFeed(postEntryRequest.getFeedName());
-
-        return ResponseBuilder.created(abderaParsedEntry);
     }
 
     private String[] processCategories(List<org.apache.abdera.model.Category> abderaCategories) {
@@ -175,5 +189,21 @@ public class JdbcFeedPublisher implements FeedPublisher {
         }
 
         counterMap.get(feedName).inc();
+    }
+
+    private TimerContext startTimer(String name) {
+        if ( enableMetrics ) {
+            final com.yammer.metrics.core.Timer timer = Metrics.newTimer(getClass(), name, TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
+            TimerContext context = timer.time();
+            return context;
+        } else {
+            return null;
+        }
+    }
+
+    private void stopTimer(TimerContext context) {
+        if ( enableMetrics && context != null ) {
+            context.stop();
+        }
     }
 }
