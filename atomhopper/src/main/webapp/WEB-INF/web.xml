@@ -67,6 +67,15 @@
         <servlet-class>org.atomhopper.AtomHopperLogCheckServlet</servlet-class>
     </servlet>
 
+    <servlet id="atom-hopper-metrics">
+        <servlet-name>Atom-Hopper-Metrics</servlet-name>
+        <servlet-class>com.yammer.metrics.reporting.MetricsServlet</servlet-class>
+        <init-param>
+            <param-name>metrics-uri</param-name>
+            <param-value>/metrics</param-value>
+        </init-param>
+    </servlet>
+
     <servlet-mapping id="atom-hopper-mapping">
         <servlet-name>Atom-Hopper</servlet-name>
         <url-pattern>/*</url-pattern>
@@ -80,6 +89,11 @@
     <servlet-mapping id="atom-hopper-log-test-mapping">
         <servlet-name>Atom-Hopper-Log-Test</servlet-name>
         <url-pattern>/logtest</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping id="metrics-mapping">
+        <servlet-name>Atom-Hopper-Metrics</servlet-name>
+        <url-pattern>/atommetrics/*</url-pattern>
     </servlet-mapping>
     
     <env-entry>
