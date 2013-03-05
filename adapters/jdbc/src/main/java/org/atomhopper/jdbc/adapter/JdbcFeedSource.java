@@ -51,10 +51,14 @@ public class JdbcFeedSource implements FeedSource {
 
     private static final int PAGE_SIZE = 25;
     private JdbcTemplate jdbcTemplate;
-    private boolean enableMetrics = false;
+    private boolean enableTimers = false;
 
     public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+    }
+
+    public void setEnableTimers(Boolean enableTimers) {
+        this.enableTimers = enableTimers;
     }
 
     @Override
@@ -106,7 +110,7 @@ public class JdbcFeedSource implements FeedSource {
         final Feed hydratedFeed = abdera.newFeed();
         final String uuidUriScheme = "urn:uuid:";
         final String baseFeedUri = decode(getFeedRequest.urlFor(
-                    new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
+                new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
         final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
 
         // Set the feed links
@@ -115,17 +119,17 @@ public class JdbcFeedSource implements FeedSource {
 
         // TODO: We should have a link builder method for these
         if (!(persistedEntries.isEmpty())) {
-                hydratedFeed.setId(uuidUriScheme + UUID.randomUUID().toString());
-                hydratedFeed.setTitle(persistedEntries.get(0).getFeed());
+            hydratedFeed.setId(uuidUriScheme + UUID.randomUUID().toString());
+            hydratedFeed.setTitle(persistedEntries.get(0).getFeed());
 
             // Set the previous link
             hydratedFeed.addLink(new StringBuilder()
-                        .append(baseFeedUri).append(MARKER_EQ)
-                        .append(persistedEntries.get(0).getEntryId())
-                        .append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
-                        .append(AND_SEARCH_EQ).append(urlEncode(searchString))
-                        .append(AND_DIRECTION_EQ_FORWARD).toString())
-                        .setRel(Link.REL_PREVIOUS);
+                                         .append(baseFeedUri).append(MARKER_EQ)
+                                         .append(persistedEntries.get(0).getEntryId())
+                                         .append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
+                                         .append(AND_SEARCH_EQ).append(urlEncode(searchString))
+                                         .append(AND_DIRECTION_EQ_FORWARD).toString())
+                    .setRel(Link.REL_PREVIOUS);
 
             final PersistedEntry lastEntryInCollection = persistedEntries.get(persistedEntries.size() - 1);
 
@@ -134,11 +138,11 @@ public class JdbcFeedSource implements FeedSource {
             if (nextEntry != null) {
                 // Set the next link
                 hydratedFeed.addLink(new StringBuilder().append(baseFeedUri)
-                            .append(MARKER_EQ).append(nextEntry.getEntryId())
-                            .append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
-                            .append(AND_SEARCH_EQ).append(urlEncode(searchString))
-                            .append(AND_DIRECTION_EQ_BACKWARD).toString())
-                            .setRel(Link.REL_NEXT);
+                                             .append(MARKER_EQ).append(nextEntry.getEntryId())
+                                             .append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
+                                             .append(AND_SEARCH_EQ).append(urlEncode(searchString))
+                                             .append(AND_DIRECTION_EQ_BACKWARD).toString())
+                        .setRel(Link.REL_NEXT);
             }
         }
 
@@ -183,6 +187,8 @@ public class JdbcFeedSource implements FeedSource {
     public AdapterResponse<Feed> getFeed(GetFeedRequest getFeedRequest) {
         AdapterResponse<Feed> response;
 
+        TimerContext context = null;
+
         int pageSize = PAGE_SIZE;
         final String pageSizeString = getFeedRequest.getPageSize();
 
@@ -192,12 +198,19 @@ public class JdbcFeedSource implements FeedSource {
 
         final String marker = getFeedRequest.getPageMarker();
 
-        if ((StringUtils.isBlank(marker))) {
-            response = getFeedHead(getFeedRequest, pageSize);
-        } else if (marker.equals(MOCK_LAST_MARKER)) {
-            response = getLastPage(getFeedRequest, pageSize);
-        } else {
-            response = getFeedPage(getFeedRequest, marker, pageSize);
+        try {
+            if ((StringUtils.isBlank(marker))) {
+                context = startTimer(String.format("get-feed-head-%s", getMetricBucketForPageSize(pageSize)));
+                response = getFeedHead(getFeedRequest, pageSize);
+            } else if (marker.equals(MOCK_LAST_MARKER)) {
+                context = startTimer(String.format("get-last-page-%s", getMetricBucketForPageSize(pageSize)));
+                response = getLastPage(getFeedRequest, pageSize);
+            } else {
+                context = startTimer(String.format("get-feed-page-%s", getMetricBucketForPageSize(pageSize)));
+                response = getFeedPage(getFeedRequest, marker, pageSize);
+            }
+        } finally {
+            stopTimer(context);
         }
 
         return response;
@@ -273,8 +286,8 @@ public class JdbcFeedSource implements FeedSource {
         }
 
         final Feed feed = hydrateFeed(getFeedRequest.getAbdera(),
-                enhancedGetLastPage(getFeedRequest.getFeedName(), lastPageSize, searchString),
-                getFeedRequest, pageSize);
+                                      enhancedGetLastPage(getFeedRequest.getFeedName(), lastPageSize, searchString),
+                                      getFeedRequest, pageSize);
         response = ResponseBuilder.found(feed);
 
         return response;
@@ -292,6 +305,7 @@ public class JdbcFeedSource implements FeedSource {
         List<PersistedEntry> feedPage = new LinkedList<PersistedEntry>();
 
         TimerContext context = null;
+
         try {
             switch (direction) {
                 case FORWARD:
@@ -311,16 +325,20 @@ public class JdbcFeedSource implements FeedSource {
                             .append(" ORDER BY datelastupdated ASC, id ASC LIMIT ?").toString();
 
                     if (searchString.length() > 0) {
-                        context = startTimer(String.format("db-get-feed-page-forward-with-cats-%s", getMetricBucketForPageSize(pageSize)));
+                        context = startTimer(String.format("db-get-feed-page-forward-with-cats-%s",
+                                                           getMetricBucketForPageSize(pageSize)));
                         feedPage = jdbcTemplate
                                 .query(forwardWithCatsSQL,
                                        new Object[]{feedName, markerEntry.getDateLastUpdated(), markerEntry.getId(),
-                                               CategoryStringGenerator.getPostgresCategoryString(searchString), feedName,
-                                               markerEntry.getDateLastUpdated(), CategoryStringGenerator.getPostgresCategoryString(searchString),
+                                               CategoryStringGenerator.getPostgresCategoryString(
+                                                       searchString), feedName,
+                                               markerEntry.getDateLastUpdated(), CategoryStringGenerator.getPostgresCategoryString(
+                                               searchString),
                                                pageSize, pageSize},
                                        new EntryRowMapper());
                     } else {
-                        context = startTimer(String.format("db-get-feed-page-forward-%s", getMetricBucketForPageSize(pageSize)));
+                        context = startTimer(
+                                String.format("db-get-feed-page-forward-%s", getMetricBucketForPageSize(pageSize)));
                         feedPage = jdbcTemplate
                                 .query(forwardSQL,
                                        new Object[]{feedName, markerEntry.getDateLastUpdated(), markerEntry.getId(),
@@ -347,16 +365,20 @@ public class JdbcFeedSource implements FeedSource {
                             .append(" ORDER BY datelastupdated DESC, id DESC LIMIT ?").toString();
 
                     if (searchString.length() > 0) {
-                        context = startTimer(String.format("db-get-feed-page-backward-with-cats-%s", getMetricBucketForPageSize(pageSize)));
+                        context = startTimer(String.format("db-get-feed-page-backward-with-cats-%s",
+                                                           getMetricBucketForPageSize(pageSize)));
                         feedPage = jdbcTemplate
                                 .query(backwardWithCatsSQL,
                                        new Object[]{feedName, markerEntry.getDateLastUpdated(), markerEntry.getId(),
-                                               CategoryStringGenerator.getPostgresCategoryString(searchString), feedName,
-                                               markerEntry.getDateLastUpdated(), CategoryStringGenerator.getPostgresCategoryString(searchString),
+                                               CategoryStringGenerator.getPostgresCategoryString(
+                                                       searchString), feedName,
+                                               markerEntry.getDateLastUpdated(), CategoryStringGenerator.getPostgresCategoryString(
+                                               searchString),
                                                pageSize, pageSize},
                                        new EntryRowMapper());
                     } else {
-                        context = startTimer(String.format("db-get-feed-page-backward-%s", getMetricBucketForPageSize(pageSize)));
+                        context = startTimer(
+                                String.format("db-get-feed-page-backward-%s", getMetricBucketForPageSize(pageSize)));
                         feedPage = jdbcTemplate
                                 .query(backwardSQL,
                                        new Object[]{feedName, markerEntry.getDateLastUpdated(), markerEntry.getId(),
@@ -411,7 +433,8 @@ public class JdbcFeedSource implements FeedSource {
         List<PersistedEntry> persistedEntries;
         try {
             if (searchString.length() > 0) {
-                context = startTimer(String.format("db-get-feed-head-with-cats-%s", getMetricBucketForPageSize(pageSize)));
+                context = startTimer(
+                        String.format("db-get-feed-head-with-cats-%s", getMetricBucketForPageSize(pageSize)));
                 persistedEntries = jdbcTemplate
                         .query(getFeedHeadWithCatsSQL, new Object[]{feedName,
                                 CategoryStringGenerator.getPostgresCategoryString(searchString), pageSize},
@@ -428,7 +451,8 @@ public class JdbcFeedSource implements FeedSource {
         return persistedEntries;
     }
 
-    private List<PersistedEntry> enhancedGetLastPage(final String feedName, final int pageSize, final String searchString) {
+    private List<PersistedEntry> enhancedGetLastPage(final String feedName, final int pageSize,
+                                                     final String searchString) {
 
         final String lastLinkQuerySQL = "SELECT * FROM entries WHERE feed = ? ORDER BY datelastupdated ASC, id ASC LIMIT ?";
         final String lastLinkQueryWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND categories && ?::varchar[] ORDER BY datelastupdated ASC, id ASC LIMIT ?";
@@ -437,7 +461,8 @@ public class JdbcFeedSource implements FeedSource {
         List<PersistedEntry> lastPersistedEntries;
         try {
             if (searchString.length() > 0) {
-                context = startTimer(String.format("db-get-last-page-with-cats-%s", getMetricBucketForPageSize(pageSize)));
+                context = startTimer(
+                        String.format("db-get-last-page-with-cats-%s", getMetricBucketForPageSize(pageSize)));
                 lastPersistedEntries = jdbcTemplate
                         .query(lastLinkQueryWithCatsSQL, new Object[]{feedName,
                                 CategoryStringGenerator.getPostgresCategoryString(searchString), pageSize},
@@ -458,7 +483,8 @@ public class JdbcFeedSource implements FeedSource {
 
     }
 
-    private PersistedEntry getNextMarker(final PersistedEntry persistedEntry, final String feedName, final String searchString) {
+    private PersistedEntry getNextMarker(final PersistedEntry persistedEntry, final String feedName,
+                                         final String searchString) {
 
         // Params: feed, date, id, feed, date, limit, limit
         final String nextLinkSQL = new StringBuilder()
@@ -474,31 +500,28 @@ public class JdbcFeedSource implements FeedSource {
                 .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? AND categories && ?::varchar[] ORDER BY datelastupdated DESC, id DESC LIMIT 1)")
                 .append(" ORDER BY datelastupdated DESC, id DESC LIMIT 1").toString();
 
-        TimerContext context = null;
         List<PersistedEntry> nextEntry;
-        try {
-            if (searchString.length() > 0) {
-                context = startTimer("db-get-next-marker-with-cats");
-                nextEntry =  jdbcTemplate
-                        .query(nextLinkWithCatsSQL, new Object[]{feedName, persistedEntry.getDateLastUpdated(), persistedEntry.getId(),
-                                CategoryStringGenerator.getPostgresCategoryString(searchString), feedName,
-                                persistedEntry.getDateLastUpdated(), CategoryStringGenerator.getPostgresCategoryString(searchString)},
-                               new EntryRowMapper());
-            } else {
-                context = startTimer("db-get-next-marker");
-                nextEntry =  jdbcTemplate
-                        .query(nextLinkSQL, new Object[]{feedName, persistedEntry.getDateLastUpdated(), persistedEntry.getId(),
-                                feedName, persistedEntry.getDateLastUpdated()},
-                               new EntryRowMapper());
-            }
 
-            return nextEntry.size() > 0 ? nextEntry.get(0) : null;
-        } finally {
-            stopTimer(context);
+        if (searchString.length() > 0) {
+            nextEntry = jdbcTemplate
+                    .query(nextLinkWithCatsSQL,
+                           new Object[]{feedName, persistedEntry.getDateLastUpdated(), persistedEntry.getId(),
+                                   CategoryStringGenerator.getPostgresCategoryString(searchString), feedName,
+                                   persistedEntry.getDateLastUpdated(), CategoryStringGenerator.getPostgresCategoryString(
+                                   searchString)},
+                           new EntryRowMapper());
+        } else {
+            nextEntry = jdbcTemplate
+                    .query(nextLinkSQL,
+                           new Object[]{feedName, persistedEntry.getDateLastUpdated(), persistedEntry.getId(),
+                                   feedName, persistedEntry.getDateLastUpdated()},
+                           new EntryRowMapper());
         }
+
+        return nextEntry.size() > 0 ? nextEntry.get(0) : null;
     }
 
-    private String urlEncode(String searchString)  {
+    private String urlEncode(String searchString) {
         try {
             return URLEncoder.encode(searchString, "UTF-8");
         } catch (UnsupportedEncodingException e) {
@@ -508,8 +531,9 @@ public class JdbcFeedSource implements FeedSource {
     }
 
     private TimerContext startTimer(String name) {
-        if ( enableMetrics ) {
-            final com.yammer.metrics.core.Timer timer = Metrics.newTimer(getClass(), name, TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
+        if (enableTimers) {
+            final com.yammer.metrics.core.Timer timer = Metrics.newTimer(getClass(), name, TimeUnit.MILLISECONDS,
+                                                                         TimeUnit.SECONDS);
             TimerContext context = timer.time();
             return context;
         } else {
@@ -518,17 +542,17 @@ public class JdbcFeedSource implements FeedSource {
     }
 
     private void stopTimer(TimerContext context) {
-        if ( enableMetrics && context != null ) {
+        if (enableTimers && context != null) {
             context.stop();
         }
     }
 
     private String getMetricBucketForPageSize(final int pageSize) {
-        if ( pageSize > 0 && pageSize <= 249 ) {
+        if (pageSize > 0 && pageSize <= 249) {
             return "tiny";
-        } else if ( pageSize >= 250 && pageSize <= 499 ) {
+        } else if (pageSize >= 250 && pageSize <= 499) {
             return "small";
-        } else if ( pageSize >= 500 && pageSize <= 749 ) {
+        } else if (pageSize >= 500 && pageSize <= 749) {
             return "medium";
         } else {
             // 750 - 1000
