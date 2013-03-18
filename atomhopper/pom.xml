@@ -264,7 +264,7 @@
                             <postremoveScriptlet>
                                 <script>rm -rf "/opt/atomhopper/"</script>
                                 <script>rm -rf "/var/log/atomhopper/"</script>
-                                <script>rm -rf "/srv/tomcat/webapps/ROOT/"</script>
+                                <script>rm -rf "/srv/tomcat7/webapps/ROOT/"</script>
                             </postremoveScriptlet>
                             <requires>
                                 <!--
