@@ -41,7 +41,7 @@ public class JdbcFeedPublisher implements FeedPublisher {
 
     private boolean allowOverrideId = false;
     private boolean allowOverrideDate = false;
-    private boolean enableMetrics = false;
+    private boolean enableTimers = false;
 
     private Map<String, Counter> counterMap = Collections.synchronizedMap(new HashMap<String, Counter>());
 
@@ -55,6 +55,10 @@ public class JdbcFeedPublisher implements FeedPublisher {
 
     public void setAllowOverrideDate(boolean allowOverrideDate) {
         this.allowOverrideDate = allowOverrideDate;
+    }
+
+    public void setEnableTimers(Boolean enableTimers) {
+        this.enableTimers = enableTimers;
     }
 
     @Override
@@ -192,7 +196,7 @@ public class JdbcFeedPublisher implements FeedPublisher {
     }
 
     private TimerContext startTimer(String name) {
-        if ( enableMetrics ) {
+        if (enableTimers) {
             final com.yammer.metrics.core.Timer timer = Metrics.newTimer(getClass(), name, TimeUnit.MILLISECONDS, TimeUnit.SECONDS);
             TimerContext context = timer.time();
             return context;
@@ -202,7 +206,7 @@ public class JdbcFeedPublisher implements FeedPublisher {
     }
 
     private void stopTimer(TimerContext context) {
-        if ( enableMetrics && context != null ) {
+        if ( enableTimers && context != null ) {
             context.stop();
         }
     }

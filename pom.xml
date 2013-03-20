@@ -5,7 +5,7 @@
     <groupId>org.atomhopper</groupId>
     <artifactId>parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.2.7-SNAPSHOT</version>
+    <version>1.2.8-SNAPSHOT</version>
     <name>ATOM Hopper - ATOMpub Server Collection</name>
 
     <url>http://atomhopper.org/</url>
@@ -294,6 +294,12 @@
                 <groupId>com.yammer.metrics</groupId>
                 <artifactId>metrics-core</artifactId>
                 <version>2.2.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.yammer.metrics</groupId>
+                <artifactId>metrics-servlet</artifactId>
+                <version>2.1.2</version>
             </dependency>
 
         </dependencies>
