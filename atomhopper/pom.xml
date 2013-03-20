@@ -242,7 +242,7 @@
                                     <username>tomcat</username>
                                     <groupname>tomcat</groupname>
                                     <!-- Modify file permissions as needed -->
-                                    <filemode>644</filemode>
+                                    <filemode>755</filemode>
                                     <configuration>false</configuration>
                                     <directoryIncluded>true</directoryIncluded>
                                     <sources>
@@ -269,7 +269,7 @@
                             <postremoveScriptlet>
                                 <script>rm -rf "/opt/atomhopper/"</script>
                                 <script>rm -rf "/var/log/atomhopper/"</script>
-                                <script>rm -rf "/srv/tomcat/webapps/ROOT/"</script>
+                                <script>rm -rf "/srv/tomcat7/webapps/ROOT/"</script>
                             </postremoveScriptlet>
                             <requires>
                                 <!--
