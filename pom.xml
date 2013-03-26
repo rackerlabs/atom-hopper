@@ -38,7 +38,7 @@
     </modules>
 
     <scm>
-        <connection>scm:git:ssh://git@github.com/rackspace/atom-hopper.git</connection>
+        <connection>scm:git:ssh://git@github.com/rackerlabs/atom-hopper.git</connection>
     </scm>
 
     <dependencyManagement>
