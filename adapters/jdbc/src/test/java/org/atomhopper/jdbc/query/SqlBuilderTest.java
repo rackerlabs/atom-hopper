@@ -6,7 +6,7 @@ import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
 @RunWith(Enclosed.class)
-public class SearchToSqlTest {
+public class SqlBuilderTest {
 
     public static class WhenCallingSearchSql {
 
@@ -20,17 +20,17 @@ public class SearchToSqlTest {
         private String result_last = "SELECT * FROM entries WHERE feed = ? ORDER BY datelastupdated ASC, id ASC LIMIT ?";
         private String result_next = "(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id < ? ) UNION ALL (SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? ORDER BY datelastupdated DESC, id DESC LIMIT 1) ORDER BY datelastupdated DESC, id DESC LIMIT 1";
 
-        private String result_forward_with_cats = "(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id > ? AND categories @> '{d}'::varchar[] ) UNION ALL (SELECT * FROM entries WHERE feed = ? AND datelastupdated > ? AND categories @> '{d}'::varchar[] ORDER BY datelastupdated ASC, id ASC LIMIT ?) ORDER BY datelastupdated ASC, id ASC LIMIT ?";
-        private String result_backward_with_cats = "(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id <= ? AND categories @> '{d}'::varchar[] ) UNION ALL (SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? AND categories @> '{d}'::varchar[] ORDER BY datelastupdated DESC, id DESC LIMIT ?) ORDER BY datelastupdated DESC, id DESC LIMIT ?";
-        private String result_count_with_cats = "SELECT COUNT(*) FROM entries WHERE feed = ? AND categories @> '{d}'::varchar[] ";
-        private String result_head_with_cats = "SELECT * FROM entries WHERE feed = ? AND categories @> '{d}'::varchar[] ORDER BY datelastupdated DESC, id DESC LIMIT ?";
-        private String result_last_with_cats = "SELECT * FROM entries WHERE feed = ? AND categories @> '{d}'::varchar[] ORDER BY datelastupdated ASC, id ASC LIMIT ?";
-        private String result_next_with_cats = "(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id < ? AND categories @> '{d}'::varchar[] ) UNION ALL (SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? AND categories @> '{d}'::varchar[] ORDER BY datelastupdated DESC, id DESC LIMIT 1) ORDER BY datelastupdated DESC, id DESC LIMIT 1";
+        private String result_forward_with_cats = "(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id > ? AND categories @> ?::varchar[] ) UNION ALL (SELECT * FROM entries WHERE feed = ? AND datelastupdated > ? AND categories @> ?::varchar[] ORDER BY datelastupdated ASC, id ASC LIMIT ?) ORDER BY datelastupdated ASC, id ASC LIMIT ?";
+        private String result_backward_with_cats = "(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id <= ? AND categories @> ?::varchar[] ) UNION ALL (SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? AND categories @> ?::varchar[] ORDER BY datelastupdated DESC, id DESC LIMIT ?) ORDER BY datelastupdated DESC, id DESC LIMIT ?";
+        private String result_count_with_cats = "SELECT COUNT(*) FROM entries WHERE feed = ? AND categories @> ?::varchar[] ";
+        private String result_head_with_cats = "SELECT * FROM entries WHERE feed = ? AND categories @> ?::varchar[] ORDER BY datelastupdated DESC, id DESC LIMIT ?";
+        private String result_last_with_cats = "SELECT * FROM entries WHERE feed = ? AND categories @> ?::varchar[] ORDER BY datelastupdated ASC, id ASC LIMIT ?";
+        private String result_next_with_cats = "(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id < ? AND categories @> ?::varchar[] ) UNION ALL (SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? AND categories @> ?::varchar[] ORDER BY datelastupdated DESC, id DESC LIMIT 1) ORDER BY datelastupdated DESC, id DESC LIMIT 1";
 
-        private String result_classic = "SELECT COUNT(*) FROM entries WHERE feed = ? AND categories && '{a,b}'::varchar[] ";
+        private String result_classic = "SELECT COUNT(*) FROM entries WHERE feed = ? AND categories && ?::varchar[] ";
         @Test
         public void ShouldGetSqlForForwad() throws Exception {
-            String result = new SearchToSql()
+            String result = new SqlBuilder()
                     .searchType(SearchType.FEED_FORWARD)
                     .toString();
 
@@ -39,7 +39,7 @@ public class SearchToSqlTest {
 
         @Test
         public void ShouldGetSqlForBackward() throws Exception {
-            String result = new SearchToSql()
+            String result = new SqlBuilder()
                     .searchType(SearchType.FEED_BACKWARD)
                     .toString();
 
@@ -48,7 +48,7 @@ public class SearchToSqlTest {
 
         @Test
         public void ShouldGetSqlForCount() throws Exception {
-            String result = new SearchToSql()
+            String result = new SqlBuilder()
                     .searchType(SearchType.FEED_COUNT)
                     .toString();
 
@@ -57,7 +57,7 @@ public class SearchToSqlTest {
 
         @Test
         public void ShouldGetSqlForHead() throws Exception {
-            String result = new SearchToSql()
+            String result = new SqlBuilder()
                     .searchType(SearchType.FEED_HEAD)
                     .toString();
 
@@ -66,7 +66,7 @@ public class SearchToSqlTest {
 
         @Test
         public void ShouldGetSqlForLast() throws Exception {
-            String result = new SearchToSql()
+            String result = new SqlBuilder()
                     .searchType(SearchType.LAST_PAGE)
                     .toString();
 
@@ -75,7 +75,7 @@ public class SearchToSqlTest {
 
         @Test
         public void ShouldGetSqlForNext() throws Exception {
-            String result = new SearchToSql()
+            String result = new SqlBuilder()
                     .searchType(SearchType.NEXT_LINK)
                     .toString();
 
@@ -84,7 +84,7 @@ public class SearchToSqlTest {
 
         @Test
         public void ShouldGetSqlForForwadWithCats() throws Exception {
-            String result = new SearchToSql()
+            String result = new SqlBuilder()
                     .searchString(searchString)
                     .searchType(SearchType.FEED_FORWARD)
                     .toString();
@@ -94,7 +94,7 @@ public class SearchToSqlTest {
 
         @Test
         public void ShouldGetSqlForBackwardWithCats() throws Exception {
-            String result = new SearchToSql()
+            String result = new SqlBuilder()
                     .searchString(searchString)
                     .searchType(SearchType.FEED_BACKWARD)
                     .toString();
@@ -104,7 +104,7 @@ public class SearchToSqlTest {
 
         @Test
         public void ShouldGetSqlForCountWithCats() throws Exception {
-            String result = new SearchToSql()
+            String result = new SqlBuilder()
                     .searchString(searchString)
                     .searchType(SearchType.FEED_COUNT)
                     .toString();
@@ -114,7 +114,7 @@ public class SearchToSqlTest {
 
         @Test
         public void ShouldGetSqlForHeadWithCats() throws Exception {
-            String result = new SearchToSql()
+            String result = new SqlBuilder()
                     .searchString(searchString)
                     .searchType(SearchType.FEED_HEAD)
                     .toString();
@@ -124,7 +124,7 @@ public class SearchToSqlTest {
 
         @Test
         public void ShouldGetSqlForLastWithCats() throws Exception {
-            String result = new SearchToSql()
+            String result = new SqlBuilder()
                     .searchString(searchString)
                     .searchType(SearchType.LAST_PAGE)
                     .toString();
@@ -134,7 +134,7 @@ public class SearchToSqlTest {
 
         @Test
         public void ShouldGetSqlForNextWithCats() throws Exception {
-            String result = new SearchToSql()
+            String result = new SqlBuilder()
                     .searchString(searchString)
                     .searchType(SearchType.NEXT_LINK)
                     .toString();
@@ -144,7 +144,7 @@ public class SearchToSqlTest {
 
         @Test
         public void ShouldGetClassicSearch() throws Exception {
-            String result = new SearchToSql()
+            String result = new SqlBuilder()
                     .searchString(classicSearchString)
                     .searchType(SearchType.FEED_COUNT)
                     .toString();

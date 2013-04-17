@@ -2,7 +2,9 @@ package org.atomhopper.jdbc.query;
 
 import org.apache.commons.lang.StringUtils;
 
-public class SearchToSql {
+import java.util.List;
+
+public class SqlBuilder {
     private String searchString;
     private SearchType type;
 
@@ -15,7 +17,7 @@ public class SearchToSql {
     private static final String OPEN_PARENS = "(";
     private static final String CLOSE_PARENS = ")";
 
-    private static final String SELECT_COUNT = "SELECT COUNT(*) FROM entries WHERE feed = ?";
+    private static final String SELECT_COUNT_FROM_ENTRIES = "SELECT COUNT(*) FROM entries WHERE feed = ?";
 
     private static final String SELECT = "SELECT * FROM entries WHERE feed = ?";
     private static final String AND = "AND";
@@ -28,12 +30,12 @@ public class SearchToSql {
     private static final String ORDER_BY_ASC = "ORDER BY datelastupdated ASC, id ASC LIMIT ?";
     private static final String ORDER_BY_DESC = "ORDER BY datelastupdated DESC, id DESC LIMIT %s";
 
-    public SearchToSql searchString(String searchString) {
+    public SqlBuilder searchString(String searchString) {
         this.searchString = searchString;
         return this;
     }
 
-    public SearchToSql searchType(SearchType type) {
+    public SqlBuilder searchType(SearchType type) {
         this.type = type;
         return this;
     }
@@ -112,7 +114,7 @@ public class SearchToSql {
                 return builder.toString();
 
             case FEED_COUNT:
-                builder.append(String.format(SELECT_COUNT));
+                builder.append(String.format(SELECT_COUNT_FROM_ENTRIES));
 
                 if (StringUtils.isNotBlank(searchSql)) {
                     builder.append(SPACE + AND);

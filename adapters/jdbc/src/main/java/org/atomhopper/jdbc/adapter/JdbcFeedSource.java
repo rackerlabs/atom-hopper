@@ -301,7 +301,33 @@ public class JdbcFeedSource implements FeedSource {
 
         TimerContext context = null;
 
-        SearchToSql sql = new SearchToSql().searchString(searchString);
+        SqlBuilder sql = new SqlBuilder().searchString(searchString);
+        List<String> categoriesList = SearchToSqlConverter.getParamsFromSearchString(searchString);
+
+        int numCats = categoriesList.size();
+
+        Object[] parms = null;
+
+        if (numCats > 0) {
+            parms = new Object[numCats * 2 + 7];
+            int index = 0;
+            parms[index++] = feedName;
+            parms[index++] = markerEntry.getDateLastUpdated();
+            parms[index++] = markerEntry.getId();
+            for (String s : categoriesList) {
+                parms[index++] = s;
+            }
+            parms[index++] = feedName;
+            parms[index++] = markerEntry.getDateLastUpdated();
+            for (String s : categoriesList) {
+                parms[index++] = s;
+            }
+            parms[index++] = pageSize;
+            parms[index++] = pageSize;
+        } else {
+            parms = new Object[]{feedName, markerEntry.getDateLastUpdated(), markerEntry.getId(),
+                    feedName, markerEntry.getDateLastUpdated(), pageSize, pageSize};
+        }
 
         try {
             switch (direction) {
@@ -309,7 +335,7 @@ public class JdbcFeedSource implements FeedSource {
 
                     sql.searchType(SearchType.FEED_FORWARD);
 
-                    if (searchString.length() > 0) {
+                    if (numCats > 0) {
                         context = startTimer(String.format("db-get-feed-page-forward-with-cats-%s",
                                                            getMetricBucketForPageSize(pageSize)));
                     } else {
@@ -317,11 +343,7 @@ public class JdbcFeedSource implements FeedSource {
                                 String.format("db-get-feed-page-forward-%s", getMetricBucketForPageSize(pageSize)));
                     }
 
-                    feedPage = jdbcTemplate
-                                .query(sql.toString(),
-                                       new Object[]{feedName, markerEntry.getDateLastUpdated(), markerEntry.getId(),
-                                               feedName, markerEntry.getDateLastUpdated(), pageSize, pageSize},
-                                       new EntryRowMapper());
+                    feedPage = jdbcTemplate.query(sql.toString(),parms,new EntryRowMapper());
 
                     Collections.reverse(feedPage);
                     break;
@@ -330,7 +352,7 @@ public class JdbcFeedSource implements FeedSource {
 
                     sql.searchType(SearchType.FEED_BACKWARD);
 
-                    if (searchString.length() > 0) {
+                    if (numCats > 0) {
                         context = startTimer(String.format("db-get-feed-page-backward-with-cats-%s",
                                                            getMetricBucketForPageSize(pageSize)));
                     } else {
@@ -338,11 +360,7 @@ public class JdbcFeedSource implements FeedSource {
                                 String.format("db-get-feed-page-backward-%s", getMetricBucketForPageSize(pageSize)));
                     }
 
-                    feedPage = jdbcTemplate
-                                .query(sql.toString(),
-                                       new Object[]{feedName, markerEntry.getDateLastUpdated(), markerEntry.getId(),
-                                               feedName, markerEntry.getDateLastUpdated(), pageSize, pageSize},
-                                       new EntryRowMapper());
+                    feedPage = jdbcTemplate.query(sql.toString(),parms,new EntryRowMapper());
                     break;
             }
         } finally {
@@ -361,18 +379,33 @@ public class JdbcFeedSource implements FeedSource {
 
     private Integer getFeedCount(final String feedName, final String searchString) {
 
-        SearchToSql sql = new SearchToSql().searchType(SearchType.FEED_COUNT).searchString(searchString);
+        SqlBuilder sql = new SqlBuilder().searchType(SearchType.FEED_COUNT).searchString(searchString);
+
+        List<String> categoriesList = SearchToSqlConverter.getParamsFromSearchString(searchString);
+        int numCats = categoriesList.size();
+
+        Object[] parms = null;
+
+        if (numCats > 0) {
+            parms = new Object[numCats + 1];
+            int index = 0;
+            parms[index++] = feedName;
+            for (String s : categoriesList) {
+                parms[index++] = s;
+            }
+        } else {
+            parms = new Object[]{feedName};
+        }
 
         TimerContext context = null;
         try {
-            if (searchString.length() > 0) {
+            if (numCats > 0) {
                 context = startTimer("db-get-feed-count-with-cats");
             } else {
                 context = startTimer("db-get-feed-count");
             }
 
-            return jdbcTemplate
-                    .queryForInt(sql.toString(), feedName);
+            return jdbcTemplate.queryForInt(sql.toString(), parms);
         } finally {
             stopTimer(context);
         }
@@ -380,18 +413,34 @@ public class JdbcFeedSource implements FeedSource {
 
     private List<PersistedEntry> getFeedHead(final String feedName, final int pageSize, final String searchString) {
 
-        SearchToSql sql = new SearchToSql().searchType(SearchType.FEED_HEAD).searchString(searchString);
+        SqlBuilder sql = new SqlBuilder().searchType(SearchType.FEED_HEAD).searchString(searchString);
+
+        List<String> categoriesList = SearchToSqlConverter.getParamsFromSearchString(searchString);
+        int numCats = categoriesList.size();
+
+        Object[] parms = null;
+
+        if (numCats > 0) {
+            parms = new Object[numCats + 2];
+            int index = 0;
+            parms[index++] = feedName;
+            for (String s : categoriesList) {
+                parms[index++] = s;
+            }
+            parms[index++] = pageSize;
+        } else {
+            parms = new Object[]{feedName, pageSize};
+        }
 
         TimerContext context = null;
         try {
-            if (searchString.length() > 0) {
+            if (numCats > 0) {
                 context = startTimer(
                         String.format("db-get-feed-head-with-cats-%s", getMetricBucketForPageSize(pageSize)));
             } else {
                 context = startTimer(String.format("db-get-feed-head-%s", getMetricBucketForPageSize(pageSize)));
             }
-            return jdbcTemplate
-                    .query(sql.toString(), new Object[]{feedName, pageSize}, new EntryRowMapper());
+            return jdbcTemplate.query(sql.toString(), parms, new EntryRowMapper());
         } finally {
             stopTimer(context);
         }
@@ -400,19 +449,36 @@ public class JdbcFeedSource implements FeedSource {
     private List<PersistedEntry> enhancedGetLastPage(final String feedName, final int pageSize,
                                                      final String searchString) {
 
-        SearchToSql sql = new SearchToSql().searchType(SearchType.LAST_PAGE).searchString(searchString);
+        SqlBuilder sql = new SqlBuilder().searchType(SearchType.LAST_PAGE).searchString(searchString);
+
+        List<String> categoriesList = SearchToSqlConverter.getParamsFromSearchString(searchString);
+        int numCats = categoriesList.size();
+
+        Object[] parms = null;
+
+        if (numCats > 0) {
+            parms = new Object[numCats + 2];
+            int index = 0;
+            parms[index++] = feedName;
+            for (String s : categoriesList) {
+                parms[index++] = s;
+            }
+            parms[index++] = pageSize;
+
+        } else {
+            parms = new Object[]{feedName, pageSize};
+        }
 
         TimerContext context = null;
         List<PersistedEntry> lastPersistedEntries;
         try {
-            if (searchString.length() > 0) {
+            if (numCats > 0) {
                 context = startTimer(
                         String.format("db-get-last-page-with-cats-%s", getMetricBucketForPageSize(pageSize)));
             } else {
                 context = startTimer(String.format("db-get-last-page-%s", getMetricBucketForPageSize(pageSize)));
             }
-            lastPersistedEntries = jdbcTemplate
-                    .query(sql.toString(), new Object[]{feedName, pageSize}, new EntryRowMapper());
+            lastPersistedEntries = jdbcTemplate.query(sql.toString(), parms, new EntryRowMapper());
         } finally {
             stopTimer(context);
         }
@@ -426,13 +492,35 @@ public class JdbcFeedSource implements FeedSource {
     private PersistedEntry getNextMarker(final PersistedEntry persistedEntry, final String feedName,
                                          final String searchString) {
 
-        SearchToSql sql = new SearchToSql().searchType(SearchType.NEXT_LINK).searchString(searchString);
+        SqlBuilder sql = new SqlBuilder().searchType(SearchType.NEXT_LINK).searchString(searchString);
+
+        List<String> categoriesList = SearchToSqlConverter.getParamsFromSearchString(searchString);
+        int numCats = categoriesList.size();
+
+        Object[] parms = null;
+
+        if (categoriesList.size() > 0) {
+            parms = new Object[numCats * 2 + 5];
+            int index = 0;
+            parms[index++] = feedName;
+            parms[index++] = persistedEntry.getDateLastUpdated();
+            parms[index++] = persistedEntry.getId();
+            for (String s : categoriesList) {
+                parms[index++] = s;
+            }
+            parms[index++] = feedName;
+            parms[index++] = persistedEntry.getDateLastUpdated();
+            for (String s : categoriesList) {
+                parms[index++] = s;
+            }
+
+        } else {
+            parms = new Object[]{feedName, persistedEntry.getDateLastUpdated(), persistedEntry.getId(),
+                    feedName, persistedEntry.getDateLastUpdated()};
+        }
 
         List<PersistedEntry> nextEntry = jdbcTemplate
-                    .query(sql.toString(),
-                           new Object[]{feedName, persistedEntry.getDateLastUpdated(), persistedEntry.getId(),
-                                   feedName, persistedEntry.getDateLastUpdated()},
-                           new EntryRowMapper());
+                    .query(sql.toString(), parms, new EntryRowMapper());
 
         return nextEntry.size() > 0 ? nextEntry.get(0) : null;
     }
