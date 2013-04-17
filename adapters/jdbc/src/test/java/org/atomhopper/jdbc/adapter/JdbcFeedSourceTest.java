@@ -315,14 +315,6 @@ public class JdbcFeedSourceTest {
         }
 
         @Test
-        public void shouldReturnBadRequestWhenMarkerUsed() throws Exception {
-            when(getFeedRequest.getPageMarker()).thenReturn(MARKER_ID);
-            when(getFeedRequest.getDirection()).thenReturn("");
-            assertEquals("Should return HTTP 400 (Bad Request)", HttpStatus.BAD_REQUEST,
-                    jdbcFeedSource.getFeed(getFeedRequest).getResponseStatus());
-        }
-
-        @Test
         @Ignore
         public void shouldReturnBadRequest() throws Exception {
             assertEquals("Should return HTTP 400 (Bad Request)", HttpStatus.BAD_REQUEST,
