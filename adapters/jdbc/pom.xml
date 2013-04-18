@@ -65,5 +65,10 @@
             <groupId>com.yammer.metrics</groupId>
             <artifactId>metrics-core</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.unboundid</groupId>
+            <artifactId>unboundid-ldapsdk</artifactId>
+        </dependency>
     </dependencies>
 </project>

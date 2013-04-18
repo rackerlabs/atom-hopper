@@ -16,8 +16,7 @@ import org.atomhopper.adapter.request.adapter.GetEntryRequest;
 import org.atomhopper.adapter.request.adapter.GetFeedRequest;
 import org.atomhopper.dbal.PageDirection;
 import org.atomhopper.jdbc.model.PersistedEntry;
-import org.atomhopper.jdbc.query.CategoryStringGenerator;
-import org.atomhopper.jdbc.query.EntryRowMapper;
+import org.atomhopper.jdbc.query.*;
 import org.atomhopper.response.AdapterResponse;
 import org.atomhopper.util.uri.template.EnumKeyedTemplateParameters;
 import org.atomhopper.util.uri.template.URITemplate;
@@ -209,6 +208,8 @@ public class JdbcFeedSource implements FeedSource {
                 context = startTimer(String.format("get-feed-page-%s", getMetricBucketForPageSize(pageSize)));
                 response = getFeedPage(getFeedRequest, marker, pageSize);
             }
+        } catch (IllegalArgumentException iae) {
+            response = ResponseBuilder.badRequest(iae.getMessage());
         } finally {
             stopTimer(context);
         }
@@ -246,14 +247,8 @@ public class JdbcFeedSource implements FeedSource {
         AdapterResponse<Feed> response;
         PageDirection pageDirection;
 
-        try {
-            final String pageDirectionValue = getFeedRequest.getDirection();
-            pageDirection = PageDirection.valueOf(pageDirectionValue.toUpperCase());
-        } catch (Exception iae) {
-            LOG.warn("Marker must have a page direction specified as either \"forward\" or \"backward\"");
-            return ResponseBuilder.badRequest(
-                    "Marker must have a page direction specified as either \"forward\" or \"backward\"");
-        }
+        final String pageDirectionValue = getFeedRequest.getDirection();
+        pageDirection = PageDirection.valueOf(pageDirectionValue.toUpperCase());
 
         final PersistedEntry markerEntry = getEntry(marker, getFeedRequest.getFeedName());
 
@@ -306,85 +301,66 @@ public class JdbcFeedSource implements FeedSource {
 
         TimerContext context = null;
 
+        SqlBuilder sql = new SqlBuilder().searchString(searchString);
+        List<String> categoriesList = SearchToSqlConverter.getParamsFromSearchString(searchString);
+
+        int numCats = categoriesList.size();
+
+        Object[] parms = null;
+
+        if (numCats > 0) {
+            parms = new Object[numCats * 2 + 7];
+            int index = 0;
+            parms[index++] = feedName;
+            parms[index++] = markerEntry.getDateLastUpdated();
+            parms[index++] = markerEntry.getId();
+            for (String s : categoriesList) {
+                parms[index++] = s;
+            }
+            parms[index++] = feedName;
+            parms[index++] = markerEntry.getDateLastUpdated();
+            for (String s : categoriesList) {
+                parms[index++] = s;
+            }
+            parms[index++] = pageSize;
+            parms[index++] = pageSize;
+        } else {
+            parms = new Object[]{feedName, markerEntry.getDateLastUpdated(), markerEntry.getId(),
+                    feedName, markerEntry.getDateLastUpdated(), pageSize, pageSize};
+        }
+
         try {
             switch (direction) {
                 case FORWARD:
 
-                    // Params: feed, date, id, feed, date, limit, limit
-                    final String forwardSQL = new StringBuilder()
-                            .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id > ?)")
-                            .append(" UNION ALL ")
-                            .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated > ? ORDER BY datelastupdated ASC, id ASC LIMIT ?)")
-                            .append(" ORDER BY datelastupdated ASC, id ASC LIMIT ?").toString();
+                    sql.searchType(SearchType.FEED_FORWARD);
 
-                    // Params: feed, date, id, categories, feed, date, categories, limit, limit
-                    final String forwardWithCatsSQL = new StringBuilder()
-                            .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id > ? AND categories && ?::varchar[])")
-                            .append(" UNION ALL ")
-                            .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated > ? AND categories && ?::varchar[] ORDER BY datelastupdated ASC, id ASC LIMIT ?)")
-                            .append(" ORDER BY datelastupdated ASC, id ASC LIMIT ?").toString();
-
-                    if (searchString.length() > 0) {
+                    if (numCats > 0) {
                         context = startTimer(String.format("db-get-feed-page-forward-with-cats-%s",
                                                            getMetricBucketForPageSize(pageSize)));
-                        feedPage = jdbcTemplate
-                                .query(forwardWithCatsSQL,
-                                       new Object[]{feedName, markerEntry.getDateLastUpdated(), markerEntry.getId(),
-                                               CategoryStringGenerator.getPostgresCategoryString(
-                                                       searchString), feedName,
-                                               markerEntry.getDateLastUpdated(), CategoryStringGenerator.getPostgresCategoryString(
-                                               searchString),
-                                               pageSize, pageSize},
-                                       new EntryRowMapper());
                     } else {
                         context = startTimer(
                                 String.format("db-get-feed-page-forward-%s", getMetricBucketForPageSize(pageSize)));
-                        feedPage = jdbcTemplate
-                                .query(forwardSQL,
-                                       new Object[]{feedName, markerEntry.getDateLastUpdated(), markerEntry.getId(),
-                                               feedName, markerEntry.getDateLastUpdated(), pageSize, pageSize},
-                                       new EntryRowMapper());
                     }
+
+                    feedPage = jdbcTemplate.query(sql.toString(),parms,new EntryRowMapper());
+
                     Collections.reverse(feedPage);
                     break;
 
                 case BACKWARD:
 
-                    // Params: feed, date, id, feed, date, limit, limit
-                    final String backwardSQL = new StringBuilder()
-                            .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id <= ?)")
-                            .append(" UNION ALL ")
-                            .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? ORDER BY datelastupdated DESC, id DESC LIMIT ?)")
-                            .append(" ORDER BY datelastupdated DESC, id DESC LIMIT ?").toString();
+                    sql.searchType(SearchType.FEED_BACKWARD);
 
-                    // Params: feed, date, id, categories, feed, date, categories, limit, limit
-                    final String backwardWithCatsSQL = new StringBuilder()
-                            .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id <= ? AND categories && ?::varchar[])")
-                            .append(" UNION ALL ")
-                            .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? AND categories && ?::varchar[] ORDER BY datelastupdated DESC, id DESC LIMIT ?)")
-                            .append(" ORDER BY datelastupdated DESC, id DESC LIMIT ?").toString();
-
-                    if (searchString.length() > 0) {
+                    if (numCats > 0) {
                         context = startTimer(String.format("db-get-feed-page-backward-with-cats-%s",
                                                            getMetricBucketForPageSize(pageSize)));
-                        feedPage = jdbcTemplate
-                                .query(backwardWithCatsSQL,
-                                       new Object[]{feedName, markerEntry.getDateLastUpdated(), markerEntry.getId(),
-                                               CategoryStringGenerator.getPostgresCategoryString(
-                                                       searchString), feedName,
-                                               markerEntry.getDateLastUpdated(), CategoryStringGenerator.getPostgresCategoryString(
-                                               searchString),
-                                               pageSize, pageSize},
-                                       new EntryRowMapper());
                     } else {
                         context = startTimer(
                                 String.format("db-get-feed-page-backward-%s", getMetricBucketForPageSize(pageSize)));
-                        feedPage = jdbcTemplate
-                                .query(backwardSQL,
-                                       new Object[]{feedName, markerEntry.getDateLastUpdated(), markerEntry.getId(),
-                                               feedName, markerEntry.getDateLastUpdated(), pageSize, pageSize},
-                                       new EntryRowMapper());
                     }
+
+                    feedPage = jdbcTemplate.query(sql.toString(),parms,new EntryRowMapper());
                     break;
             }
         } finally {
@@ -402,23 +378,34 @@ public class JdbcFeedSource implements FeedSource {
     }
 
     private Integer getFeedCount(final String feedName, final String searchString) {
-        final String totalFeedEntryCountSQL = "SELECT COUNT(*) FROM entries WHERE feed = ?";
-        final String totalFeedEntryCountWithCatsSQL = "SELECT COUNT(*) FROM entries WHERE feed = ? AND categories && ?::varchar[]";
+
+        SqlBuilder sql = new SqlBuilder().searchType(SearchType.FEED_COUNT).searchString(searchString);
+
+        List<String> categoriesList = SearchToSqlConverter.getParamsFromSearchString(searchString);
+        int numCats = categoriesList.size();
+
+        Object[] parms = null;
+
+        if (numCats > 0) {
+            parms = new Object[numCats + 1];
+            int index = 0;
+            parms[index++] = feedName;
+            for (String s : categoriesList) {
+                parms[index++] = s;
+            }
+        } else {
+            parms = new Object[]{feedName};
+        }
 
         TimerContext context = null;
-        int totalFeedEntryCount;
         try {
-            if (searchString.length() > 0) {
+            if (numCats > 0) {
                 context = startTimer("db-get-feed-count-with-cats");
-                totalFeedEntryCount = jdbcTemplate
-                        .queryForInt(totalFeedEntryCountWithCatsSQL, feedName,
-                                     CategoryStringGenerator.getPostgresCategoryString(searchString));
             } else {
                 context = startTimer("db-get-feed-count");
-                totalFeedEntryCount = jdbcTemplate
-                        .queryForInt(totalFeedEntryCountSQL, feedName);
             }
-            return totalFeedEntryCount;
+
+            return jdbcTemplate.queryForInt(sql.toString(), parms);
         } finally {
             stopTimer(context);
         }
@@ -426,53 +413,72 @@ public class JdbcFeedSource implements FeedSource {
 
     private List<PersistedEntry> getFeedHead(final String feedName, final int pageSize, final String searchString) {
 
-        final String getFeedHeadSQL = "SELECT * FROM entries WHERE feed = ? ORDER BY datelastupdated DESC, id DESC LIMIT ?";
-        final String getFeedHeadWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND categories && ?::varchar[] ORDER BY datelastupdated DESC, id DESC LIMIT ?";
+        SqlBuilder sql = new SqlBuilder().searchType(SearchType.FEED_HEAD).searchString(searchString);
+
+        List<String> categoriesList = SearchToSqlConverter.getParamsFromSearchString(searchString);
+        int numCats = categoriesList.size();
+
+        Object[] parms = null;
+
+        if (numCats > 0) {
+            parms = new Object[numCats + 2];
+            int index = 0;
+            parms[index++] = feedName;
+            for (String s : categoriesList) {
+                parms[index++] = s;
+            }
+            parms[index++] = pageSize;
+        } else {
+            parms = new Object[]{feedName, pageSize};
+        }
 
         TimerContext context = null;
-        List<PersistedEntry> persistedEntries;
         try {
-            if (searchString.length() > 0) {
+            if (numCats > 0) {
                 context = startTimer(
                         String.format("db-get-feed-head-with-cats-%s", getMetricBucketForPageSize(pageSize)));
-                persistedEntries = jdbcTemplate
-                        .query(getFeedHeadWithCatsSQL, new Object[]{feedName,
-                                CategoryStringGenerator.getPostgresCategoryString(searchString), pageSize},
-                               new EntryRowMapper());
             } else {
                 context = startTimer(String.format("db-get-feed-head-%s", getMetricBucketForPageSize(pageSize)));
-                persistedEntries = jdbcTemplate
-                        .query(getFeedHeadSQL, new Object[]{feedName, pageSize},
-                               new EntryRowMapper());
             }
+            return jdbcTemplate.query(sql.toString(), parms, new EntryRowMapper());
         } finally {
             stopTimer(context);
         }
-        return persistedEntries;
     }
 
     private List<PersistedEntry> enhancedGetLastPage(final String feedName, final int pageSize,
                                                      final String searchString) {
 
-        final String lastLinkQuerySQL = "SELECT * FROM entries WHERE feed = ? ORDER BY datelastupdated ASC, id ASC LIMIT ?";
-        final String lastLinkQueryWithCatsSQL = "SELECT * FROM entries WHERE feed = ? AND categories && ?::varchar[] ORDER BY datelastupdated ASC, id ASC LIMIT ?";
+        SqlBuilder sql = new SqlBuilder().searchType(SearchType.LAST_PAGE).searchString(searchString);
+
+        List<String> categoriesList = SearchToSqlConverter.getParamsFromSearchString(searchString);
+        int numCats = categoriesList.size();
+
+        Object[] parms = null;
+
+        if (numCats > 0) {
+            parms = new Object[numCats + 2];
+            int index = 0;
+            parms[index++] = feedName;
+            for (String s : categoriesList) {
+                parms[index++] = s;
+            }
+            parms[index++] = pageSize;
+
+        } else {
+            parms = new Object[]{feedName, pageSize};
+        }
 
         TimerContext context = null;
         List<PersistedEntry> lastPersistedEntries;
         try {
-            if (searchString.length() > 0) {
+            if (numCats > 0) {
                 context = startTimer(
                         String.format("db-get-last-page-with-cats-%s", getMetricBucketForPageSize(pageSize)));
-                lastPersistedEntries = jdbcTemplate
-                        .query(lastLinkQueryWithCatsSQL, new Object[]{feedName,
-                                CategoryStringGenerator.getPostgresCategoryString(searchString), pageSize},
-                               new EntryRowMapper());
             } else {
                 context = startTimer(String.format("db-get-last-page-%s", getMetricBucketForPageSize(pageSize)));
-                lastPersistedEntries = jdbcTemplate
-                        .query(lastLinkQuerySQL, new Object[]{feedName, pageSize},
-                               new EntryRowMapper());
             }
+            lastPersistedEntries = jdbcTemplate.query(sql.toString(), parms, new EntryRowMapper());
         } finally {
             stopTimer(context);
         }
@@ -486,37 +492,35 @@ public class JdbcFeedSource implements FeedSource {
     private PersistedEntry getNextMarker(final PersistedEntry persistedEntry, final String feedName,
                                          final String searchString) {
 
-        // Params: feed, date, id, feed, date, limit, limit
-        final String nextLinkSQL = new StringBuilder()
-                .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id < ?)")
-                .append(" UNION ALL ")
-                .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? ORDER BY datelastupdated DESC, id DESC LIMIT 1)")
-                .append(" ORDER BY datelastupdated DESC, id DESC LIMIT 1").toString();
+        SqlBuilder sql = new SqlBuilder().searchType(SearchType.NEXT_LINK).searchString(searchString);
 
-        // Params: feed, date, id, categories, feed, date, categories, limit, limit
-        final String nextLinkWithCatsSQL = new StringBuilder()
-                .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id < ? AND categories && ?::varchar[])")
-                .append(" UNION ALL ")
-                .append("(SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? AND categories && ?::varchar[] ORDER BY datelastupdated DESC, id DESC LIMIT 1)")
-                .append(" ORDER BY datelastupdated DESC, id DESC LIMIT 1").toString();
+        List<String> categoriesList = SearchToSqlConverter.getParamsFromSearchString(searchString);
+        int numCats = categoriesList.size();
 
-        List<PersistedEntry> nextEntry;
+        Object[] parms = null;
 
-        if (searchString.length() > 0) {
-            nextEntry = jdbcTemplate
-                    .query(nextLinkWithCatsSQL,
-                           new Object[]{feedName, persistedEntry.getDateLastUpdated(), persistedEntry.getId(),
-                                   CategoryStringGenerator.getPostgresCategoryString(searchString), feedName,
-                                   persistedEntry.getDateLastUpdated(), CategoryStringGenerator.getPostgresCategoryString(
-                                   searchString)},
-                           new EntryRowMapper());
+        if (categoriesList.size() > 0) {
+            parms = new Object[numCats * 2 + 5];
+            int index = 0;
+            parms[index++] = feedName;
+            parms[index++] = persistedEntry.getDateLastUpdated();
+            parms[index++] = persistedEntry.getId();
+            for (String s : categoriesList) {
+                parms[index++] = s;
+            }
+            parms[index++] = feedName;
+            parms[index++] = persistedEntry.getDateLastUpdated();
+            for (String s : categoriesList) {
+                parms[index++] = s;
+            }
+
         } else {
-            nextEntry = jdbcTemplate
-                    .query(nextLinkSQL,
-                           new Object[]{feedName, persistedEntry.getDateLastUpdated(), persistedEntry.getId(),
-                                   feedName, persistedEntry.getDateLastUpdated()},
-                           new EntryRowMapper());
+            parms = new Object[]{feedName, persistedEntry.getDateLastUpdated(), persistedEntry.getId(),
+                    feedName, persistedEntry.getDateLastUpdated()};
         }
+
+        List<PersistedEntry> nextEntry = jdbcTemplate
+                    .query(sql.toString(), parms, new EntryRowMapper());
 
         return nextEntry.size() > 0 ? nextEntry.get(0) : null;
     }
