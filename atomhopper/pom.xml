@@ -167,6 +167,7 @@
                             <group>Applications/Communications</group>
                             <packager>Rackspace - Cloud Integration Team</packager>
                             <description>ATOM Hopper - The ATOMPub Java Server</description>
+                            <release>1</release>
                             <mappings>
                                 <mapping>
                                     <directory>/etc/atomhopper</directory>
@@ -266,11 +267,23 @@
                                     </sources>
                                 </mapping>
                             </mappings>
+                            <postinstallScriptlet>
+                                <script>touch "/srv/tomcat7/webapps/ATOMHOPPER.war"</script>
+                            </postinstallScriptlet>
+                            <!--  
+                                 First of all, <postremoveScriptlet> does not seem to take
+                                 multiple <script> elements. It only takes the last one.
+                                 Seconnd, the last <script> broke rpm -e, so we are unable
+                                 to remove old packages. 
+                                 Third, I don't see why we need to remove these directories.
+                                 I think we should keep /var/log/atomhopper. The /opt/atomhopper
+                                 does not exist
                             <postremoveScriptlet>
                                 <script>rm -rf "/opt/atomhopper/"</script>
                                 <script>rm -rf "/var/log/atomhopper/"</script>
                                 <script>rm -rf "/srv/tomcat7/webapps/ROOT/"</script>
                             </postremoveScriptlet>
+                            -->
                             <requires>
                                 <!--
                                     Use this for Tomcat6
