@@ -46,7 +46,7 @@ public class RegexFeedTest extends JettyIntegrationTestHarness {
         	
         	//post an entry to regex feed /namespace4/feed4/1
             final HttpMethod postMethod = newPostEntryMethod("namespace4/feed4/1" ,"");
-            // POST to the first namespace4/feed4/1
+            // POST to the namespace4/feed4/1
             assertEquals("Getting a feed should return a 201", HttpStatus.SC_CREATED, httpClient.executeMethod(postMethod));
 
             Document doc = xml.toDOM(postMethod.getResponseBodyAsString());
@@ -59,9 +59,9 @@ public class RegexFeedTest extends JettyIntegrationTestHarness {
         
        @Test
        public void shouldFailToPostEntryOnRegexFeedWithoutEnablingRegexFeed() throws Exception {
-    	   //post an entry to regex feed /namespace5/feed5/1
-           final HttpMethod postMethod = newPostEntryMethod("namespace4/feed5/1" ,"");
-           // POST to the first namespace4/feed4/1
+    	   //post an entry to regex feed /namespace5/feed5/1 - Note that in atom-server-cfg.xml, regex support is false for namespace5
+           final HttpMethod postMethod = newPostEntryMethod("namespace5/feed5/1" ,"");
+           // POST to the first namespace5/feed5/1
            assertEquals("Getting a feed should return a 404", HttpStatus.SC_NOT_FOUND, httpClient.executeMethod(postMethod));
        }
     }
