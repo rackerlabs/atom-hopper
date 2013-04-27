@@ -42,4 +42,21 @@
             <publisher reference="hibernate-feed-publisher" />
         </feed>
     </workspace>
+    <workspace title="Namespace4" resource="/namespace4/" enableRegexFeeds="true">
+        <categories-descriptor reference="workspace-categories-descriptor" />
+
+        <feed title="feed4" resource="/feed4/[0-9]*">
+            <feed-source reference="hibernate-feed-source" />
+            <publisher reference="hibernate-feed-publisher" />
+        </feed>
+    </workspace>
+    
+    <workspace title="Namespace5" resource="/namespace5/" >
+        <categories-descriptor reference="workspace-categories-descriptor" />
+
+        <feed title="feed5" resource="/feed5/[0-9]*">
+            <feed-source reference="hibernate-feed-source" />
+            <publisher reference="hibernate-feed-publisher" />
+        </feed>
+    </workspace>
 </atom-hopper-config>
