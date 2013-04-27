@@ -5,6 +5,7 @@ import org.apache.abdera.parser.stax.FOMWorkspace;
 import org.apache.abdera.protocol.server.CollectionInfo;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.WorkspaceInfo;
+import org.apache.commons.lang.StringUtils;
 import org.atomhopper.config.v1_0.WorkspaceConfiguration;
 
 import java.util.Collection;
@@ -29,19 +30,27 @@ public class WorkspaceHandler implements WorkspaceInfo {
     }
 
     public TargetAwareAbstractCollectionAdapter getAnsweringAdapter(RequestContext rc) {
-        final String feedSpec = rc.getTarget().getParameter(TargetResolverField.FEED.toString());
-        final String adapterKey = new StringBuilder().append("/")
-                 .append(rc.getTarget().getParameter(TargetResolverField.WORKSPACE.toString()))
-                 .append("/")
-                 .append(feedSpec).toString();
-        
+    final String feedSpec = rc.getTarget().getParameter(TargetResolverField.FEED.toString());
+
         TargetAwareAbstractCollectionAdapter collectionAdapter = null;
-        Set<Entry<String, TargetAwareAbstractCollectionAdapter>> adapterEntries = collectionAdapterMap.entrySet();
         
-        for(Entry<String, TargetAwareAbstractCollectionAdapter> adapterEntry : adapterEntries){
-                if(adapterKey.matches(adapterEntry.getKey())){
-                        collectionAdapter = adapterEntry.getValue();
-                        break;
+        if(!StringUtils.isBlank(feedSpec)) {
+                final String adapterKey = new StringBuilder().append("/")
+                                .append(rc.getTarget().getParameter(TargetResolverField.WORKSPACE.toString()))
+                                .append("/")
+                                .append(feedSpec).toString();
+
+                if(myConfig.isEnableRegexFeeds()) {
+                        Set<Entry<String, TargetAwareAbstractCollectionAdapter>> adapterEntries = collectionAdapterMap.entrySet();
+                        for(Entry<String, TargetAwareAbstractCollectionAdapter> adapterEntry : adapterEntries) {
+                                if(adapterKey.matches(adapterEntry.getKey())) {
+                                        collectionAdapter = adapterEntry.getValue();
+                                        break;
+                                }
+                        }
+                }
+                else{
+                        collectionAdapter = collectionAdapterMap.get(adapterKey);
                 }
         }
         return collectionAdapter;
