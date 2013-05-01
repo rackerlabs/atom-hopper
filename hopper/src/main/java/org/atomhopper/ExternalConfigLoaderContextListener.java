@@ -25,7 +25,7 @@ public class ExternalConfigLoaderContextListener implements ServletContextListen
             String configLocation = (String) initialContext.lookup("java:comp/env/logback/configuration-resource");
             LOGGER.info("Log file location : "+ configLocation);
 
-            new LogBackConfigLoader(configLocation + "logback.xml");
+            new LogBackConfigLoader(configLocation);
         } catch (Exception e) {
             LOGGER.error("Unable to read config file", e);
         }
