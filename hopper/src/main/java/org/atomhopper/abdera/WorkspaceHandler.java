@@ -12,6 +12,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 public class WorkspaceHandler implements WorkspaceInfo {
 
@@ -28,12 +30,30 @@ public class WorkspaceHandler implements WorkspaceInfo {
     }
 
     public TargetAwareAbstractCollectionAdapter getAnsweringAdapter(RequestContext rc) {
-        final String feedSpec = rc.getTarget().getParameter(TargetResolverField.FEED.toString());
+    final String feedSpec = rc.getTarget().getParameter(TargetResolverField.FEED.toString());
 
-        return !StringUtils.isBlank(feedSpec) ? collectionAdapterMap.get(new StringBuilder().append("/")
-                .append(rc.getTarget().getParameter(TargetResolverField.WORKSPACE.toString()))
-                .append("/")
-                .append(feedSpec).toString()) : null;
+        TargetAwareAbstractCollectionAdapter collectionAdapter = null;
+        
+        if(!StringUtils.isBlank(feedSpec)) {
+                final String adapterKey = new StringBuilder().append("/")
+                                .append(rc.getTarget().getParameter(TargetResolverField.WORKSPACE.toString()))
+                                .append("/")
+                                .append(feedSpec).toString();
+
+                if(myConfig.isEnableRegexFeeds()) {
+                        Set<Entry<String, TargetAwareAbstractCollectionAdapter>> adapterEntries = collectionAdapterMap.entrySet();
+                        for(Entry<String, TargetAwareAbstractCollectionAdapter> adapterEntry : adapterEntries) {
+                                if(adapterKey.matches(adapterEntry.getKey())) {
+                                        collectionAdapter = adapterEntry.getValue();
+                                        break;
+                                }
+                        }
+                }
+                else{
+                        collectionAdapter = collectionAdapterMap.get(adapterKey);
+                }
+        }
+        return collectionAdapter;
     }
 
     @Override
