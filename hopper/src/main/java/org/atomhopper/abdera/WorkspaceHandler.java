@@ -40,7 +40,7 @@ public class WorkspaceHandler implements WorkspaceInfo {
                                 .append("/")
                                 .append(feedSpec).toString();
 
-                if(false) {
+                if(myConfig.isEnableRegexFeeds()) {
                         Set<Entry<String, TargetAwareAbstractCollectionAdapter>> adapterEntries = collectionAdapterMap.entrySet();
                         for(Entry<String, TargetAwareAbstractCollectionAdapter> adapterEntry : adapterEntries) {
                                 if(adapterKey.matches(adapterEntry.getKey())) {
