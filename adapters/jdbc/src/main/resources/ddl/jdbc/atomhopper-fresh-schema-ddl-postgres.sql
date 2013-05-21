@@ -18,7 +18,7 @@ SET client_min_messages = warning;
 
 CREATE TABLE entries (
     id bigserial,
-    entryid text NOT NULL,
+    entryid text NOT NULL UNIQUE,
     creationdate timestamp without time zone NOT NULL,
     datelastupdated timestamp without time zone NOT NULL,
     entrybody text,
