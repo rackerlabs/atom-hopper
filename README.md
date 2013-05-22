@@ -28,7 +28,7 @@ Atom Hopper works well with [Repose](http://openrepose.org/) especially if you n
 * Versioning
 * HTTP Logging
 
-To find out how to install and run Atom Hopper please see the [Atom Hopper Wiki](https://github.com/rackspace/atom-hopper/wiki)
+To find out how to install and run Atom Hopper please see the [Atom Hopper Wiki](https://github.com/rackerlabs/atom-hopper/wiki)
 
 ###Notes Regarding licensing###
 
