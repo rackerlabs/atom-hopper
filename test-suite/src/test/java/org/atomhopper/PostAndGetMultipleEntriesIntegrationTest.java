@@ -40,7 +40,15 @@ public class PostAndGetMultipleEntriesIntegrationTest extends JettyIntegrationTe
         post.setRequestBody("<?xml version=\"1.0\" ?><entry xmlns=\"http://www.w3.org/2005/Atom\"><author><name>Chad</name></author><content>" + content + "</content></entry>");
 
         return post;
-    }    
+    }
+
+    public static PostMethod newPostEntryMethodWithEntryId(String content, String entryId) {
+        final PostMethod post = new PostMethod(urlAndPort + "/namespace1/feed1/");
+        post.addRequestHeader(new Header("content-type", "application/atom+xml"));
+        post.setRequestBody("<?xml version=\"1.0\" ?><entry xmlns=\"http://www.w3.org/2005/Atom\"><author><name>Chad</name></author><content>" + content + "</content>" +
+                            "<id>" + entryId + "</id></entry>");
+        return post;
+    }
 
     public static class WhenPublishingMultipleEntries {
 
@@ -60,5 +68,16 @@ public class PostAndGetMultipleEntriesIntegrationTest extends JettyIntegrationTe
             assertEquals("Getting the new feed should show that <b1>215</b1> was added", HttpStatus.SC_OK, httpClient.executeMethod(getFeedMethod));
             assertTrue(new String(getFeedMethod.getResponseBody()).contains("<b1>215</b1>"));
         }
-    }    
+    }
+
+    public static class WhenPublishingDuplicatesGenerateError {
+
+        @Test
+        public void shouldGenerateErrorWhenDuplicates() throws Exception {
+            HttpMethod postMethod = newPostEntryMethodWithEntryId("<blah><a1>a1</a1><b1>200</b1></blah>", "urn:uuid:aa12175c-36a0-4136-bd98-6eb2d442e7ab");
+            assertEquals("Creating a new entry should return a 201", HttpStatus.SC_CREATED, httpClient.executeMethod(postMethod));
+            postMethod = newPostEntryMethodWithEntryId("<blah><a1>a1</a1><b1>200</b1></blah>", "urn:uuid:aa12175c-36a0-4136-bd98-6eb2d442e7ab");
+            assertEquals("Creating the same entry should return a 409", HttpStatus.SC_BAD_REQUEST, httpClient.executeMethod(postMethod));
+        }
+    }
 }
