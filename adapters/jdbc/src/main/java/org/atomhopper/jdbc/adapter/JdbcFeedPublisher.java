@@ -19,6 +19,7 @@ import org.atomhopper.util.uri.template.EnumKeyedTemplateParameters;
 import org.atomhopper.util.uri.template.URITemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.io.IOException;
@@ -79,17 +80,10 @@ public class JdbcFeedPublisher implements FeedPublisher {
 
             boolean entryIdSent = abderaParsedEntry.getId() != null;
 
-            // Generate an ID for this entry
             if (allowOverrideId && entryIdSent && StringUtils.isNotBlank(abderaParsedEntry.getId().toString().trim())) {
-                String entryId = abderaParsedEntry.getId().toString();
-                // Check to see if entry with this id already exists
-                PersistedEntry exists = getEntry(entryId, postEntryRequest.getFeedName());
-                if (exists != null) {
-                    String errMsg = String.format("Unable to persist entry. Reason: entryId (%s) not unique.", entryId);
-                    return ResponseBuilder.conflict(errMsg);
-                }
                 persistedEntry.setEntryId(abderaParsedEntry.getId().toString());
             } else {
+                // Generate an ID for this entry
                 persistedEntry.setEntryId(UUID_URI_SCHEME + UUID.randomUUID().toString());
                 abderaParsedEntry.setId(persistedEntry.getEntryId());
             }
@@ -123,6 +117,9 @@ public class JdbcFeedPublisher implements FeedPublisher {
                     persistedEntry.getEntryId(), persistedEntry.getCreationDate(), persistedEntry.getDateLastUpdated(),
                     persistedEntry.getEntryBody(), persistedEntry.getFeed(), new PostgreSQLTextArray(persistedEntry.getCategories())
                 });
+            } catch (DuplicateKeyException dupEx) {
+                String errMsg = String.format("Unable to persist entry. Reason: entryId (%s) not unique.", abderaParsedEntry.getId().toString());
+                return ResponseBuilder.conflict(errMsg);
             }  finally {
                 stopTimer(dbcontext);
             }
