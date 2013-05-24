@@ -123,9 +123,9 @@
             </dependency>
 
             <dependency>
-                <groupId>org.apache.servicemix.bundles</groupId>
-                <artifactId>org.apache.servicemix.bundles.commons-dbcp</artifactId>
-                <version>1.4_3</version>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-jdbc</artifactId>
+                <version>7.0.19</version>
             </dependency>
 
             <dependency>
