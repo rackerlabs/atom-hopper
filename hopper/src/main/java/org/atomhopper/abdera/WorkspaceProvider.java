@@ -160,10 +160,10 @@ public class WorkspaceProvider implements Provider {
                 transactionEnd(transaction, request, response);
             }
         } else {
-            response = ProviderHelper.notfound(request);
+            response = ProviderHelper.notfound(request).setContentType(XML);
         }
 
-        return response != null ? response : ProviderHelper.badrequest(request);
+        return response != null ? response : ProviderHelper.badrequest(request).setContentType(XML);
     }
 
     private ResponseContext handleAdapterException(Exception ex, Transactional transaction, RequestContext request) {
@@ -181,7 +181,7 @@ public class WorkspaceProvider implements Provider {
         }
 
         transactionCompensate(transaction, request, ex);
-        return ProviderHelper.servererror(request, ex);
+        return ProviderHelper.servererror(request, ex).setContentType(XML);
     }
 
     private void transactionCompensate(Transactional transactional, RequestContext request, Throwable e) {
