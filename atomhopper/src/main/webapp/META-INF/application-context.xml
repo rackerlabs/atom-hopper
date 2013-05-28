@@ -66,7 +66,7 @@
 
     <!-- Postgres (Perfromance) Data Adapter -->
     <!--
-    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+    <bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource">
         <property name="driverClassName" value="org.postgresql.Driver" />
         <property name="url" value="jdbc:postgresql://localhost:5432/atomhopper" />
         <property name="username" value="postgres" />
@@ -95,7 +95,7 @@
 
     <!-- JDBC (Performance) Data Adapter -->
     <!--
-    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+    <bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource">
         <property name="driverClassName" value="org.postgresql.Driver" />
         <property name="url" value="jdbc:postgresql://localhost:5432/atomhopper" />
         <property name="username" value="postgres" />

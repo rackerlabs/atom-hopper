@@ -1,1 +1,1 @@
-ALTER TABLE entries ADD CONSTRAINT entryid_unique UNIQUE (entryid);
+ALTER TABLE entries ADD CONSTRAINT entryid_unique UNIQUE(entryid);

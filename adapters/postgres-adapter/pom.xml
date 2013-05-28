@@ -27,9 +27,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.commons-dbcp</artifactId>
-        </dependency> 
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-jdbc</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.javassist</groupId>
