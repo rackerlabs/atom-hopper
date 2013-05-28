@@ -48,5 +48,6 @@
 
     <bean name="hibernate-feed-publisher" class="org.atomhopper.hibernate.adapter.HibernateFeedPublisher">
         <property name="feedRepository" ref="feed-repository-bean" />
+        <property name="allowOverrideId" value="true"/>
     </bean>
 </beans>

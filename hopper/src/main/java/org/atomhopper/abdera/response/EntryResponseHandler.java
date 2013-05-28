@@ -35,6 +35,9 @@ public class EntryResponseHandler extends AbstractResponseHandler<Entry> {
 
             case BAD_REQUEST:
                 return ProviderHelper.badrequest(rc, adapterResponse.getMessage());
+
+            case CONFLICT:
+                return ProviderHelper.conflict(rc, adapterResponse.getMessage());
                 
             default:
                 return ProviderHelper.notfound(rc);
