@@ -11,6 +11,8 @@ import java.util.Date;
 
 public class EntryResponseHandler extends AbstractResponseHandler<Entry> {
 
+    private static final String XML = "application/xml";
+
     public EntryResponseHandler(String[] allowedMethods, AdapterResponseInterceptor<Entry>... interceptors) {
         super(allowedMethods, interceptors);
     }
@@ -25,22 +27,22 @@ public class EntryResponseHandler extends AbstractResponseHandler<Entry> {
                 return ProviderHelper.returnBase(adapterResponse.getBody(), adapterResponse.getResponseStatus().value(), lastUpdated);
 
             case NOT_FOUND:
-                return ProviderHelper.notfound(rc, adapterResponse.getMessage());
+                return ProviderHelper.notfound(rc, adapterResponse.getMessage()).setContentType(XML);
 
             case INTERNAL_SERVER_ERROR:
-                return ProviderHelper.servererror(rc, adapterResponse.getMessage(), new InternalServerException());
+                return ProviderHelper.servererror(rc, adapterResponse.getMessage(), new InternalServerException()).setContentType(XML);
 
             case METHOD_NOT_ALLOWED:
-                return ProviderHelper.notallowed(rc, adapterResponse.getMessage(), getAllowedHttpMethods());
+                return ProviderHelper.notallowed(rc, adapterResponse.getMessage(), getAllowedHttpMethods()).setContentType(XML);
 
             case BAD_REQUEST:
-                return ProviderHelper.badrequest(rc, adapterResponse.getMessage());
+                return ProviderHelper.badrequest(rc, adapterResponse.getMessage()).setContentType(XML);
 
             case CONFLICT:
-                return ProviderHelper.conflict(rc, adapterResponse.getMessage());
+                return ProviderHelper.conflict(rc, adapterResponse.getMessage()).setContentType(XML);
                 
             default:
-                return ProviderHelper.notfound(rc);
+                return ProviderHelper.notfound(rc).setContentType(XML);
         }
     }
 }
