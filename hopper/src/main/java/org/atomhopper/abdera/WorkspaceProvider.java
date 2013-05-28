@@ -25,6 +25,7 @@ public class WorkspaceProvider implements Provider {
     private static final Logger LOG = LoggerFactory.getLogger(WorkspaceProvider.class);
     private static final int MIN_ERROR_CODE = 400;
     private static final int MAX_ERROR_CODE = 500;
+    private static final String XML = "application/xml";
     private final Map<TargetType, RequestProcessor> requestProcessors;
     private final List<Filter> filters;
     private final WorkspaceManager workspaceManager;
@@ -133,13 +134,13 @@ public class WorkspaceProvider implements Provider {
         final Target target = request.getTarget();
 
         if (target == null || target.getType() == TargetType.TYPE_NOT_FOUND) {
-            return ProviderHelper.notfound(request);
+            return ProviderHelper.notfound(request).setContentType(XML);
         }
 
         final RequestProcessor processor = this.requestProcessors.get(target.getType());
 
         if (processor == null) {
-            return ProviderHelper.notfound(request);
+            return ProviderHelper.notfound(request).setContentType(XML);
         }
 
         final CollectionAdapter adapter = getWorkspaceManager().getCollectionAdapter(request);
@@ -159,10 +160,10 @@ public class WorkspaceProvider implements Provider {
                 transactionEnd(transaction, request, response);
             }
         } else {
-            response = ProviderHelper.notfound(request);
+            response = ProviderHelper.notfound(request).setContentType(XML);
         }
 
-        return response != null ? response : ProviderHelper.badrequest(request);
+        return response != null ? response : ProviderHelper.badrequest(request).setContentType(XML);
     }
 
     private ResponseContext handleAdapterException(Exception ex, Transactional transaction, RequestContext request) {
@@ -180,7 +181,7 @@ public class WorkspaceProvider implements Provider {
         }
 
         transactionCompensate(transaction, request, ex);
-        return ProviderHelper.servererror(request, ex);
+        return ProviderHelper.servererror(request, ex).setContentType(XML);
     }
 
     private void transactionCompensate(Transactional transactional, RequestContext request, Throwable e) {
