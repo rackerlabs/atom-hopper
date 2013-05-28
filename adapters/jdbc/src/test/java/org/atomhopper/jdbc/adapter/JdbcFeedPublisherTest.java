@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.UUID;
 import static junit.framework.Assert.assertEquals;
 
-import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.parser.stax.FOMEntry;
 import org.atomhopper.adapter.request.adapter.DeleteEntryRequest;
@@ -15,6 +14,7 @@ import org.atomhopper.adapter.request.adapter.PostEntryRequest;
 import org.atomhopper.adapter.request.adapter.PutEntryRequest;
 import org.atomhopper.jdbc.model.PersistedEntry;
 import org.atomhopper.jdbc.query.EntryRowMapper;
+import org.atomhopper.jdbc.query.PostgreSQLTextArray;
 import org.atomhopper.response.AdapterResponse;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,11 +22,14 @@ import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.atomhopper.adapter.PublicationException;
 
 @RunWith(Enclosed.class)
 public class JdbcFeedPublisherTest {
@@ -35,7 +38,7 @@ public class JdbcFeedPublisherTest {
 
         private PutEntryRequest putEntryRequest;
         private DeleteEntryRequest deleteEntryRequest;
-        private JdbcFeedPublisher postgresFeedPublisher;
+        private JdbcFeedPublisher jdbcFeedPublisher;
         private PostEntryRequest postEntryRequest;
         private JdbcTemplate jdbcTemplate;
 
@@ -50,8 +53,8 @@ public class JdbcFeedPublisherTest {
             putEntryRequest = mock(PutEntryRequest.class);
             deleteEntryRequest = mock(DeleteEntryRequest.class);
             jdbcTemplate = mock(JdbcTemplate.class);
-            postgresFeedPublisher = new JdbcFeedPublisher();
-            postgresFeedPublisher.setJdbcTemplate(jdbcTemplate);
+            jdbcFeedPublisher = new JdbcFeedPublisher();
+            jdbcFeedPublisher.setJdbcTemplate(jdbcTemplate);
             postEntryRequest = mock(PostEntryRequest.class);
             when(postEntryRequest.getEntry()).thenReturn(entry());
             when(postEntryRequest.getFeedName()).thenReturn("namespace/feed");
@@ -67,34 +70,36 @@ public class JdbcFeedPublisherTest {
 
         @Test
         public void shouldReturnHTTPCreated() throws Exception {
-            AdapterResponse<Entry> adapterResponse = postgresFeedPublisher.postEntry(postEntryRequest);
+            AdapterResponse<Entry> adapterResponse = jdbcFeedPublisher.postEntry(postEntryRequest);
             assertEquals("Should return HTTP 201 (Created)", HttpStatus.CREATED, adapterResponse.getResponseStatus());
         }
 
         @Test
         public void shouldThrowErrorForEntryIdAlreadyExists() throws Exception {
-            postgresFeedPublisher.setAllowOverrideId(true);
-            when(jdbcTemplate.query(any(String.class), any(Object[].class), any(EntryRowMapper.class))).thenReturn(
-                    entryList);
-            AdapterResponse<Entry> adapterResponse = postgresFeedPublisher.postEntry(postEntryRequest);
-            assertEquals("Should return HTTP 404 (Bad Request)", HttpStatus.BAD_REQUEST, adapterResponse.getResponseStatus());
+            jdbcFeedPublisher.setAllowOverrideId(true);
+            when(jdbcTemplate.update(anyString(), new Object[]{
+                    anyString(), any(java.util.Date.class), any(java.util.Date.class),
+                    anyString(), anyString(), any(PostgreSQLTextArray.class)
+            })).thenThrow(new DuplicateKeyException("duplicate entry"));
+            AdapterResponse<Entry> adapterResponse = jdbcFeedPublisher.postEntry(postEntryRequest);
+            assertEquals("Should return HTTP 409 (Conflict)", HttpStatus.CONFLICT, adapterResponse.getResponseStatus());
         }
 
         @Test(expected = UnsupportedOperationException.class)
         public void shouldPutEntry() throws Exception {
-            postgresFeedPublisher.putEntry(putEntryRequest);
+            jdbcFeedPublisher.putEntry(putEntryRequest);
         }
 
         @Test(expected = UnsupportedOperationException.class)
         public void shouldDeleteEntry() throws Exception {
-            postgresFeedPublisher.deleteEntry(deleteEntryRequest);
+            jdbcFeedPublisher.deleteEntry(deleteEntryRequest);
         }
 
         @Test(expected = UnsupportedOperationException.class)
         public void shouldSetParameters() throws Exception {
             Map<String, String> map = new HashMap<String, String>();
             map.put("test1", "test2");
-            postgresFeedPublisher.setParameters(map);
+            jdbcFeedPublisher.setParameters(map);
         }
 
         public Entry entry() {

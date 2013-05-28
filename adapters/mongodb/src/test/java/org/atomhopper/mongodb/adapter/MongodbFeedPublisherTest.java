@@ -72,7 +72,7 @@ public class MongodbFeedPublisherTest {
             mongodbFeedPublisher.setAllowOverrideId(true);
             when(mongoTemplate.findOne(any(Query.class), any(Class.class), eq(COLLECTION_NAME))).thenReturn(persistedEntry);
             AdapterResponse<Entry> adapterResponse = mongodbFeedPublisher.postEntry(postEntryRequest);
-            assertEquals("Should return HTTP 404 (Bad Request)",HttpStatus.BAD_REQUEST, adapterResponse.getResponseStatus() );
+            assertEquals("Should return HTTP 409 (Conflict)",HttpStatus.CONFLICT, adapterResponse.getResponseStatus() );
         }
 
         @Test(expected = UnsupportedOperationException.class)

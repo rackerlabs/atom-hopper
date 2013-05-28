@@ -45,6 +45,9 @@ public class FeedResponseHandler extends AbstractResponseHandler<Feed> {
 
             case BAD_REQUEST:
                 return ProviderHelper.badrequest(rc, adapterResponse.getMessage()).setContentType(XML);
+
+            case CONFLICT:
+                return ProviderHelper.conflict(rc, adapterResponse.getMessage()).setContentType(XML);
                 
             default:
                 return ProviderHelper.notfound(rc).setContentType(XML);
