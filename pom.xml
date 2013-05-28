@@ -5,7 +5,7 @@
     <groupId>org.atomhopper</groupId>
     <artifactId>parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.2.9-SNAPSHOT</version>
+    <version>1.2.9</version>
     <name>ATOM Hopper - ATOMpub Server Collection</name>
 
     <url>http://atomhopper.org/</url>
