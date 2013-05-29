@@ -121,33 +121,78 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>com.sun.tools.xjc.maven2</groupId>
-                <artifactId>maven-jaxb-plugin</artifactId>
+    <profiles>
+        <profile>
+            <id>jaxb.jdk16</id>
+            
+            <activation>
+                <jdk>1.6</jdk>
+            </activation>
+            
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.sun.tools.xjc.maven2</groupId>
+                        <artifactId>maven-jaxb-plugin</artifactId>
 
-                <configuration>
-                    <includeSchemas>
-                        <includeSchema>**/*.xsd</includeSchema>
-                    </includeSchemas>
+                        <configuration>
+                            <includeSchemas>
+                                <includeSchema>**/*.xsd</includeSchema>
+                            </includeSchemas>
 
-                    <includeBindings>
-                        <includeBinding>**/*.xjb</includeBinding>
-                    </includeBindings>
+                            <includeBindings>
+                                <includeBinding>**/*.xjb</includeBinding>
+                            </includeBindings>
 
-                    <strict>true</strict>
-                </configuration>
+                            <strict>true</strict>
+                        </configuration>
 
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>jaxb.jdk17</id>
+            
+            <activation>
+                <jdk>1.7</jdk>
+            </activation>
+            
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>jaxb2-maven-plugin</artifactId>
+
+                        <configuration>
+                            <outputDirectory>target/generated-sources/xjc</outputDirectory>
+                            
+                            <schemaDirectory>src/main/resources/META-INF/schema</schemaDirectory>
+                            <bindingDirectory>src/main/resources/META-INF/schema</bindingDirectory>
+                            
+                            <schemaFiles>config/atom-hopper-config.xsd</schemaFiles>
+                            <bindingFiles>config/bindings.xjb</bindingFiles>
+                        </configuration>
+
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>xjc</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
 
