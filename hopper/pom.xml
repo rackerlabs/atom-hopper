@@ -124,25 +124,23 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>com.sun.tools.xjc.maven2</groupId>
-                <artifactId>maven-jaxb-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jaxb2-maven-plugin</artifactId>
 
                 <configuration>
-                    <includeSchemas>
-                        <includeSchema>**/*.xsd</includeSchema>
-                    </includeSchemas>
-
-                    <includeBindings>
-                        <includeBinding>**/*.xjb</includeBinding>
-                    </includeBindings>
-
-                    <strict>true</strict>
+                    <outputDirectory>target/generated-sources/xjc</outputDirectory>
+                            
+                    <schemaDirectory>src/main/resources/META-INF/schema</schemaDirectory>
+                    <bindingDirectory>src/main/resources/META-INF/schema</bindingDirectory>
+                            
+                    <schemaFiles>config/atom-hopper-config.xsd</schemaFiles>
+                    <bindingFiles>config/bindings.xjb</bindingFiles>
                 </configuration>
 
                 <executions>
                     <execution>
                         <goals>
-                            <goal>generate</goal>
+                            <goal>xjc</goal>
                         </goals>
                     </execution>
                 </executions>
