@@ -77,7 +77,7 @@ public class PostAndGetMultipleEntriesIntegrationTest extends JettyIntegrationTe
             HttpMethod postMethod = newPostEntryMethodWithEntryId("<blah><a1>a1</a1><b1>200</b1></blah>", "urn:uuid:aa12175c-36a0-4136-bd98-6eb2d442e7ab");
             assertEquals("Creating a new entry should return a 201", HttpStatus.SC_CREATED, httpClient.executeMethod(postMethod));
             postMethod = newPostEntryMethodWithEntryId("<blah><a1>a1</a1><b1>200</b1></blah>", "urn:uuid:aa12175c-36a0-4136-bd98-6eb2d442e7ab");
-            assertEquals("Creating the same entry should return a 409", HttpStatus.SC_BAD_REQUEST, httpClient.executeMethod(postMethod));
+            assertEquals("Creating the same entry should return a 409", HttpStatus.SC_CONFLICT, httpClient.executeMethod(postMethod));
         }
     }
 }
