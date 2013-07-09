@@ -4,6 +4,7 @@ import org.apache.abdera.i18n.iri.IRI;
 import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
+import org.apache.abdera.model.Link;
 import org.apache.abdera.parser.stax.FOMEntry;
 import org.apache.abdera.parser.stax.FOMFeed;
 import org.apache.abdera.protocol.server.RequestContext;
@@ -23,6 +24,8 @@ import java.io.IOException;
 import java.util.UUID;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -49,6 +52,27 @@ public class FeedResponseHandlerTest {
             ResponseContext responseContext = responseHandler.handleResponse(requestContext, adapterResponse);
             assertEquals("Should respond with 304", 304, responseContext.getStatus());
             assertEquals("Should have ETag", requestEntityTag, responseContext.getEntityTag());
+        }
+    }
+
+    public static class ResponseLinkHeaders extends TestParent {
+
+        @Test
+        public void shouldReturnLinkHeaders() {
+
+            FeedResponseHandler responseHandler = responseHandler();
+            RequestContext requestContext = requestContext();
+
+            AdapterResponse<Feed> adapterResponse = adapterResponseForFeed(2);
+            adapterResponse.getBody().addLink("http://localhost:8080/next", Link.REL_NEXT);
+            adapterResponse.getBody().addLink("http://localhost:8080/previous", Link.REL_PREVIOUS);
+
+            ResponseContext responseContext = responseHandler.handleResponse(requestContext, adapterResponse);
+            Object[] headers = responseContext.getHeaders("Link");
+            assertNotNull("Headers array should not be null", headers);
+            assertEquals("# of elements in Link headers array", 1, headers.length);
+            assertTrue("Link header contains URL for next", ((String)headers[0]).contains("http://localhost:8080/next"));
+            assertTrue("Link header contains URL for previous", ((String)headers[0]).contains("http://localhost:8080/previous"));
         }
     }
 
