@@ -1,5 +1,7 @@
 package org.atomhopper.abdera.response;
 
+import org.springframework.http.HttpStatus;
+import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.model.Link;
 import org.apache.abdera.protocol.server.ProviderHelper;
@@ -29,7 +31,8 @@ public class FeedResponseHandler extends AbstractResponseHandler<Feed> {
     protected ResponseContext handleAdapterResponse(RequestContext rc, AdapterResponse<Feed> adapterResponse) {
         final Date lastUpdated = adapterResponse.getBody() != null ? adapterResponse.getBody().getUpdated() : null;
 
-        switch (adapterResponse.getResponseStatus()) {
+        final HttpStatus httpStatus = adapterResponse.getResponseStatus();
+        switch (httpStatus) {
             case OK:
             	ResponseContext responseContext;
             	if (entityTagMatches(rc.getIfNoneMatch(), adapterResponse.getEntityTag())) {
@@ -54,7 +57,13 @@ public class FeedResponseHandler extends AbstractResponseHandler<Feed> {
 
             case CONFLICT:
                 return ProviderHelper.conflict(rc, adapterResponse.getMessage()).setContentType(XML);
-                
+
+            case NOT_IMPLEMENTED:
+                final Abdera abdera = rc.getAbdera();
+                final ResponseContext rspCtx =
+                    ProviderHelper.createErrorResponse(abdera, httpStatus.value(), adapterResponse.getMessage());
+                return rspCtx;
+
             default:
                 return ProviderHelper.notfound(rc).setContentType(XML);
         }
