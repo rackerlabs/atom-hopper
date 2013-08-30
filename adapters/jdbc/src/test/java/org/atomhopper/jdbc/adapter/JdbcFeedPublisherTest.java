@@ -77,6 +77,10 @@ public class JdbcFeedPublisherTest {
         @Test
         public void shouldThrowErrorForEntryIdAlreadyExists() throws Exception {
             jdbcFeedPublisher.setAllowOverrideId(true);
+            // there are now 2 flavors of jdbcTemplate.update()
+            when(jdbcTemplate.update(anyString(), new Object[]{
+                    anyString(), anyString(), anyString(), any(PostgreSQLTextArray.class)
+            })).thenThrow(new DuplicateKeyException("duplicate entry"));
             when(jdbcTemplate.update(anyString(), new Object[]{
                     anyString(), any(java.util.Date.class), any(java.util.Date.class),
                     anyString(), anyString(), any(PostgreSQLTextArray.class)
