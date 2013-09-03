@@ -51,6 +51,7 @@ public class JdbcFeedSource implements FeedSource {
     private static final int PAGE_SIZE = 25;
     private JdbcTemplate jdbcTemplate;
     private boolean enableTimers = false;
+    private int feedHeadDelayInSeconds = 2;
 
     public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -58,6 +59,10 @@ public class JdbcFeedSource implements FeedSource {
 
     public void setEnableTimers(Boolean enableTimers) {
         this.enableTimers = enableTimers;
+    }
+
+    public void setFeedHeadDelayInSeconds(int feedHeadDelayInSeconds) {
+        this.feedHeadDelayInSeconds = feedHeadDelayInSeconds;
     }
 
     @Override
@@ -200,7 +205,7 @@ public class JdbcFeedSource implements FeedSource {
         try {
             if ((StringUtils.isBlank(marker))) {
                 context = startTimer(String.format("get-feed-head-%s", getMetricBucketForPageSize(pageSize)));
-                response = getFeedHead(getFeedRequest, pageSize);
+                response = getFeedHead(getFeedRequest, pageSize, feedHeadDelayInSeconds);
             } else if (marker.equals(MOCK_LAST_MARKER)) {
                 context = startTimer(String.format("get-last-page-%s", getMetricBucketForPageSize(pageSize)));
                 response = getLastPage(getFeedRequest, pageSize);
@@ -218,7 +223,7 @@ public class JdbcFeedSource implements FeedSource {
     }
 
     private AdapterResponse<Feed> getFeedHead(GetFeedRequest getFeedRequest,
-                                              int pageSize) {
+                                              int pageSize, int feedHeadDelayInSeconds) {
         final Abdera abdera = getFeedRequest.getAbdera();
 
         final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
