@@ -76,10 +76,15 @@ public class JdbcFeedPublisher implements FeedPublisher {
         try {
             final Entry abderaParsedEntry = postEntryRequest.getEntry();
             final PersistedEntry persistedEntry = new PersistedEntry();
-            final String insertSQL = "INSERT INTO entries (entryid, creationdate, datelastupdated, entrybody, feed, categories) VALUES (?, ?, ?, ?, ?, ?)";
+
+            // D-15000: use auto generated DB timestamp, except for when allowOverrideDate
+            // is set to true
+            String insertSQL = "INSERT INTO entries (entryid, entrybody, feed, categories) VALUES (?, ?, ?, ?)";
+            if ( allowOverrideDate ) {
+                insertSQL = "INSERT INTO entries (entryid, creationdate, datelastupdated, entrybody, feed, categories) VALUES (?, ?, ?, ?, ?, ?)";
+            }
 
             boolean entryIdSent = abderaParsedEntry.getId() != null;
-
             if (allowOverrideId && entryIdSent && StringUtils.isNotBlank(abderaParsedEntry.getId().toString().trim())) {
                 persistedEntry.setEntryId(abderaParsedEntry.getId().toString());
             } else {
@@ -90,7 +95,6 @@ public class JdbcFeedPublisher implements FeedPublisher {
 
             if (allowOverrideDate) {
                 Date updated = abderaParsedEntry.getUpdated();
-
                 if (updated != null) {
                     persistedEntry.setDateLastUpdated(updated);
                     persistedEntry.setCreationDate(updated);
@@ -113,10 +117,20 @@ public class JdbcFeedPublisher implements FeedPublisher {
 
             final TimerContext dbcontext = startTimer("db-post-entry");
             try {
-                jdbcTemplate.update(insertSQL, new Object[]{
-                    persistedEntry.getEntryId(), persistedEntry.getCreationDate(), persistedEntry.getDateLastUpdated(),
-                    persistedEntry.getEntryBody(), persistedEntry.getFeed(), new PostgreSQLTextArray(persistedEntry.getCategories())
-                });
+                Object[] params = null;
+                if ( allowOverrideDate ) {
+                    // we have extra date parameters
+                    params = new Object[]{
+                        persistedEntry.getEntryId(), persistedEntry.getCreationDate(), persistedEntry.getDateLastUpdated(),
+                            persistedEntry.getEntryBody(), persistedEntry.getFeed(), new PostgreSQLTextArray(persistedEntry.getCategories())
+                        };
+                } else {
+                    params = new Object[]{
+                            persistedEntry.getEntryId(), persistedEntry.getEntryBody(), persistedEntry.getFeed(),
+                            new PostgreSQLTextArray(persistedEntry.getCategories())
+                    };
+                }
+                jdbcTemplate.update(insertSQL, params);
             } catch (DuplicateKeyException dupEx) {
                 String errMsg = String.format("Unable to persist entry. Reason: entryId (%s) not unique.", abderaParsedEntry.getId().toString());
                 return ResponseBuilder.conflict(errMsg);
@@ -125,7 +139,6 @@ public class JdbcFeedPublisher implements FeedPublisher {
             }
 
             incrementCounterForFeed(postEntryRequest.getFeedName());
-
             return ResponseBuilder.created(abderaParsedEntry);
         } finally {
             stopTimer(context);
