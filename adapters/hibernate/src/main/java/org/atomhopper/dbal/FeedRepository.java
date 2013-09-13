@@ -33,6 +33,4 @@ public interface FeedRepository {
     Set<PersistedCategory> updateCategories(Set<PersistedCategory> categories);
 
     PersistedEntry getNextMarker(PersistedEntry persistedEntry, String feedName, CategoryCriteriaGenerator criteriaGenerator);
-
-    Integer getFeedCount(String feedName, CategoryCriteriaGenerator criteriaGenerator);
 }

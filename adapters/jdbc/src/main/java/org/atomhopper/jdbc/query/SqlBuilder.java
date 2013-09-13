@@ -18,8 +18,6 @@ public class SqlBuilder {
     private static final String OPEN_PARENS = "(";
     private static final String CLOSE_PARENS = ")";
 
-    private static final String SELECT_COUNT_FROM_ENTRIES = "SELECT COUNT(*) FROM entries WHERE feed = ?";
-
     private static final String SELECT = "SELECT * FROM entries WHERE feed = ?";
     private static final String AND = "AND";
     private static final String SPACE = " ";
@@ -116,16 +114,6 @@ public class SqlBuilder {
                 builder.append(String.format(ORDER_BY_DESC, QUESTION_MARK));
                 builder.append(CLOSE_PARENS + SPACE);
                 builder.append(String.format(ORDER_BY_DESC, QUESTION_MARK));
-
-                return builder.toString();
-
-            case FEED_COUNT:
-                builder.append(String.format(SELECT_COUNT_FROM_ENTRIES));
-
-                if (StringUtils.isNotBlank(searchSql)) {
-                    builder.append(SPACE + AND);
-                    builder.append(searchSql);
-                }
 
                 return builder.toString();
 

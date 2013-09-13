@@ -282,25 +282,6 @@ public class HibernateFeedRepository implements FeedRepository {
     }
 
     @Override
-    public Integer getFeedCount(final String feedName, final CategoryCriteriaGenerator criteriaGenerator) {
-
-        return performComplexActionNonTransactionable(new ComplexSessionAction<Integer>() {
-
-            @Override
-            public Integer perform(Session liveSession) {
-                Criteria criteria = liveSession.createCriteria(PersistedEntry.class);
-
-                criteria.add(Restrictions.eq(FEED_NAME, feedName))
-                        .setProjection(Projections.rowCount());
-
-                criteriaGenerator.enhanceCriteria(criteria);
-
-                return safeLongToInt((Long) criteria.uniqueResult());
-            }
-        });
-    }
-
-    @Override
     public PersistedEntry getNextMarker(final PersistedEntry persistedEntry, final String feedName, final CategoryCriteriaGenerator criteriaGenerator) {
 
         return performComplexActionNonTransactionable(new ComplexSessionAction<PersistedEntry>() {

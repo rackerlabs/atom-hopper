@@ -1,5 +1,6 @@
 package org.atomhopper.mongodb.adapter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -7,6 +8,7 @@ import static junit.framework.Assert.assertEquals;
 import org.apache.abdera.Abdera;
 import org.atomhopper.adapter.request.adapter.GetEntryRequest;
 import org.atomhopper.adapter.request.adapter.GetFeedRequest;
+import org.atomhopper.dbal.PageDirection;
 import org.atomhopper.mongodb.domain.PersistedEntry;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -17,6 +19,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
 
@@ -36,6 +39,8 @@ public class MongodbFeedSourceTest {
         private final String ENTRY_BODY = "<entry xmlns='http://www.w3.org/2005/Atom'></entry>";
         private final String FEED_NAME = "namespace/feed";
         private final String COLLECTION_NAME = "namespace.feed";
+        private final String MOCK_LAST_MARKER = "last";
+        private final String BACKWARD = "backward";
 
         @Before
         public void setUp() throws Exception {
@@ -138,6 +143,20 @@ public class MongodbFeedSourceTest {
             when(getEntryRequest.getAbdera()).thenReturn(localAbdera);
             assertEquals("Should get a 200 response", HttpStatus.OK, mongodbFeedSource.getEntry(getEntryRequest).getResponseStatus());
 
+        }
+
+        @Test
+        public void shouldGetFeedWithLastMarker() throws Exception {
+
+            Abdera localAbdera = new Abdera();
+            when( getFeedRequest.getPageMarker() ).thenReturn( MOCK_LAST_MARKER );
+            when( getFeedRequest.getDirection() ).thenReturn( BACKWARD );
+            when( getFeedRequest.getFeedName() ).thenReturn( FEED_NAME );
+            when( getFeedRequest.getAbdera() ).thenReturn( localAbdera );
+            when( mongoTemplate.findOne(any(Query.class), any(Class.class), eq(COLLECTION_NAME))).thenReturn( persistedEntry );
+            mongodbFeedSource.setMongoTemplate( mongoTemplate );
+            assertEquals( "Should get a 200 response with marker of \"last\"", HttpStatus.OK,
+                          mongodbFeedSource.getFeed( getFeedRequest ).getResponseStatus() );
         }
     }
 }

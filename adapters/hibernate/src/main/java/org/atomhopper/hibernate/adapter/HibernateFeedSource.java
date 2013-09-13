@@ -196,14 +196,7 @@ public class HibernateFeedSource implements FeedSource {
             // Set the last link in the feed head
             final String baseFeedUri = decode(getFeedRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
 
-            final int totalFeedEntryCount = feedRepository.getFeedCount(feedName, new SimpleCategoryCriteriaGenerator(searchString));
-            int lastPageSize = totalFeedEntryCount % pageSize;
-
-            if (lastPageSize == 0) {
-                lastPageSize = pageSize;
-            }
-
-            final List<PersistedEntry> lastPersistedEntries = feedRepository.getLastPage(feedName, lastPageSize, new SimpleCategoryCriteriaGenerator(searchString));
+            final List<PersistedEntry> lastPersistedEntries = feedRepository.getLastPage(feedName, pageSize, new SimpleCategoryCriteriaGenerator(searchString));
 
             if (lastPersistedEntries != null && !(lastPersistedEntries.isEmpty())) {
                 hyrdatedFeed.addLink(new StringBuilder()

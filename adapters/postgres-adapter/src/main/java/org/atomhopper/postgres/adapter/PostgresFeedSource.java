@@ -211,14 +211,7 @@ public class PostgresFeedSource implements FeedSource {
         final String baseFeedUri = decode(getFeedRequest.urlFor(
                 new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
 
-        int totalFeedEntryCount = getFeedCount(getFeedRequest.getFeedName(), searchString);
-
-        int lastPageSize = totalFeedEntryCount % pageSize;
-        if (lastPageSize == 0) {
-            lastPageSize = pageSize;
-        }
-
-        List<PersistedEntry> lastPersistedEntries = getLastPage(getFeedRequest.getFeedName(), lastPageSize, searchString);
+        List<PersistedEntry> lastPersistedEntries = getLastPage(getFeedRequest.getFeedName(), pageSize, searchString);
 
         if (lastPersistedEntries != null && !(lastPersistedEntries.isEmpty())) {
             hyrdatedFeed.addLink(
@@ -326,23 +319,6 @@ public class PostgresFeedSource implements FeedSource {
         List<PersistedEntry> entry = jdbcTemplate
                 .query(entrySQL, new Object[]{feedName, entryId}, new EntryRowMapper());
         return entry.size() > 0 ? entry.get(0) : null;
-    }
-
-    private Integer getFeedCount(final String feedName, final String searchString) {
-        final String totalFeedEntryCountSQL = "SELECT COUNT(*) FROM entries WHERE feed = ?";
-        final String totalFeedEntryCountWithCatsSQL = "SELECT COUNT(*) FROM entries WHERE feed = ? AND categories && ?::varchar[]";
-
-        int totalFeedEntryCount;
-
-        if (searchString.length() > 0) {
-            totalFeedEntryCount = jdbcTemplate
-                    .queryForInt(totalFeedEntryCountWithCatsSQL, feedName,
-                                 CategoryStringGenerator.getPostgresCategoryString(searchString));
-        } else {
-            totalFeedEntryCount = jdbcTemplate
-                    .queryForInt(totalFeedEntryCountSQL, feedName);
-        }
-        return totalFeedEntryCount;
     }
 
     private List<PersistedEntry> getFeedHead(final String feedName, final int pageSize, final String searchString) {
