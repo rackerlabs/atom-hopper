@@ -1,14 +1,18 @@
 package org.atomhopper.hibernate.adapter;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+
 import static junit.framework.Assert.assertEquals;
 import org.apache.abdera.Abdera;
 import org.atomhopper.adapter.jpa.PersistedEntry;
 import org.atomhopper.adapter.jpa.PersistedFeed;
 import org.atomhopper.adapter.request.adapter.GetEntryRequest;
+import org.atomhopper.adapter.request.adapter.GetFeedRequest;
 import org.atomhopper.dbal.FeedRepository;
+import org.atomhopper.dbal.PageDirection;
+import org.atomhopper.hibernate.query.CategoryCriteriaGenerator;
+import org.atomhopper.hibernate.query.SimpleCategoryCriteriaGenerator;
+import org.hibernate.Criteria;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
@@ -26,11 +30,16 @@ public class HibernateFeedSourceTest {
         private HibernateFeedSource hibernateFeedSource;
         private FeedRepository feedRepository;
         private GetEntryRequest getEntryRequest;
+        private GetFeedRequest getFeedRequest;
         private PersistedFeed persistedFeed;
         private PersistedEntry persistedEntry;
+
         private final String ID = UUID.randomUUID().toString();
         private final String ENTRY_BODY = "<entry xmlns='http://www.w3.org/2005/Atom'></entry>";
         private final String FEED_NAME = "namespace/feed";
+        private final String MOCK_LAST_MARKER = "last";
+        private final int PAGE_SIZE = 10;
+        private final String BACKWARD = "backward";
 
         @Before
         public void setUp() throws Exception {
@@ -40,6 +49,7 @@ public class HibernateFeedSourceTest {
             getEntryRequest = mock(GetEntryRequest.class);
             feedRepository = mock(FeedRepository.class);
             persistedFeed = mock(PersistedFeed.class);
+            getFeedRequest = mock( GetFeedRequest.class );
 
             // Mock GetEntryRequest
             when(getEntryRequest.getFeedName()).thenReturn(FEED_NAME);
@@ -86,6 +96,22 @@ public class HibernateFeedSourceTest {
 
         }
 
-        // TODO: Finish the tests
+        @Test
+        public void shouldGetFeedWithLastMarker() throws Exception {
+
+            Abdera localAbdera = new Abdera();
+            when( getFeedRequest.getPageMarker() ).thenReturn( MOCK_LAST_MARKER );
+            when( getFeedRequest.getDirection() ).thenReturn( BACKWARD );
+            when( getFeedRequest.getFeedName() ).thenReturn( FEED_NAME );
+            when( getFeedRequest.getAbdera() ).thenReturn( localAbdera );
+            when( feedRepository.getEntry( MOCK_LAST_MARKER, FEED_NAME ) ).thenReturn( persistedEntry );
+            when( feedRepository.getFeedPage( FEED_NAME, persistedEntry, PageDirection.BACKWARD,
+                                              new SimpleCategoryCriteriaGenerator( "" ),
+                                              PAGE_SIZE ) ).thenReturn( new ArrayList<PersistedEntry>() );
+
+            hibernateFeedSource.setFeedRepository( feedRepository );
+            assertEquals( "Should get a 200 response with marker of \"last\"", HttpStatus.OK,
+                          hibernateFeedSource.getFeed( getFeedRequest ).getResponseStatus() );
+        }
     }
 }

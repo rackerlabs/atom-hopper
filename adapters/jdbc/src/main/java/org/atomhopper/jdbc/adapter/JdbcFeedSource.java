@@ -278,15 +278,8 @@ public class JdbcFeedSource implements FeedSource {
         final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
         AdapterResponse<Feed> response;
 
-        int totalFeedEntryCount = getFeedCount(getFeedRequest.getFeedName(), searchString);
-
-        int lastPageSize = totalFeedEntryCount % pageSize;
-        if (lastPageSize == 0) {
-            lastPageSize = pageSize;
-        }
-
         final Feed feed = hydrateFeed(getFeedRequest.getAbdera(),
-                                      enhancedGetLastPage(getFeedRequest.getFeedName(), lastPageSize, searchString),
+                                      enhancedGetLastPage(getFeedRequest.getFeedName(), pageSize, searchString),
                                       getFeedRequest, pageSize);
         response = ResponseBuilder.found(feed);
 
@@ -380,40 +373,6 @@ public class JdbcFeedSource implements FeedSource {
         List<PersistedEntry> entry = jdbcTemplate
                 .query(entrySQL, new Object[]{feedName, entryId}, new EntryRowMapper());
         return entry.size() > 0 ? entry.get(0) : null;
-    }
-
-    private Integer getFeedCount(final String feedName, final String searchString) {
-
-        SqlBuilder sql = new SqlBuilder().searchType(SearchType.FEED_COUNT).searchString(searchString);
-
-        List<String> categoriesList = SearchToSqlConverter.getParamsFromSearchString(searchString);
-        int numCats = categoriesList.size();
-
-        Object[] parms = null;
-
-        if (numCats > 0) {
-            parms = new Object[numCats + 1];
-            int index = 0;
-            parms[index++] = feedName;
-            for (String s : categoriesList) {
-                parms[index++] = s;
-            }
-        } else {
-            parms = new Object[]{feedName};
-        }
-
-        TimerContext context = null;
-        try {
-            if (numCats > 0) {
-                context = startTimer("db-get-feed-count-with-cats");
-            } else {
-                context = startTimer("db-get-feed-count");
-            }
-
-            return jdbcTemplate.queryForInt(sql.toString(), parms);
-        } finally {
-            stopTimer(context);
-        }
     }
 
     private List<PersistedEntry> getFeedHead(final String feedName, final int pageSize, final String searchString) {
