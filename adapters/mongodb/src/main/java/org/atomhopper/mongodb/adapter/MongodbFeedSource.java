@@ -215,12 +215,8 @@ public class MongodbFeedSource implements FeedSource {
 
             Query feedQuery = new Query(Criteria.where(FEED).is(getFeedRequest.getFeedName()));
             simpleCategoryCriteriaGenerator.enhanceCriteria(feedQuery);
-            final int totalFeedEntryCount = safeLongToInt(countDocuments(formatCollectionName(getFeedRequest.getFeedName()), feedQuery) % pageSize);
-            int lastPageSize = pageSize;
-            if (totalFeedEntryCount != 0) {
-                lastPageSize = totalFeedEntryCount;
-            }
-            Query lastLinkQuery = new Query(Criteria.where(FEED).is(getFeedRequest.getFeedName())).limit(lastPageSize);
+
+            Query lastLinkQuery = new Query(Criteria.where(FEED).is(getFeedRequest.getFeedName())).limit(pageSize);
             simpleCategoryCriteriaGenerator.enhanceCriteria(lastLinkQuery);
             lastLinkQuery.sort().on(DATE_LAST_UPDATED, Order.ASCENDING);
             final List<PersistedEntry> lastPersistedEntries = mongoTemplate.find(lastLinkQuery,
@@ -294,18 +290,6 @@ public class MongodbFeedSource implements FeedSource {
     @Override
     public FeedInformation getFeedInformation() {
         throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    private long countDocuments(final String collection, final Query query) {
-        return mongoTemplate.execute(collection,
-                new CollectionCallback< Long>() {
-
-                    @Override
-                    public Long doInCollection(DBCollection collection)
-                            throws MongoException, DataAccessException {
-                        return collection.count(query.getQueryObject());
-                    }
-                });
     }
 
     private String urlEncode(String searchString)  {

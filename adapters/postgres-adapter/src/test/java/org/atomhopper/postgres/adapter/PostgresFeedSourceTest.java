@@ -9,6 +9,7 @@ import static junit.framework.Assert.assertEquals;
 import org.apache.abdera.Abdera;
 import org.atomhopper.adapter.request.adapter.GetEntryRequest;
 import org.atomhopper.adapter.request.adapter.GetFeedRequest;
+import org.atomhopper.dbal.PageDirection;
 import org.atomhopper.postgres.model.PersistedEntry;
 import org.atomhopper.postgres.query.EntryRowMapper;
 import org.junit.Before;
@@ -46,6 +47,7 @@ public class PostgresFeedSourceTest {
         private final String BACKWARD = "backward";
         private final String SINGLE_CAT = "+Cat1";
         private final String MULTI_CAT = "+Cat1+Cat2";
+        private final String MOCK_LAST_MARKER = "last";
 
         @Before
         public void setUp() throws Exception {
@@ -290,6 +292,26 @@ public class PostgresFeedSourceTest {
             assertEquals("Should get a 200 response", HttpStatus.OK,
                          postgresFeedSource.getEntry(getEntryRequest).getResponseStatus());
 
+        }
+
+        @Test
+        public void shouldGetFeedWithLastMarker() throws Exception {
+
+            Abdera localAbdera = new Abdera();
+            when( getFeedRequest.getPageMarker() ).thenReturn( MOCK_LAST_MARKER );
+            when( getFeedRequest.getDirection() ).thenReturn( BACKWARD );
+            when( getFeedRequest.getFeedName() ).thenReturn( FEED_NAME );
+            when( getFeedRequest.getAbdera() ).thenReturn( localAbdera );
+            when(jdbcTemplate.queryForObject( any( String.class ),
+                                              any( EntryRowMapper.class ),
+                                              any( String.class ),
+                                              any( String.class ) ) ).thenReturn( persistedEntry );
+            when( jdbcTemplate.query( any( String.class ),
+                                      any( Object[].class ),
+                                      any( EntryRowMapper.class ) ) ).thenReturn( entryList );
+            postgresFeedSource.setJdbcTemplate( jdbcTemplate );
+            assertEquals( "Should get a 200 response with marker of \"last\"", HttpStatus.OK,
+                          postgresFeedSource.getFeed( getFeedRequest ).getResponseStatus() );
         }
     }
 }
