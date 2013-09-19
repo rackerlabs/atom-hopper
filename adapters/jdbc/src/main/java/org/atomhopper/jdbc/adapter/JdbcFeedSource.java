@@ -205,7 +205,7 @@ public class JdbcFeedSource implements FeedSource {
         try {
             if ((StringUtils.isBlank(marker))) {
                 context = startTimer(String.format("get-feed-head-%s", getMetricBucketForPageSize(pageSize)));
-                response = getFeedHead(getFeedRequest, pageSize, feedHeadDelayInSeconds);
+                response = getFeedHead(getFeedRequest, pageSize);
             } else if (marker.equals(MOCK_LAST_MARKER)) {
                 context = startTimer(String.format("get-last-page-%s", getMetricBucketForPageSize(pageSize)));
                 response = getLastPage(getFeedRequest, pageSize);
@@ -223,7 +223,7 @@ public class JdbcFeedSource implements FeedSource {
     }
 
     private AdapterResponse<Feed> getFeedHead(GetFeedRequest getFeedRequest,
-                                              int pageSize, int feedHeadDelayInSeconds) {
+                                              int pageSize) {
         final Abdera abdera = getFeedRequest.getAbdera();
 
         final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
@@ -377,7 +377,8 @@ public class JdbcFeedSource implements FeedSource {
 
     private List<PersistedEntry> getFeedHead(final String feedName, final int pageSize, final String searchString) {
 
-        SqlBuilder sql = new SqlBuilder().searchType(SearchType.FEED_HEAD).searchString(searchString);
+        SqlBuilder sql = new SqlBuilder().searchType(SearchType.FEED_HEAD).searchString(searchString)
+                                         .feedHeadDelayInSeconds(feedHeadDelayInSeconds);
 
         List<String> categoriesList = SearchToSqlConverter.getParamsFromSearchString(searchString);
         int numCats = categoriesList.size();
