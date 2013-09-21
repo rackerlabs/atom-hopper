@@ -2553,7 +2553,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="D - Get the last page - 1 only" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="D - Get the last page - 3,2,1" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -2582,18 +2582,36 @@
               <intProp name="Assertion.test_type">8</intProp>
             </ResponseAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain one entry" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain three entries" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">count(/feed/entry)=1</stringProp>
+              <stringProp name="XPath.xpath">count(/feed/entry)=3</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 1 in the first spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 3 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_1}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_3}&quot;</stringProp>
+              <boolProp name="XPath.validate">false</boolProp>
+              <boolProp name="XPath.whitespace">false</boolProp>
+              <boolProp name="XPath.tolerant">false</boolProp>
+              <boolProp name="XPath.namespace">false</boolProp>
+            </XPathAssertion>
+            <hashTree/>
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 2 in the second spot" enabled="true">
+              <boolProp name="XPath.negate">false</boolProp>
+              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_2}&quot;</stringProp>
+              <boolProp name="XPath.validate">false</boolProp>
+              <boolProp name="XPath.whitespace">false</boolProp>
+              <boolProp name="XPath.tolerant">false</boolProp>
+              <boolProp name="XPath.namespace">false</boolProp>
+            </XPathAssertion>
+            <hashTree/>
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 1 in the third spot" enabled="true">
+              <boolProp name="XPath.negate">false</boolProp>
+              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_1}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -2709,7 +2727,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="D - Get the last page - 1 only - check the &quot;self&quot; link - 1 only" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="D - Get the last page - 3,2,1 - check the &quot;self&quot; link - 1 only" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -2738,18 +2756,36 @@
               <intProp name="Assertion.test_type">8</intProp>
             </ResponseAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain one entry" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain three entries" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">count(/feed/entry)=1</stringProp>
+              <stringProp name="XPath.xpath">count(/feed/entry)=3</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 1 in the first spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 3 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_1}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_3}&quot;</stringProp>
+              <boolProp name="XPath.validate">false</boolProp>
+              <boolProp name="XPath.whitespace">false</boolProp>
+              <boolProp name="XPath.tolerant">false</boolProp>
+              <boolProp name="XPath.namespace">false</boolProp>
+            </XPathAssertion>
+            <hashTree/>
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 2 in the second spot" enabled="true">
+              <boolProp name="XPath.negate">false</boolProp>
+              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_2}&quot;</stringProp>
+              <boolProp name="XPath.validate">false</boolProp>
+              <boolProp name="XPath.whitespace">false</boolProp>
+              <boolProp name="XPath.tolerant">false</boolProp>
+              <boolProp name="XPath.namespace">false</boolProp>
+            </XPathAssertion>
+            <hashTree/>
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 1 in the third spot" enabled="true">
+              <boolProp name="XPath.negate">false</boolProp>
+              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_1}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -2976,7 +3012,7 @@
             </XPathAssertion>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="D - Get the previous page - 4,3,2" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="D - Get the previous page - 6,5,4" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -3014,27 +3050,27 @@
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 4 in the first spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 5 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_4}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_6}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 3 in the second spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 5 in the second spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_3}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_5}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 2 in the third spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 4 in the third spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_2}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_4}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -3150,7 +3186,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="D - Get the previous page - 4,3,2 - check the &quot;self&quot; link - 4,3,2" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="D - Get the previous page - 6,5,4 - check the &quot;self&quot; link - 4,3,2" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -3188,27 +3224,27 @@
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 4 in the first spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 6 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_4}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_6}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 3 in the second spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 5 in the second spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_3}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_5}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 2 in the third spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 4 in the third spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_2}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_4}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -3282,7 +3318,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="D - Get the previous page - 4,3,2 - check &quot;current&quot; link - 10..1" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="D - Get the previous page - 6,5,4 - check &quot;current&quot; link - 10..1" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -3456,7 +3492,7 @@
             </XPathAssertion>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="D - Get the previous page - 7,6,5" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="D - Get the previous page - 9,8,7" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -3494,27 +3530,27 @@
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 7 in the first spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 9 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_7}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_9}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 6 in the second spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 8 in the second spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_6}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_8}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 5 in the third spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 7 in the third spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_5}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_7}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -3630,7 +3666,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="D - Get the previous page - 7,6,5 - check the &quot;self&quot; link - 7,6,5" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="D - Get the previous page - 9,8,7 - check the &quot;self&quot; link - 7,6,5" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -3668,27 +3704,27 @@
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 7 in the first spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 9 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_7}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_9}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 6 in the second spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 8 in the second spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_6}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_8}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 5 in the third spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 7 in the third spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_5}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_7}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -3762,7 +3798,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="D - Get the previous page - 7,6,5 - check &quot;current&quot; link - 10..1" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="D - Get the previous page - 9,8,7 - check &quot;current&quot; link - 10..1" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -3936,7 +3972,7 @@
             </XPathAssertion>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="D - Get the previous page - 10,9,8" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="D - Get the previous page - 10" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -3965,9 +4001,9 @@
               <intProp name="Assertion.test_type">8</intProp>
             </ResponseAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain three entries" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain one entry" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">count(/feed/entry)=3</stringProp>
+              <stringProp name="XPath.xpath">count(/feed/entry)=1</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -3977,24 +4013,6 @@
             <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 10 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
               <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_10}&quot;</stringProp>
-              <boolProp name="XPath.validate">false</boolProp>
-              <boolProp name="XPath.whitespace">false</boolProp>
-              <boolProp name="XPath.tolerant">false</boolProp>
-              <boolProp name="XPath.namespace">false</boolProp>
-            </XPathAssertion>
-            <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 9 in the second spot" enabled="true">
-              <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_9}&quot;</stringProp>
-              <boolProp name="XPath.validate">false</boolProp>
-              <boolProp name="XPath.whitespace">false</boolProp>
-              <boolProp name="XPath.tolerant">false</boolProp>
-              <boolProp name="XPath.namespace">false</boolProp>
-            </XPathAssertion>
-            <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 8 in the third spot" enabled="true">
-              <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_8}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -4110,7 +4128,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="D - Get the previous page - 10,9,8 - check the &quot;self&quot; link - 10,9,8" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="D - Get the previous page - 10 - check the &quot;self&quot; link - 10,9,8" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -4139,9 +4157,9 @@
               <intProp name="Assertion.test_type">8</intProp>
             </ResponseAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain three entries" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain one entry" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">count(/feed/entry)=3</stringProp>
+              <stringProp name="XPath.xpath">count(/feed/entry)=1</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -4151,24 +4169,6 @@
             <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 10 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
               <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_10}&quot;</stringProp>
-              <boolProp name="XPath.validate">false</boolProp>
-              <boolProp name="XPath.whitespace">false</boolProp>
-              <boolProp name="XPath.tolerant">false</boolProp>
-              <boolProp name="XPath.namespace">false</boolProp>
-            </XPathAssertion>
-            <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 9 in the second spot" enabled="true">
-              <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_9}&quot;</stringProp>
-              <boolProp name="XPath.validate">false</boolProp>
-              <boolProp name="XPath.whitespace">false</boolProp>
-              <boolProp name="XPath.tolerant">false</boolProp>
-              <boolProp name="XPath.namespace">false</boolProp>
-            </XPathAssertion>
-            <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 8 in the third spot" enabled="true">
-              <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_8}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -4242,7 +4242,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="D - Get the previous page - 10,9,8 - check &quot;current&quot; link - 10..1" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="D - Get the previous page - 10 - check &quot;current&quot; link - 10..1" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -4871,7 +4871,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="E - Get the last page - 1" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="E - Get the last page - 3,2,1" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -4900,18 +4900,36 @@
               <intProp name="Assertion.test_type">8</intProp>
             </ResponseAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain one entry" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain three entries" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">count(/feed/entry)=1</stringProp>
+              <stringProp name="XPath.xpath">count(/feed/entry)=3</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 1 in the first spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 3 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_1}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_3}&quot;</stringProp>
+              <boolProp name="XPath.validate">false</boolProp>
+              <boolProp name="XPath.whitespace">false</boolProp>
+              <boolProp name="XPath.tolerant">false</boolProp>
+              <boolProp name="XPath.namespace">false</boolProp>
+            </XPathAssertion>
+            <hashTree/>
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 2 in the second spot" enabled="true">
+              <boolProp name="XPath.negate">false</boolProp>
+              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_2}&quot;</stringProp>
+              <boolProp name="XPath.validate">false</boolProp>
+              <boolProp name="XPath.whitespace">false</boolProp>
+              <boolProp name="XPath.tolerant">false</boolProp>
+              <boolProp name="XPath.namespace">false</boolProp>
+            </XPathAssertion>
+            <hashTree/>
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 1 in the third spot" enabled="true">
+              <boolProp name="XPath.negate">false</boolProp>
+              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_1}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -5027,7 +5045,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="E - Get the last page - 1" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="E - Get the last page - 3,2,1" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -5056,18 +5074,36 @@
               <intProp name="Assertion.test_type">8</intProp>
             </ResponseAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain one entry" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain three entries" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">count(/feed/entry)=1</stringProp>
+              <stringProp name="XPath.xpath">count(/feed/entry)=3</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 1 in the first spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 3 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_1}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_3}&quot;</stringProp>
+              <boolProp name="XPath.validate">false</boolProp>
+              <boolProp name="XPath.whitespace">false</boolProp>
+              <boolProp name="XPath.tolerant">false</boolProp>
+              <boolProp name="XPath.namespace">false</boolProp>
+            </XPathAssertion>
+            <hashTree/>
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 2 in the second spot" enabled="true">
+              <boolProp name="XPath.negate">false</boolProp>
+              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_2}&quot;</stringProp>
+              <boolProp name="XPath.validate">false</boolProp>
+              <boolProp name="XPath.whitespace">false</boolProp>
+              <boolProp name="XPath.tolerant">false</boolProp>
+              <boolProp name="XPath.namespace">false</boolProp>
+            </XPathAssertion>
+            <hashTree/>
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 1 in the third spot" enabled="true">
+              <boolProp name="XPath.negate">false</boolProp>
+              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_1}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -5120,7 +5156,7 @@
             </XPathAssertion>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="E - Get the last page - 1 - check &quot;current&quot; link - 10..1" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="E - Get the last page - 3,2,1 - check &quot;current&quot; link - 10..1" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -5294,7 +5330,7 @@
             </XPathAssertion>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="E - Get the previous page - 4,3,2" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="E - Get the previous page - 6,5,4" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -5332,27 +5368,27 @@
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 4 in the first spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 6 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_4}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_6}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 3 in the second spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 5 in the second spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_3}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_5}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 2 in the third spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 4 in the third spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_2}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_4}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -5468,7 +5504,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="E - Get the previous page - 4,3,2 - check the &quot;self&quot; link - 4,3,2" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="E - Get the previous page - 6,5,4 - check the &quot;self&quot; link - 4,3,2" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -5506,27 +5542,27 @@
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 4 in the first spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 6 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_4}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_6}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 3 in the second spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 5 in the second spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_3}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_5}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 2 in the third spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 4 in the third spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_2}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_4}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -5579,7 +5615,7 @@
             </XPathAssertion>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="E - Get the previous page - 4,3,2 - check &quot;current&quot; link - 10..1" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="E - Get the previous page - 6,5,4 - check &quot;current&quot; link - 10..1" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -5753,7 +5789,7 @@
             </XPathAssertion>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="E - Get the previous page - 7,6,5" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="E - Get the previous page - 9,8,7" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -5791,27 +5827,27 @@
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 7 in the first spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 9 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_7}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_9}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 6 in the second spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 8 in the second spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_6}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_8}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 5 in the third spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 7 in the third spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_5}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_7}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -5927,7 +5963,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="E - Get the previous page - 7,6,5 - check the &quot;self&quot; link - 7,6,5" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="E - Get the previous page - 9,8,7 - check the &quot;self&quot; link - 7,6,5" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -5965,27 +6001,27 @@
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 7 in the first spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 9 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_7}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_9}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 6 in the second spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 8 in the second spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_6}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_8}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 5 in the third spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 7 in the third spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_5}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_7}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -6038,7 +6074,7 @@
             </XPathAssertion>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="E - Get the previous page - 7,6,5 - check &quot;current&quot; link - 10..1" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="E - Get the previous page - 9,8,7 - check &quot;current&quot; link - 10..1" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -6212,7 +6248,7 @@
             </XPathAssertion>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="E - Get the next page - 4,3,2 again" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="E - Get the next page - 6,5,4 again" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -6250,27 +6286,27 @@
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 4 in the first spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 6 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_4}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_6}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 3 in the second spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 5 in the second spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_3}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_5}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 2 in the third spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 4 in the third spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_2}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_4}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -6386,7 +6422,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="E - Get the next page - 4,3,2 again - check the &quot;self&quot; link - 4,3,2" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="E - Get the next page - 6,5,4 again - check the &quot;self&quot; link - 4,3,2" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -6424,27 +6460,27 @@
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 4 in the first spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 6 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_4}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_6}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 3 in the second spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 5 in the second spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_3}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_5}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 2 in the third spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 4 in the third spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_2}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_4}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -6497,7 +6533,7 @@
             </XPathAssertion>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="E - Get the next page - 4,3,2 again - check &quot;current&quot; link - 10..1" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="E - Get the next page - 6,5,4 again - check &quot;current&quot; link - 10..1" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -6671,7 +6707,7 @@
             </XPathAssertion>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="E - Get the previous page - 7,6,5 again" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="E - Get the previous page - 9,8,7 again" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -6709,27 +6745,27 @@
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 7 in the first spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 9 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_7}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_9}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 6 in the second spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 8 in the second spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_6}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_8}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 5 in the third spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 7 in the third spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_5}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_7}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -6824,7 +6860,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="E - Get the previous page - 7,6,5 again - check the &quot;self&quot; link - 7,6,5" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="E - Get the previous page - 9,8,7 again - check the &quot;self&quot; link - 7,6,5" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -6862,27 +6898,27 @@
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 7 in the first spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 9 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_7}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_9}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 6 in the second spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 8 in the second spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_6}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_8}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 5 in the third spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 7 in the third spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_5}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_7}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -6935,7 +6971,7 @@
             </XPathAssertion>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="E - Get the previous page - 7,6,5 again - check &quot;current&quot; link - 10..1" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="E - Get the previous page - 9,8,7 again - check &quot;current&quot; link - 10..1" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -7755,7 +7791,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="G - Get the last page - 1" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="G - Get the last page - 3,2,1" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -7784,18 +7820,36 @@
               <intProp name="Assertion.test_type">8</intProp>
             </ResponseAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain one entry" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain three entries" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">count(/feed/entry)=1</stringProp>
+              <stringProp name="XPath.xpath">count(/feed/entry)=3</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 1 in the first spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 3 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_1}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_3}&quot;</stringProp>
+              <boolProp name="XPath.validate">false</boolProp>
+              <boolProp name="XPath.whitespace">false</boolProp>
+              <boolProp name="XPath.tolerant">false</boolProp>
+              <boolProp name="XPath.namespace">false</boolProp>
+            </XPathAssertion>
+            <hashTree/>
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 2 in the second spot" enabled="true">
+              <boolProp name="XPath.negate">false</boolProp>
+              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_2}&quot;</stringProp>
+              <boolProp name="XPath.validate">false</boolProp>
+              <boolProp name="XPath.whitespace">false</boolProp>
+              <boolProp name="XPath.tolerant">false</boolProp>
+              <boolProp name="XPath.namespace">false</boolProp>
+            </XPathAssertion>
+            <hashTree/>
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 1 in the third spot" enabled="true">
+              <boolProp name="XPath.negate">false</boolProp>
+              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_1}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -7869,7 +7923,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="G - Get the previous page - 4,3,2" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="G - Get the previous page - 6,5,4" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -7907,27 +7961,27 @@
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 4 in the first spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 6 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_4}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_6}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 3 in the second spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 5 in the second spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_3}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_5}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 2 in the third spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 4 in the third spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_2}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_4}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -8001,7 +8055,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="G - Get the previous page - 7,6,5" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="G - Get the previous page - 9,8,7" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -8039,27 +8093,27 @@
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 7 in the first spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 9 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_7}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_9}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 6 in the second spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 8 in the second spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_6}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_8}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 5 in the third spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 7 in the third spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_5}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_7}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -8133,7 +8187,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="G - Get the previous page - 10,9,8" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="G - Get the previous page - 10" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -8162,9 +8216,9 @@
               <intProp name="Assertion.test_type">8</intProp>
             </ResponseAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain three entries" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain one entry" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">count(/feed/entry)=3</stringProp>
+              <stringProp name="XPath.xpath">count(/feed/entry)=1</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -8174,24 +8228,6 @@
             <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 10 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
               <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_10}&quot;</stringProp>
-              <boolProp name="XPath.validate">false</boolProp>
-              <boolProp name="XPath.whitespace">false</boolProp>
-              <boolProp name="XPath.tolerant">false</boolProp>
-              <boolProp name="XPath.namespace">false</boolProp>
-            </XPathAssertion>
-            <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 9 in the second spot" enabled="true">
-              <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_9}&quot;</stringProp>
-              <boolProp name="XPath.validate">false</boolProp>
-              <boolProp name="XPath.whitespace">false</boolProp>
-              <boolProp name="XPath.tolerant">false</boolProp>
-              <boolProp name="XPath.namespace">false</boolProp>
-            </XPathAssertion>
-            <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 8 in the third spot" enabled="true">
-              <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_8}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -9213,7 +9249,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="G - Get the last page - 2,1" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="G - Get the last page - 3,2,1" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -9242,27 +9278,36 @@
               <intProp name="Assertion.test_type">8</intProp>
             </ResponseAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain two entries" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain three entries" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">count(/feed/entry)=2</stringProp>
+              <stringProp name="XPath.xpath">count(/feed/entry)=3</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 2 in the first spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 3 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_2}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_3}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 1 in the second spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 2 in the second spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_1}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_2}&quot;</stringProp>
+              <boolProp name="XPath.validate">false</boolProp>
+              <boolProp name="XPath.whitespace">false</boolProp>
+              <boolProp name="XPath.tolerant">false</boolProp>
+              <boolProp name="XPath.namespace">false</boolProp>
+            </XPathAssertion>
+            <hashTree/>
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 1 in the third spot" enabled="true">
+              <boolProp name="XPath.negate">false</boolProp>
+              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_1}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -9357,7 +9402,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="G - Get the last page - 2,1 - check &quot;self&quot; link - empty" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="G - Get the last page - 3,2,1 - check &quot;self&quot; link - empty" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -9386,27 +9431,36 @@
               <intProp name="Assertion.test_type">8</intProp>
             </ResponseAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain two entries" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain three entries" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">count(/feed/entry)=2</stringProp>
+              <stringProp name="XPath.xpath">count(/feed/entry)=3</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 2 in the first spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 3 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_2}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_3}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 1 in the second spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 2 in the second spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_1}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_2}&quot;</stringProp>
+              <boolProp name="XPath.validate">false</boolProp>
+              <boolProp name="XPath.whitespace">false</boolProp>
+              <boolProp name="XPath.tolerant">false</boolProp>
+              <boolProp name="XPath.namespace">false</boolProp>
+            </XPathAssertion>
+            <hashTree/>
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 1 in the third spot" enabled="true">
+              <boolProp name="XPath.negate">false</boolProp>
+              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_1}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -9501,7 +9555,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="G - Get the last page - 2,1 - check &quot;current&quot; link - 11..1" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="G - Get the last page - 3,2,1 - check &quot;current&quot; link - 11..1" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -10880,7 +10934,7 @@
             </XPathAssertion>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="I - Get the last page - 12 only" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="I - Get the last page - 14,13,12" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -10909,18 +10963,36 @@
               <intProp name="Assertion.test_type">8</intProp>
             </ResponseAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain one entry" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain three entries" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">count(/feed/entry)=1</stringProp>
+              <stringProp name="XPath.xpath">count(/feed/entry)=3</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 12 in the first spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 14 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_12}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_14}&quot;</stringProp>
+              <boolProp name="XPath.validate">false</boolProp>
+              <boolProp name="XPath.whitespace">false</boolProp>
+              <boolProp name="XPath.tolerant">false</boolProp>
+              <boolProp name="XPath.namespace">false</boolProp>
+            </XPathAssertion>
+            <hashTree/>
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 13 in the second spot" enabled="true">
+              <boolProp name="XPath.negate">false</boolProp>
+              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_13}&quot;</stringProp>
+              <boolProp name="XPath.validate">false</boolProp>
+              <boolProp name="XPath.whitespace">false</boolProp>
+              <boolProp name="XPath.tolerant">false</boolProp>
+              <boolProp name="XPath.namespace">false</boolProp>
+            </XPathAssertion>
+            <hashTree/>
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 12 in the third spot" enabled="true">
+              <boolProp name="XPath.negate">false</boolProp>
+              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_12}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -11036,7 +11108,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="I - Get the last page - 12 only - check &quot;self&quot; link - 12 only" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="I - Get the last page - 14,13,12 - check &quot;self&quot; link - 14,13,12" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -11065,18 +11137,36 @@
               <intProp name="Assertion.test_type">8</intProp>
             </ResponseAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain one entry" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain three entries" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">count(/feed/entry)=1</stringProp>
+              <stringProp name="XPath.xpath">count(/feed/entry)=3</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 12 in the first spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 14 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_12}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_14}&quot;</stringProp>
+              <boolProp name="XPath.validate">false</boolProp>
+              <boolProp name="XPath.whitespace">false</boolProp>
+              <boolProp name="XPath.tolerant">false</boolProp>
+              <boolProp name="XPath.namespace">false</boolProp>
+            </XPathAssertion>
+            <hashTree/>
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 13 in the second spot" enabled="true">
+              <boolProp name="XPath.negate">false</boolProp>
+              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_13}&quot;</stringProp>
+              <boolProp name="XPath.validate">false</boolProp>
+              <boolProp name="XPath.whitespace">false</boolProp>
+              <boolProp name="XPath.tolerant">false</boolProp>
+              <boolProp name="XPath.namespace">false</boolProp>
+            </XPathAssertion>
+            <hashTree/>
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 12 in the third spot" enabled="true">
+              <boolProp name="XPath.negate">false</boolProp>
+              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_12}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -11465,7 +11555,7 @@
             </XPathAssertion>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="I - Get the previous page - 16,14,13" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="I - Get the previous page - 20,18,16" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -11503,27 +11593,27 @@
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 16 in the first spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 20 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_16}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_20}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 14 in the second spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 18 in the second spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_14}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_18}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 13 in the third spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 16 in the third spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_13}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_16}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -11639,7 +11729,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="I - Get the previous page - 16,14,13 - check &quot;self&quot; link - 16,14,13" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="I - Get the previous page - 20,18,16 - check &quot;self&quot; link - 16,14,13" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -11677,27 +11767,27 @@
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 16 in the first spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 20 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_16}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_20}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 14 in the second spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 18 in the second spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_14}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_18}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 13 in the third spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 16 in the third spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_13}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_16}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -11813,7 +11903,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="I - Get the previous page - 16,14,13 - check &quot;current&quot; link - 21..1" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="I - Get the previous page - 20,18,16 - check &quot;current&quot; link - 21..1" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -12086,7 +12176,7 @@
             </XPathAssertion>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="I - Get the previous page - 21,20,18" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="I - Get the previous page - 21" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -12115,9 +12205,9 @@
               <intProp name="Assertion.test_type">8</intProp>
             </ResponseAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain three entries" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain one entry" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">count(/feed/entry)=3</stringProp>
+              <stringProp name="XPath.xpath">count(/feed/entry)=1</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -12127,24 +12217,6 @@
             <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 21 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
               <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_21}&quot;</stringProp>
-              <boolProp name="XPath.validate">false</boolProp>
-              <boolProp name="XPath.whitespace">false</boolProp>
-              <boolProp name="XPath.tolerant">false</boolProp>
-              <boolProp name="XPath.namespace">false</boolProp>
-            </XPathAssertion>
-            <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 20 in the second spot" enabled="true">
-              <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_20}&quot;</stringProp>
-              <boolProp name="XPath.validate">false</boolProp>
-              <boolProp name="XPath.whitespace">false</boolProp>
-              <boolProp name="XPath.tolerant">false</boolProp>
-              <boolProp name="XPath.namespace">false</boolProp>
-            </XPathAssertion>
-            <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 18 in the third spot" enabled="true">
-              <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_18}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -12260,7 +12332,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="I - Get the previous page - 21,20,18 - check &quot;self&quot; link - 21,20,18" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="I - Get the previous page - 21 - check &quot;self&quot; link - 21,20,18" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -12289,9 +12361,9 @@
               <intProp name="Assertion.test_type">8</intProp>
             </ResponseAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain three entries" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain one entry" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">count(/feed/entry)=3</stringProp>
+              <stringProp name="XPath.xpath">count(/feed/entry)=1</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -12301,24 +12373,6 @@
             <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 21 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
               <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_21}&quot;</stringProp>
-              <boolProp name="XPath.validate">false</boolProp>
-              <boolProp name="XPath.whitespace">false</boolProp>
-              <boolProp name="XPath.tolerant">false</boolProp>
-              <boolProp name="XPath.namespace">false</boolProp>
-            </XPathAssertion>
-            <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 20 in the second spot" enabled="true">
-              <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_20}&quot;</stringProp>
-              <boolProp name="XPath.validate">false</boolProp>
-              <boolProp name="XPath.whitespace">false</boolProp>
-              <boolProp name="XPath.tolerant">false</boolProp>
-              <boolProp name="XPath.namespace">false</boolProp>
-            </XPathAssertion>
-            <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 18 in the third spot" enabled="true">
-              <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_18}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -12434,7 +12488,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="I - Get the previous page - 21,20,18 - check &quot;current&quot; link - 21..1" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="I - Get the previous page - 21 - check &quot;current&quot; link - 21..1" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -12707,7 +12761,7 @@
             </XPathAssertion>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="I - Get the next page - 16,14,13 again" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="I - Get the next page - 20,18,16 again" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -12745,27 +12799,27 @@
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 16 in the first spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 20 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_16}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_20}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 14 in the second spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 18 in the second spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_14}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_18}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 13 in the third spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 16 in the third spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_13}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_16}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -12881,7 +12935,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="I - Get the next page - 16,14,13 again - check &quot;self&quot; link - 16,14,13" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="I - Get the next page - 20,18,16 again - check &quot;self&quot; link - 16,14,13" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -12919,27 +12973,27 @@
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 16 in the first spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 20 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_16}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_20}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 14 in the second spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 18 in the second spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_14}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_18}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 13 in the third spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 16 in the third spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_13}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_16}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -13055,7 +13109,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="I - Get the next page - 16,14,13 again - check &quot;current&quot; link - 21..1" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="I - Get the next page - 20,18,16 again - check &quot;current&quot; link - 21..1" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -13328,7 +13382,7 @@
             </XPathAssertion>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="I - Get the previous page - 21,20,18 again" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="I - Get the previous page - 21 again" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -13357,9 +13411,9 @@
               <intProp name="Assertion.test_type">8</intProp>
             </ResponseAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain three entries" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain one entry" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">count(/feed/entry)=3</stringProp>
+              <stringProp name="XPath.xpath">count(/feed/entry)=1</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -13369,24 +13423,6 @@
             <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 21 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
               <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_21}&quot;</stringProp>
-              <boolProp name="XPath.validate">false</boolProp>
-              <boolProp name="XPath.whitespace">false</boolProp>
-              <boolProp name="XPath.tolerant">false</boolProp>
-              <boolProp name="XPath.namespace">false</boolProp>
-            </XPathAssertion>
-            <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 20 in the second spot" enabled="true">
-              <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_20}&quot;</stringProp>
-              <boolProp name="XPath.validate">false</boolProp>
-              <boolProp name="XPath.whitespace">false</boolProp>
-              <boolProp name="XPath.tolerant">false</boolProp>
-              <boolProp name="XPath.namespace">false</boolProp>
-            </XPathAssertion>
-            <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 18 in the third spot" enabled="true">
-              <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_18}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -13499,7 +13535,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="I - Get the previous page - 21,20,18 again - check &quot;self&quot; link - 21,20,18" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="I - Get the previous page - 21 again - check &quot;self&quot; link - 21" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -13528,9 +13564,9 @@
               <intProp name="Assertion.test_type">8</intProp>
             </ResponseAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain three entries" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain one entry" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">count(/feed/entry)=3</stringProp>
+              <stringProp name="XPath.xpath">count(/feed/entry)=1</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -13540,24 +13576,6 @@
             <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 21 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
               <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_21}&quot;</stringProp>
-              <boolProp name="XPath.validate">false</boolProp>
-              <boolProp name="XPath.whitespace">false</boolProp>
-              <boolProp name="XPath.tolerant">false</boolProp>
-              <boolProp name="XPath.namespace">false</boolProp>
-            </XPathAssertion>
-            <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 20 in the second spot" enabled="true">
-              <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_20}&quot;</stringProp>
-              <boolProp name="XPath.validate">false</boolProp>
-              <boolProp name="XPath.whitespace">false</boolProp>
-              <boolProp name="XPath.tolerant">false</boolProp>
-              <boolProp name="XPath.namespace">false</boolProp>
-            </XPathAssertion>
-            <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 18 in the third spot" enabled="true">
-              <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_18}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -13670,7 +13688,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="I - Get the previous page - 21,20,18 again - check &quot;current&quot; link - 21..1" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="I - Get the previous page - 21 again - check &quot;current&quot; link - 21..1" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -14519,7 +14537,7 @@
             </XPathAssertion>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="J - Get the last page - 13 only" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="J - Get the last page - 15,14,13 only" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -14548,18 +14566,36 @@
               <intProp name="Assertion.test_type">8</intProp>
             </ResponseAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain one entry" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain three entries" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">count(/feed/entry)=1</stringProp>
+              <stringProp name="XPath.xpath">count(/feed/entry)=3</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 13 in the first spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 15 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_13}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_15}&quot;</stringProp>
+              <boolProp name="XPath.validate">false</boolProp>
+              <boolProp name="XPath.whitespace">false</boolProp>
+              <boolProp name="XPath.tolerant">false</boolProp>
+              <boolProp name="XPath.namespace">false</boolProp>
+            </XPathAssertion>
+            <hashTree/>
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 14 in the second spot" enabled="true">
+              <boolProp name="XPath.negate">false</boolProp>
+              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_14}&quot;</stringProp>
+              <boolProp name="XPath.validate">false</boolProp>
+              <boolProp name="XPath.whitespace">false</boolProp>
+              <boolProp name="XPath.tolerant">false</boolProp>
+              <boolProp name="XPath.namespace">false</boolProp>
+            </XPathAssertion>
+            <hashTree/>
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 13 in the third spot" enabled="true">
+              <boolProp name="XPath.negate">false</boolProp>
+              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_13}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -14675,7 +14711,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="J - Get the last page - 13 only - check &quot;self&quot; link - 13 only" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="J - Get the last page - 15,14,13 only - check &quot;self&quot; link - 13 only" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -14704,18 +14740,36 @@
               <intProp name="Assertion.test_type">8</intProp>
             </ResponseAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain one entry" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain three entries" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">count(/feed/entry)=1</stringProp>
+              <stringProp name="XPath.xpath">count(/feed/entry)=3</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 13 in the first spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 15 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_13}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_15}&quot;</stringProp>
+              <boolProp name="XPath.validate">false</boolProp>
+              <boolProp name="XPath.whitespace">false</boolProp>
+              <boolProp name="XPath.tolerant">false</boolProp>
+              <boolProp name="XPath.namespace">false</boolProp>
+            </XPathAssertion>
+            <hashTree/>
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 14 in the second spot" enabled="true">
+              <boolProp name="XPath.negate">false</boolProp>
+              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_14}&quot;</stringProp>
+              <boolProp name="XPath.validate">false</boolProp>
+              <boolProp name="XPath.whitespace">false</boolProp>
+              <boolProp name="XPath.tolerant">false</boolProp>
+              <boolProp name="XPath.namespace">false</boolProp>
+            </XPathAssertion>
+            <hashTree/>
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 13 in the third spot" enabled="true">
+              <boolProp name="XPath.negate">false</boolProp>
+              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_13}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -14789,7 +14843,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="J - Get the last page - 13 only - check &quot;current&quot; link - 21..1" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="J - Get the last page - 15,14,13 only - check &quot;current&quot; link - 21..1" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -15062,7 +15116,7 @@
             </XPathAssertion>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="J - Get the previous page - 17,15,14" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="J - Get the previous page - 19,18.17" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -15100,27 +15154,27 @@
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 17 in the first spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 19 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_17}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_19}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 15 in the second spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 18 in the second spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_15}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_18}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 14 in the third spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 17 in the third spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_14}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_17}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -15236,7 +15290,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="J - Get the previous page - 17,15,14 - check &quot;self&quot; link - 17,15,14" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="J - Get the previous page - 19,18,17 - check &quot;self&quot; link - 17,15,14" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -15274,27 +15328,27 @@
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 17 in the first spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 19 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_17}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_19}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 15 in the second spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 18 in the second spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_15}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_18}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 14 in the third spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 17 in the third spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_14}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_17}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -15368,7 +15422,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="J - Get the previous page - 17,15,14 - check &quot;current&quot; link - 21..1" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="J - Get the previous page - 19,18,17 - check &quot;current&quot; link - 21..1" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -15641,7 +15695,7 @@
             </XPathAssertion>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="J - Get the previous page - 20,19,18" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="J - Get the previous page - 20" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -15670,9 +15724,9 @@
               <intProp name="Assertion.test_type">8</intProp>
             </ResponseAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain three entries" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain one entry" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">count(/feed/entry)=3</stringProp>
+              <stringProp name="XPath.xpath">count(/feed/entry)=1</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -15682,24 +15736,6 @@
             <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 20 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
               <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_20}&quot;</stringProp>
-              <boolProp name="XPath.validate">false</boolProp>
-              <boolProp name="XPath.whitespace">false</boolProp>
-              <boolProp name="XPath.tolerant">false</boolProp>
-              <boolProp name="XPath.namespace">false</boolProp>
-            </XPathAssertion>
-            <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 19 in the second spot" enabled="true">
-              <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_19}&quot;</stringProp>
-              <boolProp name="XPath.validate">false</boolProp>
-              <boolProp name="XPath.whitespace">false</boolProp>
-              <boolProp name="XPath.tolerant">false</boolProp>
-              <boolProp name="XPath.namespace">false</boolProp>
-            </XPathAssertion>
-            <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 18 in the third spot" enabled="true">
-              <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_18}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -15815,7 +15851,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="J - Get the previous page - 20,19,18 - check &quot;self&quot; link - 20,19,18" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="J - Get the previous page - 20 - check &quot;self&quot; link - 20,19,18" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -15844,9 +15880,9 @@
               <intProp name="Assertion.test_type">8</intProp>
             </ResponseAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain three entries" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain one entry" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">count(/feed/entry)=3</stringProp>
+              <stringProp name="XPath.xpath">count(/feed/entry)=1</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -15856,24 +15892,6 @@
             <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 20 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
               <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_20}&quot;</stringProp>
-              <boolProp name="XPath.validate">false</boolProp>
-              <boolProp name="XPath.whitespace">false</boolProp>
-              <boolProp name="XPath.tolerant">false</boolProp>
-              <boolProp name="XPath.namespace">false</boolProp>
-            </XPathAssertion>
-            <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 19 in the second spot" enabled="true">
-              <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_19}&quot;</stringProp>
-              <boolProp name="XPath.validate">false</boolProp>
-              <boolProp name="XPath.whitespace">false</boolProp>
-              <boolProp name="XPath.tolerant">false</boolProp>
-              <boolProp name="XPath.namespace">false</boolProp>
-            </XPathAssertion>
-            <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 18 in the third spot" enabled="true">
-              <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_18}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -15947,7 +15965,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="J - Get the previous page - 20,19,18 - check &quot;current&quot; link - 21..1" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="J - Get the previous page - 20 - check &quot;current&quot; link - 21..1" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -16220,7 +16238,7 @@
             </XPathAssertion>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="J - Get the next page - 17,15,14 again" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="J - Get the next page - 19,18,17 again" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -16258,27 +16276,27 @@
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 17 in the first spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 19 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_17}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_19}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 15 in the second spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 18 in the second spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_15}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_18}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 14 in the third spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 17 in the third spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_14}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_17}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -16394,7 +16412,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="J - Get the next page - 17,15,14 again - check &quot;self&quot; link - 17,15,14 again" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="J - Get the next page - 19,18,17 again - check &quot;self&quot; link - 17,15,14 again" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -16432,27 +16450,27 @@
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 17 in the first spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 19 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_17}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_19}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 15 in the second spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 18 in the second spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_15}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_18}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
               <boolProp name="XPath.namespace">false</boolProp>
             </XPathAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 14 in the third spot" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 17 in the third spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_14}&quot;</stringProp>
+              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_17}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -16526,7 +16544,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="J - Get the next page - 17,15,14 again - check &quot;current&quot; link - 21..1" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="J - Get the next page - 19,18,17 again - check &quot;current&quot; link - 21..1" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -16799,7 +16817,7 @@
             </XPathAssertion>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="J - Get the previous page - 20,19,18 again" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="J - Get the previous page - 20 again" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -16828,9 +16846,9 @@
               <intProp name="Assertion.test_type">8</intProp>
             </ResponseAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain three entries" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain one entry" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">count(/feed/entry)=3</stringProp>
+              <stringProp name="XPath.xpath">count(/feed/entry)=1</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -16840,24 +16858,6 @@
             <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 20 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
               <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_20}&quot;</stringProp>
-              <boolProp name="XPath.validate">false</boolProp>
-              <boolProp name="XPath.whitespace">false</boolProp>
-              <boolProp name="XPath.tolerant">false</boolProp>
-              <boolProp name="XPath.namespace">false</boolProp>
-            </XPathAssertion>
-            <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 19 in the second spot" enabled="true">
-              <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_19}&quot;</stringProp>
-              <boolProp name="XPath.validate">false</boolProp>
-              <boolProp name="XPath.whitespace">false</boolProp>
-              <boolProp name="XPath.tolerant">false</boolProp>
-              <boolProp name="XPath.namespace">false</boolProp>
-            </XPathAssertion>
-            <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 18 in the third spot" enabled="true">
-              <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_18}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -16952,7 +16952,7 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="J - Get the previous page - 20,19,18 again - check &quot;self&quot; link - 20,19,18 again" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="J - Get the previous page - 20 again - check &quot;self&quot; link - 20 again" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -16981,9 +16981,9 @@
               <intProp name="Assertion.test_type">8</intProp>
             </ResponseAssertion>
             <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain three entries" enabled="true">
+            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain one entry" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">count(/feed/entry)=3</stringProp>
+              <stringProp name="XPath.xpath">count(/feed/entry)=1</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -16993,24 +16993,6 @@
             <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 20 in the first spot" enabled="true">
               <boolProp name="XPath.negate">false</boolProp>
               <stringProp name="XPath.xpath">/feed/entry[1]/id/text()=&quot;${uuid_20}&quot;</stringProp>
-              <boolProp name="XPath.validate">false</boolProp>
-              <boolProp name="XPath.whitespace">false</boolProp>
-              <boolProp name="XPath.tolerant">false</boolProp>
-              <boolProp name="XPath.namespace">false</boolProp>
-            </XPathAssertion>
-            <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 19 in the second spot" enabled="true">
-              <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[2]/id/text()=&quot;${uuid_19}&quot;</stringProp>
-              <boolProp name="XPath.validate">false</boolProp>
-              <boolProp name="XPath.whitespace">false</boolProp>
-              <boolProp name="XPath.tolerant">false</boolProp>
-              <boolProp name="XPath.namespace">false</boolProp>
-            </XPathAssertion>
-            <hashTree/>
-            <XPathAssertion guiclass="XPathAssertionGui" testclass="XPathAssertion" testname="Should contain entry 18 in the third spot" enabled="true">
-              <boolProp name="XPath.negate">false</boolProp>
-              <stringProp name="XPath.xpath">/feed/entry[3]/id/text()=&quot;${uuid_18}&quot;</stringProp>
               <boolProp name="XPath.validate">false</boolProp>
               <boolProp name="XPath.whitespace">false</boolProp>
               <boolProp name="XPath.tolerant">false</boolProp>
@@ -17063,7 +17045,7 @@
             </XPathAssertion>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="J - Get the previous page - 20,19,18 again - check &quot;current&quot; link - 21..1" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="J - Get the previous page - 20 again - check &quot;current&quot; link - 21..1" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
