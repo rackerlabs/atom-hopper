@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jmeterTestPlan version="1.2" properties="2.2">
+<jmeterTestPlan version="1.2" properties="2.4" jmeter="2.9 r1437961">
   <hashTree>
     <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Paging" enabled="true">
       <stringProp name="TestPlan.comments">Test paging by following next, previous, and last links in a feed</stringProp>
@@ -681,6 +681,12 @@
             <hashTree/>
           </hashTree>
         </hashTree>
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Wait 5 minutes for feed head delay" enabled="true">
+          <intProp name="ActionProcessor.action">1</intProp>
+          <intProp name="ActionProcessor.target">0</intProp>
+          <stringProp name="ActionProcessor.duration">300000</stringProp>
+        </TestAction>
+        <hashTree/>
         <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="C - Page toward oldest" enabled="true">
           <stringProp name="TestPlan.comments">Grab the first page and follow the &quot;next&quot; links</stringProp>
         </GenericController>
@@ -10296,6 +10302,12 @@
             <hashTree/>
           </hashTree>
         </hashTree>
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Wait 5 minutes for feed head delay" enabled="true">
+          <intProp name="ActionProcessor.action">1</intProp>
+          <intProp name="ActionProcessor.target">0</intProp>
+          <stringProp name="ActionProcessor.duration">300000</stringProp>
+        </TestAction>
+        <hashTree/>
         <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="I - Check category A" enabled="true"/>
         <hashTree>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="I - Get the feed with category=&quot;Category A&quot; - 21,20,18" enabled="true">
