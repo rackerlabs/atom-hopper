@@ -8362,6 +8362,12 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
+          <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Wait 5 minues for feed head delay" enabled="true">
+            <intProp name="ActionProcessor.action">1</intProp>
+            <intProp name="ActionProcessor.target">0</intProp>
+            <stringProp name="ActionProcessor.duration">300000</stringProp>
+          </TestAction>
+          <hashTree/>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="G - Get the previous page - 11 only" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
