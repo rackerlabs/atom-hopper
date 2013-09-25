@@ -78,6 +78,20 @@ public class SqlBuilder {
                     builder.append(searchSql);
                 }
 
+                // D-15000: when we are getting feed head and there are
+                // aggressive inserts going on at the same time, Postgres
+                // does not guarantee that entries that are inserted later
+                // will have later timestamps. This is just due to the nature
+                // of multi-process and multi-threaded-ness of the database.
+                // Therefore, we return only entries that have been inserted
+                // in the database n seconds from the current select time.
+                if ( feedHeadDelayInSeconds != -1 ) {
+                    builder.append(AND);
+                    builder.append(" datelastupdated < now() - interval '");
+                    builder.append(feedHeadDelayInSeconds);
+                    builder.append(" seconds' ");
+                }
+
                 builder.append(String.format(ORDER_BY_ASC));
                 builder.append(CLOSE_PARENS + SPACE);
                 builder.append(String.format(ORDER_BY_ASC));
