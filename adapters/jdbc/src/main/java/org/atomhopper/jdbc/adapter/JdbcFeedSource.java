@@ -331,7 +331,7 @@ public class JdbcFeedSource implements FeedSource {
             switch (direction) {
                 case FORWARD:
 
-                    sql.searchType(SearchType.FEED_FORWARD);
+                    sql.searchType(SearchType.FEED_FORWARD).feedHeadDelayInSeconds( feedHeadDelayInSeconds );
 
                     if (numCats > 0) {
                         context = startTimer(String.format("db-get-feed-page-forward-with-cats-%s",
