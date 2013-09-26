@@ -331,7 +331,7 @@ public class JdbcFeedSource implements FeedSource {
             switch (direction) {
                 case FORWARD:
 
-                    sql.searchType(SearchType.FEED_FORWARD);
+                    sql.searchType(SearchType.FEED_FORWARD).feedHeadDelayInSeconds( feedHeadDelayInSeconds );
 
                     if (numCats > 0) {
                         context = startTimer(String.format("db-get-feed-page-forward-with-cats-%s",
@@ -414,7 +414,8 @@ public class JdbcFeedSource implements FeedSource {
     private List<PersistedEntry> enhancedGetLastPage(final String feedName, final int pageSize,
                                                      final String searchString) {
 
-        SqlBuilder sql = new SqlBuilder().searchType(SearchType.LAST_PAGE).searchString(searchString);
+        SqlBuilder sql = new SqlBuilder().searchType( SearchType.LAST_PAGE ).searchString( searchString )
+              .feedHeadDelayInSeconds( feedHeadDelayInSeconds );
 
         List<String> categoriesList = SearchToSqlConverter.getParamsFromSearchString(searchString);
         int numCats = categoriesList.size();
