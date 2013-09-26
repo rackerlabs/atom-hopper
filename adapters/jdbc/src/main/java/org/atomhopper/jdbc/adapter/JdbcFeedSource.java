@@ -414,7 +414,8 @@ public class JdbcFeedSource implements FeedSource {
     private List<PersistedEntry> enhancedGetLastPage(final String feedName, final int pageSize,
                                                      final String searchString) {
 
-        SqlBuilder sql = new SqlBuilder().searchType(SearchType.LAST_PAGE).searchString(searchString);
+        SqlBuilder sql = new SqlBuilder().searchType( SearchType.LAST_PAGE ).searchString( searchString )
+              .feedHeadDelayInSeconds( feedHeadDelayInSeconds );
 
         List<String> categoriesList = SearchToSqlConverter.getParamsFromSearchString(searchString);
         int numCats = categoriesList.size();
