@@ -681,12 +681,6 @@
             <hashTree/>
           </hashTree>
         </hashTree>
-        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Wait 5 minutes for feed head delay" enabled="true">
-          <intProp name="ActionProcessor.action">1</intProp>
-          <intProp name="ActionProcessor.target">0</intProp>
-          <stringProp name="ActionProcessor.duration">300000</stringProp>
-        </TestAction>
-        <hashTree/>
         <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="C - Page toward oldest" enabled="true">
           <stringProp name="TestPlan.comments">Grab the first page and follow the &quot;next&quot; links</stringProp>
         </GenericController>
@@ -8362,12 +8356,6 @@
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Wait 5 minues for feed head delay" enabled="true">
-            <intProp name="ActionProcessor.action">1</intProp>
-            <intProp name="ActionProcessor.target">0</intProp>
-            <stringProp name="ActionProcessor.duration">300000</stringProp>
-          </TestAction>
-          <hashTree/>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="G - Get the previous page - 11 only" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
               <collectionProp name="Arguments.arguments"/>
@@ -10308,12 +10296,6 @@
             <hashTree/>
           </hashTree>
         </hashTree>
-        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Wait 5 minutes for feed head delay" enabled="true">
-          <intProp name="ActionProcessor.action">1</intProp>
-          <intProp name="ActionProcessor.target">0</intProp>
-          <stringProp name="ActionProcessor.duration">300000</stringProp>
-        </TestAction>
-        <hashTree/>
         <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="I - Check category A" enabled="true"/>
         <hashTree>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="I - Get the feed with category=&quot;Category A&quot; - 21,20,18" enabled="true">
