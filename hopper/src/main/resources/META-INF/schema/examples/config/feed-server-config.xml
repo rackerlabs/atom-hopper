@@ -20,10 +20,12 @@
             <publisher reference="net.jps.atom.adapter.InMemoryPublisher">
                 <parameter name="net.jps.atom.adapter.db.show_sql" value="true" />
             </publisher>
+            <archive-feed href="/archive" />
         </feed>
 
         <feed title="Testing Feed Archive" resource="/archive/" archived="true">
             <feed-source reference="feed-archive-adapter" />
+            <current-feed href="/feed" />
         </feed>
     </workspace>
 
@@ -36,4 +38,5 @@
             <feed-source reference="feed-archive-adapter" />
         </feed>
     </workspace>
+
 </atom-hopper-config>

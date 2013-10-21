@@ -110,6 +110,8 @@
 
             <xs:element name="feed-source" type="hopcfg:AdapterDescriptor" minOccurs="0" maxOccurs="1" />
             <xs:element name="publisher" type="hopcfg:AdapterDescriptor" minOccurs="0" maxOccurs="1" />
+            <xs:element name="archive-feed" type="hopcfg:ArchiveSource" minOccurs="0" maxOccurs="1" />
+            <xs:element name="current-feed" type="hopcfg:CurrentSource" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
 
         <xs:attribute name="title" type="xs:string" use="required">
@@ -132,6 +134,24 @@
             <xs:annotation>
                 <xs:documentation>
                     <xhtml:p></xhtml:p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="CurrentSource">
+        <xs:attribute name="href" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="ArchiveSource">
+        <xs:attribute name="href" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>

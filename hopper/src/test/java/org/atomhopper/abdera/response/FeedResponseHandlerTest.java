@@ -13,6 +13,7 @@ import org.apache.abdera.protocol.server.Target;
 import org.apache.abdera.util.EntityTag;
 import org.atomhopper.abdera.filter.FeedEntityTagProcessor;
 import org.atomhopper.abdera.filter.FeedPagingProcessor;
+import org.atomhopper.adapter.FeedSource;
 import org.atomhopper.response.AdapterResponse;
 import org.atomhopper.response.FeedSourceAdapterResponse;
 import org.junit.Ignore;
@@ -66,6 +67,24 @@ public class FeedResponseHandlerTest {
             AdapterResponse<Feed> adapterResponse = adapterResponseForFeed(2);
             adapterResponse.getBody().addLink("http://localhost:8080/next", Link.REL_NEXT);
             adapterResponse.getBody().addLink("http://localhost:8080/previous", Link.REL_PREVIOUS);
+
+            ResponseContext responseContext = responseHandler.handleResponse(requestContext, adapterResponse);
+            Object[] headers = responseContext.getHeaders("Link");
+            assertNotNull("Headers array should not be null", headers);
+            assertEquals("# of elements in Link headers array", 1, headers.length);
+            assertTrue("Link header contains URL for next", ((String)headers[0]).contains("http://localhost:8080/next"));
+            assertTrue("Link header contains URL for previous", ((String)headers[0]).contains("http://localhost:8080/previous"));
+        }
+
+        @Test
+        public void shouldReturnArchiveLinkHeaders() {
+
+            FeedResponseHandler responseHandler = responseHandler();
+            RequestContext requestContext = requestContext();
+
+            AdapterResponse<Feed> adapterResponse = adapterResponseForFeed(2);
+            adapterResponse.getBody().addLink( "http://localhost:8080/next", FeedSource.REL_ARCHIVE_NEXT );
+            adapterResponse.getBody().addLink( "http://localhost:8080/previous", FeedSource.REL_ARCHIVE_PREV );
 
             ResponseContext responseContext = responseHandler.handleResponse(requestContext, adapterResponse);
             Object[] headers = responseContext.getHeaders("Link");
