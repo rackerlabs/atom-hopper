@@ -7,6 +7,7 @@ import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.ResponseContext;
 import org.apache.abdera.util.EntityTag;
 import org.atomhopper.abdera.filter.AdapterResponseInterceptor;
+import org.atomhopper.adapter.FeedSource;
 import org.atomhopper.response.AdapterResponse;
 
 import java.util.Arrays;
@@ -67,10 +68,16 @@ public class FeedResponseHandler extends AbstractResponseHandler<Feed> {
             if ( adapterResponse.getBody().getLink(Link.REL_NEXT) != null ) {
                 nextLink = buildLinkHeaderForType(adapterResponse, Link.REL_NEXT);
             }
+            else if ( adapterResponse.getBody().getLink( FeedSource.REL_ARCHIVE_NEXT ) != null ) {
+                nextLink = buildLinkHeaderForType(adapterResponse, FeedSource.REL_ARCHIVE_NEXT );
+            }
 
             String prevLink = null;
             if ( adapterResponse.getBody().getLink(Link.REL_PREVIOUS) != null ) {
                 prevLink = buildLinkHeaderForType(adapterResponse, Link.REL_PREVIOUS);
+            }
+            else if ( adapterResponse.getBody().getLink( FeedSource.REL_ARCHIVE_PREV ) != null ) {
+                prevLink = buildLinkHeaderForType(adapterResponse, FeedSource.REL_ARCHIVE_PREV );
             }
 
             if ( nextLink != null && prevLink != null ) {

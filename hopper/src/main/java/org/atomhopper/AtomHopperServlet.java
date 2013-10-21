@@ -128,7 +128,8 @@ public final class AtomHopperServlet extends AbderaServlet {
         for (WorkspaceConfiguration workspaceCfg : configuration.getWorkspace()) {
             final WorkspaceConfigProcessor cfgProcessor = new WorkspaceConfigProcessor(
                     workspaceCfg, applicationContextAdapter,
-                    workspaceProvider.getTargetResolver(), atomhopperUrlPattern);
+                    workspaceProvider.getTargetResolver(), atomhopperUrlPattern,
+                    getHostConfiguration() );
 
             workspaceProvider.getWorkspaceManager().addWorkspaces(cfgProcessor.toHandler());
         }
