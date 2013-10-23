@@ -34,7 +34,7 @@ public final class DisabledFeedSource extends AbstractDisabledAdapter implements
     }
 
     @Override
-    public void setAsArchived( URL urlCurrent ) {
+    public void setCurrentUrl( URL urlCurrent ) {
         // do nothing since this feed is disabled
     }
 

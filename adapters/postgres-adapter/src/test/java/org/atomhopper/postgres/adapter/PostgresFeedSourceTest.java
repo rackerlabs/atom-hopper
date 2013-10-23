@@ -1,5 +1,6 @@
 package org.atomhopper.postgres.adapter;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -7,6 +8,10 @@ import java.util.UUID;
 import static junit.framework.Assert.assertEquals;
 
 import org.apache.abdera.Abdera;
+import org.apache.abdera.i18n.iri.IRI;
+import org.apache.abdera.model.Element;
+import org.apache.abdera.model.Feed;
+import org.atomhopper.adapter.AdapterHelper;
 import org.atomhopper.adapter.request.adapter.GetEntryRequest;
 import org.atomhopper.adapter.request.adapter.GetFeedRequest;
 import org.atomhopper.dbal.PageDirection;
@@ -20,6 +25,7 @@ import org.junit.runner.RunWith;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
@@ -48,6 +54,7 @@ public class PostgresFeedSourceTest {
         private final String SINGLE_CAT = "+Cat1";
         private final String MULTI_CAT = "+Cat1+Cat2";
         private final String MOCK_LAST_MARKER = "last";
+        private final String CURRENT = "current";
 
         @Before
         public void setUp() throws Exception {
@@ -68,7 +75,7 @@ public class PostgresFeedSourceTest {
             jdbcTemplate = mock(JdbcTemplate.class);
 
             postgresFeedSource = new PostgresFeedSource();
-            postgresFeedSource.setJdbcTemplate(jdbcTemplate);
+            postgresFeedSource.setJdbcTemplate( jdbcTemplate );
 
             // Mock GetEntryRequest
             when(getEntryRequest.getFeedName()).thenReturn(FEED_NAME);
@@ -312,6 +319,51 @@ public class PostgresFeedSourceTest {
             postgresFeedSource.setJdbcTemplate( jdbcTemplate );
             assertEquals( "Should get a 200 response with marker of \"last\"", HttpStatus.OK,
                           postgresFeedSource.getFeed( getFeedRequest ).getResponseStatus() );
+
+            /* TODO:  Other adapters test for the next-archive link here, but the same .query() call is used
+               get the entries as well as testing to determine if the feed is empty.  I'm not sure how
+               to mock this up */
+
+        }
+
+        @Test
+        public void shouldGetCurrentLinkFromArchiveFeedAndArchiveNode() throws Exception {
+
+            final String currentURL = "http://current.com/namespace/feed";
+
+            PostgresFeedSource archiveSource = new PostgresFeedSource();
+            archiveSource.setJdbcTemplate( jdbcTemplate );
+            archiveSource.setCurrentUrl( new URL( currentURL ) );
+
+            Abdera localAbdera = new Abdera();
+            when(jdbcTemplate.queryForObject(any(String.class),
+                                             any(EntryRowMapper.class),
+                                             any(String.class),
+                                             any(String.class))).thenReturn(persistedEntry);
+            when(getFeedRequest.getAbdera()).thenReturn(localAbdera);
+            when(getEntryRequest.getAbdera()).thenReturn(localAbdera);
+            when(jdbcTemplate.query(any(String.class), any(Object[].class), any(EntryRowMapper.class))).thenReturn(entryList);
+            when(jdbcTemplate.queryForInt(any(String.class), any(Object[].class))).thenReturn(1);
+            assertEquals("Should get a 200 response", HttpStatus.OK,
+                         archiveSource.getFeed(getFeedRequest).getResponseStatus());
+
+
+            Feed feed = archiveSource.getFeed( getFeedRequest ).getBody();
+
+            boolean found = false;
+
+            for( Element e : feed.getElements() ) {
+
+                if ( e.getQName().getLocalPart().equals( AdapterHelper.ARCHIVE )
+                      && e.getQName().getPrefix().equals( AdapterHelper.ARCHIVE_PREFIX )
+                      && e.getQName().getNamespaceURI().equals( AdapterHelper.ARCHIVE_NS ) ) {
+
+                    found = true;
+                    break;
+                }
+            }
+
+            assertTrue("'<fn:archive>' node should exist", found );
         }
     }
 }

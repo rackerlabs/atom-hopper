@@ -43,14 +43,13 @@ public interface FeedSource extends AtomHopperAdapter {
     AdapterResponse<Entry> getEntry(GetEntryRequest getEntryRequest);
 
     /**
-     * Set's the current source as an archive feed.  An archive feed must have a link to
-     * the current feed which its the archive for.  By setting the current feed for this source,
-     * you are declaring it as an archive feed.
+     * Declares this feed as an archive feed as well as sets the current url for the archive feed.
+     * An archive feed must have a link to the current feed which its the archive for.
      *
      * @param urlCurrent The URL to the current feed for this archive.  This will be displayed
      *                   in the "current" link
      */
-    public void setAsArchived( URL urlCurrent );
+    public void setCurrentUrl( URL urlCurrent );
 
     /**
      * If an atom feed has a corresponding archive,

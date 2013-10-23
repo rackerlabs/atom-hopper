@@ -70,9 +70,9 @@ public class JdbcFeedSource implements FeedSource {
 
 
     @Override
-    public void setAsArchived( URL urlCurrent ) {
+    public void setCurrentUrl( URL urlCurrent ) {
 
-        helper.setAsArchived( urlCurrent );
+        helper.setCurrentUrl( urlCurrent );
     }
 
     public void setEnableTimers(Boolean enableTimers) {

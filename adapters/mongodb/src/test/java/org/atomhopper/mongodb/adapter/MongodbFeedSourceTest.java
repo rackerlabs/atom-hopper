@@ -1,11 +1,16 @@
 package org.atomhopper.mongodb.adapter;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import static junit.framework.Assert.assertEquals;
 import org.apache.abdera.Abdera;
+import org.apache.abdera.i18n.iri.IRI;
+import org.apache.abdera.model.Element;
+import org.apache.abdera.model.Feed;
+import org.atomhopper.adapter.AdapterHelper;
 import org.atomhopper.adapter.request.adapter.GetEntryRequest;
 import org.atomhopper.adapter.request.adapter.GetFeedRequest;
 import org.atomhopper.dbal.PageDirection;
@@ -15,6 +20,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
+
+import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
@@ -41,6 +48,10 @@ public class MongodbFeedSourceTest {
         private final String COLLECTION_NAME = "namespace.feed";
         private final String MOCK_LAST_MARKER = "last";
         private final String BACKWARD = "backward";
+        private final String NEXT_ARCHIVE = "next-archive";
+        private final String ARCHIVE_LINK = "http://archive.com/namespace/feed/archive";
+        private final String CURRENT = "current";
+
 
         @Before
         public void setUp() throws Exception {
@@ -58,10 +69,11 @@ public class MongodbFeedSourceTest {
 
             mongodbFeedSource = new MongodbFeedSource();
             mongodbFeedSource.setMongoTemplate(mongoTemplate);
+            mongodbFeedSource.setArchiveUrl( new URL( ARCHIVE_LINK ) );
 
             // Mock MongoTemplate
             //when(mongoTemplate.findOne(query, PersistedEntry.class)).thenReturn(persistedEntry);
-            when(mongoTemplate.findOne(query, PersistedEntry.class, COLLECTION_NAME)).thenReturn(persistedEntry);
+            when( mongoTemplate.findOne( query, PersistedEntry.class, COLLECTION_NAME ) ).thenReturn(persistedEntry);
 
             // Mock GetEntryRequest
             when(getEntryRequest.getFeedName()).thenReturn(FEED_NAME);
@@ -146,7 +158,7 @@ public class MongodbFeedSourceTest {
         }
 
         @Test
-        public void shouldGetFeedWithLastMarker() throws Exception {
+        public void shouldGetFeedWithLastMarkerAndContainNextArchive() throws Exception {
 
             Abdera localAbdera = new Abdera();
             when( getFeedRequest.getPageMarker() ).thenReturn( MOCK_LAST_MARKER );
@@ -157,6 +169,50 @@ public class MongodbFeedSourceTest {
             mongodbFeedSource.setMongoTemplate( mongoTemplate );
             assertEquals( "Should get a 200 response with marker of \"last\"", HttpStatus.OK,
                           mongodbFeedSource.getFeed( getFeedRequest ).getResponseStatus() );
+
+            IRI iri = mongodbFeedSource.getFeed(getFeedRequest).getBody().getLink( NEXT_ARCHIVE ).getHref();
+            assertTrue("'next-archive' link should contain \"" + ARCHIVE_LINK + "\"", iri.toString().contains( ARCHIVE_LINK ) );
         }
+
+        @Test
+        public void shouldGetCurrentLinkFromArchiveFeedAndArchiveNode() throws Exception {
+
+            final String currentURL = "http://current.com/namespace/feed";
+
+            MongodbFeedSource archiveSource = new MongodbFeedSource();
+            mongodbFeedSource.setMongoTemplate(mongoTemplate);
+            archiveSource.setCurrentUrl( new URL( currentURL ) );
+
+            Abdera localAbdera = new Abdera();
+            when( getFeedRequest.getPageMarker() ).thenReturn( MOCK_LAST_MARKER );
+            when( getFeedRequest.getDirection() ).thenReturn( BACKWARD );
+            when( getFeedRequest.getFeedName() ).thenReturn( FEED_NAME );
+            when( getFeedRequest.getAbdera() ).thenReturn( localAbdera );
+            when( mongoTemplate.findOne(any(Query.class), any(Class.class), eq(COLLECTION_NAME))).thenReturn( persistedEntry );
+            archiveSource.setMongoTemplate( mongoTemplate );
+            assertEquals( "Should get a 200 response with marker of \"last\"", HttpStatus.OK,
+                          archiveSource.getFeed( getFeedRequest ).getResponseStatus() );
+
+            IRI iri = archiveSource.getFeed(getFeedRequest).getBody().getLink( CURRENT ).getHref();
+            assertTrue("'current' link should contain \"" + currentURL + "\"", iri.toString().contains( currentURL ) );
+
+            Feed feed = archiveSource.getFeed( getFeedRequest ).getBody();
+
+            boolean found = false;
+
+            for( Element e : feed.getElements() ) {
+
+                if ( e.getQName().getLocalPart().equals( AdapterHelper.ARCHIVE )
+                      && e.getQName().getPrefix().equals( AdapterHelper.ARCHIVE_PREFIX )
+                      && e.getQName().getNamespaceURI().equals( AdapterHelper.ARCHIVE_NS ) ) {
+
+                    found = true;
+                    break;
+                }
+            }
+
+            assertTrue("'<fn:archive>' node should exist", found );
+        }
+
     }
 }

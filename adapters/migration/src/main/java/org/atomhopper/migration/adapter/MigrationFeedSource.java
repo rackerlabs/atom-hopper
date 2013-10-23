@@ -50,10 +50,10 @@ public class MigrationFeedSource implements FeedSource {
     }
 
     @Override
-    public void setAsArchived( URL urlCurrent ) {
+    public void setCurrentUrl( URL urlCurrent ) {
 
-        oldFeedSource.setAsArchived( urlCurrent );
-        newFeedSource.setAsArchived( urlCurrent );
+        oldFeedSource.setCurrentUrl( urlCurrent );
+        newFeedSource.setCurrentUrl( urlCurrent );
     }
 
     @Override

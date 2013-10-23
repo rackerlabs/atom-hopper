@@ -196,7 +196,7 @@ public class WorkspaceConfigProcessor {
             String href = createUrl( feed.getCurrentFeed().getHref() );
 
             try {
-                feedSource.setAsArchived( new URL( href ) );
+                feedSource.setCurrentUrl( new URL( href ) );
             }
             catch ( MalformedURLException e ) {
 

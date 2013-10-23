@@ -57,10 +57,8 @@ public class InMemoryFeedAdapter implements FeedSource, FeedPublisher {
         return ResponseBuilder.notFound();
     }
 
-    // GREG:  TODO
-
     @Override
-    public void setAsArchived( URL currentURL ) {
+    public void setCurrentUrl( URL currentURL ) {
         // Not implemented since this adapter doesn't page
     }
 

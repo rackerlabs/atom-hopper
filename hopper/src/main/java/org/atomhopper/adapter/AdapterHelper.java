@@ -20,9 +20,9 @@ import java.net.URL;
  */
 public class AdapterHelper {
 
-    static private final String ARCHIVE_NS = "http://purl.org/syndication/history/1.0";
-    static private final String ARCHIVE = "archive";
-    static private final String ARCHIVE_PREFIX = "fh";
+    static public final String ARCHIVE_NS = "http://purl.org/syndication/history/1.0";
+    static public final String ARCHIVE = "archive";
+    static public final String ARCHIVE_PREFIX = "fh";
 
     private String archiveUrl;
     private String nextLink = Link.REL_NEXT;
@@ -43,7 +43,7 @@ public class AdapterHelper {
         return currentUrl != null;
     }
 
-    public void setAsArchived( URL currentUrl ) {
+    public void setCurrentUrl( URL currentUrl ) {
 
         this.currentUrl = currentUrl.toExternalForm();
 
