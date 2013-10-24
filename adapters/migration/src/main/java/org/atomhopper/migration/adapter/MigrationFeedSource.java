@@ -52,8 +52,7 @@ public class MigrationFeedSource implements FeedSource {
     @Override
     public void setCurrentUrl( URL urlCurrent ) {
 
-        oldFeedSource.setCurrentUrl( urlCurrent );
-        newFeedSource.setCurrentUrl( urlCurrent );
+        // No op - migration adapter isn't used on archive feeds
     }
 
     @Override

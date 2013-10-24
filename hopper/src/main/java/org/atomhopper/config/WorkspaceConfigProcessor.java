@@ -162,7 +162,7 @@ public class WorkspaceConfigProcessor {
      * @param feed
      * @param feedSource
      */
-    private void checkArchiving( FeedConfiguration feed, FeedSource feedSource ) {
+    public void checkArchiving( FeedConfiguration feed, FeedSource feedSource ) {
 
         if ( feed.isArchived() && feed.getArchiveFeed() != null ) {
 
@@ -185,9 +185,9 @@ public class WorkspaceConfigProcessor {
         if ( !feed.isArchived() && feed.getCurrentFeed() != null ) {
 
             LOG.error( "Feed '" + feed.getTitle()
-                             + "' cannot be anon-archived feed & have a current-feed declared." );
+                             + "' cannot be a non-archived feed & have a current-feed declared." );
             throw new ConfigurationException( "Feed '" + feed.getTitle()
-                                                    + "' cannot be anon-archived feed & have a current-feed declared.",
+                                                    + "' cannot be a non-archived feed & have a current-feed declared.",
                                               new RuntimeException() );
         }
 
