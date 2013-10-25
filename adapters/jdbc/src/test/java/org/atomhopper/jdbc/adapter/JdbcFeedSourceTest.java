@@ -1,5 +1,6 @@
 package org.atomhopper.jdbc.adapter;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -8,6 +9,9 @@ import static junit.framework.Assert.assertEquals;
 
 import org.apache.abdera.Abdera;
 import org.apache.abdera.i18n.iri.IRI;
+import org.apache.abdera.model.Element;
+import org.apache.abdera.model.Feed;
+import org.atomhopper.adapter.AdapterHelper;
 import org.atomhopper.adapter.request.adapter.GetEntryRequest;
 import org.atomhopper.adapter.request.adapter.GetFeedRequest;
 import org.atomhopper.jdbc.model.PersistedEntry;
@@ -49,6 +53,9 @@ public class JdbcFeedSourceTest {
         private final String SINGLE_CAT = "+Cat1";
         private final String MULTI_CAT = "+Cat1+Cat2";
         private final String MOCK_LAST_MARKER = "last";
+        private final String NEXT_ARCHIVE = "next-archive";
+        private final String ARCHIVE_LINK = "http://archive.com/namespace/feed/archive";
+        private final String CURRENT = "current";
 
 
         @Before
@@ -71,9 +78,10 @@ public class JdbcFeedSourceTest {
 
             jdbcFeedSource = new JdbcFeedSource();
             jdbcFeedSource.setJdbcTemplate(jdbcTemplate);
+            jdbcFeedSource.setArchiveUrl( new URL( ARCHIVE_LINK ) );
 
             // Mock GetEntryRequest
-            when(getEntryRequest.getFeedName()).thenReturn(FEED_NAME);
+            when( getEntryRequest.getFeedName() ).thenReturn(FEED_NAME);
             when(getEntryRequest.getEntryId()).thenReturn(MARKER_ID);
 
             //Mock GetFeedRequest
@@ -87,6 +95,48 @@ public class JdbcFeedSourceTest {
             JdbcFeedSource tempPostgresFeedSource = mock(JdbcFeedSource.class);
             tempPostgresFeedSource.setJdbcTemplate(jdbcTemplate);
             verify(tempPostgresFeedSource).setJdbcTemplate(jdbcTemplate);
+        }
+
+        @Test
+        public void shouldGetCurrentLinkFromArchiveFeedAndArchiveNode() throws Exception {
+
+            final String currentURL = "http://current.com/namespace/feed";
+
+            JdbcFeedSource archiveSource = new JdbcFeedSource();
+            archiveSource.setJdbcTemplate( jdbcTemplate );
+            archiveSource.setCurrentUrl( new URL( currentURL ) );
+
+            Abdera localAbdera = new Abdera();
+            when(jdbcTemplate.queryForObject(any(String.class),
+                                             any(EntryRowMapper.class),
+                                             any(String.class),
+                                             any(String.class))).thenReturn(persistedEntry);
+            when(getFeedRequest.getAbdera()).thenReturn(localAbdera);
+            when(getEntryRequest.getAbdera()).thenReturn(localAbdera);
+            when(jdbcTemplate.query(any(String.class), any(Object[].class), any(EntryRowMapper.class))).thenReturn(entryList);
+            when(jdbcTemplate.queryForInt(any(String.class), any(Object[].class))).thenReturn(1);
+            assertEquals("Should get a 200 response", HttpStatus.OK,
+                         archiveSource.getFeed(getFeedRequest).getResponseStatus());
+
+            IRI iri = archiveSource.getFeed(getFeedRequest).getBody().getLink( CURRENT ).getHref();
+            assertTrue("'current' link should contain \"" + currentURL + "\"", iri.toString().contains( currentURL ) );
+
+            Feed feed = archiveSource.getFeed( getFeedRequest ).getBody();
+
+            boolean found = false;
+
+            for( Element e : feed.getElements() ) {
+
+               if ( e.getQName().getLocalPart().equals( AdapterHelper.ARCHIVE )
+                   && e.getQName().getPrefix().equals( AdapterHelper.ARCHIVE_PREFIX )
+                   && e.getQName().getNamespaceURI().equals( AdapterHelper.ARCHIVE_NS ) ) {
+
+                    found = true;
+                    break;
+                }
+            }
+
+            assertTrue("'<fn:archive>' node should exist", found );
         }
 
         @Test
@@ -184,18 +234,23 @@ public class JdbcFeedSourceTest {
         }
 
         @Test
-        public void shouldGetFeedWithLastMarker() throws Exception {
+        public void shouldGetFeedWithLastMarkerAndContainNextArchive() throws Exception {
             Abdera localAbdera = new Abdera();
             when(getFeedRequest.getPageMarker()).thenReturn(MOCK_LAST_MARKER);
             when(jdbcTemplate.queryForObject(any(String.class),
                     any(EntryRowMapper.class),
                     any(String.class),
                     any(String.class))).thenReturn(persistedEntry);
+            when(jdbcTemplate.query(any(String.class),
+                                    any( Object[].class ),
+                                    any(EntryRowMapper.class))).thenReturn( new ArrayList<PersistedEntry>() );
             when(getFeedRequest.getAbdera()).thenReturn(localAbdera);
             when(getEntryRequest.getAbdera()).thenReturn(localAbdera);
-            when(jdbcTemplate.query(any(String.class), any(Object[].class), any(EntryRowMapper.class))).thenReturn(entryList);
-            assertEquals("Should get a 200 response with marker of \"last\"", HttpStatus.OK,
+             assertEquals("Should get a 200 response with marker of \"last\"", HttpStatus.OK,
                     jdbcFeedSource.getFeed(getFeedRequest).getResponseStatus());
+
+            IRI iri = jdbcFeedSource.getFeed(getFeedRequest).getBody().getLink( NEXT_ARCHIVE ).getHref();
+            assertTrue("'next-archive' link should contain \"" + ARCHIVE_LINK + "\"", iri.toString().contains( ARCHIVE_LINK ) );
         }
 
         @Test

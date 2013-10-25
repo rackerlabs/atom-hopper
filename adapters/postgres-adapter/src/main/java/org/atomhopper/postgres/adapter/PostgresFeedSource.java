@@ -10,6 +10,7 @@ import org.atomhopper.adapter.FeedInformation;
 import org.atomhopper.adapter.FeedSource;
 import org.atomhopper.adapter.NotImplemented;
 import org.atomhopper.adapter.ResponseBuilder;
+import org.atomhopper.adapter.AdapterHelper;
 import org.atomhopper.adapter.request.adapter.GetEntryRequest;
 import org.atomhopper.adapter.request.adapter.GetFeedRequest;
 import org.atomhopper.dbal.PageDirection;
@@ -25,6 +26,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.*;
 
@@ -48,6 +50,7 @@ public class PostgresFeedSource implements FeedSource {
 
     private static final int PAGE_SIZE = 25;
     private JdbcTemplate jdbcTemplate;
+    private AdapterHelper helper = new AdapterHelper();
 
     public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -93,56 +96,72 @@ public class PostgresFeedSource implements FeedSource {
 
     private void addFeedCurrentLink(Feed hyrdatedFeed, final String baseFeedUri) {
 
-        hyrdatedFeed.addLink(baseFeedUri, Link.REL_CURRENT);
+        String url = helper.isArchived() ? helper.getCurrentUrl() : baseFeedUri;
+
+        hyrdatedFeed.addLink( url, Link.REL_CURRENT);
     }
 
     private Feed hydrateFeed(Abdera abdera, List<PersistedEntry> persistedEntries,
                              GetFeedRequest getFeedRequest, final int pageSize) {
 
-        final Feed hyrdatedFeed = abdera.newFeed();
+        final Feed hydratedFeed = abdera.newFeed();
         final String uuidUriScheme = "urn:uuid:";
         final String baseFeedUri = decode(getFeedRequest.urlFor(
                 new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
         final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
 
         // Set the feed links
-        addFeedCurrentLink(hyrdatedFeed, baseFeedUri);
-        addFeedSelfLink(hyrdatedFeed, baseFeedUri, getFeedRequest, pageSize, searchString);
+        addFeedCurrentLink(hydratedFeed, baseFeedUri);
+        addFeedSelfLink(hydratedFeed, baseFeedUri, getFeedRequest, pageSize, searchString);
+
+        if ( helper.isArchived() ) {
+
+            helper.addArchiveNode( hydratedFeed );
+        }
+
+        PersistedEntry nextEntry = null;
 
         // TODO: We should have a link builder method for these
         if (!(persistedEntries.isEmpty())) {
-            hyrdatedFeed.setId(uuidUriScheme + UUID.randomUUID().toString());
-            hyrdatedFeed.setTitle(persistedEntries.get(0).getFeed());
+            hydratedFeed.setId( uuidUriScheme + UUID.randomUUID().toString() );
+            hydratedFeed.setTitle( persistedEntries.get( 0 ).getFeed() );
 
             // Set the previous link
-            hyrdatedFeed.addLink(new StringBuilder()
-                                         .append(baseFeedUri).append(MARKER_EQ)
-                                         .append(persistedEntries.get(0).getEntryId())
-                                         .append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
-                                         .append(AND_SEARCH_EQ).append(urlEncode(searchString))
-                                         .append(AND_DIRECTION_EQ_FORWARD).toString())
-                    .setRel(Link.REL_PREVIOUS);
+            hydratedFeed.addLink( new StringBuilder()
+                                        .append( baseFeedUri ).append( MARKER_EQ )
+                                        .append( persistedEntries.get( 0 ).getEntryId() )
+                                        .append( AND_LIMIT_EQ ).append( String.valueOf( pageSize ) )
+                                        .append( AND_SEARCH_EQ ).append( urlEncode( searchString ) )
+                                        .append( AND_DIRECTION_EQ_FORWARD ).toString() )
+                    .setRel( helper.getPrevLink() );
 
             final PersistedEntry lastEntryInCollection = persistedEntries.get(persistedEntries.size() - 1);
 
-            PersistedEntry nextEntry = getNextMarker(lastEntryInCollection, getFeedRequest.getFeedName(), searchString);
+            nextEntry = getNextMarker(lastEntryInCollection, getFeedRequest.getFeedName(), searchString);
 
             if (nextEntry != null) {
                 // Set the next link
-                hyrdatedFeed.addLink(new StringBuilder().append(baseFeedUri)
-                                             .append(MARKER_EQ).append(nextEntry.getEntryId())
-                                             .append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
-                                             .append(AND_SEARCH_EQ).append(urlEncode(searchString))
-                                             .append(AND_DIRECTION_EQ_BACKWARD).toString())
-                        .setRel(Link.REL_NEXT);
+                hydratedFeed.addLink( new StringBuilder().append( baseFeedUri )
+                                            .append( MARKER_EQ ).append( nextEntry.getEntryId() )
+                                            .append( AND_LIMIT_EQ ).append( String.valueOf( pageSize ) )
+                                            .append( AND_SEARCH_EQ ).append( urlEncode( searchString ) )
+                                            .append( AND_DIRECTION_EQ_BACKWARD ).toString() )
+                        .setRel( helper.getNextLink() );
             }
         }
 
-        for (PersistedEntry persistedFeedEntry : persistedEntries) {
-            hyrdatedFeed.addEntry(hydrateEntry(persistedFeedEntry, abdera));
+        // if we are at the last page & there is an archive link, provide it
+        if ( nextEntry == null && helper.getArchiveUrl() != null ) {
+            hydratedFeed.addLink(new StringBuilder().append( helper.getArchiveUrl() ).append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
+                                       .append(AND_DIRECTION_EQ_BACKWARD).toString())
+                  .setRel( FeedSource.REL_ARCHIVE_NEXT );
         }
 
-        return hyrdatedFeed;
+        for (PersistedEntry persistedFeedEntry : persistedEntries) {
+            hydratedFeed.addEntry( hydrateEntry( persistedFeedEntry, abdera ) );
+        }
+
+        return hydratedFeed;
     }
 
     private Entry hydrateEntry(PersistedEntry persistedEntry, Abdera abderaReference) {
@@ -173,6 +192,19 @@ public class PostgresFeedSource implements FeedSource {
         }
 
         return response;
+    }
+
+    @Override
+    public void setArchiveUrl( URL url ) {
+
+        helper.setArchiveUrl( url );
+    }
+
+
+    @Override
+    public void setCurrentUrl( URL urlCurrent ) {
+
+        helper.setCurrentUrl( urlCurrent );
     }
 
     @Override
@@ -213,7 +245,7 @@ public class PostgresFeedSource implements FeedSource {
 
         List<PersistedEntry> lastPersistedEntries = getLastPage(getFeedRequest.getFeedName(), pageSize, searchString);
 
-        if (lastPersistedEntries != null && !(lastPersistedEntries.isEmpty())) {
+        if ( !helper.isArchived() && lastPersistedEntries != null && !(lastPersistedEntries.isEmpty()) ) {
             hyrdatedFeed.addLink(
                     new StringBuilder().append(baseFeedUri)
                             .append(MARKER_EQ).append(

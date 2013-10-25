@@ -10,6 +10,7 @@ import org.atomhopper.adapter.request.adapter.GetFeedRequest;
 import org.atomhopper.migration.domain.MigrationReadFrom;
 import org.atomhopper.response.AdapterResponse;
 
+import java.net.URL;
 import java.util.Map;
 
 public class MigrationFeedSource implements FeedSource {
@@ -46,6 +47,19 @@ public class MigrationFeedSource implements FeedSource {
     public AdapterResponse<Entry> getEntry(GetEntryRequest getEntryRequest) {
         return readFrom == MigrationReadFrom.NEW ? newFeedSource.getEntry(getEntryRequest)
                 : oldFeedSource.getEntry(getEntryRequest);
+    }
+
+    @Override
+    public void setCurrentUrl( URL urlCurrent ) {
+
+        // No op - migration adapter isn't used on archive feeds
+    }
+
+    @Override
+    public void setArchiveUrl( URL url ) {
+
+        oldFeedSource.setArchiveUrl( url );
+        newFeedSource.setArchiveUrl( url );
     }
 
     @Override

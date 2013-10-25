@@ -14,18 +14,8 @@
 
         <categories-descriptor reference="workspace-categories-descriptor" />
 
-        <feed title="Testing Feed" resource="/feed" archived="false">
-            <feed-source reference="feed-source-adapter" />
-
-            <publisher reference="net.jps.atom.adapter.InMemoryPublisher">
-                <parameter name="net.jps.atom.adapter.db.show_sql" value="true" />
-            </publisher>
-            <archive-feed href="/archive" />
-        </feed>
-
         <feed title="Testing Feed Archive" resource="/archive/" archived="true">
             <feed-source reference="feed-archive-adapter" />
-            <current-feed href="/feed" />
         </feed>
     </workspace>
 

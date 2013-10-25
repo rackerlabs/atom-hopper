@@ -18,6 +18,7 @@ import org.atomhopper.util.uri.template.EnumKeyedTemplateParameters;
 import org.atomhopper.util.uri.template.URITemplate;
 import org.springframework.http.HttpStatus;
 
+import java.net.URL;
 import java.util.Collections;
 import java.util.Map;
 import java.util.SortedMap;
@@ -54,6 +55,16 @@ public class InMemoryFeedAdapter implements FeedSource, FeedPublisher {
         }
 
         return ResponseBuilder.notFound();
+    }
+
+    @Override
+    public void setCurrentUrl( URL currentURL ) {
+        // Not implemented since this adapter doesn't page
+    }
+
+    @Override
+    public void setArchiveUrl( URL url ) {
+        // Not implemented since this adapter doesn't page
     }
 
     @Override

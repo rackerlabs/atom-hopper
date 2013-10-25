@@ -12,6 +12,7 @@ import org.atomhopper.adapter.FeedInformation;
 import org.atomhopper.adapter.FeedSource;
 import org.atomhopper.adapter.NotImplemented;
 import org.atomhopper.adapter.ResponseBuilder;
+import org.atomhopper.adapter.AdapterHelper;
 import org.atomhopper.adapter.request.adapter.GetEntryRequest;
 import org.atomhopper.adapter.request.adapter.GetFeedRequest;
 import org.atomhopper.dbal.PageDirection;
@@ -26,6 +27,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -51,10 +53,26 @@ public class JdbcFeedSource implements FeedSource {
     private static final int PAGE_SIZE = 25;
     private JdbcTemplate jdbcTemplate;
     private boolean enableTimers = false;
+    private AdapterHelper  helper = new AdapterHelper();
+
     private int feedHeadDelayInSeconds = 2;
+
 
     public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+    }
+
+    @Override
+    public void setArchiveUrl( URL url ) {
+
+        helper.setArchiveUrl( url );
+    }
+
+
+    @Override
+    public void setCurrentUrl( URL urlCurrent ) {
+
+        helper.setCurrentUrl( urlCurrent );
     }
 
     public void setEnableTimers(Boolean enableTimers) {
@@ -105,7 +123,9 @@ public class JdbcFeedSource implements FeedSource {
 
     private void addFeedCurrentLink(Feed hydratedFeed, final String baseFeedUri) {
 
-        hydratedFeed.addLink(baseFeedUri, Link.REL_CURRENT);
+        String url = helper.isArchived() ? helper.getCurrentUrl() : baseFeedUri;
+
+        hydratedFeed.addLink( url, Link.REL_CURRENT);
     }
 
     private Feed hydrateFeed(Abdera abdera, List<PersistedEntry> persistedEntries,
@@ -117,9 +137,17 @@ public class JdbcFeedSource implements FeedSource {
                 new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
         final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
 
+        if ( helper.isArchived() ) {
+
+            helper.addArchiveNode( hydratedFeed );
+        }
+
         // Set the feed links
         addFeedCurrentLink(hydratedFeed, baseFeedUri);
-        addFeedSelfLink(hydratedFeed, baseFeedUri, getFeedRequest, pageSize, searchString);
+        addFeedSelfLink( hydratedFeed, baseFeedUri, getFeedRequest, pageSize, searchString );
+
+
+        PersistedEntry nextEntry = null;
 
         // TODO: We should have a link builder method for these
         if (!(persistedEntries.isEmpty())) {
@@ -133,11 +161,11 @@ public class JdbcFeedSource implements FeedSource {
                                          .append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
                                          .append(AND_SEARCH_EQ).append(urlEncode(searchString))
                                          .append(AND_DIRECTION_EQ_FORWARD).toString())
-                    .setRel(Link.REL_PREVIOUS);
+                    .setRel( helper.getPrevLink() );
 
             final PersistedEntry lastEntryInCollection = persistedEntries.get(persistedEntries.size() - 1);
 
-            PersistedEntry nextEntry = getNextMarker(lastEntryInCollection, getFeedRequest.getFeedName(), searchString);
+            nextEntry = getNextMarker(lastEntryInCollection, getFeedRequest.getFeedName(), searchString);
 
             if (nextEntry != null) {
                 // Set the next link
@@ -146,8 +174,14 @@ public class JdbcFeedSource implements FeedSource {
                                              .append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
                                              .append(AND_SEARCH_EQ).append(urlEncode(searchString))
                                              .append(AND_DIRECTION_EQ_BACKWARD).toString())
-                        .setRel(Link.REL_NEXT);
+                        .setRel( helper.getNextLink() );
             }
+        }
+
+        if ( nextEntry == null && helper.getArchiveUrl() != null ) {
+            hydratedFeed.addLink(new StringBuilder().append( helper.getArchiveUrl() ).append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
+                                       .append(AND_DIRECTION_EQ_BACKWARD).toString())
+                  .setRel( FeedSource.REL_ARCHIVE_NEXT );
         }
 
         for (PersistedEntry persistedFeedEntry : persistedEntries) {
@@ -236,13 +270,16 @@ public class JdbcFeedSource implements FeedSource {
         final String baseFeedUri = decode(getFeedRequest.urlFor(
                 new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
 
-        hydratedFeed.addLink(
-                new StringBuilder().append(baseFeedUri)
+        if( !helper.isArchived() ) {
+
+            hydratedFeed.addLink(
+                  new StringBuilder().append(baseFeedUri)
                         .append(MARKER_EQ).append(MOCK_LAST_MARKER)
                         .append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
                         .append(AND_SEARCH_EQ).append(urlEncode(searchString))
                         .append(AND_DIRECTION_EQ_BACKWARD).toString())
-                .setRel(Link.REL_LAST);
+                  .setRel(Link.REL_LAST);
+        }
 
         return ResponseBuilder.found(hydratedFeed);
     }

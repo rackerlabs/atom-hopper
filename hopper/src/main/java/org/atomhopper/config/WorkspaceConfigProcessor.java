@@ -10,6 +10,7 @@ import org.atomhopper.adapter.FeedPublisher;
 import org.atomhopper.adapter.FeedSource;
 import org.atomhopper.config.v1_0.AdapterDescriptor;
 import org.atomhopper.config.v1_0.FeedConfiguration;
+import org.atomhopper.config.v1_0.HostConfiguration;
 import org.atomhopper.config.v1_0.WorkspaceConfiguration;
 import org.atomhopper.servlet.ApplicationContextAdapter;
 import org.atomhopper.util.TargetRegexBuilder;
@@ -17,6 +18,8 @@ import org.atomhopper.util.context.AdapterGetter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -33,9 +36,14 @@ public class WorkspaceConfigProcessor {
     private final AdapterGetter adapterGetter;
     private final WorkspaceConfiguration config;
     private final TargetRegexBuilder targetRegexGenerator;
+    private final HostConfiguration hostConfiguration;
 
     //TODO: Consider builder pattern
-    public WorkspaceConfigProcessor(WorkspaceConfiguration config, ApplicationContextAdapter contextAdapter, RegexTargetResolver regexTargetResolver, String contextPath) {
+    public WorkspaceConfigProcessor(WorkspaceConfiguration config,
+                                    ApplicationContextAdapter contextAdapter,
+                                    RegexTargetResolver regexTargetResolver,
+                                    String contextPath,
+                                    HostConfiguration hostConfiguration ) {
         this.config = config;
         this.adapterGetter = new AdapterGetter(contextAdapter);
         this.regexTargetResolver = regexTargetResolver;
@@ -45,6 +53,8 @@ public class WorkspaceConfigProcessor {
         if (!StringUtils.isBlank(contextPath)) {
             targetRegexGenerator.setContextPath(contextPath);
         }
+
+        this.hostConfiguration = hostConfiguration;
     }
 
     public List<WorkspaceHandler> toHandler() {
@@ -116,6 +126,8 @@ public class WorkspaceConfigProcessor {
         for (FeedConfiguration feed : feeds) {
             final FeedSource feedSource = getAdapter(feed.getFeedSource(), FeedSource.class);
 
+            checkArchiving( feed, feedSource );
+
             final FeedPublisher feedPublisher = getAdapter(feed.getPublisher(), FeedPublisher.class);
 
             final TargetRegexBuilder feedTargetRegexBuilder = new TargetRegexBuilder(workspaceTarget);
@@ -138,5 +150,83 @@ public class WorkspaceConfigProcessor {
         }
 
         return collections;
+    }
+
+    /**
+     * From the feed configuration XML, sets the FeedSourced with the following:
+     * <ul>
+     *     <li>If the feed is an archive, sets the "current" link URL.</li>
+     *     <li>If the feed has a archived feed, sets the next-archive link URL for its last page.</li>
+     * </ul>
+     *
+     * @param feed
+     * @param feedSource
+     */
+    public void checkArchiving( FeedConfiguration feed, FeedSource feedSource ) {
+
+        if ( feed.isArchived() && feed.getArchiveFeed() != null ) {
+
+            LOG.error( "Feed '" + feed.getTitle()
+                             + "' cannot be tagged as an archived feed & have an archive-feed declared." );
+            throw new ConfigurationException( "Feed '" + feed.getTitle()
+                                                    + "' cannot be tagged as an archived feed & have an archive-feed declared.",
+                                              new RuntimeException() );
+        }
+
+        if ( feed.isArchived() && feed.getCurrentFeed() == null ) {
+
+            LOG.error( "Feed '" + feed.getTitle()
+                             + "' cannot be tagged as an archived feed & not have a current-feed declared." );
+            throw new ConfigurationException( "Feed '" + feed.getTitle()
+                                                    + "' cannot be tagged as an archived feed & not have a current-feed declared.",
+                                              new RuntimeException() );
+        }
+
+        if ( !feed.isArchived() && feed.getCurrentFeed() != null ) {
+
+            LOG.error( "Feed '" + feed.getTitle()
+                             + "' cannot be a non-archived feed & have a current-feed declared." );
+            throw new ConfigurationException( "Feed '" + feed.getTitle()
+                                                    + "' cannot be a non-archived feed & have a current-feed declared.",
+                                              new RuntimeException() );
+        }
+
+        if ( feed.getCurrentFeed() != null ) {
+
+            String href = createUrl( feed.getCurrentFeed().getHref() );
+
+            try {
+                feedSource.setCurrentUrl( new URL( href ) );
+            }
+            catch ( MalformedURLException e ) {
+
+                LOG.error( "Invalid current URL feed '" + feed.getTitle() + "': '" + href + "'" );
+                throw new ConfigurationException( "Invalid current URL feed '" + feed.getTitle() + "': '" + href + "'", e );
+            }
+        }
+
+
+        if ( feed.getArchiveFeed() != null ) {
+
+            String href = createUrl( feed.getArchiveFeed().getHref() );
+
+            try {
+                feedSource.setArchiveUrl( new URL( href ) );
+            }
+            catch ( MalformedURLException e ) {
+
+                LOG.error( "Invalid archive URL feed '" + feed.getTitle() + "': '" + href + "'" );
+                throw new ConfigurationException( "Invalid archive URL feed '" + feed.getTitle() + "': '" + href + "'", e );
+            }
+        }
+    }
+
+    private String createUrl( String href ) {
+
+        if ( href.startsWith( "/" ) ) {
+
+            href = hostConfiguration.getScheme() + "://" + hostConfiguration.getDomain() + href;
+        }
+        return href;
     }
 }

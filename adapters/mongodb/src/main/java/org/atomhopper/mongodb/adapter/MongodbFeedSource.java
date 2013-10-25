@@ -1,9 +1,8 @@
 package org.atomhopper.mongodb.adapter;
 
-import com.mongodb.DBCollection;
-import com.mongodb.MongoException;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.*;
 import org.apache.abdera.Abdera;
@@ -18,19 +17,18 @@ import org.atomhopper.adapter.FeedInformation;
 import org.atomhopper.adapter.FeedSource;
 import org.atomhopper.adapter.NotImplemented;
 import org.atomhopper.adapter.ResponseBuilder;
+import org.atomhopper.adapter.AdapterHelper;
 import org.atomhopper.adapter.request.adapter.GetEntryRequest;
 import org.atomhopper.adapter.request.adapter.GetFeedRequest;
 import org.atomhopper.dbal.PageDirection;
 import static org.atomhopper.mongodb.adapter.MongodbUtilities.formatCollectionName;
-import static org.atomhopper.mongodb.adapter.MongodbUtilities.safeLongToInt;
+
 import org.atomhopper.mongodb.domain.PersistedEntry;
 import org.atomhopper.mongodb.query.CategoryCriteriaGenerator;
 import org.atomhopper.mongodb.query.SimpleCategoryCriteriaGenerator;
 import org.atomhopper.response.AdapterResponse;
 import org.atomhopper.util.uri.template.EnumKeyedTemplateParameters;
 import org.atomhopper.util.uri.template.URITemplate;
-import org.springframework.dao.DataAccessException;
-import org.springframework.data.mongodb.core.CollectionCallback;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Order;
@@ -43,6 +41,7 @@ public class MongodbFeedSource implements FeedSource {
     private static final String FEED = "feed";
     private static final String ID = "_id";
     private MongoTemplate mongoTemplate;
+    private AdapterHelper helper = new AdapterHelper();
 
     public void setMongoTemplate(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
@@ -84,32 +83,42 @@ public class MongodbFeedSource implements FeedSource {
     }
 
     private void addFeedCurrentLink(Feed hyrdatedFeed, final String baseFeedUri) {
-        hyrdatedFeed.addLink(baseFeedUri, Link.REL_CURRENT);
+
+        String url = helper.isArchived() ? helper.getCurrentUrl() : baseFeedUri;
+
+        hyrdatedFeed.addLink( url, Link.REL_CURRENT);
     }
 
     private Feed hydrateFeed(Abdera abdera, List<PersistedEntry> persistedEntries, GetFeedRequest getFeedRequest, final int pageSize) {
-        final Feed hyrdatedFeed = abdera.newFeed();
+        final Feed hydratedFeed = abdera.newFeed();
         final String uuidUriScheme = "urn:uuid:";
         final String baseFeedUri = decode(getFeedRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
         final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
 
+        if ( helper.isArchived() ) {
+
+            helper.addArchiveNode( hydratedFeed );
+        }
+
         // Set the feed links
-        addFeedCurrentLink(hyrdatedFeed, baseFeedUri);
-        addFeedSelfLink(hyrdatedFeed, baseFeedUri, getFeedRequest, pageSize, searchString);
+        addFeedCurrentLink(hydratedFeed, baseFeedUri);
+        addFeedSelfLink(hydratedFeed, baseFeedUri, getFeedRequest, pageSize, searchString);
+
+        PersistedEntry nextEntry = null;
 
         // TODO: We should have a link builder method for these
         if (!(persistedEntries.isEmpty())) {
-            hyrdatedFeed.setId(uuidUriScheme + UUID.randomUUID().toString());
-            hyrdatedFeed.setTitle(persistedEntries.get(0).getFeed());
+            hydratedFeed.setId( uuidUriScheme + UUID.randomUUID().toString() );
+            hydratedFeed.setTitle( persistedEntries.get( 0 ).getFeed() );
 
             // Set the previous link
-            hyrdatedFeed.addLink(new StringBuilder()
-                    .append(baseFeedUri).append("?marker=")
-                    .append(persistedEntries.get(0).getEntryId())
-                    .append("&limit=").append(String.valueOf(pageSize))
-                    .append("&search=").append(urlEncode(searchString).toString())
-                    .append("&direction=forward").toString())
-                    .setRel(Link.REL_PREVIOUS);
+            hydratedFeed.addLink( new StringBuilder()
+                                        .append( baseFeedUri ).append( "?marker=" )
+                                        .append( persistedEntries.get( 0 ).getEntryId() )
+                                        .append( "&limit=" ).append( String.valueOf( pageSize ) )
+                                        .append( "&search=" ).append( urlEncode( searchString ).toString() )
+                                        .append( "&direction=forward" ).toString() )
+                    .setRel( helper.getPrevLink() );
 
             final PersistedEntry lastEntryInCollection = persistedEntries.get(persistedEntries.size() - 1);
             Query nextLinkQuery = new Query(Criteria.where(FEED).is(lastEntryInCollection.getFeed())).limit(1).addCriteria(Criteria.where(DATE_LAST_UPDATED).lt(lastEntryInCollection.getDateLastUpdated()));
@@ -118,25 +127,33 @@ public class MongodbFeedSource implements FeedSource {
             SimpleCategoryCriteriaGenerator simpleCategoryCriteriaGenerator = new SimpleCategoryCriteriaGenerator(searchString);
             simpleCategoryCriteriaGenerator.enhanceCriteria(nextLinkQuery);
 
-            final PersistedEntry nextEntry = mongoTemplate.findOne(nextLinkQuery,
+            nextEntry = mongoTemplate.findOne(nextLinkQuery,
                     PersistedEntry.class, formatCollectionName(lastEntryInCollection.getFeed()));
 
             if (nextEntry != null) {
                 // Set the next link
-                hyrdatedFeed.addLink(new StringBuilder().append(baseFeedUri)
-                        .append("?marker=").append(nextEntry.getEntryId())
-                        .append("&limit=").append(String.valueOf(pageSize))
-                        .append("&search=").append(urlEncode(searchString).toString())
-                        .append("&direction=backward").toString())
-                        .setRel(Link.REL_NEXT);
+                hydratedFeed.addLink( new StringBuilder().append( baseFeedUri )
+                                            .append( "?marker=" ).append( nextEntry.getEntryId() )
+                                            .append( "&limit=" ).append( String.valueOf( pageSize ) )
+                                            .append( "&search=" ).append( urlEncode( searchString ).toString() )
+                                            .append( "&direction=backward" ).toString() )
+                        .setRel( helper.getNextLink() );
             }
         }
 
-        for (PersistedEntry persistedFeedEntry : persistedEntries) {
-            hyrdatedFeed.addEntry(hydrateEntry(persistedFeedEntry, abdera));
+        // if we are at the last page & there is an archive link, provide it
+        if ( nextEntry == null && helper.getArchiveUrl() != null ) {
+            hydratedFeed.addLink(new StringBuilder().append( helper.getArchiveUrl() ).append( "&limit=" ).append(String.valueOf(pageSize))
+                                       .append( "&direction=backward" ).toString())
+                  .setRel( FeedSource.REL_ARCHIVE_NEXT );
         }
 
-        return hyrdatedFeed;
+
+        for (PersistedEntry persistedFeedEntry : persistedEntries) {
+            hydratedFeed.addEntry( hydrateEntry( persistedFeedEntry, abdera ) );
+        }
+
+        return hydratedFeed;
     }
 
     private Entry hydrateEntry(PersistedEntry persistedEntry, Abdera abderaReference) {
@@ -167,6 +184,18 @@ public class MongodbFeedSource implements FeedSource {
         }
 
         return response;
+    }
+
+    @Override
+    public void setArchiveUrl( URL url ) {
+
+        helper.setArchiveUrl( url );
+    }
+
+    @Override
+    public void setCurrentUrl( URL urlCurrent ) {
+
+        helper.setCurrentUrl( urlCurrent );
     }
 
     @Override
@@ -222,7 +251,7 @@ public class MongodbFeedSource implements FeedSource {
             final List<PersistedEntry> lastPersistedEntries = mongoTemplate.find(lastLinkQuery,
                     PersistedEntry.class, formatCollectionName(getFeedRequest.getFeedName()));
 
-            if (lastPersistedEntries != null && !(lastPersistedEntries.isEmpty())) {
+            if (!helper.isArchived() && lastPersistedEntries != null && !(lastPersistedEntries.isEmpty())) {
                 hyrdatedFeed.addLink(new StringBuilder().append(baseFeedUri).append("?marker=").append(lastPersistedEntries.get(lastPersistedEntries.size() - 1).getEntryId()).append("&limit=").append(String.valueOf(pageSize)).append("&search=").append(urlEncode(searchString).toString()).append("&direction=backward").toString()).setRel(Link.REL_LAST);
             }
 

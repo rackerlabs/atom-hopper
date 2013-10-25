@@ -9,6 +9,8 @@ import org.atomhopper.adapter.request.adapter.GetEntryRequest;
 import org.atomhopper.adapter.request.adapter.GetFeedRequest;
 import org.atomhopper.response.AdapterResponse;
 
+import java.net.URL;
+
 public final class DisabledFeedSource extends AbstractDisabledAdapter implements FeedSource {
 
     private static final DisabledFeedSource INSTANCE = new DisabledFeedSource();
@@ -29,6 +31,16 @@ public final class DisabledFeedSource extends AbstractDisabledAdapter implements
     @Override
     public AdapterResponse<Entry> getEntry(GetEntryRequest getEntryRequest) {
         return ResponseBuilder.notImplemented(OP_NOT_SUPPORTED_MESSAGE);
+    }
+
+    @Override
+    public void setCurrentUrl( URL urlCurrent ) {
+        // do nothing since this feed is disabled
+    }
+
+    @Override
+    public void setArchiveUrl( URL url ) {
+        // do nothing since this feed is disabled
     }
 
     @Override
