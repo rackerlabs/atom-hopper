@@ -179,7 +179,7 @@ public class JdbcFeedSource implements FeedSource {
         }
 
         if ( nextEntry == null && helper.getArchiveUrl() != null ) {
-            hydratedFeed.addLink(new StringBuilder().append( helper.getArchiveUrl() ).append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
+            hydratedFeed.addLink(new StringBuilder().append( helper.getArchiveUrl() ).append( LIMIT_EQ).append(String.valueOf(pageSize))
                                        .append(AND_DIRECTION_EQ_BACKWARD).toString())
                   .setRel( FeedSource.REL_ARCHIVE_NEXT );
         }

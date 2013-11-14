@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jmeterTestPlan version="1.2" properties="2.4" jmeter="2.9 r1437961">
+<jmeterTestPlan version="1.2" properties="2.5" jmeter="2.10 r1533061">
   <hashTree>
     <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Paging" enabled="true">
       <stringProp name="TestPlan.comments">Test paging by following next, previous, and last links in a feed</stringProp>
@@ -17481,7 +17481,7 @@
             <hashTree/>
             <BSFAssertion guiclass="TestBeanGUI" testclass="BSFAssertion" testname="Verify value of next-archive link" enabled="true">
               <stringProp name="scriptLanguage">javascript</stringProp>
-              <stringProp name="parameters">${feed}/archive&amp;limit=3&amp;direction=backward ${next-archive_link}</stringProp>
+              <stringProp name="parameters">${feed}/archive?limit=3&amp;direction=backward ${next-archive_link}</stringProp>
               <stringProp name="filename"></stringProp>
               <stringProp name="script">if ( args[0] != args[1] ) {
  

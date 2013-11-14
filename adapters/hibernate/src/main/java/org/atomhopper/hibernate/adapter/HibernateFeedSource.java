@@ -143,7 +143,7 @@ public class HibernateFeedSource implements FeedSource {
 
         // if we are at the last page & there is an archive link, provide it
         if ( nextPersistedEntry == null && helper.getArchiveUrl() != null ) {
-            hydratedFeed.addLink(new StringBuilder().append( helper.getArchiveUrl() ).append( "&limit=" ).append(String.valueOf(pageSize))
+            hydratedFeed.addLink(new StringBuilder().append( helper.getArchiveUrl() ).append( "?limit=" ).append(String.valueOf(pageSize))
                                        .append( "&direction=backward" ).toString())
                   .setRel( FeedSource.REL_ARCHIVE_NEXT );
         }
