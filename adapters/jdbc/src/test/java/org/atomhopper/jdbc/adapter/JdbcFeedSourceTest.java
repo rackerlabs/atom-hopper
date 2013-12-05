@@ -21,12 +21,12 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 import java.util.*;
@@ -407,6 +407,44 @@ public class JdbcFeedSourceTest {
             assertEquals("Should get a 200 response", HttpStatus.OK,
                     jdbcFeedSource.getEntry(getEntryRequest).getResponseStatus());
 
+        }
+
+        @Test
+        public void shouldLogUuidsWhenEnableLoggingOnShortPageIsTrue() throws Exception {
+            jdbcFeedSource.setEnableLoggingOnShortPage(Boolean.TRUE);
+            JdbcFeedSource.LOG = mock(Logger.class);
+            Abdera localAbdera = new Abdera();
+            when(jdbcTemplate.queryForObject(any(String.class),
+                    any(EntryRowMapper.class),
+                    any(String.class),
+                    any(String.class))).thenReturn(persistedEntry);
+            when(getFeedRequest.getAbdera()).thenReturn(localAbdera);
+            when(getEntryRequest.getAbdera()).thenReturn(localAbdera);
+            when(jdbcTemplate.query(any(String.class), any(Object[].class), any(EntryRowMapper.class))).thenReturn(entryList);
+            when(jdbcTemplate.queryForInt(any(String.class), any(Object[].class))).thenReturn(1);
+            when(getFeedRequest.getPageSize()).thenReturn("13");
+            assertEquals("Should get a 200 response", HttpStatus.OK,
+                    jdbcFeedSource.getFeed(getFeedRequest).getResponseStatus());
+            verify(JdbcFeedSource.LOG, atLeastOnce()).warn(any(String.class));
+        }
+
+        @Test
+        public void shouldNotLogUuidsWhenEnableLoggingOnShortPageIsFalse() throws Exception {
+            jdbcFeedSource.setEnableLoggingOnShortPage(Boolean.FALSE);
+            JdbcFeedSource.LOG = mock(Logger.class);
+            Abdera localAbdera = new Abdera();
+            when(jdbcTemplate.queryForObject(any(String.class),
+                    any(EntryRowMapper.class),
+                    any(String.class),
+                    any(String.class))).thenReturn(persistedEntry);
+            when(getFeedRequest.getAbdera()).thenReturn(localAbdera);
+            when(getEntryRequest.getAbdera()).thenReturn(localAbdera);
+            when(jdbcTemplate.query(any(String.class), any(Object[].class), any(EntryRowMapper.class))).thenReturn(entryList);
+            when(jdbcTemplate.queryForInt(any(String.class), any(Object[].class))).thenReturn(1);
+            when(getFeedRequest.getPageSize()).thenReturn("13");
+            assertEquals("Should get a 200 response", HttpStatus.OK,
+                    jdbcFeedSource.getFeed(getFeedRequest).getResponseStatus());
+            verify(JdbcFeedSource.LOG, never()).warn(any(String.class));
         }
     }
 }
