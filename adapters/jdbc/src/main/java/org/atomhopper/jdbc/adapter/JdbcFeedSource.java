@@ -37,7 +37,7 @@ import static org.apache.abdera.i18n.text.UrlEncoding.decode;
 
 public class JdbcFeedSource implements FeedSource {
 
-    private static final Logger LOG = LoggerFactory.getLogger(
+    static Logger LOG = LoggerFactory.getLogger(
             JdbcFeedSource.class);
 
     private static final String MARKER_EQ = "?marker=";
@@ -53,9 +53,10 @@ public class JdbcFeedSource implements FeedSource {
     private static final int PAGE_SIZE = 25;
     private JdbcTemplate jdbcTemplate;
     private boolean enableTimers = false;
-    private AdapterHelper  helper = new AdapterHelper();
-
+    private boolean enableLoggingOnShortPage = false;
     private int feedHeadDelayInSeconds = 2;
+
+    private AdapterHelper  helper = new AdapterHelper();
 
 
     public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
@@ -77,6 +78,18 @@ public class JdbcFeedSource implements FeedSource {
 
     public void setEnableTimers(Boolean enableTimers) {
         this.enableTimers = enableTimers;
+    }
+
+    public void setEnableLoggingOnShortPage(Boolean enableLoggingOnShortPage) {
+        this.enableLoggingOnShortPage = enableLoggingOnShortPage;
+    }
+
+    public Boolean getEnableLoggingOnShortPage() {
+        return enableLoggingOnShortPage;
+    }
+
+    static void setLog(Logger log) {
+        LOG = log;
     }
 
     public void setFeedHeadDelayInSeconds(int feedHeadDelayInSeconds) {
@@ -186,6 +199,21 @@ public class JdbcFeedSource implements FeedSource {
 
         for (PersistedEntry persistedFeedEntry : persistedEntries) {
             hydratedFeed.addEntry(hydrateEntry(persistedFeedEntry, abdera));
+        }
+
+        if ( getEnableLoggingOnShortPage() ) {
+            if ( hydratedFeed.getEntries() != null && hydratedFeed.getEntries().size() < pageSize ) {
+                LOG.warn("User requested " + getFeedRequest.getFeedName() + " feed with limit " + pageSize + ", but returning only " + hydratedFeed.getEntries().size());
+                List<Entry> entries = hydratedFeed.getEntries();
+                StringBuilder sb = new StringBuilder();
+                for (int idx=0; idx<entries.size(); idx++) {
+                    Entry entry = entries.get(idx);
+                    sb.append(entry.getId() + ", ");
+                }
+                LOG.warn("UUIDs: " + sb.toString());
+            } else if ( hydratedFeed.getEntries() == null ) {
+                LOG.warn("User requested " + getFeedRequest.getFeedName() + " feed with limit " + pageSize + ", but no entries are available");
+            }
         }
 
         return hydratedFeed;
