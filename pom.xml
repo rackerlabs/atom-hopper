@@ -17,6 +17,7 @@
         <org.springframework.data.version>1.0.0.RELEASE</org.springframework.data.version>
         <org.aspectj.version>1.6.9</org.aspectj.version>
         <cglib.version>2.2</cglib.version>
+        <metrics.version>3.0.1</metrics.version>
     </properties>
 
     <licenses>
@@ -327,6 +328,18 @@
                 <groupId>com.unboundid</groupId>
                 <artifactId>unboundid-ldapsdk</artifactId>
                 <version>2.3.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.codahale.metrics</groupId>
+                <artifactId>metrics-core</artifactId>
+                <version>${metrics.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.codahale.metrics</groupId>
+                <artifactId>metrics-graphite</artifactId>
+                <version>${metrics.version}</version>
             </dependency>
 
         </dependencies>
