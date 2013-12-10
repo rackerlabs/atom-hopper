@@ -88,15 +88,6 @@ public class TomcatJdbcPoolGraphiteReporter {
                     reporter.stop();
                 }
             });
-/*
-            Helpful for testing
-
-            ConsoleReporter console = ConsoleReporter.forRegistry( registry )
-                  .convertRatesTo(TimeUnit.SECONDS)
-                  .convertDurationsTo( TimeUnit.MILLISECONDS )
-                  .build();
-            console.start( period, TimeUnit.SECONDS );
-*/
         }
     }
 }
