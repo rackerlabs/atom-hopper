@@ -1,13 +1,16 @@
 package org.atomhopper.jdbc.query;
 
 import org.apache.commons.lang.StringUtils;
-
-import java.util.List;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 public class SqlBuilder {
     private String searchString;
     private SearchType type;
     private int feedHeadDelayInSeconds = -1;
+    private DateTime startingTimestamp;
 
     private static final String EQUALS = "=";
     private static final String LESS_THAN = "<";
@@ -27,7 +30,9 @@ public class SqlBuilder {
     private static final String UNION_ALL = "UNION ALL";
 
     private static final String ORDER_BY_ASC = "ORDER BY datelastupdated ASC, id ASC LIMIT ?";
-    private static final String ORDER_BY_DESC = "ORDER BY datelastupdated DESC, id DESC LIMIT %s";
+    private static final String ORDER_BY_ASC_LIMIT = "ORDER BY datelastupdated ASC, id ASC LIMIT %s";
+    private static final String ORDER_BY_DESC_LIMIT = "ORDER BY datelastupdated DESC, id DESC LIMIT %s";
+    private static final String DB_TIMESTAMP_PATTERN = "yyyy-MM-dd HH:mm:ss z";
 
     public SqlBuilder searchString(String searchString) {
         this.searchString = searchString;
@@ -41,6 +46,11 @@ public class SqlBuilder {
 
     public SqlBuilder feedHeadDelayInSeconds(int delay) {
         this.feedHeadDelayInSeconds = delay;
+        return this;
+    }
+
+    public SqlBuilder startingTimestamp(DateTime timestamp) {
+        this.startingTimestamp = timestamp;
         return this;
     }
 
@@ -139,9 +149,9 @@ public class SqlBuilder {
                     builder.append(searchSql);
                 }
 
-                builder.append(String.format(ORDER_BY_DESC, QUESTION_MARK));
+                builder.append(String.format(ORDER_BY_DESC_LIMIT, QUESTION_MARK));
                 builder.append(CLOSE_PARENS + SPACE);
-                builder.append(String.format(ORDER_BY_DESC, QUESTION_MARK));
+                builder.append(String.format(ORDER_BY_DESC_LIMIT, QUESTION_MARK));
 
                 return builder.toString();
 
@@ -168,7 +178,7 @@ public class SqlBuilder {
                     builder.append(" seconds' ");
                 }
 
-                builder.append(String.format(ORDER_BY_DESC, QUESTION_MARK));
+                builder.append(String.format(ORDER_BY_DESC_LIMIT, QUESTION_MARK));
 
                 return builder.toString();
 
@@ -199,10 +209,48 @@ public class SqlBuilder {
                     builder.append(searchSql);
                 }
 
-                builder.append(String.format(ORDER_BY_DESC, 1));
+                builder.append(String.format(ORDER_BY_DESC_LIMIT, 1));
                 builder.append(CLOSE_PARENS + SPACE);
-                builder.append(String.format(ORDER_BY_DESC, 1));
+                builder.append(String.format(ORDER_BY_DESC_LIMIT, 1));
 
+                return builder.toString();
+
+            case BY_TIMESTAMP_FORWARD:
+            case BY_TIMESTAMP_BACKWARD:
+                if ( startingTimestamp == null ) {
+                    throw new IllegalArgumentException("for searchType " + type + ", startingTimestamp() must be used");
+                }
+                builder.append(SELECT);
+                builder.append(" ");
+
+                if ( feedHeadDelayInSeconds != -1 ) {
+                    builder.append(AND);
+                    builder.append(" datelastupdated < now() - interval '");
+                    builder.append(feedHeadDelayInSeconds);
+                    builder.append(" seconds' ");
+                }
+
+                DateTimeZone timeZone = startingTimestamp.getZone();
+
+                builder.append(AND);
+                builder.append(" (datelastupdated at time zone current_setting('TIMEZONE')) at time zone '");
+                builder.append(timeZone.getShortName(startingTimestamp.getMillis()));
+
+                if ( type == SearchType.BY_TIMESTAMP_BACKWARD ) {
+                    builder.append("' < '");
+                } else {
+                    builder.append("' > '");
+                }
+
+                DateTimeFormatter postgresDTF = DateTimeFormat.forPattern(DB_TIMESTAMP_PATTERN);
+                builder.append(startingTimestamp.toString(postgresDTF));
+                builder.append("'::timestamp ");
+
+                if ( type == SearchType.BY_TIMESTAMP_BACKWARD ) {
+                    builder.append(String.format(ORDER_BY_DESC_LIMIT, 1));
+                } else {
+                    builder.append(String.format(ORDER_BY_ASC_LIMIT, 1));
+                }
                 return builder.toString();
 
             case LAST_PAGE:

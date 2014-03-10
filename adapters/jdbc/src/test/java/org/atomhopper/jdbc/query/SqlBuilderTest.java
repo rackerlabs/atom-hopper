@@ -1,6 +1,9 @@
 package org.atomhopper.jdbc.query;
 
 import junit.framework.Assert;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
@@ -23,6 +26,8 @@ public class SqlBuilderTest {
         private String result_head_with_cats = "SELECT * FROM entries WHERE feed = ? AND categories @> ?::varchar[] ORDER BY datelastupdated DESC, id DESC LIMIT ?";
         private String result_last_with_cats = "SELECT * FROM entries WHERE feed = ? AND categories @> ?::varchar[] ORDER BY datelastupdated ASC, id ASC LIMIT ?";
         private String result_next_with_cats = "(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id < ? AND categories @> ?::varchar[] ) UNION ALL (SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? AND categories @> ?::varchar[] ORDER BY datelastupdated DESC, id DESC LIMIT 1) ORDER BY datelastupdated DESC, id DESC LIMIT 1";
+
+        private DateTimeFormatter isoDTF = ISODateTimeFormat.dateTimeNoMillis();
 
         @Test
         public void ShouldGetSqlForForwad() throws Exception {
@@ -117,6 +122,38 @@ public class SqlBuilderTest {
                     .toString();
 
             Assert.assertEquals(result_next_with_cats, result);
+        }
+
+        @Test(expected = IllegalArgumentException.class)
+        public void shouldGetExceptionOnStartingAtMissingTimezone() throws Exception {
+            DateTime startAt = isoDTF.parseDateTime("2014-03-03T08:51:32");
+            String result = new SqlBuilder()
+                                    .searchType(SearchType.BY_TIMESTAMP_BACKWARD)
+                                    .startingTimestamp(startAt)
+                                    .toString();
+        }
+
+        @Test(expected = IllegalArgumentException.class)
+        public void shouldGetExceptionOnStartingAtInvalidFormat() throws Exception {
+            DateTime startAt = isoDTF.parseDateTime("20140303T08:51:32Z");
+            String result = new SqlBuilder()
+                                    .searchType(SearchType.BY_TIMESTAMP_BACKWARD)
+                                    .startingTimestamp(startAt)
+                                    .toString();
+        }
+
+        @Test
+        public void shouldGetSelectWithTimestamp() throws Exception {
+            String startingTimestamp =  "2014-03-03T08:51:32Z";
+            DateTime startAt = isoDTF.parseDateTime(startingTimestamp);
+            String result = new SqlBuilder()
+                                    .searchType(SearchType.BY_TIMESTAMP_BACKWARD)
+                                    .startingTimestamp(startAt)
+                                    .toString();
+
+            String timestamp = startAt.getHourOfDay() + ":" + startAt.getMinuteOfHour() + ":" + startAt.getSecondOfMinute();
+            Assert.assertTrue("result string has timezone", result.contains("current_setting('TIMEZONE')"));
+            Assert.assertTrue("result string has correct time", result.contains(timestamp));
         }
     }
 }

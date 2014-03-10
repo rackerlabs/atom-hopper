@@ -47,4 +47,8 @@ public class GetFeedRequestImpl extends AbstractFeedRequest implements GetFeedRe
         final String direction = this.getRequestParameter(RequestQueryParameter.PAGE_DIRECTION.toString());
         return !StringUtils.isNullOrEmpty(direction) ? direction : "forward";
     }
+
+    public String getStartingAt() {
+        return this.getRequestParameter(RequestQueryParameter.STARTING_AT.toString());
+    }
 }

@@ -5,5 +5,7 @@ public enum SearchType {
     FEED_BACKWARD,
     FEED_HEAD,
     LAST_PAGE,
-    NEXT_LINK
+    NEXT_LINK,
+    BY_TIMESTAMP_FORWARD,
+    BY_TIMESTAMP_BACKWARD
 }
