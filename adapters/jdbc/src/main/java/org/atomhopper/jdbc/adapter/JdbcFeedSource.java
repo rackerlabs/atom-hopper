@@ -327,7 +327,10 @@ public class JdbcFeedSource implements FeedSource {
     private AdapterResponse<Feed> getFeedPage(GetFeedRequest getFeedRequest, String marker, int pageSize) {
 
         final String pageDirectionValue = getFeedRequest.getDirection();
-        final PageDirection pageDirection = PageDirection.valueOf(pageDirectionValue.toUpperCase());
+        PageDirection pageDirection = PageDirection.FORWARD;
+        if ( StringUtils.isNotEmpty(pageDirectionValue) ) {
+            pageDirection = PageDirection.valueOf(pageDirectionValue.toUpperCase());
+        }
 
         final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
 
