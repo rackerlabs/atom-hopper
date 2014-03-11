@@ -271,9 +271,6 @@ public class JdbcFeedSource implements FeedSource {
             return response;
         }
 
-        final String pageDirectionValue = getFeedRequest.getDirection();
-        final PageDirection pageDirection = PageDirection.valueOf(pageDirectionValue.toUpperCase());
-
         try {
 
             if ( StringUtils.isBlank(marker) && StringUtils.isBlank(startingAt) ) {
@@ -284,21 +281,11 @@ public class JdbcFeedSource implements FeedSource {
                 response = getLastPage(getFeedRequest, pageSize);
             } else if ( StringUtils.isNotBlank(marker) ) {
                 context = startTimer(String.format("get-feed-page-%s", getMetricBucketForPageSize(pageSize)));
-                PersistedEntry entryMarker = getEntry(marker, getFeedRequest.getFeedName());
-                if ( entryMarker == null ) {
-                    return ResponseBuilder.notFound("No entry with specified marker found");
-                }
-                response = getFeedPage(getFeedRequest, entryMarker, entryMarker.getDateLastUpdated(), pageSize);
+                response = getFeedPage(getFeedRequest, marker, pageSize);
             } else {
                 // we process 'startingAt' parameter here
                 context = startTimer(String.format("get-feed-page-startingAt-%s", getMetricBucketForPageSize(pageSize)));
-                DateTimeFormatter isoDTF = ISODateTimeFormat.dateTimeNoMillis();
-                DateTime startAt = isoDTF.parseDateTime(startingAt);
-                PersistedEntry entryMarker = getEntryByTimestamp(startAt, getFeedRequest.getFeedName(), pageDirection);
-                if ( entryMarker == null ) {
-                    return ResponseBuilder.notFound("No entry with specified startingAt timestamp found");
-                }
-                response = getFeedPage(getFeedRequest, entryMarker, startAt.toDate(), pageSize);
+                response = getFeedPageByTimestamp(getFeedRequest, startingAt, pageSize);
             }
         } catch (IllegalArgumentException iae) {
             response = ResponseBuilder.badRequest(iae.getMessage());
@@ -337,19 +324,52 @@ public class JdbcFeedSource implements FeedSource {
         return ResponseBuilder.found(hydratedFeed);
     }
 
-    private AdapterResponse<Feed> getFeedPage(GetFeedRequest getFeedRequest, PersistedEntry markerEntry, Date markerTimestamp, int pageSize) {
+    private AdapterResponse<Feed> getFeedPage(GetFeedRequest getFeedRequest, String marker, int pageSize) {
 
         final String pageDirectionValue = getFeedRequest.getDirection();
         final PageDirection pageDirection = PageDirection.valueOf(pageDirectionValue.toUpperCase());
 
         final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
+
+        PersistedEntry entryMarker = getEntry(marker, getFeedRequest.getFeedName());
+        if ( entryMarker == null ) {
+            return ResponseBuilder.notFound("No entry with specified marker found");
+        }
+
         final Feed feed = hydrateFeed(getFeedRequest.getAbdera(),
                                           enhancedGetFeedPage(getFeedRequest.getFeedName(),
-                                                              markerTimestamp,
-                                                              markerEntry.getId(),
+                                                              entryMarker.getDateLastUpdated(),
+                                                              entryMarker.getId(),
                                                               pageDirection,
                                                               searchString, pageSize),
                                           getFeedRequest, pageSize);
+        return ResponseBuilder.found(feed);
+    }
+
+    private AdapterResponse<Feed> getFeedPageByTimestamp(GetFeedRequest getFeedRequest, String startingAt, int pageSize) {
+
+        final String pageDirectionValue = getFeedRequest.getDirection();
+        PageDirection pageDirection = PageDirection.FORWARD;
+        if ( StringUtils.isNotEmpty(pageDirectionValue) ) {
+            pageDirection = PageDirection.valueOf(pageDirectionValue.toUpperCase());
+        }
+
+        final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
+
+        DateTimeFormatter isoDTF = ISODateTimeFormat.dateTimeNoMillis();
+        DateTime startAt = isoDTF.parseDateTime(startingAt);
+        PersistedEntry entryMarker = getEntryByTimestamp(startAt, getFeedRequest.getFeedName(), pageDirection);
+        if ( entryMarker == null ) {
+            return ResponseBuilder.notFound("No entry with specified startingAt timestamp found");
+        }
+
+        final Feed feed = hydrateFeed(getFeedRequest.getAbdera(),
+                enhancedGetFeedPage(getFeedRequest.getFeedName(),
+                        startAt.toDate(),
+                        entryMarker.getId(),
+                        pageDirection,
+                        searchString, pageSize),
+                getFeedRequest, pageSize);
         return ResponseBuilder.found(feed);
     }
 
