@@ -22,4 +22,6 @@ public interface GetFeedRequest extends FeedRequest {
     String getPageSize();
 
     String getDirection();
+
+    String getStartingAt();
 }

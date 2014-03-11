@@ -6,7 +6,8 @@ public enum RequestQueryParameter {
     SEARCH("search"),
     PAGE_DIRECTION("direction"),
     MARKER("marker"),
-    PAGE_LIMIT("limit");
+    PAGE_LIMIT("limit"),
+    STARTING_AT("startingAt");
 
     //Class contents
     private final String stringValue;
