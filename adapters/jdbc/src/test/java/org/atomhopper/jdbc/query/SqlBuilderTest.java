@@ -27,7 +27,7 @@ public class SqlBuilderTest {
         private String result_last_with_cats = "SELECT * FROM entries WHERE feed = ? AND categories @> ?::varchar[] ORDER BY datelastupdated ASC, id ASC LIMIT ?";
         private String result_next_with_cats = "(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id < ? AND categories @> ?::varchar[] ) UNION ALL (SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? AND categories @> ?::varchar[] ORDER BY datelastupdated DESC, id DESC LIMIT 1) ORDER BY datelastupdated DESC, id DESC LIMIT 1";
 
-        private DateTimeFormatter isoDTF = ISODateTimeFormat.dateTimeNoMillis();
+        private DateTimeFormatter isoDTF = ISODateTimeFormat.dateTime();
 
         @Test
         public void ShouldGetSqlForForwad() throws Exception {
@@ -126,7 +126,7 @@ public class SqlBuilderTest {
 
         @Test(expected = IllegalArgumentException.class)
         public void shouldGetExceptionOnStartingAtMissingTimezone() throws Exception {
-            DateTime startAt = isoDTF.parseDateTime("2014-03-03T08:51:32");
+            DateTime startAt = isoDTF.parseDateTime("2014-03-03T08:51:32.000");
             String result = new SqlBuilder()
                                     .searchType(SearchType.BY_TIMESTAMP_BACKWARD)
                                     .startingTimestamp(startAt)
@@ -135,7 +135,7 @@ public class SqlBuilderTest {
 
         @Test(expected = IllegalArgumentException.class)
         public void shouldGetExceptionOnStartingAtInvalidFormat() throws Exception {
-            DateTime startAt = isoDTF.parseDateTime("20140303T08:51:32Z");
+            DateTime startAt = isoDTF.parseDateTime("20140303T08:51:32.000Z");
             String result = new SqlBuilder()
                                     .searchType(SearchType.BY_TIMESTAMP_BACKWARD)
                                     .startingTimestamp(startAt)
@@ -144,7 +144,7 @@ public class SqlBuilderTest {
 
         @Test
         public void shouldGetSelectWithTimestamp() throws Exception {
-            String startingTimestamp =  "2014-03-03T08:51:32Z";
+            String startingTimestamp =  "2014-03-03T08:51:32.000Z";
             DateTime startAt = isoDTF.parseDateTime(startingTimestamp);
             String result = new SqlBuilder()
                                     .searchType(SearchType.BY_TIMESTAMP_BACKWARD)

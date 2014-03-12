@@ -359,7 +359,7 @@ public class JdbcFeedSource implements FeedSource {
 
         final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
 
-        DateTimeFormatter isoDTF = ISODateTimeFormat.dateTimeNoMillis();
+        DateTimeFormatter isoDTF = ISODateTimeFormat.dateTime();
         DateTime startAt = isoDTF.parseDateTime(startingAt);
         PersistedEntry entryMarker = getEntryByTimestamp(startAt, getFeedRequest.getFeedName(), pageDirection);
         if ( entryMarker == null ) {
