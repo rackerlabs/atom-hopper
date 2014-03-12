@@ -32,7 +32,7 @@ public class SqlBuilder {
     private static final String ORDER_BY_ASC = "ORDER BY datelastupdated ASC, id ASC LIMIT ?";
     private static final String ORDER_BY_ASC_LIMIT = "ORDER BY datelastupdated ASC, id ASC LIMIT %s";
     private static final String ORDER_BY_DESC_LIMIT = "ORDER BY datelastupdated DESC, id DESC LIMIT %s";
-    private static final String DB_TIMESTAMP_PATTERN = "yyyy-MM-dd HH:mm:ss z";
+    private static final String DB_TIMESTAMP_PATTERN = "yyyy-MM-dd HH:mm:ss.SSS z";
 
     public SqlBuilder searchString(String searchString) {
         this.searchString = searchString;
