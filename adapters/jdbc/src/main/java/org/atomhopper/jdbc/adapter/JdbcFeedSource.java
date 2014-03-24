@@ -368,7 +368,7 @@ public class JdbcFeedSource implements FeedSource {
 
         final Feed feed = hydrateFeed(getFeedRequest.getAbdera(),
                 enhancedGetFeedPage(getFeedRequest.getFeedName(),
-                        startAt.toDate(),
+                        entryMarker.getDateLastUpdated(),
                         entryMarker.getId(),
                         pageDirection,
                         searchString, pageSize),
