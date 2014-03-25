@@ -31,7 +31,9 @@ public class SqlBuilder {
 
     private static final String ORDER_BY_ASC = "ORDER BY datelastupdated ASC, id ASC LIMIT ?";
     private static final String ORDER_BY_ASC_LIMIT = "ORDER BY datelastupdated ASC, id ASC LIMIT %s";
+    private static final String ORDER_BY_DATE_ASC_ID_DESC_LIMIT = "ORDER BY datelastupdated ASC, id DESC LIMIT %s";
     private static final String ORDER_BY_DESC_LIMIT = "ORDER BY datelastupdated DESC, id DESC LIMIT %s";
+    private static final String ORDER_BY_DATE_DESC_ID_ASC_LIMIT = "ORDER BY datelastupdated DESC, id ASC LIMIT %s";
     private static final String DB_TIMESTAMP_PATTERN = "yyyy-MM-dd HH:mm:ss.SSS z";
 
     public SqlBuilder searchString(String searchString) {
@@ -237,9 +239,9 @@ public class SqlBuilder {
                 builder.append(timeZone.getShortName(startingTimestamp.getMillis()));
 
                 if ( type == SearchType.BY_TIMESTAMP_BACKWARD ) {
-                    builder.append("' < '");
+                    builder.append("' <= '");
                 } else {
-                    builder.append("' > '");
+                    builder.append("' >= '");
                 }
 
                 DateTimeFormatter postgresDTF = DateTimeFormat.forPattern(DB_TIMESTAMP_PATTERN);
@@ -247,9 +249,9 @@ public class SqlBuilder {
                 builder.append("'::timestamp ");
 
                 if ( type == SearchType.BY_TIMESTAMP_BACKWARD ) {
-                    builder.append(String.format(ORDER_BY_DESC_LIMIT, 1));
+                    builder.append(String.format(ORDER_BY_DATE_DESC_ID_ASC_LIMIT, 1));
                 } else {
-                    builder.append(String.format(ORDER_BY_ASC_LIMIT, 1));
+                    builder.append(String.format(ORDER_BY_DATE_ASC_ID_DESC_LIMIT, 1));
                 }
                 return builder.toString();
 
