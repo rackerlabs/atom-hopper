@@ -416,7 +416,7 @@
 
                                                 // workaround for the veracode-client-java not taking buildVersion as String
                                                 version = version - '-SNAPSHOT'
-                                                version = version.replaceAll("\\.","")
+                                                version = version.replaceAll("\\.","") + '${build.number}'
                                                 print version
                                                 def buildVersion = version.toInteger()
 
