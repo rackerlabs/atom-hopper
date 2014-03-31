@@ -95,6 +95,11 @@
             <artifactId>metrics-servlet</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.rackspace.api.clients</groupId>
+            <artifactId>veracode-client</artifactId>
+            <version>1.3</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -378,6 +383,50 @@
                                             </mapper>
                                         </data>
                                     </dataSet>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>upload-veracode-static-scan</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.gmaven</groupId>
+                        <artifactId>gmaven-plugin</artifactId>
+                        <version>1.3</version>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>execute</goal>
+                                </goals>
+                                <configuration>
+                                    <source>
+                                        def client = new com.rackspace.api.clients.veracode.DefaultVeracodeApiClient("https://analysiscenter.veracode.com/api/", '${veracode.username}', '${veracode.password}', System.out)
+                                        def pattern = ~/atomhopper.*\.war/
+                                        def copyFile = new File('${project.basedir}' + "/target/atomhopper.war") 
+                                        def warFiles = new File('${project.basedir}', '/target').eachFileMatch(pattern) {
+                                            file ->
+                                                def version = project.version
+
+                                                // workaround for the veracode-client-java not taking buildVersion as String
+                                                version = version - '-SNAPSHOT'
+                                                version = version.replaceAll("\\.","")
+                                                print version
+                                                def buildVersion = version.toInteger()
+
+                                                // workaround for veracode wanting the same filename for each scan
+                                                new groovy.util.AntBuilder().copy(file:file.canonicalPath, tofile:copyFile.canonicalPath)
+
+                                                client.scanArtifacts([copyFile].asList(), buildVersion, "Atom Hopper", "Linux")
+                                                new groovy.util.AntBuilder().delete(file:copyFile.canonicalPath)
+                                        } 
+                                    </source>
                                 </configuration>
                             </execution>
                         </executions>
