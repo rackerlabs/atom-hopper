@@ -36,6 +36,13 @@ public class SqlBuilder {
     private static final String ORDER_BY_DATE_DESC_ID_ASC_LIMIT = "ORDER BY datelastupdated DESC, id ASC LIMIT %s";
     private static final String DB_TIMESTAMP_PATTERN = "yyyy-MM-dd HH:mm:ss.SSS z";
 
+    private SearchToSqlConverter searchToSqlConverter;
+
+    public SqlBuilder( SearchToSqlConverter converter ) {
+
+        searchToSqlConverter = converter;
+    }
+
     public SqlBuilder searchString(String searchString) {
         this.searchString = searchString;
         return this;
@@ -59,7 +66,7 @@ public class SqlBuilder {
     @Override
     public String toString() {
 
-        String searchSql = SearchToSqlConverter.getSqlFromSearchString(searchString);
+        String searchSql = searchToSqlConverter.getSqlFromSearchString(searchString);
         StringBuilder builder = new StringBuilder();
 
         switch (type) {

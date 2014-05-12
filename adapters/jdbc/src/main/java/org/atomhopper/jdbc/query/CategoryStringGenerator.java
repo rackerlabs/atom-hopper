@@ -2,6 +2,7 @@ package org.atomhopper.jdbc.query;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public final class CategoryStringGenerator {
 
@@ -12,15 +13,81 @@ public final class CategoryStringGenerator {
         throw new AssertionError();
     }
 
-    public static String getPostgresCategoryString(String searchString) {
+    /**
+     * Takes a search string, prefix map & prefix character & returns an array of strings which are arguments to the
+     * corresponding generated SQL statement.
+     *
+     * See SearchToSqlConverter for more details.
+     *
+     * @param searchString
+     * @param mapPrefix
+     * @param prefixSplit
+     *
+     * @return
+     */
+    public static List<String> getPostgresCategoryString(String searchString, Map<String, String> mapPrefix, String prefixSplit ) {
+
+        List<String> finalList = new ArrayList<String>();
+
 
         if (searchString == null || !(searchString.trim().length() > 0)) {
-            return "{}";
+
+            finalList.add( "{}" );
+            return finalList;
         }
 
         List<String> categories = parse(searchString.trim().toLowerCase());
 
-        return PostgreSQLTextArray.stringArrayToPostgreSQLTextArray(categories.toArray(new String[categories.size()]));
+        List<String> catHolder = new ArrayList<String>();
+
+        // find if any categories are prefixed, if so, split them out.
+        for( String cat : categories ) {
+
+            if (prefixSplit != null ) {
+
+                int index = cat.indexOf( prefixSplit );
+
+                if ( index != -1 ) {
+
+                    String prefix = cat.substring( 0, index );
+                    String value = cat.substring( index + 1 );
+
+                    if ( mapPrefix.containsKey( prefix ) ) {
+
+                        addToFinalList( finalList, catHolder );
+
+                        finalList.add( value );
+                    }
+                    else {
+
+                        catHolder.add( cat );
+                    }
+                }
+                else {
+
+                    catHolder.add( cat );
+                }
+            }
+            else {
+                catHolder.add( cat );
+            }
+        }
+
+        addToFinalList( finalList, catHolder );
+
+        return finalList;
+    }
+
+    private static void addToFinalList( List<String> finalList, List<String> catHolder ) {
+
+        if ( !catHolder.isEmpty() ) {
+
+            String psArray = PostgreSQLTextArray.stringArrayToPostgreSQLTextArray( catHolder.toArray( new String[ catHolder
+                  .size() ] ) );
+            finalList.add( psArray );
+
+            catHolder.clear();
+        }
     }
 
     private static List<String> parse(String searchString) {
@@ -53,7 +120,7 @@ public final class CategoryStringGenerator {
             final char nextChar = searchString.charAt(charIndex);
 
             if (isEscaped || !isOperator(nextChar)) {
-                builder.append(nextChar);
+                builder.append( nextChar );
                 isEscaped = false;
             } else {
                 if (nextChar == ESCAPE_OPERATOR) {
