@@ -236,7 +236,7 @@ public class SqlBuilder {
 
                 builder.append(AND);
                 builder.append(" (datelastupdated at time zone current_setting('TIMEZONE')) at time zone '");
-                builder.append(timeZone.getShortName(startingTimestamp.getMillis()));
+                builder.append(timeZone.getID());
 
                 if ( type == SearchType.BY_TIMESTAMP_BACKWARD ) {
                     builder.append("' <= '");
