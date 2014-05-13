@@ -50,7 +50,7 @@ public final class CategoryStringGenerator {
                 if ( index != -1 ) {
 
                     String prefix = cat.substring( 0, index );
-                    String value = cat.substring( index + 1 );
+                    String value = cat.substring( index + prefixSplit.length() );
 
                     if ( mapPrefix.containsKey( prefix ) ) {
 

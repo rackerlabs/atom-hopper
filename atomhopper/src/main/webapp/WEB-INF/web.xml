@@ -62,11 +62,6 @@
         <servlet-class>org.atomhopper.AtomHopperVersionServlet</servlet-class>
     </servlet>
 
-    <servlet id="atom-hopper-log-test">
-        <servlet-name>Atom-Hopper-Log-Test</servlet-name>
-        <servlet-class>org.atomhopper.AtomHopperLogCheckServlet</servlet-class>
-    </servlet>
-
     <servlet id="atom-hopper-metrics">
         <servlet-name>Atom-Hopper-Metrics</servlet-name>
         <servlet-class>com.yammer.metrics.reporting.MetricsServlet</servlet-class>
@@ -84,11 +79,6 @@
     <servlet-mapping id="atom-hopper-version-mapping">
         <servlet-name>Atom-Hopper-Version</servlet-name>
         <url-pattern>/buildinfo</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping id="atom-hopper-log-test-mapping">
-        <servlet-name>Atom-Hopper-Log-Test</servlet-name>
-        <url-pattern>/logtest</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping id="metrics-mapping">

@@ -18,7 +18,9 @@ public class SqlBuilderTest {
     public static class WhenCallingSearchSql {
 
         private String searchString = "(cat=D)";
-        private String searchStringPrefix = "(AND(cat=D)(cat=tid:1234))";
+        private String searchStringAndPrefix = "(AND(cat=D)(cat=tid:1234))";
+        private String searchStringOrPrefix = "(OR(cat=D)(cat=tid:1234))";
+        private String searchStringNotPrefix = "(NOT(AND(cat=D)(cat=tid:1234)))";
 
 
         private String result_forward = "(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id > ? ) UNION ALL (SELECT * FROM entries WHERE feed = ? AND datelastupdated > ? ORDER BY datelastupdated ASC, id ASC LIMIT ?) ORDER BY datelastupdated ASC, id ASC LIMIT ?";
@@ -28,15 +30,25 @@ public class SqlBuilderTest {
         private String result_next = "(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id < ? ) UNION ALL (SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? ORDER BY datelastupdated DESC, id DESC LIMIT 1) ORDER BY datelastupdated DESC, id DESC LIMIT 1";
 
         private String result_forward_with_cats = "(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id > ? AND categories @> ?::varchar[] ) UNION ALL (SELECT * FROM entries WHERE feed = ? AND datelastupdated > ? AND categories @> ?::varchar[] ORDER BY datelastupdated ASC, id ASC LIMIT ?) ORDER BY datelastupdated ASC, id ASC LIMIT ?";
-        private String result_forward_with_cats_prefix = "(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id > ? AND( categories @> ?::varchar[]  AND  tenantId = ? )) UNION ALL (SELECT * FROM entries WHERE feed = ? AND datelastupdated > ? AND( categories @> ?::varchar[]  AND  tenantId = ? )ORDER BY datelastupdated ASC, id ASC LIMIT ?) ORDER BY datelastupdated ASC, id ASC LIMIT ?";
+        private String result_forward_with_cats_and_prefix = "(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id > ? AND( categories @> ?::varchar[]  AND  tenantId = ? )) UNION ALL (SELECT * FROM entries WHERE feed = ? AND datelastupdated > ? AND( categories @> ?::varchar[]  AND  tenantId = ? )ORDER BY datelastupdated ASC, id ASC LIMIT ?) ORDER BY datelastupdated ASC, id ASC LIMIT ?";
+        private String result_forward_with_cats_not_prefix = "(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id > ? AND NOT ( categories @> ?::varchar[]  AND  tenantId = ? )) UNION ALL (SELECT * FROM entries WHERE feed = ? AND datelastupdated > ? AND NOT ( categories @> ?::varchar[]  AND  tenantId = ? )ORDER BY datelastupdated ASC, id ASC LIMIT ?) ORDER BY datelastupdated ASC, id ASC LIMIT ?";
+        private String result_forward_with_cats_or_prefix = "(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id > ? AND( categories @> ?::varchar[]  OR  tenantId = ? )) UNION ALL (SELECT * FROM entries WHERE feed = ? AND datelastupdated > ? AND( categories @> ?::varchar[]  OR  tenantId = ? )ORDER BY datelastupdated ASC, id ASC LIMIT ?) ORDER BY datelastupdated ASC, id ASC LIMIT ?";
         private String result_backward_with_cats = "(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id <= ? AND categories @> ?::varchar[] ) UNION ALL (SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? AND categories @> ?::varchar[] ORDER BY datelastupdated DESC, id DESC LIMIT ?) ORDER BY datelastupdated DESC, id DESC LIMIT ?";
-        private String result_backward_with_cats_prefix = "(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id <= ? AND( categories @> ?::varchar[]  AND  tenantId = ? )) UNION ALL (SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? AND( categories @> ?::varchar[]  AND  tenantId = ? )ORDER BY datelastupdated DESC, id DESC LIMIT ?) ORDER BY datelastupdated DESC, id DESC LIMIT ?";
+        private String result_backward_with_cats_and_prefix = "(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id <= ? AND( categories @> ?::varchar[]  AND  tenantId = ? )) UNION ALL (SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? AND( categories @> ?::varchar[]  AND  tenantId = ? )ORDER BY datelastupdated DESC, id DESC LIMIT ?) ORDER BY datelastupdated DESC, id DESC LIMIT ?";
+        private String result_backward_with_cats_not_prefix = "(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id <= ? AND NOT ( categories @> ?::varchar[]  AND  tenantId = ? )) UNION ALL (SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? AND NOT ( categories @> ?::varchar[]  AND  tenantId = ? )ORDER BY datelastupdated DESC, id DESC LIMIT ?) ORDER BY datelastupdated DESC, id DESC LIMIT ?";
+        private String result_backward_with_cats_or_prefix = "(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id <= ? AND( categories @> ?::varchar[]  OR  tenantId = ? )) UNION ALL (SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? AND( categories @> ?::varchar[]  OR  tenantId = ? )ORDER BY datelastupdated DESC, id DESC LIMIT ?) ORDER BY datelastupdated DESC, id DESC LIMIT ?";
         private String result_head_with_cats = "SELECT * FROM entries WHERE feed = ? AND categories @> ?::varchar[] ORDER BY datelastupdated DESC, id DESC LIMIT ?";
-        private String result_head_with_cats_prefix = "SELECT * FROM entries WHERE feed = ? AND( categories @> ?::varchar[]  AND  tenantId = ? )ORDER BY datelastupdated DESC, id DESC LIMIT ?";
+        private String result_head_with_cats_and_prefix = "SELECT * FROM entries WHERE feed = ? AND( categories @> ?::varchar[]  AND  tenantId = ? )ORDER BY datelastupdated DESC, id DESC LIMIT ?";
+        private String result_head_with_cats_not_prefix = "SELECT * FROM entries WHERE feed = ? AND NOT ( categories @> ?::varchar[]  AND  tenantId = ? )ORDER BY datelastupdated DESC, id DESC LIMIT ?";
+        private String result_head_with_cats_or_prefix = "SELECT * FROM entries WHERE feed = ? AND( categories @> ?::varchar[]  OR  tenantId = ? )ORDER BY datelastupdated DESC, id DESC LIMIT ?";
         private String result_last_with_cats = "SELECT * FROM entries WHERE feed = ? AND categories @> ?::varchar[] ORDER BY datelastupdated ASC, id ASC LIMIT ?";
-        private String result_last_with_cats_prefix = "SELECT * FROM entries WHERE feed = ? AND( categories @> ?::varchar[]  AND  tenantId = ? )ORDER BY datelastupdated ASC, id ASC LIMIT ?";
+        private String result_last_with_cats_and_prefix = "SELECT * FROM entries WHERE feed = ? AND( categories @> ?::varchar[]  AND  tenantId = ? )ORDER BY datelastupdated ASC, id ASC LIMIT ?";
+        private String result_last_with_cats_not_prefix = "SELECT * FROM entries WHERE feed = ? AND NOT ( categories @> ?::varchar[]  AND  tenantId = ? )ORDER BY datelastupdated ASC, id ASC LIMIT ?";
+        private String result_last_with_cats_or_prefix = "SELECT * FROM entries WHERE feed = ? AND( categories @> ?::varchar[]  OR  tenantId = ? )ORDER BY datelastupdated ASC, id ASC LIMIT ?";
         private String result_next_with_cats = "(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id < ? AND categories @> ?::varchar[] ) UNION ALL (SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? AND categories @> ?::varchar[] ORDER BY datelastupdated DESC, id DESC LIMIT 1) ORDER BY datelastupdated DESC, id DESC LIMIT 1";
-        private String result_next_with_cats_prefix = "(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id < ? AND( categories @> ?::varchar[]  AND  tenantId = ? )) UNION ALL (SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? AND( categories @> ?::varchar[]  AND  tenantId = ? )ORDER BY datelastupdated DESC, id DESC LIMIT 1) ORDER BY datelastupdated DESC, id DESC LIMIT 1";
+        private String result_next_with_cats_and_prefix = "(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id < ? AND( categories @> ?::varchar[]  AND  tenantId = ? )) UNION ALL (SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? AND( categories @> ?::varchar[]  AND  tenantId = ? )ORDER BY datelastupdated DESC, id DESC LIMIT 1) ORDER BY datelastupdated DESC, id DESC LIMIT 1";
+        private String result_next_with_cats_not_prefix = "(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id < ? AND NOT ( categories @> ?::varchar[]  AND  tenantId = ? )) UNION ALL (SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? AND NOT ( categories @> ?::varchar[]  AND  tenantId = ? )ORDER BY datelastupdated DESC, id DESC LIMIT 1) ORDER BY datelastupdated DESC, id DESC LIMIT 1";
+        private String result_next_with_cats_or_prefix = "(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id < ? AND( categories @> ?::varchar[]  OR  tenantId = ? )) UNION ALL (SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? AND( categories @> ?::varchar[]  OR  tenantId = ? )ORDER BY datelastupdated DESC, id DESC LIMIT 1) ORDER BY datelastupdated DESC, id DESC LIMIT 1";
 
         private DateTimeFormatter isoDTF = ISODateTimeFormat.dateTime();
 
@@ -120,15 +132,39 @@ public class SqlBuilderTest {
         }
 
         @Test
-        public void ShouldGetSqlForForwadWithCatsPrefix() throws Exception {
+        public void ShouldGetSqlForForwadWithCatsAndPrefix() throws Exception {
             SearchToSqlConverter searchToSqlConverter = new SearchToSqlConverter( map, PREFIX_SPLIT );
 
             String result = new SqlBuilder( searchToSqlConverter )
-                  .searchString( searchStringPrefix )
+                  .searchString( searchStringAndPrefix )
                   .searchType(SearchType.FEED_FORWARD)
                   .toString();
 
-            Assert.assertEquals(result_forward_with_cats_prefix, result);
+            Assert.assertEquals(result_forward_with_cats_and_prefix, result);
+        }
+
+        @Test
+        public void ShouldGetSqlForForwadWithCatsNotPrefix() throws Exception {
+            SearchToSqlConverter searchToSqlConverter = new SearchToSqlConverter( map, PREFIX_SPLIT );
+
+            String result = new SqlBuilder( searchToSqlConverter )
+                  .searchString( searchStringNotPrefix )
+                  .searchType(SearchType.FEED_FORWARD)
+                  .toString();
+
+            Assert.assertEquals(result_forward_with_cats_not_prefix, result);
+        }
+
+        @Test
+        public void ShouldGetSqlForForwadWithCatsOrPrefix() throws Exception {
+            SearchToSqlConverter searchToSqlConverter = new SearchToSqlConverter( map, PREFIX_SPLIT );
+
+            String result = new SqlBuilder( searchToSqlConverter )
+                  .searchString( searchStringOrPrefix )
+                  .searchType(SearchType.FEED_FORWARD)
+                  .toString();
+
+            Assert.assertEquals(result_forward_with_cats_or_prefix, result);
         }
 
         @Test
@@ -144,15 +180,39 @@ public class SqlBuilderTest {
         }
 
         @Test
-        public void ShouldGetSqlForBackwardWithCatsPrefix() throws Exception {
+        public void ShouldGetSqlForBackwardWithCatsAndPrefix() throws Exception {
             SearchToSqlConverter searchToSqlConverter = new SearchToSqlConverter( map, PREFIX_SPLIT );
 
             String result = new SqlBuilder( searchToSqlConverter )
-                  .searchString( searchStringPrefix )
+                  .searchString( searchStringAndPrefix )
                   .searchType(SearchType.FEED_BACKWARD)
                   .toString();
 
-            Assert.assertEquals(result_backward_with_cats_prefix, result);
+            Assert.assertEquals(result_backward_with_cats_and_prefix, result);
+        }
+
+        @Test
+        public void ShouldGetSqlForBackwardWithCatsNotPrefix() throws Exception {
+            SearchToSqlConverter searchToSqlConverter = new SearchToSqlConverter( map, PREFIX_SPLIT );
+
+            String result = new SqlBuilder( searchToSqlConverter )
+                  .searchString( searchStringNotPrefix )
+                  .searchType(SearchType.FEED_BACKWARD)
+                  .toString();
+
+            Assert.assertEquals(result_backward_with_cats_not_prefix, result);
+        }
+
+        @Test
+        public void ShouldGetSqlForBackwardWithCatsOrPrefix() throws Exception {
+            SearchToSqlConverter searchToSqlConverter = new SearchToSqlConverter( map, PREFIX_SPLIT );
+
+            String result = new SqlBuilder( searchToSqlConverter )
+                  .searchString( searchStringOrPrefix )
+                  .searchType(SearchType.FEED_BACKWARD)
+                  .toString();
+
+            Assert.assertEquals(result_backward_with_cats_or_prefix, result);
         }
 
         @Test
@@ -168,15 +228,39 @@ public class SqlBuilderTest {
         }
 
         @Test
-        public void ShouldGetSqlForHeadWithCatsPrefix() throws Exception {
+        public void ShouldGetSqlForHeadWithCatsAndPrefix() throws Exception {
             SearchToSqlConverter searchToSqlConverter = new SearchToSqlConverter( map, PREFIX_SPLIT );
 
             String result = new SqlBuilder( searchToSqlConverter )
-                  .searchString( searchStringPrefix )
+                  .searchString( searchStringAndPrefix )
                   .searchType(SearchType.FEED_HEAD)
                   .toString();
 
-            Assert.assertEquals(result_head_with_cats_prefix, result);
+            Assert.assertEquals(result_head_with_cats_and_prefix, result);
+        }
+
+        @Test
+        public void ShouldGetSqlForHeadWithCatsNotPrefix() throws Exception {
+            SearchToSqlConverter searchToSqlConverter = new SearchToSqlConverter( map, PREFIX_SPLIT );
+
+            String result = new SqlBuilder( searchToSqlConverter )
+                  .searchString( searchStringNotPrefix )
+                  .searchType(SearchType.FEED_HEAD)
+                  .toString();
+
+            Assert.assertEquals(result_head_with_cats_not_prefix, result);
+        }
+
+        @Test
+        public void ShouldGetSqlForHeadWithCatsOrPrefix() throws Exception {
+            SearchToSqlConverter searchToSqlConverter = new SearchToSqlConverter( map, PREFIX_SPLIT );
+
+            String result = new SqlBuilder( searchToSqlConverter )
+                  .searchString( searchStringOrPrefix )
+                  .searchType(SearchType.FEED_HEAD)
+                  .toString();
+
+            Assert.assertEquals(result_head_with_cats_or_prefix, result);
         }
 
         @Test
@@ -192,15 +276,39 @@ public class SqlBuilderTest {
         }
 
         @Test
-        public void ShouldGetSqlForLastWithCatsPrefix() throws Exception {
+        public void ShouldGetSqlForLastWithCatsAndPrefix() throws Exception {
             SearchToSqlConverter searchToSqlConverter = new SearchToSqlConverter( map, PREFIX_SPLIT );
 
             String result = new SqlBuilder( searchToSqlConverter )
-                  .searchString( searchStringPrefix )
+                  .searchString( searchStringAndPrefix )
                   .searchType(SearchType.LAST_PAGE)
                   .toString();
 
-            Assert.assertEquals(result_last_with_cats_prefix, result);
+            Assert.assertEquals(result_last_with_cats_and_prefix, result);
+        }
+
+        @Test
+        public void ShouldGetSqlForLastWithCatsNotPrefix() throws Exception {
+            SearchToSqlConverter searchToSqlConverter = new SearchToSqlConverter( map, PREFIX_SPLIT );
+
+            String result = new SqlBuilder( searchToSqlConverter )
+                  .searchString( searchStringNotPrefix )
+                  .searchType(SearchType.LAST_PAGE)
+                  .toString();
+
+            Assert.assertEquals(result_last_with_cats_not_prefix, result);
+        }
+
+        @Test
+        public void ShouldGetSqlForLastWithCatsOrPrefix() throws Exception {
+            SearchToSqlConverter searchToSqlConverter = new SearchToSqlConverter( map, PREFIX_SPLIT );
+
+            String result = new SqlBuilder( searchToSqlConverter )
+                  .searchString( searchStringOrPrefix )
+                  .searchType(SearchType.LAST_PAGE)
+                  .toString();
+
+            Assert.assertEquals(result_last_with_cats_or_prefix, result);
         }
 
         @Test
@@ -216,15 +324,39 @@ public class SqlBuilderTest {
         }
 
         @Test
-        public void ShouldGetSqlForNextWithCatsPrefix() throws Exception {
+        public void ShouldGetSqlForNextWithCatsAndPrefix() throws Exception {
             SearchToSqlConverter searchToSqlConverter = new SearchToSqlConverter( map, PREFIX_SPLIT );
 
             String result = new SqlBuilder( searchToSqlConverter )
-                  .searchString( searchStringPrefix )
+                  .searchString( searchStringAndPrefix )
                   .searchType(SearchType.NEXT_LINK)
                   .toString();
 
-            Assert.assertEquals(result_next_with_cats_prefix, result);
+            Assert.assertEquals(result_next_with_cats_and_prefix, result);
+        }
+
+        @Test
+        public void ShouldGetSqlForNextWithCatsNotPrefix() throws Exception {
+            SearchToSqlConverter searchToSqlConverter = new SearchToSqlConverter( map, PREFIX_SPLIT );
+
+            String result = new SqlBuilder( searchToSqlConverter )
+                  .searchString( searchStringNotPrefix )
+                  .searchType(SearchType.NEXT_LINK)
+                  .toString();
+
+            Assert.assertEquals(result_next_with_cats_not_prefix, result);
+        }
+
+        @Test
+        public void ShouldGetSqlForNextWithCatsOrPrefix() throws Exception {
+            SearchToSqlConverter searchToSqlConverter = new SearchToSqlConverter( map, PREFIX_SPLIT );
+
+            String result = new SqlBuilder( searchToSqlConverter )
+                  .searchString( searchStringOrPrefix )
+                  .searchType(SearchType.NEXT_LINK)
+                  .toString();
+
+            Assert.assertEquals(result_next_with_cats_or_prefix, result);
         }
 
         @Test(expected = IllegalArgumentException.class)

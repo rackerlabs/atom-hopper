@@ -31,7 +31,7 @@ public class SearchToSqlConverterTest {
         private String not_search_result = " NOT  categories @> ?::varchar[] ";
 
         private String classic_search = "+A";
-        private String classic_search_result = "( categories @> ?::varchar[] )";
+        private String classic_search_result = "( categories && ?::varchar[] )";
 
         private String no_plus_or_parens_search = "search";
         private String bad_ldap_search = "(cat=D";
@@ -51,7 +51,13 @@ public class SearchToSqlConverterTest {
         private String prefix_not_search_result = " NOT  tenantId = ? ";
 
         private String prefix_classic_search = "+tid:A+B";
-        private String prefix_classic_search_result = "( tenantId = ?  OR  categories @> ?::varchar[] )";
+        private String prefix_classic_search_result = "( tenantId = ?  OR  categories && ?::varchar[] )";
+
+        private String prefix_classic_search_3 = "+B+tid:A+C";
+        private String prefix_classic_search_result_3 = "( categories && ?::varchar[]  OR  tenantId = ?  OR  categories && ?::varchar[] )";
+
+        private String classic_search_or = "+A+B";
+        private String classic_search_result_or = "( categories && ?::varchar[] )";
 
         private static Map<String, String> prefixMapper = new HashMap<String, String>();
 
@@ -236,6 +242,22 @@ public class SearchToSqlConverterTest {
 
             String result = searchToSqlConverter.getSqlFromSearchString(prefix_classic_search);
             assertEquals(prefix_classic_search_result, result);
+        }
+
+        @Test
+        public void ShouldGetSqlForClassicPrefixThree() throws Exception {
+            SearchToSqlConverter searchToSqlConverter = new SearchToSqlConverter( prefixMapper, PREFIX_SPLIT );
+
+            String result = searchToSqlConverter.getSqlFromSearchString(prefix_classic_search_3);
+            assertEquals(prefix_classic_search_result_3, result);
+        }
+
+        @Test
+        public void ShouldGetSqlForClassicOr() throws Exception {
+            SearchToSqlConverter searchToSqlConverter = new SearchToSqlConverter( prefixMapper, PREFIX_SPLIT );
+
+            String result = searchToSqlConverter.getSqlFromSearchString(classic_search_or);
+            assertEquals(classic_search_result_or, result);
         }
 
         @Test(expected = IllegalArgumentException.class)

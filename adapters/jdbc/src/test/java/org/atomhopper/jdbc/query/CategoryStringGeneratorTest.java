@@ -24,6 +24,7 @@ public class CategoryStringGeneratorTest {
     final String SPLIT = ":";
 
     final String COL_CAT = "+pOne:col+cat1";
+    final String COL_CAT_3 = "+cat1+pOne:col+cat2";
 
     @Before
     public void setUp() throws Exception {
@@ -39,6 +40,16 @@ public class CategoryStringGeneratorTest {
         assertEquals( result.size(), 2 );
         assertEquals(result.get( 0 ), "col" );
         assertEquals(result.get( 1 ), "{cat1}" );
+    }
+
+    @Test
+    public void shouldGenerateThreeItems() {
+
+        List<String> result = CategoryStringGenerator.getPostgresCategoryString( COL_CAT_3, prefixMap, SPLIT );
+        assertEquals( result.size(), 3 );
+        assertEquals(result.get( 0 ), "{cat1}" );
+        assertEquals(result.get( 1 ), "col" );
+        assertEquals(result.get( 2 ), "{cat2}" );
     }
 
     @Test

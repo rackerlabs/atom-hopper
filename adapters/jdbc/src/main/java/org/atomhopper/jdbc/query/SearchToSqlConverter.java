@@ -51,6 +51,8 @@ public class SearchToSqlConverter {
     private static final String CATEGORY = "cat";
     private static final String CATEGORY_STRING = " categories @> ?::varchar[] ";
 
+    public static final String OLD_CATEGORY_STRING = " categories && ?::varchar[] ";
+
     private static final String COLUMN_STRING= " = ? ";
 
     private String prefixSplit = null;
@@ -127,10 +129,10 @@ public class SearchToSqlConverter {
         // first item is an empty string, so we skip
         for( int i = 1; i < params.length; i++ ) {
 
-            String state = createSql( params[ i ] );
+            String state = createSql( params[ i ], OLD_CATEGORY_STRING );
 
             // if we have several generic categories, we only need 1 sql statement to handle them
-            if( !(state.equals( CATEGORY_STRING ) && last.equals( CATEGORY_STRING ) ) ) {
+            if( !(state.equals( OLD_CATEGORY_STRING ) && last.equals( OLD_CATEGORY_STRING ) ) ) {
 
                 sqlList.add( state );
             }
@@ -210,7 +212,7 @@ public class SearchToSqlConverter {
                     throw new IllegalArgumentException("Invalid Search Parameter: LDAP attribute name must be 'cat'");
                 }
 
-                sql.append( createSql( filter.getAssertionValue() ) );
+                sql.append( createSql( filter.getAssertionValue(), CATEGORY_STRING ) );
 
                 break;
         }
@@ -218,7 +220,7 @@ public class SearchToSqlConverter {
         return sql.toString();
     }
 
-    private String createSql( String param ) {
+    private String createSql( String param, String defaultSql ) {
 
         if( prefixSplit != null ) {
 
@@ -238,7 +240,7 @@ public class SearchToSqlConverter {
             }
         }
 
-        return CATEGORY_STRING;
+        return defaultSql;
     }
 
     private List<String> getParametersFromLdapFilter(Filter filter) {
@@ -276,7 +278,7 @@ public class SearchToSqlConverter {
                     if ( index != -1 ) {
 
                         String prefix = filter.getAssertionValue().substring( 0, index );
-                        String value = filter.getAssertionValue().substring( index + 1 );
+                        String value = filter.getAssertionValue().substring( index + prefixSplit.length() );
 
                         if ( mapPrefix.containsKey( prefix ) ) {
 
