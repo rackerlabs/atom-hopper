@@ -516,14 +516,14 @@ public class JdbcFeedSource implements FeedSource {
 
         TimerContext context = null;
 
-        boolean noCats = searchString.trim().isEmpty();
+        boolean hasCats = !searchString.trim().isEmpty();
 
         try {
             switch (direction) {
                 case FORWARD:
 
 
-                    if ( noCats ) {
+                    if (  hasCats ) {
                         context = startTimer(String.format("db-get-feed-page-forward-with-cats-%s",
                                                            getMetricBucketForPageSize(pageSize)));
                     } else {
@@ -543,7 +543,7 @@ public class JdbcFeedSource implements FeedSource {
                 case BACKWARD:
 
 
-                    if ( noCats ) {
+                    if (  hasCats ) {
                         context = startTimer(String.format("db-get-feed-page-backward-with-cats-%s",
                                                            getMetricBucketForPageSize(pageSize)));
                     } else {
