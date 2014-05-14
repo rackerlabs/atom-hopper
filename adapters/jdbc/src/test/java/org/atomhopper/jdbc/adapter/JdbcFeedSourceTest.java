@@ -16,7 +16,6 @@ import org.atomhopper.adapter.request.adapter.GetEntryRequest;
 import org.atomhopper.adapter.request.adapter.GetFeedRequest;
 import org.atomhopper.dbal.PageDirection;
 import org.atomhopper.jdbc.model.PersistedEntry;
-import org.atomhopper.jdbc.query.EntryRowMapper;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -25,6 +24,7 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.atomhopper.jdbc.adapter.JdbcFeedSource.EntryRowMapper;
 
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;

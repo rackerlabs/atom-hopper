@@ -268,7 +268,7 @@
                                 </mapping>
                             </mappings>
                             <postinstallScriptlet>
-                                <script>touch "/srv/tomcat7/webapps/ATOMHOPPER.war"</script>
+                                <script>touch "/srv/tomcat/webapps/ATOMHOPPER.war"</script>
                             </postinstallScriptlet>
                             <!--  
                                  First of all, <postremoveScriptlet> does not seem to take

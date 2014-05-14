@@ -1,7 +1,7 @@
 -- This file can be used to create fresh AH DB schema.
--- It is useful when we create new feeds. 
+-- It is useful when we create new feeds.
 --
--- This file needs to be kept up-to-date, everytime we change 
+-- This file needs to be kept up-to-date, everytime we change
 -- AH schema.
 --
 -- You will have to run this SQL as the schema user.
@@ -23,6 +23,11 @@ CREATE TABLE entries (
     datelastupdated timestamp without time zone NOT NULL DEFAULT current_timestamp,
     entrybody text,
     feed text,
+-- categories which are mapped to specific columns
+-- remove if you aren't configuring your FeedSource & FeedPublisher accordingly
+    eventtype text,
+    tenantid text,
+-- ---------------------
     categories character varying[],
     PRIMARY KEY(datelastupdated, id)
 );
@@ -31,3 +36,8 @@ CREATE INDEX categories_idx on entries(categories);
 CREATE INDEX feed_idx on entries(feed);
 CREATE INDEX feed_entryid_idx on entries(feed, entryid);
 
+-- categories which are mapped to specific columns
+-- remove if you aren't configuring your FeedSource & FeedPublisher accordingly
+CREATE INDEX eventtype_idx on entries( eventtype );
+CREATE INDEX tenantid_idx on entries( tenantid );
+-- ---------------------
