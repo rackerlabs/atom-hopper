@@ -8,16 +8,14 @@ import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.model.Link;
 import org.apache.commons.lang.StringUtils;
-import org.atomhopper.adapter.FeedInformation;
-import org.atomhopper.adapter.FeedSource;
-import org.atomhopper.adapter.NotImplemented;
-import org.atomhopper.adapter.ResponseBuilder;
-import org.atomhopper.adapter.AdapterHelper;
+import org.atomhopper.adapter.*;
 import org.atomhopper.adapter.request.adapter.GetEntryRequest;
 import org.atomhopper.adapter.request.adapter.GetFeedRequest;
 import org.atomhopper.dbal.PageDirection;
 import org.atomhopper.jdbc.model.PersistedEntry;
-import org.atomhopper.jdbc.query.*;
+import org.atomhopper.jdbc.query.SearchToSqlConverter;
+import org.atomhopper.jdbc.query.SearchType;
+import org.atomhopper.jdbc.query.SqlBuilder;
 import org.atomhopper.response.AdapterResponse;
 import org.atomhopper.util.uri.template.EnumKeyedTemplateParameters;
 import org.atomhopper.util.uri.template.URITemplate;
@@ -26,22 +24,46 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.core.RowMapper;
 
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static org.apache.abdera.i18n.text.UrlEncoding.decode;
 
-
+/**
+ * Implements the FeedSource interface for retrieving feed entries from a datastore.  This class implements
+ * the following:
+ *
+ * <ul>
+ *     <li>Enabling an archive feed</li>
+ *     <li>Records performance metrics</li>
+ *     <li>Generating the feed entries from PersistedEntry instances</li>
+ *     <li>Accessing data from a postgres table where all categories are treated equally</li>
+ *     <li>Read categories with predefined prefixes from specified columns for better search performance</li>
+ * </ul>
+ *
+ * Mapping category prefixes to postgres columns is done through the following:
+ * <ul>
+ *     <li>PrefixColumnMap - maps a prefix key to a column name.  E.g., 'tid' to 'tenantid'</li>
+ *     <li>Delimiter - used to extract the prefix from a category.  E.g., if the delimiter is ':' the category
+ *     value would be 'tid:1234'</li>
+ * </ul>
+ *
+ */
 public class JdbcFeedSource implements FeedSource {
 
     static Logger LOG = LoggerFactory.getLogger(
-            JdbcFeedSource.class);
+          JdbcFeedSource.class );
 
     private static final String MARKER_EQ = "?marker=";
     private static final String LIMIT_EQ = "?limit=";
@@ -60,8 +82,27 @@ public class JdbcFeedSource implements FeedSource {
     private boolean enableLoggingOnShortPage = false;
     private int feedHeadDelayInSeconds = 2;
 
-    private AdapterHelper  helper = new AdapterHelper();
+    private Map<String, String> mapPrefix = new HashMap<String, String>();
+    private Map<String, String> mapColumn = new HashMap<String, String>();
 
+    private String split;
+
+    private AdapterHelper helper = new AdapterHelper();
+
+    private SearchToSqlConverter getSearchToSqlConverter() {
+
+        return new SearchToSqlConverter( mapPrefix, split );
+    }
+
+    private RowMapper getRowMapper() {
+
+        return new EntryRowMapper();
+    }
+
+    protected JdbcTemplate getJdbcTemplate() {
+
+        return jdbcTemplate;
+    }
 
     public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -100,6 +141,23 @@ public class JdbcFeedSource implements FeedSource {
         this.feedHeadDelayInSeconds = feedHeadDelayInSeconds;
     }
 
+    public void setPrefixColumnMap( Map<String, String> prefix ) {
+
+        mapPrefix = new HashMap<String, String>( prefix );
+
+        mapColumn = new HashMap<String, String>();
+
+        for( String key : mapPrefix.keySet() ) {
+
+            mapColumn.put( mapPrefix.get( key ), key );
+        }
+    }
+
+    public void setDelimiter( String splitParam ) {
+
+        split = splitParam;
+    }
+
     @Override
     @NotImplemented
     public void setParameters(Map<String, String> params) {
@@ -114,7 +172,7 @@ public class JdbcFeedSource implements FeedSource {
         boolean markerIsSet = false;
 
         queryParams.append(baseFeedUri).append(LIMIT_EQ).append(
-                String.valueOf(pageSize));
+              String.valueOf(pageSize));
 
         if (searchString.length() > 0) {
             queryParams.append(AND_SEARCH_EQ).append(urlEncode(searchString));
@@ -128,14 +186,69 @@ public class JdbcFeedSource implements FeedSource {
         } else {
             queryParams.append(AND_DIRECTION_EQ_BACKWARD);
             if (queryParams.toString().equalsIgnoreCase(
-                    baseFeedUri + LIMIT_EQ + "25" + AND_DIRECTION_EQ_BACKWARD)) {
+                  baseFeedUri + LIMIT_EQ + "25" + AND_DIRECTION_EQ_BACKWARD)) {
                 // They are calling the feedhead, just use the base feed uri
                 // This keeps the validator at http://validator.w3.org/ happy
                 queryParams.delete(0, queryParams.toString().length()).append(
-                        baseFeedUri);
+                      baseFeedUri);
             }
         }
-        feed.addLink(queryParams.toString()).setRel(Link.REL_SELF);
+        feed.addLink(queryParams.toString()).setRel( Link.REL_SELF );
+    }
+
+    protected List<PersistedEntry> getFeedBackward( String feedName,
+                                                    Date markerTimestamp,
+                                                    long markerId,
+                                                    String searchString,
+                                                    int pageSize ) {
+
+        List<String> categoriesList = getSearchToSqlConverter().getParamsFromSearchString( searchString );
+
+
+        List<PersistedEntry> feedPage;
+        Object[] parmsBack = createParams( feedName, markerTimestamp, markerId, pageSize, categoriesList );
+        SqlBuilder sqlBac = new SqlBuilder( getSearchToSqlConverter() ).searchString(searchString);
+        sqlBac.searchType( SearchType.FEED_BACKWARD);
+
+        feedPage = getJdbcTemplate().query(sqlBac.toString(),parmsBack, getRowMapper() );
+
+        return feedPage;
+    }
+
+    protected List<PersistedEntry> getFeedForward( String feedName,
+                                                   Date markerTimestamp,
+                                                   long markerId,
+                                                   String searchString,
+                                                   int pageSize,
+                                                   int feedHeadDelayInSeconds) {
+
+        List<String> categoriesList = getSearchToSqlConverter().getParamsFromSearchString( searchString );
+
+        List<PersistedEntry> feedPage;
+        Object[] parmsFor = createParams( feedName, markerTimestamp, markerId, pageSize, categoriesList );
+        SqlBuilder sqlFor = new SqlBuilder( getSearchToSqlConverter() ).searchString(searchString);
+        sqlFor.searchType( SearchType.FEED_FORWARD).feedHeadDelayInSeconds( feedHeadDelayInSeconds );
+        feedPage = getJdbcTemplate().query( sqlFor.toString(), parmsFor, getRowMapper() );
+
+        return feedPage;
+    }
+
+    protected PersistedEntry getEntry(final String entryId, final String feedName) {
+        final String entrySQL = "SELECT * FROM entries WHERE feed = ? AND entryid = ?";
+        List<PersistedEntry> entry = getJdbcTemplate()
+              .query(entrySQL, new Object[]{feedName, entryId}, getRowMapper());
+        return entry.size() > 0 ? entry.get(0) : null;
+    }
+
+    protected PersistedEntry getEntryByTimestamp(final DateTime markerDate, final String feedName, PageDirection direction) {
+
+        SqlBuilder sqlBuilder = new SqlBuilder( getSearchToSqlConverter() )
+              .searchType(direction == PageDirection.BACKWARD ? SearchType.BY_TIMESTAMP_BACKWARD : SearchType.BY_TIMESTAMP_FORWARD)
+              .startingTimestamp(markerDate);
+
+        List<PersistedEntry> entry = getJdbcTemplate()
+              .query(sqlBuilder.toString(), new Object[]{feedName}, getRowMapper());
+        return entry.size() > 0 ? entry.get(0) : null;
     }
 
     private void addFeedCurrentLink(Feed hydratedFeed, final String baseFeedUri) {
@@ -150,7 +263,7 @@ public class JdbcFeedSource implements FeedSource {
 
         final Feed hydratedFeed = abdera.newFeed();
         final String baseFeedUri = decode(getFeedRequest.urlFor(
-                new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
+              new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
         final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
 
         if ( helper.isArchived() ) {
@@ -172,12 +285,12 @@ public class JdbcFeedSource implements FeedSource {
 
             // Set the previous link
             hydratedFeed.addLink(new StringBuilder()
-                                         .append(baseFeedUri).append(MARKER_EQ)
-                                         .append(persistedEntries.get(0).getEntryId())
-                                         .append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
-                                         .append(AND_SEARCH_EQ).append(urlEncode(searchString))
-                                         .append(AND_DIRECTION_EQ_FORWARD).toString())
-                    .setRel( helper.getPrevLink() );
+                                       .append(baseFeedUri).append(MARKER_EQ)
+                                       .append(persistedEntries.get(0).getEntryId())
+                                       .append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
+                                       .append(AND_SEARCH_EQ).append(urlEncode(searchString))
+                                       .append(AND_DIRECTION_EQ_FORWARD).toString())
+                  .setRel( helper.getPrevLink() );
 
             final PersistedEntry lastEntryInCollection = persistedEntries.get(persistedEntries.size() - 1);
 
@@ -186,11 +299,11 @@ public class JdbcFeedSource implements FeedSource {
             if (nextEntry != null) {
                 // Set the next link
                 hydratedFeed.addLink(new StringBuilder().append(baseFeedUri)
-                                             .append(MARKER_EQ).append(nextEntry.getEntryId())
-                                             .append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
-                                             .append(AND_SEARCH_EQ).append(urlEncode(searchString))
-                                             .append(AND_DIRECTION_EQ_BACKWARD).toString())
-                        .setRel( helper.getNextLink() );
+                                           .append(MARKER_EQ).append(nextEntry.getEntryId())
+                                           .append(AND_LIMIT_EQ).append(String.valueOf(pageSize))
+                                           .append(AND_SEARCH_EQ).append(urlEncode(searchString))
+                                           .append(AND_DIRECTION_EQ_BACKWARD).toString())
+                      .setRel( helper.getNextLink() );
             }
         }
 
@@ -225,7 +338,7 @@ public class JdbcFeedSource implements FeedSource {
     private Entry hydrateEntry(PersistedEntry persistedEntry, Abdera abderaReference) {
 
         final Document<Entry> hydratedEntryDocument = abderaReference.getParser().parse(
-                new StringReader(persistedEntry.getEntryBody()));
+              new StringReader( persistedEntry.getEntryBody() ) );
 
         Entry entry = null;
 
@@ -260,7 +373,7 @@ public class JdbcFeedSource implements FeedSource {
 
         int pageSize = PAGE_SIZE;
         final String pageSizeString = getFeedRequest.getPageSize();
-        if (StringUtils.isNotBlank(pageSizeString)) {
+        if ( StringUtils.isNotBlank( pageSizeString )) {
             pageSize = Integer.parseInt(pageSizeString);
         }
 
@@ -308,7 +421,7 @@ public class JdbcFeedSource implements FeedSource {
 
         // Set the last link in the feed head
         final String baseFeedUri = decode(getFeedRequest.urlFor(
-                new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
+              new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
 
         if( !helper.isArchived() ) {
 
@@ -334,18 +447,18 @@ public class JdbcFeedSource implements FeedSource {
 
         final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
 
-        PersistedEntry entryMarker = getEntry(marker, getFeedRequest.getFeedName());
+        PersistedEntry entryMarker = getEntry( marker, getFeedRequest.getFeedName() );
         if ( entryMarker == null ) {
             return ResponseBuilder.notFound("No entry with specified marker found");
         }
 
         final Feed feed = hydrateFeed(getFeedRequest.getAbdera(),
-                                          enhancedGetFeedPage(getFeedRequest.getFeedName(),
-                                                              entryMarker.getDateLastUpdated(),
-                                                              entryMarker.getId(),
-                                                              pageDirection,
-                                                              searchString, pageSize),
-                                          getFeedRequest, pageSize);
+                                      enhancedGetFeedPage(getFeedRequest.getFeedName(),
+                                                          entryMarker.getDateLastUpdated(),
+                                                          entryMarker.getId(),
+                                                          pageDirection,
+                                                          searchString, pageSize),
+                                      getFeedRequest, pageSize);
         return ResponseBuilder.found(feed);
     }
 
@@ -367,12 +480,12 @@ public class JdbcFeedSource implements FeedSource {
         }
 
         final Feed feed = hydrateFeed(getFeedRequest.getAbdera(),
-                enhancedGetFeedPage(getFeedRequest.getFeedName(),
-                        entryMarker.getDateLastUpdated(),
-                        entryMarker.getId(),
-                        pageDirection,
-                        searchString, pageSize),
-                getFeedRequest, pageSize);
+                                      enhancedGetFeedPage(getFeedRequest.getFeedName(),
+                                                          entryMarker.getDateLastUpdated(),
+                                                          entryMarker.getId(),
+                                                          pageDirection,
+                                                          searchString, pageSize),
+                                      getFeedRequest, pageSize);
         return ResponseBuilder.found(feed);
     }
 
@@ -403,66 +516,47 @@ public class JdbcFeedSource implements FeedSource {
 
         TimerContext context = null;
 
-        SqlBuilder sql = new SqlBuilder().searchString(searchString);
-        List<String> categoriesList = SearchToSqlConverter.getParamsFromSearchString(searchString);
-
-        int numCats = categoriesList.size();
-
-        Object[] parms = null;
-
-        if (numCats > 0) {
-            parms = new Object[numCats * 2 + 7];
-            int index = 0;
-            parms[index++] = feedName;
-            parms[index++] = markerTimestamp;
-            parms[index++] = markerId;
-            for (String s : categoriesList) {
-                parms[index++] = s;
-            }
-            parms[index++] = feedName;
-            parms[index++] = markerTimestamp;
-            for (String s : categoriesList) {
-                parms[index++] = s;
-            }
-            parms[index++] = pageSize;
-            parms[index++] = pageSize;
-        } else {
-            parms = new Object[]{feedName, markerTimestamp, markerId,
-                    feedName, markerTimestamp, pageSize, pageSize};
-        }
+        boolean hasCats = !searchString.trim().isEmpty();
 
         try {
             switch (direction) {
                 case FORWARD:
 
-                    sql.searchType(SearchType.FEED_FORWARD).feedHeadDelayInSeconds( feedHeadDelayInSeconds );
 
-                    if (numCats > 0) {
+                    if (  hasCats ) {
                         context = startTimer(String.format("db-get-feed-page-forward-with-cats-%s",
                                                            getMetricBucketForPageSize(pageSize)));
                     } else {
                         context = startTimer(
-                                String.format("db-get-feed-page-forward-%s", getMetricBucketForPageSize(pageSize)));
+                              String.format("db-get-feed-page-forward-%s", getMetricBucketForPageSize(pageSize)));
                     }
-
-                    feedPage = jdbcTemplate.query(sql.toString(),parms,new EntryRowMapper());
+                    feedPage = getFeedForward( feedName,
+                                               markerTimestamp,
+                                               markerId,
+                                               searchString,
+                                               pageSize,
+                                               feedHeadDelayInSeconds );
 
                     Collections.reverse(feedPage);
                     break;
 
                 case BACKWARD:
 
-                    sql.searchType(SearchType.FEED_BACKWARD);
 
-                    if (numCats > 0) {
+                    if (  hasCats ) {
                         context = startTimer(String.format("db-get-feed-page-backward-with-cats-%s",
                                                            getMetricBucketForPageSize(pageSize)));
                     } else {
                         context = startTimer(
-                                String.format("db-get-feed-page-backward-%s", getMetricBucketForPageSize(pageSize)));
+                              String.format("db-get-feed-page-backward-%s", getMetricBucketForPageSize(pageSize)));
                     }
+                    feedPage = getFeedBackward( feedName,
+                                                markerTimestamp,
+                                                markerId,
+                                                searchString,
+                                                pageSize );
 
-                    feedPage = jdbcTemplate.query(sql.toString(),parms,new EntryRowMapper());
+
                     break;
             }
         } finally {
@@ -472,30 +566,10 @@ public class JdbcFeedSource implements FeedSource {
         return feedPage;
     }
 
-    private PersistedEntry getEntry(final String entryId, final String feedName) {
-        final String entrySQL = "SELECT * FROM entries WHERE feed = ? AND entryid = ?";
-        List<PersistedEntry> entry = jdbcTemplate
-                .query(entrySQL, new Object[]{feedName, entryId}, new EntryRowMapper());
-        return entry.size() > 0 ? entry.get(0) : null;
-    }
-
-    protected PersistedEntry getEntryByTimestamp(final DateTime markerDate, final String feedName, PageDirection direction) {
-
-        SqlBuilder sqlBuilder = new SqlBuilder()
-                                        .searchType(direction == PageDirection.BACKWARD ? SearchType.BY_TIMESTAMP_BACKWARD : SearchType.BY_TIMESTAMP_FORWARD)
-                                        .startingTimestamp(markerDate);
-
-        List<PersistedEntry> entry = jdbcTemplate
-                                        .query(sqlBuilder.toString(), new Object[]{feedName}, new EntryRowMapper());
-        return entry.size() > 0 ? entry.get(0) : null;
-    }
 
     private List<PersistedEntry> getFeedHead(final String feedName, final int pageSize, final String searchString) {
 
-        SqlBuilder sql = new SqlBuilder().searchType(SearchType.FEED_HEAD).searchString(searchString)
-                                         .feedHeadDelayInSeconds(feedHeadDelayInSeconds);
-
-        List<String> categoriesList = SearchToSqlConverter.getParamsFromSearchString(searchString);
+        List<String> categoriesList = getSearchToSqlConverter().getParamsFromSearchString(searchString);
         int numCats = categoriesList.size();
 
         Object[] parms = null;
@@ -516,11 +590,16 @@ public class JdbcFeedSource implements FeedSource {
         try {
             if (numCats > 0) {
                 context = startTimer(
-                        String.format("db-get-feed-head-with-cats-%s", getMetricBucketForPageSize(pageSize)));
+                      String.format("db-get-feed-head-with-cats-%s", getMetricBucketForPageSize(pageSize)));
             } else {
                 context = startTimer(String.format("db-get-feed-head-%s", getMetricBucketForPageSize(pageSize)));
             }
-            return jdbcTemplate.query(sql.toString(), parms, new EntryRowMapper());
+
+            SqlBuilder sql = new SqlBuilder( getSearchToSqlConverter() ).searchType(SearchType.FEED_HEAD).searchString(searchString)
+                  .feedHeadDelayInSeconds(feedHeadDelayInSeconds);
+
+            return jdbcTemplate.query(sql.toString(), parms, getRowMapper() );
+
         } finally {
             stopTimer(context);
         }
@@ -529,10 +608,7 @@ public class JdbcFeedSource implements FeedSource {
     private List<PersistedEntry> enhancedGetLastPage(final String feedName, final int pageSize,
                                                      final String searchString) {
 
-        SqlBuilder sql = new SqlBuilder().searchType( SearchType.LAST_PAGE ).searchString( searchString )
-              .feedHeadDelayInSeconds( feedHeadDelayInSeconds );
-
-        List<String> categoriesList = SearchToSqlConverter.getParamsFromSearchString(searchString);
+        List<String> categoriesList = getSearchToSqlConverter().getParamsFromSearchString(searchString);
         int numCats = categoriesList.size();
 
         Object[] parms = null;
@@ -555,11 +631,16 @@ public class JdbcFeedSource implements FeedSource {
         try {
             if (numCats > 0) {
                 context = startTimer(
-                        String.format("db-get-last-page-with-cats-%s", getMetricBucketForPageSize(pageSize)));
+                      String.format("db-get-last-page-with-cats-%s", getMetricBucketForPageSize(pageSize)));
             } else {
                 context = startTimer(String.format("db-get-last-page-%s", getMetricBucketForPageSize(pageSize)));
             }
-            lastPersistedEntries = jdbcTemplate.query(sql.toString(), parms, new EntryRowMapper());
+
+            SqlBuilder sql = new SqlBuilder( getSearchToSqlConverter() ).searchType( SearchType.LAST_PAGE ).searchString( searchString )
+                  .feedHeadDelayInSeconds( feedHeadDelayInSeconds );
+
+            lastPersistedEntries = jdbcTemplate.query(sql.toString(), parms, getRowMapper());
+
         } finally {
             stopTimer(context);
         }
@@ -573,9 +654,7 @@ public class JdbcFeedSource implements FeedSource {
     private PersistedEntry getNextMarker(final PersistedEntry persistedEntry, final String feedName,
                                          final String searchString) {
 
-        SqlBuilder sql = new SqlBuilder().searchType(SearchType.NEXT_LINK).searchString(searchString);
-
-        List<String> categoriesList = SearchToSqlConverter.getParamsFromSearchString(searchString);
+        List<String> categoriesList = getSearchToSqlConverter().getParamsFromSearchString(searchString);
         int numCats = categoriesList.size();
 
         Object[] parms = null;
@@ -597,18 +676,20 @@ public class JdbcFeedSource implements FeedSource {
 
         } else {
             parms = new Object[]{feedName, persistedEntry.getDateLastUpdated(), persistedEntry.getId(),
-                    feedName, persistedEntry.getDateLastUpdated()};
+                  feedName, persistedEntry.getDateLastUpdated()};
         }
 
+        SqlBuilder sql = new SqlBuilder( getSearchToSqlConverter() ).searchType(SearchType.NEXT_LINK).searchString(searchString);
+
         List<PersistedEntry> nextEntry = jdbcTemplate
-                    .query(sql.toString(), parms, new EntryRowMapper());
+              .query(sql.toString(), parms, getRowMapper());
 
         return nextEntry.size() > 0 ? nextEntry.get(0) : null;
     }
 
     private String urlEncode(String searchString) {
         try {
-            return URLEncoder.encode(searchString, "UTF-8");
+            return URLEncoder.encode( searchString, "UTF-8" );
         } catch (UnsupportedEncodingException e) {
             //noop - should never get here
             return "";
@@ -617,8 +698,8 @@ public class JdbcFeedSource implements FeedSource {
 
     private TimerContext startTimer(String name) {
         if (enableTimers) {
-            final com.yammer.metrics.core.Timer timer = Metrics.newTimer(getClass(), name, TimeUnit.MILLISECONDS,
-                                                                         TimeUnit.SECONDS);
+            final com.yammer.metrics.core.Timer timer = Metrics.newTimer( getClass(), name, TimeUnit.MILLISECONDS,
+                                                                          TimeUnit.SECONDS );
             TimerContext context = timer.time();
             return context;
         } else {
@@ -644,5 +725,76 @@ public class JdbcFeedSource implements FeedSource {
             return "large";
         }
     }
-}
 
+    protected Object[] createParams( String feedName,
+                                     Date markerTimestamp,
+                                     long markerId,
+                                     int pageSize,
+                                     List<String> categoriesList ) {
+
+        int numCats = categoriesList.size();
+
+        Object[] parms = null;
+
+        if (numCats > 0) {
+            parms = new Object[numCats * 2 + 7];
+            int index = 0;
+            parms[index++] = feedName;
+            parms[index++] = markerTimestamp;
+            parms[index++] = markerId;
+            for (String s : categoriesList) {
+                parms[index++] = s;
+            }
+            parms[index++] = feedName;
+            parms[index++] = markerTimestamp;
+            for (String s : categoriesList) {
+                parms[index++] = s;
+            }
+            parms[index++] = pageSize;
+            parms[index++] = pageSize;
+        } else {
+            parms = new Object[]{feedName, markerTimestamp, markerId,
+                  feedName, markerTimestamp, pageSize, pageSize};
+        }
+        return parms;
+    }
+
+    public class EntryRowMapper implements RowMapper {
+
+        @Override
+        public Object mapRow( ResultSet rs, int rowNum ) throws SQLException {
+            EntryResultSetExtractor extractor = new EntryResultSetExtractor();
+            return extractor.extractData(rs);
+        }
+    }
+
+    public class EntryResultSetExtractor implements ResultSetExtractor {
+
+
+        @Override
+        public Object extractData( ResultSet rs ) throws SQLException, DataAccessException {
+
+            PersistedEntry entry = new PersistedEntry();
+            entry.setId(rs.getLong("id"));
+            entry.setFeed(rs.getString("feed"));
+            entry.setCreationDate(rs.getTimestamp("creationdate"));
+            entry.setDateLastUpdated(rs.getTimestamp("datelastupdated"));
+            entry.setEntryBody(rs.getString("entrybody"));
+            entry.setEntryId(rs.getString("entryid"));
+
+
+            List<String> cats = new ArrayList<String>( Arrays.asList( (String[])rs.getArray( "categories" ).getArray() ) );
+
+            for( String column : mapColumn.keySet() ) {
+
+                if( rs.getString( column) != null ) {
+
+                    cats.add( mapColumn.get( column) + split + rs.getString( column) );
+                }
+            }
+
+            entry.setCategories( cats.toArray( new String[ 0 ]) );
+            return entry;
+        }
+    }
+}

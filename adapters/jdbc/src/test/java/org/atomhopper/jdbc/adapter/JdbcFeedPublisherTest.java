@@ -13,7 +13,6 @@ import org.atomhopper.adapter.request.adapter.DeleteEntryRequest;
 import org.atomhopper.adapter.request.adapter.PostEntryRequest;
 import org.atomhopper.adapter.request.adapter.PutEntryRequest;
 import org.atomhopper.jdbc.model.PersistedEntry;
-import org.atomhopper.jdbc.query.EntryRowMapper;
 import org.atomhopper.jdbc.query.PostgreSQLTextArray;
 import org.atomhopper.response.AdapterResponse;
 import org.junit.Before;
