@@ -50,7 +50,7 @@ import static org.apache.abdera.i18n.text.UrlEncoding.decode;
  *     <li>Delimiter - used to extract the prefix from a category.  E.g., if the delimiter is ':' the category
  *     value would be 'tid:1234'</li>
  *     <li>AsCategorySet - prefixes listed here are saved to the corresponding column as well as in the generic
- *     categories column.  This is used for migrating a category from the generic column to the</li>
+ *     categories column.  This is used for migrating a category from the generic column to the specific column</li>
  * </ul>
  */
 public class JdbcFeedPublisher implements FeedPublisher {
