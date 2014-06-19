@@ -44,13 +44,10 @@ public class HeaderValueFeedEntityTagProcessor extends FeedEntityTagProcessor {
         if ( headerName != null ) {
             Object[] roles = rc.getHeaders(headerName);
             if ( roles != null ) {
-                for (int idx = 0; idx<roles.length; idx++) {
-                    if ( roles[idx] != null ) {
-                        String aRole = roles[idx].toString();
-                        String postfix = headerTagPostfixMap.get(aRole);
-                        if ( postfix != null )
-                            postfixSet.add(postfix);
-                    }
+                for (Object aRole: roles) {
+                    String postfix = headerTagPostfixMap.get(aRole);
+                    if ( postfix != null )
+                        postfixSet.add(postfix);
                 }
             }
         }
