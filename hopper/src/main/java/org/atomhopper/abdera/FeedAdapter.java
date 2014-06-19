@@ -47,10 +47,6 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
             throw new IllegalArgumentException("adapterResponseInterceptorList argument must not be null");
         }
 
-        if ( adapterResponseInterceptorList.isEmpty() ) {
-            throw new IllegalArgumentException("adapterResponseInterceptorList argument must contain at least one element");
-        }
-
         this.feedConfiguration = feedConfiguration;
 
         final List<String> allowedMethodsList = new LinkedList<String>();
