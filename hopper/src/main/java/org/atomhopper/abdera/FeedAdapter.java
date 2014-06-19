@@ -9,6 +9,7 @@ import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.ResponseContext;
 import org.apache.abdera.protocol.server.TargetType;
 import org.apache.commons.lang.StringUtils;
+import org.atomhopper.abdera.filter.AdapterResponseInterceptor;
 import org.atomhopper.abdera.filter.FeedEntityTagProcessor;
 import org.atomhopper.abdera.filter.FeedPagingProcessor;
 import org.atomhopper.abdera.response.EmptyBodyResponseHandler;
@@ -38,8 +39,17 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
     private final FeedPublisher feedPublisher;
     private final FeedSource feedSource;
 
-    public FeedAdapter(String target, FeedConfiguration feedConfiguration, FeedSource feedSource, FeedPublisher feedPublisher) {
+    public FeedAdapter(String target, FeedConfiguration feedConfiguration, FeedSource feedSource, FeedPublisher feedPublisher,
+                       List<AdapterResponseInterceptor<Feed>>adapterResponseInterceptorList) {
         super(target);
+
+        if ( adapterResponseInterceptorList == null ) {
+            throw new IllegalArgumentException("adapterResponseInterceptorList argument must not be null");
+        }
+
+        if ( adapterResponseInterceptorList.isEmpty() ) {
+            throw new IllegalArgumentException("adapterResponseInterceptorList argument must contain at least one element");
+        }
 
         this.feedConfiguration = feedConfiguration;
 
@@ -65,9 +75,19 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
 
         final String[] allowedMethods = allowedMethodsList.toArray(new String[allowedMethodsList.size()]);
 
-        feedResponseHandler = new FeedResponseHandler(allowedMethods, new FeedPagingProcessor(), new FeedEntityTagProcessor());
+        feedResponseHandler = new FeedResponseHandler(allowedMethods, adapterResponseInterceptorList);
         entryResponseHandler = new EntryResponseHandler(allowedMethods);
         emptyBodyResponseHandler = new EmptyBodyResponseHandler(allowedMethods);
+    }
+
+    public FeedAdapter(String target, FeedConfiguration feedConfiguration, FeedSource feedSource, FeedPublisher feedPublisher,
+                       AdapterResponseInterceptor<Feed>...interceptors) {
+        this(target, feedConfiguration, feedSource, feedPublisher, Arrays.asList(interceptors));
+    }
+
+    public FeedAdapter(String target, FeedConfiguration feedConfiguration, FeedSource feedSource, FeedPublisher feedPublisher) {
+
+        this(target, feedConfiguration, feedSource, feedPublisher, new FeedPagingProcessor(), new FeedEntityTagProcessor());
     }
 
     public FeedConfiguration getFeedConfiguration() {

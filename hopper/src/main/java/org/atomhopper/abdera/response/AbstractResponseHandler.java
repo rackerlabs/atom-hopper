@@ -19,8 +19,13 @@ public abstract class AbstractResponseHandler<T> implements ResponseHandler<T> {
         responseInterceptors = new LinkedList<AdapterResponseInterceptor<T>>(Arrays.asList(interceptors));
     }
 
+    public AbstractResponseHandler(String[] allowedMethods, List<AdapterResponseInterceptor<T>> adapterResponseInterceptorList) {
+        this.allowedMethods = Arrays.copyOf(allowedMethods, allowedMethods.length);
+        responseInterceptors = new LinkedList<AdapterResponseInterceptor<T>>(adapterResponseInterceptorList);
+    }
+
     @Override
-    public final ResponseContext handleResponse(RequestContext rc, AdapterResponse<T> adapterResponse) {
+    public final ResponseContext handleResponse(RequestContext rc, AdapterResponse <T> adapterResponse) {
         processResponse(rc, adapterResponse);
 
         return handleAdapterResponse(rc, adapterResponse);

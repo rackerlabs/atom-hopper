@@ -1,11 +1,16 @@
 package org.atomhopper.config;
 
+import org.apache.abdera.model.Feed;
 import org.apache.abdera.protocol.server.TargetType;
 import org.apache.abdera.protocol.server.impl.RegexTargetResolver;
 import org.apache.commons.lang.StringUtils;
 import org.atomhopper.abdera.FeedAdapter;
 import org.atomhopper.abdera.TargetAwareAbstractCollectionAdapter;
 import org.atomhopper.abdera.WorkspaceHandler;
+import org.atomhopper.abdera.filter.AdapterResponseInterceptor;
+import org.atomhopper.abdera.filter.FeedEntityTagProcessor;
+import org.atomhopper.abdera.filter.FeedPagingProcessor;
+import org.atomhopper.abdera.response.FeedResponseHandler;
 import org.atomhopper.adapter.FeedPublisher;
 import org.atomhopper.adapter.FeedSource;
 import org.atomhopper.config.v1_0.AdapterDescriptor;
@@ -20,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -133,8 +139,22 @@ public class WorkspaceConfigProcessor {
             final TargetRegexBuilder feedTargetRegexBuilder = new TargetRegexBuilder(workspaceTarget);
             feedTargetRegexBuilder.setFeed(feed.getResource());
 
+            List <AdapterResponseInterceptor<Feed>> adapterResponseInterceptorList = new ArrayList<AdapterResponseInterceptor<Feed>>();
+            if ( feed.getFeedResponseHandlers() != null && feed.getFeedResponseHandlers().getFeedResponseHandler() != null &&
+                    !feed.getFeedResponseHandlers().getFeedResponseHandler().isEmpty() ) {
+                List<AdapterDescriptor> adapterDescriptorList = feed.getFeedResponseHandlers().getFeedResponseHandler();
+                for (AdapterDescriptor adapterDescriptor : adapterDescriptorList ) {
+                    AdapterResponseInterceptor<Feed> interceptor = (AdapterResponseInterceptor<Feed>) getAdapter(adapterDescriptor, AdapterResponseInterceptor.class);
+                    adapterResponseInterceptorList.add(interceptor);
+                }
+            } else {
+                // this was the old list of response interceptors
+                adapterResponseInterceptorList.add(new FeedPagingProcessor());
+                adapterResponseInterceptorList.add(new FeedEntityTagProcessor());
+            }
+
             final FeedAdapter feedAdapter = new FeedAdapter(
-                    feedTargetRegexBuilder.getFeedResource(), feed, feedSource, feedPublisher);
+                    feedTargetRegexBuilder.getFeedResource(), feed, feedSource, feedPublisher, adapterResponseInterceptorList);
 
             // feed regex matching
             regexTargetResolver.setPattern(feedTargetRegexBuilder.toFeedPattern(),

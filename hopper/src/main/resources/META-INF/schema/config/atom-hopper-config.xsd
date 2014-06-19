@@ -108,10 +108,11 @@
         <xs:sequence>
             <xs:element name="author" type="hopcfg:Author" minOccurs="0" maxOccurs="1" />
 
-            <xs:element name="feed-source" type="hopcfg:AdapterDescriptor" minOccurs="0" maxOccurs="1" />
-            <xs:element name="publisher" type="hopcfg:AdapterDescriptor" minOccurs="0" maxOccurs="1" />
-            <xs:element name="archive-feed" type="hopcfg:ArchiveSource" minOccurs="0" maxOccurs="1" />
-            <xs:element name="current-feed" type="hopcfg:CurrentSource" minOccurs="0" maxOccurs="1" />
+            <xs:element name="feed-source"            type="hopcfg:AdapterDescriptor" minOccurs="0" maxOccurs="1" />
+            <xs:element name="publisher"              type="hopcfg:AdapterDescriptor" minOccurs="0" maxOccurs="1" />
+            <xs:element name="archive-feed"           type="hopcfg:ArchiveSource" minOccurs="0" maxOccurs="1" />
+            <xs:element name="current-feed"           type="hopcfg:CurrentSource" minOccurs="0" maxOccurs="1" />
+            <xs:element name="feed-response-handlers" type="hopcfg:FeedResponseHandlers" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
 
         <xs:attribute name="title" type="xs:string" use="required">
@@ -155,6 +156,12 @@
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="FeedResponseHandlers">
+        <xs:sequence>
+            <xs:element name="feed-response-handler" type="hopcfg:AdapterDescriptor" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="AdapterDescriptor">
