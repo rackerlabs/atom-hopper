@@ -26,8 +26,12 @@ public class FeedResponseHandler extends AbstractResponseHandler<Feed> {
         super(allowedMethods, interceptors);
     }
 
+    public FeedResponseHandler(String[] allowedMethods, List<AdapterResponseInterceptor<Feed>> adapterResponseInterceptorList) {
+        super(allowedMethods, adapterResponseInterceptorList);
+    }
+
     @Override
-    protected ResponseContext handleAdapterResponse(RequestContext rc, AdapterResponse<Feed> adapterResponse) {
+    protected ResponseContext handleAdapterResponse(RequestContext rc, AdapterResponse <Feed> adapterResponse) {
         final Date lastUpdated = adapterResponse.getBody() != null ? adapterResponse.getBody().getUpdated() : null;
 
         switch (adapterResponse.getResponseStatus()) {

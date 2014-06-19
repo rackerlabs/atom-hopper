@@ -50,4 +50,15 @@
         <property name="feedRepository" ref="feed-repository-bean" />
         <property name="allowOverrideId" value="true"/>
     </bean>
+
+    <bean name="feed-paging-processor"          class="org.atomhopper.abdera.filter.FeedPagingProcessor"/>
+    <bean name="role-aware-feed-etag-processor" class="org.atomhopper.abdera.filter.HeaderValueFeedEntityTagProcessor">
+        <property name="headerName" value="x-access" />
+        <property name="headerTagPostfixMap">
+            <map>
+  	      <entry key="level1" value="L1"/>
+  	      <entry key="level2" value="L2"/>
+            </map>
+        </property>
+    </bean>
 </beans>

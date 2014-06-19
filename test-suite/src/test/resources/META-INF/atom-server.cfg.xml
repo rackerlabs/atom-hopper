@@ -59,4 +59,16 @@
             <publisher reference="hibernate-feed-publisher" />
         </feed>
     </workspace>
+    <workspace title="Namespace6" resource="/namespace6/" >
+        <categories-descriptor reference="workspace-categories-descriptor" />
+
+        <feed title="feed6" resource="/feed6">
+            <feed-source reference="hibernate-feed-source" />
+            <publisher reference="hibernate-feed-publisher" />
+            <feed-response-handlers>
+                <feed-response-handler reference="feed-paging-processor"/>
+                <feed-response-handler reference="role-aware-feed-etag-processor"/>
+            </feed-response-handlers>
+        </feed>
+    </workspace>
 </atom-hopper-config>

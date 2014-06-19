@@ -31,8 +31,12 @@ public class FeedEntityTagProcessor implements AdapterResponseInterceptor<Feed> 
         // Get the id of the last entry on this page
         String lastId = f.getEntries().get(totalEntries-1).getId().toString();
 
-        EntityTag feedEtag = new EntityTag(id + ":" + lastId, true);
+        EntityTag feedEtag = createEntityTag(rc, id, lastId);
         adapterResponse.setEntityTag(feedEtag);
+    }
+
+    protected EntityTag createEntityTag(RequestContext rc, String firstId, String lastId) {
+        return new EntityTag(firstId + ":" + lastId, true);
     }
 
 }
