@@ -47,12 +47,18 @@ public class VerifyFeedWeakETagsTest extends JettyIntegrationTestHarness {
             final HttpMethod postMethod = newCategoryPostEntryMethod("/namespace6/feed6/");
             assertEquals("Creating a new entry should return a 201", HttpStatus.SC_CREATED, httpClient.executeMethod(postMethod));
 
-
             final HttpMethod getFeedMethod = new GetMethod(urlAndPort + "/namespace6/feed6/");
             getFeedMethod.addRequestHeader("x-access", "level1");
             httpClient.executeMethod(getFeedMethod);
-            assertTrue("The returned feed should set an etag in the header", getFeedMethod.getResponseHeader("ETag").getValue().contains("W/"));
-            assertTrue("The returned feed should set an etag in the header with tag L1 but has: " + getFeedMethod.getResponseHeader("ETag").getValue(), getFeedMethod.getResponseHeader("ETag").getValue().contains("L1"));
+            final String etagL1 = getFeedMethod.getResponseHeader("ETag").getValue();
+            assertTrue("The returned feed should set an etag in the header", etagL1.contains("W/"));
+
+            final HttpMethod getFeedMethodAsLevel3 = new GetMethod(urlAndPort + "/namespace6/feed6");
+            getFeedMethodAsLevel3.addRequestHeader("x-access", "level3");
+            httpClient.executeMethod(getFeedMethodAsLevel3);
+            final String etagL3 = getFeedMethodAsLevel3.getResponseHeader("ETag").getValue();
+            assertTrue("The returned feed should set an etag in the header", etagL3.contains("W/"));
+            assertTrue("The returned feed should set a different etag header (etag1=" + etagL1 + ", etag3=" + etagL3+")", !etagL1.equals(etagL3));
         }
     }
 }
