@@ -10,9 +10,10 @@
 
     <xs:complexType name="Configuration">
         <xs:sequence>
-            <xs:element name="defaults" type="hopcfg:ConfigurationDefaults" minOccurs="0" maxOccurs="1" />
-            <xs:element name="host" type="hopcfg:HostConfiguration" minOccurs="1" maxOccurs="1" />
-            <xs:element name="workspace" type="hopcfg:WorkspaceConfiguration" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="defaults"            type="hopcfg:ConfigurationDefaults"   minOccurs="0" maxOccurs="1" />
+            <xs:element name="host"                type="hopcfg:HostConfiguration"       minOccurs="1" maxOccurs="1" />
+            <xs:element name="provider-filters"    type="hopcfg:ProviderFiltersType"     minOccurs="0" maxOccurs="1" />
+            <xs:element name="workspace"           type="hopcfg:WorkspaceConfiguration"  minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
     </xs:complexType>
 
@@ -71,7 +72,6 @@
         <xs:sequence>
             <xs:element name="defaults" type="hopcfg:ConfigurationDefaults" minOccurs="0" maxOccurs="1" />
             <xs:element name="categories-descriptor" type="hopcfg:AdapterDescriptor" minOccurs="0" maxOccurs="1" />
-
             <xs:element name="feed" type="hopcfg:FeedConfiguration" minOccurs="1" maxOccurs="unbounded" />
         </xs:sequence>
 
@@ -98,6 +98,9 @@
             <xs:annotation>
                 <xs:documentation>
                     <xhtml:p>
+                        This is a boolean flag that controls the way Atom Hopper will treat the 'resource' string.
+                        If this flag is set to true, the 'resource' string will be interpreted as a regular 
+                        expression. If set to flase, the 'resource' string will be treated as is.
                     </xhtml:p>
                 </xs:documentation>
             </xs:annotation>
@@ -107,7 +110,6 @@
     <xs:complexType name="FeedConfiguration">
         <xs:sequence>
             <xs:element name="author" type="hopcfg:Author" minOccurs="0" maxOccurs="1" />
-
             <xs:element name="feed-source"            type="hopcfg:AdapterDescriptor" minOccurs="0" maxOccurs="1" />
             <xs:element name="publisher"              type="hopcfg:AdapterDescriptor" minOccurs="0" maxOccurs="1" />
             <xs:element name="archive-feed"           type="hopcfg:ArchiveSource" minOccurs="0" maxOccurs="1" />
@@ -159,9 +161,45 @@
     </xs:complexType>
 
     <xs:complexType name="FeedResponseHandlers">
+        <xs:annotation>
+            <xs:documentation>
+                <xhtml:p>
+                    This element holds the list of Feed Response Handler classes, which all have to implement 
+                    the org.atomhopper.abdera.filter.AdapterResponseInterceptor interface. Feed Response 
+                    handler can process responses and augment AdapterResponse objects, in a similar manner
+                    to a Servlet Filter operating on HttpServletResponse objects.
+                </xhtml:p>
+            </xs:documentation>
+        </xs:annotation>
         <xs:sequence>
             <xs:element name="feed-response-handler" type="hopcfg:AdapterDescriptor" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ProviderFiltersType">
+        <xs:annotation>
+            <xs:documentation>
+                <xhtml:p>
+                    This element holds the list of Workspace Provider Filter classes, which all have to implement 
+                    the org.atomhopper.abdera.protocol.server.Filter interface. Workspace Provider Filter
+                    can process responses and invoke the next filter in the chain, in a similar manner
+                    to a Servlet Filter operating on HttpServletRequest objects.
+                </xhtml:p>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="provider-filter" type="hopcfg:FilterDescriptor" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="FilterDescriptor">
+        <xs:attribute name="reference" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation>
+                    <xhtml:p></xhtml:p>
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
 
     <xs:complexType name="AdapterDescriptor">

@@ -7,6 +7,10 @@
 
     <host domain="localhost:24156" scheme="http" />
 
+    <provider-filters>
+        <provider-filter reference="selective-uri-json-filter"/>
+    </provider-filters>
+
     <workspace title="Namespace" resource="/namespace/">
         <categories-descriptor reference="workspace-categories-descriptor" />
 
