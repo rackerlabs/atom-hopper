@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.util.EntityTag;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -52,7 +53,7 @@ public class HeaderValueFeedEntityTagProcessor extends FeedEntityTagProcessor {
             }
         }
         String allPostfix = StringUtils.join(postfixSet, ",");
-        return new EntityTag(firstId + ":" + lastId + ":" + allPostfix, true);
+        return new EntityTag(hashIt(firstId + ":" + lastId + ":" + allPostfix), true);
     }
 
     public String getHeaderName() {
@@ -69,5 +70,9 @@ public class HeaderValueFeedEntityTagProcessor extends FeedEntityTagProcessor {
 
     public void setHeaderTagPostfixMap(Map<String, String> headerTagPostfixMap) {
         this.headerTagPostfixMap = headerTagPostfixMap;
+    }
+
+    private String hashIt(String input) {
+        return DigestUtils.md5Hex(input);
     }
 }
