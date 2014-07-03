@@ -26,7 +26,7 @@ public class SelectiveURIJSONFilterTest extends JettyIntegrationTestHarness {
         public void shouldReturnOK() throws Exception {
             final HttpMethod getFeedMethod = new GetMethod(urlAndPort + "/namespace2/feed2/?format=json");
             httpClient.executeMethod(getFeedMethod);
-            assertEquals("Response code: "  + getFeedMethod.getStatusText(), 200, getFeedMethod.getStatusCode());
+            assertEquals("Response code: ", 200, getFeedMethod.getStatusCode());
         }
     }
 
@@ -36,7 +36,7 @@ public class SelectiveURIJSONFilterTest extends JettyIntegrationTestHarness {
         public void shouldReturnOK() throws Exception {
             final HttpMethod getFeedMethod = new GetMethod(urlAndPort + "/namespace6/feed6/?format=json");
             httpClient.executeMethod(getFeedMethod);
-            assertEquals("Response code: " + getFeedMethod.getStatusText(), 400, getFeedMethod.getStatusCode());
+            assertEquals("Response code: ", 400, getFeedMethod.getStatusCode());
         }
     }
 }
