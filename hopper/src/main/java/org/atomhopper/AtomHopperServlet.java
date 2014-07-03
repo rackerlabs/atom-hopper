@@ -2,16 +2,14 @@ package org.atomhopper;
 
 import org.apache.abdera.Abdera;
 import org.apache.abdera.ext.json.JSONFilter;
+import org.apache.abdera.protocol.server.Filter;
 import org.apache.abdera.protocol.server.Provider;
 import org.apache.abdera.protocol.server.servlet.AbderaServlet;
 import org.apache.commons.lang.StringUtils;
 import org.atomhopper.abdera.WorkspaceProvider;
 import org.atomhopper.config.AtomHopperConfigurationPreprocessor;
 import org.atomhopper.config.WorkspaceConfigProcessor;
-import org.atomhopper.config.v1_0.Configuration;
-import org.atomhopper.config.v1_0.ConfigurationDefaults;
-import org.atomhopper.config.v1_0.HostConfiguration;
-import org.atomhopper.config.v1_0.WorkspaceConfiguration;
+import org.atomhopper.config.v1_0.*;
 import org.atomhopper.exceptions.ContextAdapterResolutionException;
 import org.atomhopper.exceptions.ServletInitException;
 import org.atomhopper.servlet.ApplicationContextAdapter;
@@ -115,7 +113,7 @@ public final class AtomHopperServlet extends AbderaServlet {
     protected Provider createProvider() {
         final WorkspaceProvider workspaceProvider = new WorkspaceProvider(getHostConfiguration());
         final String atomhopperUrlPattern = (getServletConfig().getInitParameter("atomhopper-url-pattern") == null) ?
-                "/" : getServletConfig().getInitParameter("atomhopper-url-pattern"); 
+                                                "/" : getServletConfig().getInitParameter("atomhopper-url-pattern");
         
         workspaceProvider.init(abderaReference, parseDefaults(configuration.getDefaults()));
 
@@ -134,7 +132,14 @@ public final class AtomHopperServlet extends AbderaServlet {
             workspaceProvider.getWorkspaceManager().addWorkspaces(cfgProcessor.toHandler());
         }
 
-        workspaceProvider.addFilter(new JSONFilter());
+        // adding the workspace provider filters
+        if ( configuration.getProviderFilters() != null ) {
+            for (FilterDescriptor filterD : configuration.getProviderFilters().getProviderFilter() ) {
+                String beanId = filterD.getReference();
+                Filter aFilter = applicationContextAdapter.fromContext(beanId, Filter.class);
+                workspaceProvider.addFilter(aFilter);
+            }
+        }
 
         return workspaceProvider;
     }

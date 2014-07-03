@@ -11,6 +11,11 @@
           http://www.springframework.org/schema/beans
           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
+    <!-- if you need to return feed pages in JSON format, you'll need to reference
+         this bean from atom-server.cfg.xml
+    -->
+    <bean name="json-filter"          class="org.apache.abdera.ext.json.JSONFilter"/>
+
     <!-- Hibernate -->
     <bean name="feed-repository-bean" class="org.atomhopper.hibernate.HibernateFeedRepository">
         <constructor-arg>

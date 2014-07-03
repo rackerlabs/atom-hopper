@@ -61,4 +61,11 @@
             </map>
         </property>
     </bean>
+    <bean name="selective-uri-json-filter"       class="org.atomhopper.abdera.filter.SelectiveURIJSONFilter">
+      <property name="allowedURIs">
+          <list>
+              <value>/namespace2/feed2</value>
+          </list>
+      </property>
+    </bean>
 </beans>
