@@ -37,6 +37,9 @@ public class HeaderValueFeedEntityTagProcessor extends FeedEntityTagProcessor {
     private String headerName;
 
     @Autowired
+    private boolean hashETag;
+
+    @Autowired
     private Map<String, String> headerTagPostfixMap;
 
     protected EntityTag createEntityTag(RequestContext rc, String firstId, String lastId) {
@@ -72,7 +75,19 @@ public class HeaderValueFeedEntityTagProcessor extends FeedEntityTagProcessor {
         this.headerTagPostfixMap = headerTagPostfixMap;
     }
 
+    public boolean isHashETag() {
+        return hashETag;
+    }
+
+    public void setHashETag(boolean hashETag) {
+        this.hashETag = hashETag;
+    }
+
     private String hashIt(String input) {
-        return DigestUtils.md5Hex(input);
+        if (hashETag) {
+            return DigestUtils.md5Hex(input);
+        } else {
+            return input;
+        }
     }
 }
