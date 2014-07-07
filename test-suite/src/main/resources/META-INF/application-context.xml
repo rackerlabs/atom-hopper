@@ -54,6 +54,7 @@
     <bean name="feed-paging-processor"          class="org.atomhopper.abdera.filter.FeedPagingProcessor"/>
     <bean name="role-aware-feed-etag-processor" class="org.atomhopper.abdera.filter.HeaderValueFeedEntityTagProcessor">
         <property name="headerName" value="x-access" />
+        <property name="hashETag"    value="true"/>
         <property name="headerTagPostfixMap">
             <map>
   	      <entry key="level1" value="L1"/>
