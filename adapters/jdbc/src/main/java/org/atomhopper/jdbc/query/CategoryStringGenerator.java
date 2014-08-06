@@ -101,6 +101,11 @@ public final class CategoryStringGenerator {
 
             switch (nextOperator) {
                 case INCLUSIVE_OPERATOR:
+                    if( searchTermBuilder.toString().isEmpty() ) {
+
+                        throw new IllegalArgumentException( "Invalid Search Parameter: Parameter cannot be empty string." );
+                    }
+
                     categories.add(searchTermBuilder.toString());
                     break;
 
@@ -116,7 +121,8 @@ public final class CategoryStringGenerator {
         int charIndex = currentCharIndex;
         boolean isEscaped = false;
 
-        do {
+
+        while( charIndex < searchString.length() ) {
             final char nextChar = searchString.charAt(charIndex);
 
             if (isEscaped || !isOperator(nextChar)) {
@@ -129,7 +135,9 @@ public final class CategoryStringGenerator {
                     return charIndex - 1;
                 }
             }
-        } while (++charIndex < searchString.length());
+
+            charIndex++;
+        }
 
         return charIndex;
     }
