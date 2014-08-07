@@ -1,8 +1,11 @@
 package org.atomhopper;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.atomhopper.servlet.ServletInitParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,10 +20,12 @@ public class ExternalConfigLoaderContextListener implements ServletContextListen
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        final String configLocation = "/etc/atomhopper/";
-
         try {
-            new LogBackConfigLoader(configLocation + "logback.xml");
+            InitialContext initialContext = new InitialContext();
+            String configLocation = (String) initialContext.lookup("java:comp/env/logback/configuration-resource");
+            LOGGER.info("Log file location : "+ configLocation);
+
+            new LogBackConfigLoader(configLocation);
         } catch (Exception e) {
             LOGGER.error("Unable to read config file", e);
         }

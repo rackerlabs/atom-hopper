@@ -85,11 +85,14 @@
         <servlet-name>Atom-Hopper-Metrics</servlet-name>
         <url-pattern>/atommetrics/*</url-pattern>
     </servlet-mapping>
+    <!--
+    Make the log file location configurable here.
+    -->
     
     <env-entry>
         <env-entry-name>logback/configuration-resource</env-entry-name>
         <env-entry-type>java.lang.String</env-entry-type>
-        <env-entry-value>file:///etc/atomhopper/logback.xml</env-entry-value>
+        <env-entry-value>/etc/atomhopper/logback.xml</env-entry-value>
     </env-entry>
     
     <listener>
