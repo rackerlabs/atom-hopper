@@ -26,6 +26,10 @@ public class CategoryStringGeneratorTest {
     final String COL_CAT = "+pOne:col+cat1";
     final String COL_CAT_3 = "+cat1+pOne:col+cat2";
 
+    final String EMPTY_CAT1 = "+";
+    final String EMPTY_CAT2 =  "+cat1+";
+    final String EMPTY_CAT3 = "++cat1";
+
     @Before
     public void setUp() throws Exception {
 
@@ -64,5 +68,20 @@ public class CategoryStringGeneratorTest {
         List<String> result = CategoryStringGenerator.getPostgresCategoryString(MULTI_CAT, Collections.EMPTY_MAP, null );
         assertEquals( result.size(), 1 );
         assertEquals(result.get( 0 ), MULTI_CAT_RESULT);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldFailEmpty1() {
+        List<String> result = CategoryStringGenerator.getPostgresCategoryString(EMPTY_CAT1, Collections.EMPTY_MAP, null );
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldFailEmpty2() {
+        List<String> result = CategoryStringGenerator.getPostgresCategoryString(EMPTY_CAT2, Collections.EMPTY_MAP, null );
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldFailEmpty3() {
+        List<String> result = CategoryStringGenerator.getPostgresCategoryString(EMPTY_CAT3, Collections.EMPTY_MAP, null );
     }
 }
