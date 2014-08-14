@@ -39,6 +39,9 @@ import java.util.Map;
  */
 public class SearchToSqlConverter {
 
+    public static final String BAD_SEARCH_REGEX = ".*(\"|,).*";
+    public static final String BAD_CHAR_MSG = "Invalid Search Parameter:  '\"' ',' not allowed.";
+
     private static final String OPEN_PARENS = "(";
     private static final String CLOSED_PARENS = ")";
     private static final String OPEN_CURLY_BRACKET = "{";
@@ -287,8 +290,16 @@ public class SearchToSqlConverter {
                     }
                 }
 
+                if (param.matches( BAD_SEARCH_REGEX ) ) {
+
+                    throw new IllegalArgumentException( BAD_CHAR_MSG );
+                }
+
                 params.add( param );
                 break;
+            default:
+
+                throw new IllegalArgumentException( "Invalid Search Parameter" );
         }
 
         return params;

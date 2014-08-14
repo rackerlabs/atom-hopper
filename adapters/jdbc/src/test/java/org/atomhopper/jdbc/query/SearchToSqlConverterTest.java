@@ -15,6 +15,16 @@ public class SearchToSqlConverterTest {
 
     public static class WhenCallingSearchToSqlConverter {
 
+        private String bad_cat1 = "(cat=\")";
+        private String bad_cat2 = "(cat=ab\"cd)";
+        private String bad_cat3 = "(cat=\"ab\")";
+        private String bad_cat4 = "(cat=,)";
+
+        private String bad_classic1 = "+\"";
+        private String bad_classic2 = "+\"abcd\"";
+        private String bad_classic3 = "+a\"b\"c";
+        private String bad_classic4 = "+,";
+
         private String single_search = "(cat=D)";
         private String single_search_result = " categories @> ?::varchar[] ";
 
@@ -331,5 +341,62 @@ public class SearchToSqlConverterTest {
             assertEquals( result.get( 0 ), "a" );
             assertEquals( result.get( 1 ), "{b}" );
         }
+
+        @Test( expected = IllegalArgumentException.class )
+        public void ShouldThrowExceptionBadCat1() throws Exception {
+
+            SearchToSqlConverter searchToSqlConverter = new SearchToSqlConverter( prefixMapper, PREFIX_SPLIT );
+            searchToSqlConverter.getParamsFromSearchString( bad_cat1 );
+        }
+
+        @Test( expected = IllegalArgumentException.class )
+        public void ShouldThrowExceptionBadCat2() throws Exception {
+
+            SearchToSqlConverter searchToSqlConverter = new SearchToSqlConverter( prefixMapper, PREFIX_SPLIT );
+            searchToSqlConverter.getParamsFromSearchString( bad_cat2 );
+        }
+
+        @Test( expected = IllegalArgumentException.class )
+        public void ShouldThrowExceptionBadCat3() throws Exception {
+
+            SearchToSqlConverter searchToSqlConverter = new SearchToSqlConverter( prefixMapper, PREFIX_SPLIT );
+            searchToSqlConverter.getParamsFromSearchString( bad_cat3 );
+        }
+
+        @Test( expected = IllegalArgumentException.class )
+        public void ShouldThrowExceptionBadCat4() throws Exception {
+
+            SearchToSqlConverter searchToSqlConverter = new SearchToSqlConverter( prefixMapper, PREFIX_SPLIT );
+            searchToSqlConverter.getParamsFromSearchString( bad_cat4 );
+        }
+
+        @Test( expected = IllegalArgumentException.class )
+        public void ShouldThrowExceptionBadClassic1() throws Exception {
+
+            SearchToSqlConverter searchToSqlConverter = new SearchToSqlConverter( prefixMapper, PREFIX_SPLIT );
+            searchToSqlConverter.getParamsFromSearchString( bad_classic1 );
+        }
+
+        @Test( expected = IllegalArgumentException.class )
+        public void ShouldThrowExceptionBadClassic2() throws Exception {
+
+            SearchToSqlConverter searchToSqlConverter = new SearchToSqlConverter( prefixMapper, PREFIX_SPLIT );
+            searchToSqlConverter.getParamsFromSearchString( bad_classic2 );
+        }
+
+        @Test( expected = IllegalArgumentException.class )
+        public void ShouldThrowExceptionBadClassic3() throws Exception {
+
+            SearchToSqlConverter searchToSqlConverter = new SearchToSqlConverter( prefixMapper, PREFIX_SPLIT );
+            searchToSqlConverter.getParamsFromSearchString( bad_classic3 );
+        }
+
+        @Test( expected = IllegalArgumentException.class )
+        public void ShouldThrowExceptionBadClassic4() throws Exception {
+
+            SearchToSqlConverter searchToSqlConverter = new SearchToSqlConverter( prefixMapper, PREFIX_SPLIT );
+            searchToSqlConverter.getParamsFromSearchString( bad_classic4 );
+        }
+
     }
 }

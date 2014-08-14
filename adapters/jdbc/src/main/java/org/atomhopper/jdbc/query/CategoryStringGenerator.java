@@ -43,6 +43,12 @@ public final class CategoryStringGenerator {
         // find if any categories are prefixed, if so, split them out.
         for( String cat : categories ) {
 
+            if (cat.matches( SearchToSqlConverter.BAD_SEARCH_REGEX ) ) {
+
+                throw new IllegalArgumentException( SearchToSqlConverter.BAD_CHAR_MSG );
+            }
+
+
             if (prefixSplit != null ) {
 
                 int index = cat.indexOf( prefixSplit );
