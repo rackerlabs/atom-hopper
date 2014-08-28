@@ -24,6 +24,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -60,7 +61,7 @@ import static org.apache.abdera.i18n.text.UrlEncoding.decode;
  * </ul>
  *
  */
-public class JdbcFeedSource implements FeedSource {
+public class JdbcFeedSource implements FeedSource, InitializingBean {
 
     static Logger LOG = LoggerFactory.getLogger(
           JdbcFeedSource.class );
@@ -163,6 +164,16 @@ public class JdbcFeedSource implements FeedSource {
     public void setParameters(Map<String, String> params) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    @Override
+    public void afterPropertiesSet() {
+
+        if( split != null ^ !mapPrefix.isEmpty() ) {
+
+            throw new IllegalArgumentException( "The 'delimiter' and 'prefixColumnMap' field must both be defined" );
+        }
+    }
+
 
     private void addFeedSelfLink(Feed feed, final String baseFeedUri,
                                  final GetFeedRequest getFeedRequest,

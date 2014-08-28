@@ -21,6 +21,7 @@ import org.atomhopper.util.uri.template.EnumKeyedTemplateParameters;
 import org.atomhopper.util.uri.template.URITemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -53,7 +54,7 @@ import static org.apache.abdera.i18n.text.UrlEncoding.decode;
  *     categories column.  This is used for migrating a category from the generic column to the specific column</li>
  * </ul>
  */
-public class JdbcFeedPublisher implements FeedPublisher {
+public class JdbcFeedPublisher implements FeedPublisher, InitializingBean {
 
     private static final Logger LOG = LoggerFactory.getLogger( JdbcFeedPublisher.class );
     private static final String UUID_URI_SCHEME = "urn:uuid:";
@@ -112,6 +113,15 @@ public class JdbcFeedPublisher implements FeedPublisher {
     public void setParameters(Map<String, String> params) {
         throw new UnsupportedOperationException("Not supported yet.");
 
+    }
+
+    @Override
+    public void afterPropertiesSet() {
+
+        if( split != null ^ !mapPrefix.isEmpty() ) {
+
+            throw new IllegalArgumentException( "The 'delimiter' and 'prefixColumnMap' field must both be defined" );
+        }
     }
 
     private String createSql( String insertSql1, String insertSql2 ) {
