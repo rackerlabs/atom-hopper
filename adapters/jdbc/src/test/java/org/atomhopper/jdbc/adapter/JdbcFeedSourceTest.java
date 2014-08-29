@@ -93,6 +93,24 @@ public class JdbcFeedSourceTest {
             when(getFeedRequest.getAbdera()).thenReturn(abdera);
         }
 
+
+        @Test( expected = IllegalArgumentException.class )
+        public void shouldThrowExceptionForPrefixColumnMap() throws Exception {
+
+            jdbcFeedSource.setDelimiter( ":" );
+            jdbcFeedSource.afterPropertiesSet();
+        }
+
+        @Test( expected = IllegalArgumentException.class )
+        public void shouldThrowExceptionForDelimiter() throws Exception {
+
+            Map<String, String> map = new HashMap<String, String>();
+            map.put( "test1", "testA" );
+
+            jdbcFeedSource.setPrefixColumnMap( map );
+            jdbcFeedSource.afterPropertiesSet();
+        }
+
         @Test
         public void shouldSetJdbcTemplate() throws Exception {
             JdbcFeedSource tempPostgresFeedSource = mock(JdbcFeedSource.class);

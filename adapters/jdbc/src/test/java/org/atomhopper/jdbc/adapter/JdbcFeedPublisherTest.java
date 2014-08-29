@@ -67,6 +67,24 @@ public class JdbcFeedPublisherTest {
             entryList.add(persistedEntry);
         }
 
+
+        @Test( expected = IllegalArgumentException.class )
+        public void shouldThrowExceptionForPrefixColumnMap() throws Exception {
+
+            jdbcFeedPublisher.setDelimiter( ":" );
+            jdbcFeedPublisher.afterPropertiesSet();
+        }
+
+        @Test( expected = IllegalArgumentException.class )
+        public void shouldThrowExceptionForDelimiter() throws Exception {
+
+            Map<String, String> map = new HashMap<String, String>();
+            map.put( "test1", "testA" );
+
+            jdbcFeedPublisher.setPrefixColumnMap( map );
+            jdbcFeedPublisher.afterPropertiesSet();
+        }
+
         @Test
         public void shouldReturnHTTPCreated() throws Exception {
             AdapterResponse<Entry> adapterResponse = jdbcFeedPublisher.postEntry(postEntryRequest);
