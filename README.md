@@ -36,3 +36,16 @@ To find out how to install and run Atom Hopper please see the [Atom Hopper Wiki]
 under the [Apache License v2.0](http://www.apache.org/licenses/LICENSE-2.0).
 You must agree to the terms of this license and abide by them before
 viewing, utilizing or distributing the source code contained within this distribution.*
+
+###Notes Regarding Data Adapter###
+The current status of the Atom Hopper Data Adapters is as follows:
+
+* JDBC Data Adapter - ongoing development
+
+* Hibernate Data Adapter - not currently adding features/fixing defects
+
+* MongoDB Data Adapter - not currently adding features/fixing defects
+
+* Migration Data Adapter - ongoing development
+
+* Postgres Data Adapter - not currently adding features/fixing defects
