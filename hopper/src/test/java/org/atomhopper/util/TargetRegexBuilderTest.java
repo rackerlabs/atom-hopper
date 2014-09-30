@@ -41,7 +41,7 @@ public class TargetRegexBuilderTest {
             targetRegexBuilder.setWorkspace(workspaceResource);
             targetRegexBuilder.setFeed(feedResource);
 
-            assertTrue("should contain the workspaceResource regex",targetRegexBuilder.toEntryPattern().contains(workspaceResource));
+            assertTrue("should retain the backslash in the workspace resource regex",targetRegexBuilder.toEntryPattern().contains(workspaceResource));
 
         }
     }
