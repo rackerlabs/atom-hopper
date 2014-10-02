@@ -41,10 +41,12 @@ public class TargetRegexBuilder {
     }
 
     public void setFeed(String feed) {
+        feed = feed.replace("\\", "\\\\");
         this.feed = StringUtils.strip(feed, "/");
     }
 
     public void setWorkspace(String workspace) {
+        workspace = workspace.replace("\\", "\\\\");
         this.workspace = StringUtils.strip(workspace, "/");
     }
 
