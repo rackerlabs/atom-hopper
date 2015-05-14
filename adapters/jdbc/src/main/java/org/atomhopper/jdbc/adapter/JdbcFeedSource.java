@@ -75,7 +75,7 @@ public class JdbcFeedSource implements FeedSource, InitializingBean {
     private static final String AND_DIRECTION_EQ_BACKWARD = "&direction=backward";
     private static final String AND_DIRECTION_EQ_FORWARD = "&direction=forward";
     private static final String MOCK_LAST_MARKER = "last";
-    private static final String UUID_URI_SCHEME = "urn:uuid";
+    private static final String UUID_URI_SCHEME = "urn:uuid:";
 
     private static final int PAGE_SIZE = 25;
     private JdbcTemplate jdbcTemplate;
