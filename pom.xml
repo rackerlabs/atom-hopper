@@ -355,12 +355,12 @@
         <repository>
             <id>public.maven.research.rackspace.com</id>
             <name>Rackspace Research</name>
-            <url>http://maven.research.rackspacecloud.com/content/groups/aggregate/</url>
+            <url>https://maven.research.rackspacecloud.com/content/groups/aggregate/</url>
         </repository>
         <repository>
             <id>rackspace-research</id>
             <name>Rackspace Research Repository</name>
-            <url>http://maven.research.rackspacecloud.com/content/groups/public/</url>
+            <url>https://maven.research.rackspacecloud.com/content/groups/public/</url>
         </repository>
     </repositories>
 
@@ -369,14 +369,14 @@
             <id>releases.maven.research.rackspace.com</id>
 
             <name>Rackspace Research Releases</name>
-            <url>http://maven.research.rackspacecloud.com/content/repositories/releases</url>
+            <url>https://maven.research.rackspacecloud.com/content/repositories/releases</url>
         </repository>
 
         <snapshotRepository>
             <id>snapshots.maven.research.rackspace.com</id>
 
             <name>Rackspace Research Snapshots</name>
-            <url>http://maven.research.rackspacecloud.com/content/repositories/snapshots</url>
+            <url>https://maven.research.rackspacecloud.com/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
 
