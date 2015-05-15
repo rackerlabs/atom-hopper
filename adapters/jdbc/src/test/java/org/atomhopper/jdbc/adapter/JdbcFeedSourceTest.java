@@ -16,6 +16,7 @@ import org.atomhopper.adapter.request.adapter.GetEntryRequest;
 import org.atomhopper.adapter.request.adapter.GetFeedRequest;
 import org.atomhopper.dbal.PageDirection;
 import org.atomhopper.jdbc.model.PersistedEntry;
+import org.atomhopper.response.AdapterResponse;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -205,6 +206,24 @@ public class JdbcFeedSourceTest {
                     jdbcFeedSource.getFeed(getFeedRequest).getResponseStatus());
         }
 
+        @Test
+        public void shouldGetFeedHeadWithIdInCorrectFormat() throws Exception {
+            Abdera localAbdera = new Abdera();
+            when(jdbcTemplate.queryForObject(any(String.class),
+                    any(EntryRowMapper.class),
+                    any(String.class),
+                    any(String.class))).thenReturn(persistedEntry);
+            when(getFeedRequest.getDirection()).thenReturn("forward");
+            when(getFeedRequest.getAbdera()).thenReturn(localAbdera);
+            when(getEntryRequest.getAbdera()).thenReturn(localAbdera);
+            when(jdbcTemplate.query(any(String.class), any(Object[].class), any(EntryRowMapper.class))).thenReturn(entryList);
+            when(jdbcTemplate.queryForInt(any(String.class), any(Object[].class))).thenReturn(1);
+            
+            AdapterResponse<Feed> response = jdbcFeedSource.getFeed(getFeedRequest);
+            String feedId = response.getBody().getId().toString();
+            assertTrue("Feed id should be of the form urn:uuid:xxxx", feedId.startsWith("urn:uuid:"));
+        }
+        
         @Test
         public void shouldGetFeedHeadWithCategory() throws Exception {
             Abdera localAbdera = new Abdera();
