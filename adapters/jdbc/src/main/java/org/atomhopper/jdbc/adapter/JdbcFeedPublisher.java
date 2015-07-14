@@ -262,15 +262,8 @@ public class JdbcFeedPublisher implements FeedPublisher, InitializingBean {
         final List<String> categoriesList = new ArrayList<String>();
 
         for (org.apache.abdera.model.Category abderaCat : abderaCategories) {
-            String term = abderaCat.getTerm();
-            String termPrefix = "";
-            if ( StringUtils.isNotBlank(term) ) {
-                String[] parts = term.split(":");
-                if ( parts != null && parts.length>=1 ) {
-                    termPrefix = parts[0];
-                }
-            }
-            if ( mapPrefix.keySet().contains(termPrefix) ) {
+            String termPrefix = getPrefixFromTerm(abderaCat.getTerm());
+            if ( StringUtils.isNotEmpty(termPrefix) && mapPrefix.keySet().contains(termPrefix) ) {
                 categoriesList.add(abderaCat.getTerm());
             } else {
                 categoriesList.add(abderaCat.getTerm().toLowerCase());
@@ -281,6 +274,16 @@ public class JdbcFeedPublisher implements FeedPublisher, InitializingBean {
         categoriesList.toArray(categoryArray);
 
         return categoryArray;
+    }
+
+    private String getPrefixFromTerm(String term) {
+        if ( StringUtils.isNotBlank(term) ) {
+            String[] parts = term.split(":");
+            if ( parts != null && parts.length>=1 ) {
+                return parts[0];
+            }
+        }
+        return null;
     }
 
     private String entryToString(Entry entry) {
