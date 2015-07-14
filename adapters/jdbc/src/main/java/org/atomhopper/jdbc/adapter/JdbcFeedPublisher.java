@@ -263,11 +263,14 @@ public class JdbcFeedPublisher implements FeedPublisher, InitializingBean {
 
         for (org.apache.abdera.model.Category abderaCat : abderaCategories) {
             String term = abderaCat.getTerm();
-            // CF-1034: temporary fix for not being able
-            // to search Files events using NAST ID because
-            // it is the tenantID for Cloud Files and it's
-            // being converted to all lower case here.
-            if ( term.startsWith("tid:") ) {
+            String termPrefix = "";
+            if ( StringUtils.isNotBlank(term) ) {
+                String[] parts = term.split(":");
+                if ( parts != null && parts.length>=1 ) {
+                    termPrefix = parts[0];
+                }
+            }
+            if ( mapPrefix.keySet().contains(termPrefix) ) {
                 categoriesList.add(abderaCat.getTerm());
             } else {
                 categoriesList.add(abderaCat.getTerm().toLowerCase());
