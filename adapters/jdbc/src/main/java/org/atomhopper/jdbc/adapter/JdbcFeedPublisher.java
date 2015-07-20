@@ -258,7 +258,7 @@ public class JdbcFeedPublisher implements FeedPublisher, InitializingBean {
         }
     }
 
-    private String[] processCategories(List<org.apache.abdera.model.Category> abderaCategories) {
+    protected String[] processCategories(List<org.apache.abdera.model.Category> abderaCategories) {
         final List<String> categoriesList = new ArrayList<String>();
 
         for (org.apache.abdera.model.Category abderaCat : abderaCategories) {

@@ -1,10 +1,7 @@
 package org.atomhopper.jdbc.adapter;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+
 import static junit.framework.Assert.assertEquals;
 
 import org.apache.abdera.model.Entry;
@@ -20,6 +17,8 @@ import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
@@ -104,6 +103,60 @@ public class JdbcFeedPublisherTest {
             })).thenThrow(new DuplicateKeyException("duplicate entry"));
             AdapterResponse<Entry> adapterResponse = jdbcFeedPublisher.postEntry(postEntryRequest);
             assertEquals("Should return HTTP 409 (Conflict)", HttpStatus.CONFLICT, adapterResponse.getResponseStatus());
+        }
+
+        @Test
+        public void shouldNotLowerCaseCategoryInPrefixMap() throws Exception {
+            Map<String, String> prefixMap = new HashMap<String, String>();
+            prefixMap.put("foo", "bar");
+            prefixMap.put("gee", "wish");
+            jdbcFeedPublisher.setPrefixColumnMap(prefixMap);
+
+            List<org.apache.abdera.model.Category> categories = new ArrayList<org.apache.abdera.model.Category>();
+            org.apache.abdera.model.Category cat1 = mock(org.apache.abdera.parser.stax.FOMCategory.class);
+            org.apache.abdera.model.Category cat2 = mock(org.apache.abdera.parser.stax.FOMCategory.class);
+            when(cat1.getTerm()).thenReturn("foo:myCamelCaseFoo");
+            when(cat2.getTerm()).thenReturn("gee:myCamelCaseGee");
+            categories.add(cat1);
+            categories.add(cat2);
+            String[] results = jdbcFeedPublisher.processCategories(categories);
+
+            assertNotNull("processCategories() should return non null results", results);
+            assertEquals("processCategories() should return array of length 2", results.length, 2);
+
+            List<String> resultsArray = Arrays.asList(results);
+            for (org.apache.abdera.model.Category cat: categories) {
+                assertTrue("category '" + cat.getTerm() + "' should be in the original categories",
+                        resultsArray.contains(cat.getTerm()));
+            }
+        }
+
+        @Test
+        public void shouldLowerCaseCategory() throws Exception {
+            Map<String, String> prefixMap = new HashMap<String, String>();
+            prefixMap.put("foo", "bar");
+            prefixMap.put("gee", "wish");
+            jdbcFeedPublisher.setPrefixColumnMap(prefixMap);
+
+            String camelCase = "myCamelCaseFood";
+            String toBeLowerCase = "toBeLowerCase";
+            List<org.apache.abdera.model.Category> categories = new ArrayList<org.apache.abdera.model.Category>();
+            org.apache.abdera.model.Category cat1 = mock(org.apache.abdera.parser.stax.FOMCategory.class);
+            org.apache.abdera.model.Category cat2 = mock(org.apache.abdera.parser.stax.FOMCategory.class);
+            when(cat1.getTerm()).thenReturn("foo:" + camelCase);
+            when(cat2.getTerm()).thenReturn("cat2:" + toBeLowerCase);
+            categories.add(cat1);
+            categories.add(cat2);
+            String[] results = jdbcFeedPublisher.processCategories(categories);
+
+            assertNotNull("processCategories() should return non null results", results);
+            assertEquals("processCategories() should return array of length 2", results.length, 2);
+            for (int idx=0; idx<results.length; idx++) {
+                 if ( results[idx].startsWith("cat2:")) {
+                    assertEquals("result '" + results[idx] + "' should be in lower case",
+                            results[idx], "cat2:" + toBeLowerCase.toLowerCase());
+                }
+            }
         }
 
         @Test(expected = UnsupportedOperationException.class)
