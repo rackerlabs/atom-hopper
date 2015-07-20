@@ -258,17 +258,32 @@ public class JdbcFeedPublisher implements FeedPublisher, InitializingBean {
         }
     }
 
-    private String[] processCategories(List<org.apache.abdera.model.Category> abderaCategories) {
+    protected String[] processCategories(List<org.apache.abdera.model.Category> abderaCategories) {
         final List<String> categoriesList = new ArrayList<String>();
 
         for (org.apache.abdera.model.Category abderaCat : abderaCategories) {
-            categoriesList.add(abderaCat.getTerm().toLowerCase());
+            String termPrefix = getPrefixFromTerm(abderaCat.getTerm());
+            if ( StringUtils.isNotEmpty(termPrefix) && mapPrefix.keySet().contains(termPrefix) ) {
+                categoriesList.add(abderaCat.getTerm());
+            } else {
+                categoriesList.add(abderaCat.getTerm().toLowerCase());
+            }
         }
 
         final String[] categoryArray = new String[categoriesList.size()];
         categoriesList.toArray(categoryArray);
 
         return categoryArray;
+    }
+
+    private String getPrefixFromTerm(String term) {
+        if ( StringUtils.isNotBlank(term) ) {
+            String[] parts = term.split(":");
+            if ( parts != null && parts.length>=1 ) {
+                return parts[0];
+            }
+        }
+        return null;
     }
 
     private String entryToString(Entry entry) {
