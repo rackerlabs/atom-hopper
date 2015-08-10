@@ -1,5 +1,6 @@
 package org.atomhopper.abdera.filter;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -48,7 +49,9 @@ public class HeaderValueFeedEntityTagProcessor extends FeedEntityTagProcessor {
         if ( headerName != null ) {
             Object[] roles = rc.getHeaders(headerName);
             if ( roles != null ) {
-                for (Object aRole: roles) {
+
+                for (String aRole: findRoles( roles )) {
+
                     String postfix = headerTagPostfixMap.get(aRole);
                     if ( postfix != null )
                         postfixSet.add(postfix);
@@ -57,6 +60,17 @@ public class HeaderValueFeedEntityTagProcessor extends FeedEntityTagProcessor {
         }
         String allPostfix = StringUtils.join(postfixSet, ",");
         return new EntityTag(hashIt(firstId + ":" + lastId + ":" + allPostfix), true);
+    }
+
+    private Set<String> findRoles( Object[] roles ) {
+        Set<String> roleSet = new HashSet<String>();
+
+        // the x-roles might be passed as a single comma-delimited header
+        for( Object role : roles ) {
+
+            roleSet.addAll( Arrays.asList( ( (String) role ).split( "," ) ) );
+        }
+        return roleSet;
     }
 
     public String getHeaderName() {
