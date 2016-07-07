@@ -207,7 +207,155 @@ public class HibernateFeedRepositoryTest {
         @Test
         public void shouldNotContainOtherCategories() throws Exception {
             assertEquals(3, categories.size());
+        }
+    }
 
+    public static class WhenOperatingInParallel {
+        static HibernateFeedRepository feedRepository;
+        final CyclicBarrier barrier = new CyclicBarrier(2);
+        static Runner runner1 = new Runner();
+        static Runner runner2 = new Runner();
+
+        @BeforeClass
+        public static void setup() throws Exception {
+            Map<String, String> parameters = new HashMap<String, String>();
+            parameters.put("hibernate.connection.driver_class", "org.h2.Driver");
+            parameters.put("hibernate.connection.url", "jdbc:h2:mem:WhenOperatingInParallel");
+            parameters.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
+            parameters.put("hibernate.connection.username", "sa");
+            parameters.put("hibernate.connection.password", "");
+            parameters.put("hibernate.hbm2ddl.auto", "update");
+
+            feedRepository = new HibernateFeedRepository(parameters);
+        }
+
+        static class Runner {
+            Thread t;
+
+            interface Operation<T> {
+                T run();
+            }
+
+            interface Future<T> {
+                T get(long timeout) throws InterruptedException;
+            }
+
+            <T> Future<T> run(final Operation<T> op) {
+                final ArrayList<T> result = new ArrayList<T>(1);
+                final ArrayList<RuntimeException> exception = new ArrayList<RuntimeException>(1);
+                t = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            result.add(op.run());
+                        } catch (RuntimeException e) {
+                            exception.add(e);
+                        }
+                    }
+                });
+                t.start();
+                return new Future<T>() {
+                    @Override
+                    public T get(long timeout) throws InterruptedException {
+                        t.join(timeout);
+                        if (t.isAlive()) {
+                            t.interrupt();
+                            t.join();
+                        }
+                        if (!exception.isEmpty()) {
+                            throw new RuntimeException("Operation threw exception", exception.get(0));
+                        }
+                        return result.get(0);
+                    }
+                };
+            }
+        }
+
+        @Test
+        public void shouldCreateCategoriesWithoutDuplicates() throws Exception {
+
+            final Runner.Future<Integer> r1 = runner1.run(new Runner.Operation<Integer>() {
+                @Override
+                public Integer run() {
+                    final PersistedEntry entry = new PersistedEntry("entry1");
+                    entry.setCategories(Collections.singleton(new PersistedCategory("cat")));
+                    PersistedFeed feed = new PersistedFeed("feed1", "feed1");
+                    feed.setEntries(Collections.singleton(entry));
+                    entry.setFeed(feed);
+                    try {
+                        barrier.await();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (BrokenBarrierException e) {
+                        e.printStackTrace();
+                    }
+
+                    feedRepository.saveEntry(entry);
+                    return null;
+                }
+            });
+            final Runner.Future<Integer> r2 = runner2.run(new Runner.Operation<Integer>() {
+                @Override
+                public Integer run() {
+                    final PersistedEntry entry = new PersistedEntry("entry2");
+                    entry.setCategories(Collections.singleton(new PersistedCategory("cat")));
+                    PersistedFeed feed = new PersistedFeed("feed2", "feed2");
+                    feed.setEntries(Collections.singleton(entry));
+                    entry.setFeed(feed);
+                    try {
+                        barrier.await();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (BrokenBarrierException e) {
+                        e.printStackTrace();
+                    }
+
+                    feedRepository.saveEntry(entry);
+                    return null;
+                }
+            });
+            r1.get(3000);
+            r2.get(3000);
+        }
+
+        @Test
+        public void shouldUpdateCategoriesWithoutDuplicates() throws Exception {
+
+            final Runner.Future<Integer> r1 = runner1.run(new Runner.Operation<Integer>() {
+                @Override
+                public Integer run() {
+                    final Set<PersistedCategory> categories = Collections.singleton(new PersistedCategory("update"));
+                    try {
+                        barrier.await();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (BrokenBarrierException e) {
+                        e.printStackTrace();
+                    }
+
+                    feedRepository.updateCategories(categories);
+                    return null;
+                }
+            });
+            final Runner.Future<Integer> r2 = runner2.run(new Runner.Operation<Integer>() {
+                @Override
+                public Integer run() {
+                    final Set<PersistedCategory> categories = Collections.singleton(new PersistedCategory("update"));
+                    try {
+                        barrier.await();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (BrokenBarrierException e) {
+                        e.printStackTrace();
+                    }
+
+                    feedRepository.updateCategories(categories);
+                    return null;
+
+                }
+            });
+            r1.get(3000);
+            r2.get(3000);
         }
     }
 }
