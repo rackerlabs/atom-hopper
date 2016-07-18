@@ -1,6 +1,13 @@
 package org.atomhopper.hibernate;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.atomhopper.adapter.jpa.PersistedCategory;
 import org.atomhopper.adapter.jpa.PersistedEntry;
 import org.atomhopper.adapter.jpa.PersistedFeed;
@@ -14,7 +21,6 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -185,45 +191,83 @@ public class HibernateFeedRepository implements FeedRepository {
 
     @Override
     public Set<PersistedCategory> updateCategories(final Set<PersistedCategory> categories) {
-        return performComplexAction(new ComplexSessionAction<Set<PersistedCategory>>() {
+        /* Creating caretories can fail if there's another request in parallel
+         * attempting to create the same categories, in another transaction.
+         * If that other transaction completes first, then the check for
+         * whether categories already exist will indicate that they don't, due
+         * to transaction isolation. After the ComplexSessionAction returns,
+         * performComplexAction will attempt to commit, which fails due to the
+         * categories already aving been inserted and committed in the other
+         * transaction.
+         * To handle this, we need to retry the whole transaction. This time
+         * around, the criterion that failed the earlier transaction will be
+         * found, and therefore skipped. We thus need to retry at most
+         * categories.size() times. */
+        int attemptsLeft = categories.size() + 1;
+        AtomDatabaseException firstException = null;
+        while (attemptsLeft-- > 0) {
+            try {
+                return performComplexAction(new ComplexSessionAction<Set<PersistedCategory>>() {
 
-            @Override
-            public Set<PersistedCategory> perform(Session liveSession) {
-                final Set<PersistedCategory> updatedCategories = new HashSet<PersistedCategory>();
+                    @Override
+                    public Set<PersistedCategory> perform(Session liveSession) {
+                        final Set<PersistedCategory> updatedCategories = new HashSet<PersistedCategory>();
 
-                for (PersistedCategory entryCategory : categories) {
-                    PersistedCategory liveCategory = (PersistedCategory) liveSession.createCriteria(PersistedCategory.class)
-                            .add(Restrictions.idEq(entryCategory.getTerm())).uniqueResult();
+                        for (PersistedCategory entryCategory : categories) {
+                            PersistedCategory liveCategory =
+                                (PersistedCategory) liveSession.createCriteria(PersistedCategory.class)
+                                    .add(Restrictions.idEq(entryCategory.getTerm())).uniqueResult();
 
-                    if (liveCategory == null) {
-                        liveCategory = new PersistedCategory(entryCategory.getTerm());
-                        liveSession.save(liveCategory);
+                            if (liveCategory == null) {
+                                liveCategory = new PersistedCategory(entryCategory.getTerm());
+                                liveSession.save(liveCategory);
+                            }
+
+                            updatedCategories.add(liveCategory);
+                        }
+
+                        return updatedCategories;
                     }
-
-                    updatedCategories.add(liveCategory);
+                });
+            } catch (AtomDatabaseException e) {
+                if (firstException == null) {
+                    firstException = e;
                 }
-
-                return updatedCategories;
             }
-        });
+        }
+        throw firstException;
     }
 
     @Override
     public void saveEntry(final PersistedEntry entry) {
-        performSimpleAction(new SimpleSessionAction() {
+        /* Retry in case of category creation failure (see updateCategories) */
+        int attemptsLeft = entry.getCategories().size() + 1;
+        AtomDatabaseException firstException = null;
+        while (attemptsLeft-- > 0) {
+            try {
+                performSimpleAction(new SimpleSessionAction() {
 
-            @Override
-            public void perform(Session liveSession) {
-                PersistedFeed feed = (PersistedFeed) liveSession.createCriteria(PersistedFeed.class).add(Restrictions.idEq(entry.getFeed().getName())).uniqueResult();
+                    @Override
+                    public void perform(Session liveSession) {
+                        PersistedFeed feed = (PersistedFeed) liveSession.createCriteria(PersistedFeed.class)
+                            .add(Restrictions.idEq(entry.getFeed().getName())).uniqueResult();
 
-                if (feed == null) {
-                    feed = entry.getFeed();
+                        if (feed == null) {
+                            feed = entry.getFeed();
+                        }
+
+                        liveSession.saveOrUpdate(feed);
+                        liveSession.save(entry);
+                    }
+                });
+                return;
+            } catch (AtomDatabaseException e) {
+                if (firstException == null) {
+                    firstException = e;
                 }
-
-                liveSession.saveOrUpdate(feed);
-                liveSession.save(entry);
             }
-        });
+        }
+        throw firstException;
     }
 
     @Override
