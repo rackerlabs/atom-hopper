@@ -1,7 +1,5 @@
 package org.atomhopper.hibernate;
 
-import static org.mockito.Mockito.mock;
-
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
@@ -20,8 +18,6 @@ import java.util.concurrent.CyclicBarrier;
 import org.atomhopper.adapter.jpa.PersistedCategory;
 import org.atomhopper.adapter.jpa.PersistedEntry;
 import org.atomhopper.adapter.jpa.PersistedFeed;
-import org.atomhopper.dbal.AtomDatabaseException;
-import org.atomhopper.hibernate.actions.ComplexSessionAction;
 import org.atomhopper.hibernate.actions.SimpleSessionAction;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -39,11 +35,8 @@ import org.junit.runner.RunWith;
 @RunWith(Enclosed.class)
 public class HibernateFeedRepositoryTest {
 
-    public static class WhenPerformingSimpleAction {
-
-        HibernateFeedRepository feedRepository;
+    public static class WhenCreatingMisconfiguredFeedRepository{
         Map<String, String> parameters;
-        SimpleSessionAction simpleSessionAction;
 
         @Before
         public void setup() throws Exception {
@@ -54,40 +47,11 @@ public class HibernateFeedRepositoryTest {
             parameters.put("hibernate.connection.username", "sa");
             parameters.put("hibernate.connection.password", "");
             parameters.put("hibernate.hbm2ddl.auto", "update");
-
-            feedRepository = new HibernateFeedRepository(parameters);
-            simpleSessionAction = mock(SimpleSessionAction.class);
         }
 
-        @Test(expected=AtomDatabaseException.class)
+        @Test(expected=UnsupportedOperationException.class)
         public void shouldThrowAtomDatabaseException() throws Exception {
-            feedRepository.performSimpleAction(simpleSessionAction);
-        }
-    }
-
-    public static class WhenPerformingComplexAction {
-
-        HibernateFeedRepository feedRepository;
-        Map<String, String> parameters;
-        ComplexSessionAction complexSessionAction;
-
-        @Before
-        public void setup() throws Exception {
-            parameters = new HashMap<String, String>();
-            parameters.put("hibernate.connection.driver_class", "org.h2.Driver");
-            parameters.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
-            parameters.put("hibernate.connection.username", "sa");
-            parameters.put("hibernate.connection.password", "");
-            parameters.put("hibernate.hbm2ddl.auto", "update");
-
-            feedRepository = new HibernateFeedRepository(parameters);
-            complexSessionAction = mock(ComplexSessionAction.class);
-        }
-
-        /*This should throw the error because */
-        @Test(expected=AtomDatabaseException.class)
-        public void shouldThrowAtomDatabaseException() throws Exception {
-            feedRepository.performComplexAction(complexSessionAction);
+            new HibernateFeedRepository(parameters);
         }
     }
 
