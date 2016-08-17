@@ -15,6 +15,7 @@ import org.atomhopper.response.EmptyBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 
@@ -69,7 +70,7 @@ public class MigrationFeedPublisher implements FeedPublisher {
         // If allowOverrideDate is false then set the DateLastUpdated
         // Also set the DateLastUpdated if allowOverrideDate is true, but no DateLastUpdated was sent in the entry
         if (!allowOverrideDate || postEntryRequest.getEntry().getUpdated() == null) {
-            postEntryRequest.getEntry().setUpdated(entry.getDateLastUpdated());
+            postEntryRequest.getEntry().setUpdated(Date.from(entry.getDateLastUpdated()));
         }
 
         switch (writeTo) {

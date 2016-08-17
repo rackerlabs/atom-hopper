@@ -1,8 +1,11 @@
 package org.atomhopper.hibernate;
 
+import static org.junit.Assert.assertFalse;
+
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -18,9 +21,12 @@ import java.util.concurrent.CyclicBarrier;
 import org.atomhopper.adapter.jpa.PersistedCategory;
 import org.atomhopper.adapter.jpa.PersistedEntry;
 import org.atomhopper.adapter.jpa.PersistedFeed;
+import org.atomhopper.dbal.PageDirection;
 import org.atomhopper.hibernate.actions.SimpleSessionAction;
+import org.atomhopper.hibernate.query.SimpleCategoryCriteriaGenerator;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -63,7 +69,7 @@ public class HibernateFeedRepositoryTest {
             Map<String, String> parameters;
             parameters = new HashMap<String, String>();
             parameters.put("hibernate.connection.driver_class", "org.h2.Driver");
-            parameters.put("hibernate.connection.url", "jdbc:h2:mem:WhenCreatingFeed");
+            parameters.put("hibernate.connection.url", "jdbc:h2:mem:WhenCreatingEntry");
             parameters.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
             parameters.put("hibernate.connection.username", "sa");
             parameters.put("hibernate.connection.password", "");
@@ -121,6 +127,108 @@ public class HibernateFeedRepositoryTest {
                     assertEquals("entryId", entry.getEntryId());
                 }
             });
+        }
+
+        @Test
+        public void pagingForwardsShouldNotFindTheEntry() {
+            final PersistedEntry entry = feedRepository.getEntry("entryId", "feedName");
+            final List<PersistedEntry> page = feedRepository.getFeedPage(
+                "feedName", entry, PageDirection.FORWARD, new SimpleCategoryCriteriaGenerator(""), 1
+            );
+            Assert.assertTrue(page.isEmpty());
+        }
+
+        @Test
+        public void pagingBackwardsShouldFindTheEntry() {
+            final PersistedEntry entry = feedRepository.getEntry("entryId", "feedName");
+            final List<PersistedEntry> page = feedRepository.getFeedPage(
+                "feedName", entry, PageDirection.BACKWARD, new SimpleCategoryCriteriaGenerator(""), 1
+            );
+            Assert.assertEquals(1, page.size());
+            Assert.assertEquals("entryId", page.get(0).getEntryId());
+        }
+    }
+
+    public static class WhenCreatingTwoEntries {
+        static HibernateFeedRepository feedRepository;
+
+        @BeforeClass
+        public static void setup() throws Exception {
+            Map<String, String> parameters;
+            parameters = new HashMap<String, String>();
+            parameters.put("hibernate.connection.driver_class", "org.h2.Driver");
+            parameters.put("hibernate.connection.url", "jdbc:h2:mem:WhenCreatingTwoEntries");
+            parameters.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
+            parameters.put("hibernate.connection.username", "sa");
+            parameters.put("hibernate.connection.password", "");
+            parameters.put("hibernate.hbm2ddl.auto", "update");
+
+            feedRepository = new HibernateFeedRepository(parameters);
+
+            PersistedFeed feed = new PersistedFeed("feedName", "feedId");
+
+            PersistedEntry entry1 = new PersistedEntry("entry1");
+            Instant earlier = Instant.now().minusSeconds(60);
+            entry1.setDateLastUpdated(earlier);
+            entry1.setFeed(feed);
+
+            feedRepository.saveEntry(entry1);
+
+            PersistedEntry entry2 = new PersistedEntry("entry2");
+            Instant now = Instant.now();
+            entry2.setDateLastUpdated(now);
+            entry2.setFeed(feed);
+
+            feedRepository.saveEntry(entry2);
+        }
+
+        @Test
+        public void entriesShouldBeSortedByRecency() throws Exception {
+            final List<PersistedEntry> entries = feedRepository.getFeedHead(
+                "feedName", new SimpleCategoryCriteriaGenerator(""), 2
+            );
+            Assert.assertEquals(entries.get(0).getEntryId(), "entry2");
+            Assert.assertEquals(entries.get(1).getEntryId(), "entry1");
+        }
+
+        @Test
+        public void pagingBackwardsFromLatestShouldFindBoth() {
+            final PersistedEntry latest = feedRepository.getEntry("entry2", "feedName");
+            final List<PersistedEntry> page = feedRepository.getFeedPage(
+                "feedName", latest, PageDirection.BACKWARD, new SimpleCategoryCriteriaGenerator(""), 2
+            );
+            Assert.assertEquals(2, page.size());
+            Assert.assertEquals("entry2", page.get(0).getEntryId());
+            Assert.assertEquals("entry1", page.get(1).getEntryId());
+        }
+
+        @Test
+        public void pagingForwardsFromLatestShouldNotFindAnything() {
+            final PersistedEntry latest = feedRepository.getEntry("entry2", "feedName");
+            final List<PersistedEntry> page = feedRepository.getFeedPage(
+                "feedName", latest, PageDirection.FORWARD, new SimpleCategoryCriteriaGenerator(""), 2
+            );
+            Assert.assertTrue(page.isEmpty());
+        }
+
+        @Test
+        public void pagingBackwardsFromOldestShouldOnlyFindOldest() {
+            final PersistedEntry oldest = feedRepository.getEntry("entry1", "feedName");
+            final List<PersistedEntry> page = feedRepository.getFeedPage(
+                "feedName", oldest, PageDirection.BACKWARD, new SimpleCategoryCriteriaGenerator(""), 2
+            );
+            Assert.assertEquals(1, page.size());
+            Assert.assertEquals("entry1", page.get(0).getEntryId());
+        }
+
+        @Test
+        public void pagingForwardsFromOldestShouldFindLatest() {
+            final PersistedEntry oldest = feedRepository.getEntry("entry1", "feedName");
+            final List<PersistedEntry> page = feedRepository.getFeedPage(
+                "feedName", oldest, PageDirection.FORWARD, new SimpleCategoryCriteriaGenerator(""), 2
+            );
+            Assert.assertEquals(1, page.size());
+            Assert.assertEquals("entry2", page.get(0).getEntryId());
         }
     }
 
@@ -320,6 +428,59 @@ public class HibernateFeedRepositoryTest {
             });
             r1.get(3000);
             r2.get(3000);
+        }
+
+        @Test
+        public void entriesShouldGetDistinctIds() throws Exception {
+
+            final PersistedEntry existing = new PersistedEntry("existing");
+            final PersistedFeed feed = new PersistedFeed("feed1", "feed1");
+            feed.setEntries(Collections.singleton(existing));
+            existing.setFeed(feed);
+            feedRepository.saveEntry(existing);
+
+            final Runner.Future<PersistedEntry> r1 = runner1.run(new Runner.Operation<PersistedEntry>() {
+                @Override
+                public PersistedEntry run() {
+                    final PersistedEntry entry = new PersistedEntry("entry2a");
+                    feed.setEntries(Collections.singleton(entry));
+                    entry.setFeed(feed);
+                    try {
+                        barrier.await();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (BrokenBarrierException e) {
+                        e.printStackTrace();
+                    }
+
+                    feedRepository.saveEntry(entry);
+                    return entry;
+                }
+            });
+            final Runner.Future<PersistedEntry> r2 = runner2.run(new Runner.Operation<PersistedEntry>() {
+                @Override
+                public PersistedEntry run() {
+                    final PersistedEntry entry = new PersistedEntry("entry2b");
+                    feed.setEntries(Collections.singleton(entry));
+                    entry.setFeed(feed);
+                    try {
+                        barrier.await();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (BrokenBarrierException e) {
+                        e.printStackTrace();
+                    }
+
+                    feedRepository.saveEntry(entry);
+                    return entry;
+                }
+            });
+            final PersistedEntry entry1 = r1.get(3000);
+            final PersistedEntry entry2 = r2.get(3000);
+
+            assertFalse(entry1.getEntryId().equals(entry2.getEntryId()));
+            assertFalse(entry1.getCreationDate().isBefore(existing.getCreationDate()));
+            assertFalse(entry2.getCreationDate().isBefore(existing.getCreationDate()));
         }
     }
 }

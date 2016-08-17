@@ -91,8 +91,8 @@ public class HibernateFeedPublisher implements FeedPublisher {
             Date updated = abderaParsedEntry.getUpdated();
 
             if (updated != null) {
-                persistedEntry.setDateLastUpdated(updated);
-                persistedEntry.setCreationDate(updated);
+                persistedEntry.setDateLastUpdated(updated.toInstant());
+                persistedEntry.setCreationDate(updated.toInstant());
             }
         }
 
@@ -106,8 +106,8 @@ public class HibernateFeedPublisher implements FeedPublisher {
         persistedEntry.setFeed(feedRef);
         persistedEntry.setEntryBody(entryToString(abderaParsedEntry));
 
-        abderaParsedEntry.setUpdated(persistedEntry.getDateLastUpdated());
-        abderaParsedEntry.setPublished(persistedEntry.getCreationDate());
+        abderaParsedEntry.setUpdated(Date.from(persistedEntry.getDateLastUpdated()));
+        abderaParsedEntry.setPublished(Date.from(persistedEntry.getCreationDate()));
 
         feedRepository.saveEntry(persistedEntry);
 

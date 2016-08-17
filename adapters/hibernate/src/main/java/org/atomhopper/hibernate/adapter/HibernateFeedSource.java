@@ -4,6 +4,7 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.sql.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -163,8 +164,8 @@ public class HibernateFeedSource implements FeedSource {
         if (hydratedEntryDocument != null) {
             entry = hydratedEntryDocument.getRoot();
 
-            entry.setUpdated(persistedEntry.getDateLastUpdated());
-            entry.setPublished(persistedEntry.getCreationDate());
+            entry.setUpdated(Date.from(persistedEntry.getDateLastUpdated()));
+            entry.setPublished(Date.from(persistedEntry.getCreationDate()));
         }
 
         return entry;

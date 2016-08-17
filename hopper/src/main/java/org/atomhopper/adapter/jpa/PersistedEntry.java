@@ -1,5 +1,12 @@
 package org.atomhopper.adapter.jpa;
 
+import java.io.Serializable;
+import java.time.Clock;
+import java.time.Instant;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -12,15 +19,8 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import java.io.Serializable;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.TimeZone;
+
+import org.atomhopper.util.NanoClock;
 
 @Entity
 @Table(name = "Entries")
@@ -49,22 +49,18 @@ public class PersistedEntry implements Serializable {
     
     @Basic(optional = false)
     @Column(name = "CreationDate")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date creationDate;
+    private Instant creationDate;
     
     @Basic(optional = false)
     @Column(name = "DateLastUpdated")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dateLastUpdated;
+    private Instant dateLastUpdated;
 
     public PersistedEntry() {
         categories = Collections.EMPTY_SET;
-        
-        final Calendar localNow = Calendar.getInstance(TimeZone.getDefault());
-        localNow.setTimeInMillis(System.currentTimeMillis());
-        
-        creationDate = localNow.getTime();
-        dateLastUpdated = localNow.getTime();
+        Clock nanoClock = new NanoClock();
+        Instant now = Instant.now(nanoClock);
+        creationDate = now;
+        dateLastUpdated = now;
     }
 
     public PersistedEntry(String entryId) {
@@ -74,20 +70,20 @@ public class PersistedEntry implements Serializable {
         this.entryId = entryId;
     }
 
-    public Date getCreationDate() {
-        return (Date) creationDate.clone();
+    public Instant getCreationDate() {
+        return creationDate;
     }
 
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = (Date) creationDate.clone();
+    public void setCreationDate(Instant creationDate) {
+        this.creationDate = creationDate;
     }
 
-    public Date getDateLastUpdated() {
-        return (Date) dateLastUpdated.clone();
+    public Instant getDateLastUpdated() {
+        return dateLastUpdated;
     }
 
-    public void setDateLastUpdated(Date dateLastUpdated) {
-        this.dateLastUpdated = (Date) dateLastUpdated.clone();
+    public void setDateLastUpdated(Instant dateLastUpdated) {
+        this.dateLastUpdated = dateLastUpdated;
     }
 
     public Set<PersistedCategory> getCategories() {
