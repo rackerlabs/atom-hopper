@@ -18,9 +18,15 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "Entries")
+@Table(
+    name = "Entries", uniqueConstraints = {
+        @UniqueConstraint(columnNames= {"Feed", "CreationDate"}),
+        @UniqueConstraint(columnNames= {"Feed", "DateLastUpdated"})
+    }
+)
 public class PersistedEntry implements Serializable {
 
     @Id
