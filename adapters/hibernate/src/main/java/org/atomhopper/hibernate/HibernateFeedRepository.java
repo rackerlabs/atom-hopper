@@ -259,6 +259,8 @@ public class HibernateFeedRepository implements FeedRepository {
 
                         if (feed == null) {
                             feed = entry.getFeed();
+                        } else {
+                            liveSession.lock(feed, LockMode.PESSIMISTIC_WRITE);
                         }
 
                         if (entry.getCreationDate() == null || entry.getDateLastUpdated() == null) {
