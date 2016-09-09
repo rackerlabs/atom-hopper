@@ -1,7 +1,6 @@
 package org.atomhopper.adapter.jpa;
 
 import java.io.Serializable;
-import java.time.Clock;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.HashSet;
@@ -19,8 +18,6 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.atomhopper.util.NanoClock;
 
 @Entity
 @Table(name = "Entries")
@@ -57,10 +54,6 @@ public class PersistedEntry implements Serializable {
 
     public PersistedEntry() {
         categories = Collections.EMPTY_SET;
-        Clock nanoClock = new NanoClock();
-        Instant now = Instant.now(nanoClock);
-        creationDate = now;
-        dateLastUpdated = now;
     }
 
     public PersistedEntry(String entryId) {

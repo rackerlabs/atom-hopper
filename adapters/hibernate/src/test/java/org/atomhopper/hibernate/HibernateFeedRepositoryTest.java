@@ -170,6 +170,7 @@ public class HibernateFeedRepositoryTest {
             PersistedEntry entry1 = new PersistedEntry("entry1");
             Instant earlier = Instant.now().minusSeconds(60);
             entry1.setDateLastUpdated(earlier);
+            entry1.setCreationDate(earlier);
             entry1.setFeed(feed);
 
             feedRepository.saveEntry(entry1);
@@ -177,6 +178,7 @@ public class HibernateFeedRepositoryTest {
             PersistedEntry entry2 = new PersistedEntry("entry2");
             Instant now = Instant.now();
             entry2.setDateLastUpdated(now);
+            entry2.setCreationDate(now);
             entry2.setFeed(feed);
 
             feedRepository.saveEntry(entry2);

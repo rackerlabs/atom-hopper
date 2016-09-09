@@ -106,10 +106,10 @@ public class HibernateFeedPublisher implements FeedPublisher {
         persistedEntry.setFeed(feedRef);
         persistedEntry.setEntryBody(entryToString(abderaParsedEntry));
 
+        feedRepository.saveEntry(persistedEntry);
+
         abderaParsedEntry.setUpdated(Date.from(persistedEntry.getDateLastUpdated()));
         abderaParsedEntry.setPublished(Date.from(persistedEntry.getCreationDate()));
-
-        feedRepository.saveEntry(persistedEntry);
 
         incrementCounterForFeed(postEntryRequest.getFeedName());
 

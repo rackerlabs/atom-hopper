@@ -50,6 +50,8 @@ public class PersistedEntryTest {
         @Before
         public void setUp() throws Exception {
             persistedEntry = new PersistedEntry();
+            persistedEntry.setCreationDate(Instant.now());
+            persistedEntry.setDateLastUpdated(Instant.now());
         }
 
         @Test
