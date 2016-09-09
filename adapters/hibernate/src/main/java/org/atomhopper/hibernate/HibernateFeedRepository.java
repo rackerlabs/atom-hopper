@@ -162,13 +162,13 @@ public class HibernateFeedRepository implements FeedRepository {
 
                 switch (direction) {
                     case FORWARD:
-                        criteria.add(Restrictions.gt(DATE_LAST_UPDATED, markerEntry.getCreationDate())).addOrder(Order.asc(DATE_LAST_UPDATED));
+                        criteria.add(Restrictions.gt(DATE_LAST_UPDATED, markerEntry.getDateLastUpdated())).addOrder(Order.asc(DATE_LAST_UPDATED));
                         feedPage.addAll(criteria.list());
                         Collections.reverse(feedPage);
                         break;
 
                     case BACKWARD:
-                        criteria.add(Restrictions.le(DATE_LAST_UPDATED, markerEntry.getCreationDate())).addOrder(Order.desc(DATE_LAST_UPDATED));
+                        criteria.add(Restrictions.le(DATE_LAST_UPDATED, markerEntry.getDateLastUpdated())).addOrder(Order.desc(DATE_LAST_UPDATED));
                         feedPage.addAll(criteria.list());
                         break;
                 }
