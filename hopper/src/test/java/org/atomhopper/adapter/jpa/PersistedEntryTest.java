@@ -67,7 +67,7 @@ public class PersistedEntryTest {
             date = persistedEntry.getDateLastUpdated();
             assertEquals("Getting the date last updated should return a date object.", persistedEntry.getDateLastUpdated(), date);
             persistedEntry.setDateLastUpdated(new Date());
-            assertNotSame("Setting the date last updated should change last updated date.", persistedEntry.getDateLastUpdated().equals(date));
+            assertNotSame("Setting the date last updated should change last updated date.", persistedEntry.getDateLastUpdated(), date);
         }
 
         @Test
