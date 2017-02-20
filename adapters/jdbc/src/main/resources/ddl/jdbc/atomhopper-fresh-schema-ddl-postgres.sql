@@ -23,12 +23,12 @@ CREATE TABLE entries (
     datelastupdated timestamp without time zone NOT NULL DEFAULT current_timestamp,
     entrybody text,
     feed text,
+    categories character varying[],
 -- categories which are mapped to specific columns
 -- remove if you aren't configuring your FeedSource & FeedPublisher accordingly
     eventtype text,
     tenantid text,
 -- ---------------------
-    categories character varying[],
     PRIMARY KEY(datelastupdated, id)
 );
 CREATE INDEX entryid_idx on entries(entryid);
