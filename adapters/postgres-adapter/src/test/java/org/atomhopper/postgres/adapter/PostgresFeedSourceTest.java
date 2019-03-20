@@ -132,7 +132,7 @@ public class PostgresFeedSourceTest {
             when(getFeedRequest.getAbdera()).thenReturn(localAbdera);
             when(getEntryRequest.getAbdera()).thenReturn(localAbdera);
             when(jdbcTemplate.query(any(String.class), any(Object[].class), any(EntryRowMapper.class))).thenReturn(entryList);
-            when(jdbcTemplate.queryForInt(any(String.class), any(Object[].class))).thenReturn(1);
+            when(jdbcTemplate.queryForObject(eq(any(String.class)), any(Object[].class), Integer.class)).thenReturn(1);
             assertEquals("Should get a 200 response", HttpStatus.OK,
                          postgresFeedSource.getFeed(getFeedRequest).getResponseStatus());
         }
@@ -148,7 +148,7 @@ public class PostgresFeedSourceTest {
             when(getFeedRequest.getAbdera()).thenReturn(localAbdera);
             when(getEntryRequest.getAbdera()).thenReturn(localAbdera);
             when(jdbcTemplate.query(any(String.class), any(Object[].class), any(EntryRowMapper.class))).thenReturn(entryList);
-            when(jdbcTemplate.queryForInt(any(String.class), any(Object[].class))).thenReturn(1);
+            when(jdbcTemplate.queryForObject(eq(any(String.class)), any(Object[].class), Integer.class)).thenReturn(1);
             assertEquals("Should get a 200 response", HttpStatus.OK,
                          postgresFeedSource.getFeed(getFeedRequest).getResponseStatus());
         }
@@ -343,7 +343,8 @@ public class PostgresFeedSourceTest {
             when(getFeedRequest.getAbdera()).thenReturn(localAbdera);
             when(getEntryRequest.getAbdera()).thenReturn(localAbdera);
             when(jdbcTemplate.query(any(String.class), any(Object[].class), any(EntryRowMapper.class))).thenReturn(entryList);
-            when(jdbcTemplate.queryForInt(any(String.class), any(Object[].class))).thenReturn(1);
+            when(jdbcTemplate.queryForObject(eq(any(String.class)), any(Object[].class), Integer.class)).thenReturn(1);
+//            when(jdbcTemplate.queryForInt(any(String.class), any(Object[].class))).thenReturn(1);
             assertEquals("Should get a 200 response", HttpStatus.OK,
                          archiveSource.getFeed(getFeedRequest).getResponseStatus());
 

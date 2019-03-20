@@ -137,7 +137,7 @@ public class JdbcFeedSourceTest {
             when(getFeedRequest.getDirection()).thenReturn("forward");
             when(getEntryRequest.getAbdera()).thenReturn(localAbdera);
             when(jdbcTemplate.query(any(String.class), any(Object[].class), any(EntryRowMapper.class))).thenReturn(entryList);
-            when(jdbcTemplate.queryForInt(any(String.class), any(Object[].class))).thenReturn(1);
+            when(jdbcTemplate.queryForObject(eq(any(String.class)), any(Object[].class), Integer.class)).thenReturn(1);
             assertEquals("Should get a 200 response", HttpStatus.OK,
                          archiveSource.getFeed(getFeedRequest).getResponseStatus());
 
@@ -201,7 +201,7 @@ public class JdbcFeedSourceTest {
             when(getFeedRequest.getAbdera()).thenReturn(localAbdera);
             when(getEntryRequest.getAbdera()).thenReturn(localAbdera);
             when(jdbcTemplate.query(any(String.class), any(Object[].class), any(EntryRowMapper.class))).thenReturn(entryList);
-            when(jdbcTemplate.queryForInt(any(String.class), any(Object[].class))).thenReturn(1);
+            when(jdbcTemplate.queryForObject(eq(any(String.class)), any(Object[].class), Integer.class)).thenReturn(1);
             assertEquals("Should get a 200 response", HttpStatus.OK,
                     jdbcFeedSource.getFeed(getFeedRequest).getResponseStatus());
         }
@@ -217,7 +217,7 @@ public class JdbcFeedSourceTest {
             when(getFeedRequest.getAbdera()).thenReturn(localAbdera);
             when(getEntryRequest.getAbdera()).thenReturn(localAbdera);
             when(jdbcTemplate.query(any(String.class), any(Object[].class), any(EntryRowMapper.class))).thenReturn(entryList);
-            when(jdbcTemplate.queryForInt(any(String.class), any(Object[].class))).thenReturn(1);
+            when(jdbcTemplate.queryForObject(eq(any(String.class)), any(Object[].class), Integer.class)).thenReturn(1);
             
             AdapterResponse<Feed> response = jdbcFeedSource.getFeed(getFeedRequest);
             String feedId = response.getBody().getId().toString();
@@ -236,7 +236,7 @@ public class JdbcFeedSourceTest {
             when(getFeedRequest.getAbdera()).thenReturn(localAbdera);
             when(getEntryRequest.getAbdera()).thenReturn(localAbdera);
             when(jdbcTemplate.query(any(String.class), any(Object[].class), any(EntryRowMapper.class))).thenReturn(entryList);
-            when(jdbcTemplate.queryForInt(any(String.class), any(Object[].class))).thenReturn(1);
+            when(jdbcTemplate.queryForObject(eq(any(String.class)), any(Object[].class), Integer.class)).thenReturn(1);
             assertEquals("Should get a 200 response", HttpStatus.OK,
                     jdbcFeedSource.getFeed(getFeedRequest).getResponseStatus());
         }
@@ -252,7 +252,7 @@ public class JdbcFeedSourceTest {
             when(getFeedRequest.getAbdera()).thenReturn(localAbdera);
             when(getEntryRequest.getAbdera()).thenReturn(localAbdera);
             when(jdbcTemplate.query(any(String.class), any(Object[].class), any(EntryRowMapper.class))).thenReturn(entryList);
-            when(jdbcTemplate.queryForInt(any(String.class), any(Object[].class))).thenReturn(1);
+            when(jdbcTemplate.queryForObject(eq(any(String.class)), any(Object[].class), Integer.class)).thenReturn(1);
 
             IRI iri = jdbcFeedSource.getFeed(getFeedRequest).getBody().getLink(MOCK_LAST_MARKER).getHref();
 
@@ -271,7 +271,7 @@ public class JdbcFeedSourceTest {
             when(getFeedRequest.getAbdera()).thenReturn(localAbdera);
             when(getEntryRequest.getAbdera()).thenReturn(localAbdera);
             when(jdbcTemplate.query(any(String.class), any(Object[].class), any(EntryRowMapper.class))).thenReturn(entryList);
-            when(jdbcTemplate.queryForInt(any(String.class), any(Object[].class))).thenReturn(1);
+            when(jdbcTemplate.queryForObject(eq(any(String.class)), any(Object[].class), Integer.class)).thenReturn(1);
 
             IRI iri = jdbcFeedSource.getFeed(getFeedRequest).getBody().getLink(MOCK_LAST_MARKER).getHref();
 
@@ -512,7 +512,7 @@ public class JdbcFeedSourceTest {
             when(getFeedRequest.getAbdera()).thenReturn(localAbdera);
             when(getEntryRequest.getAbdera()).thenReturn(localAbdera);
             when(jdbcTemplate.query(any(String.class), any(Object[].class), any(EntryRowMapper.class))).thenReturn(entryList);
-            when(jdbcTemplate.queryForInt(any(String.class), any(Object[].class))).thenReturn(1);
+            when(jdbcTemplate.queryForObject(eq(any(String.class)), any(Object[].class), Integer.class)).thenReturn(1);
             when(getFeedRequest.getPageSize()).thenReturn("13");
             assertEquals("Should get a 200 response", HttpStatus.OK,
                     jdbcFeedSource.getFeed(getFeedRequest).getResponseStatus());
@@ -532,7 +532,7 @@ public class JdbcFeedSourceTest {
             when(getFeedRequest.getAbdera()).thenReturn(localAbdera);
             when(getEntryRequest.getAbdera()).thenReturn(localAbdera);
             when(jdbcTemplate.query(any(String.class), any(Object[].class), any(EntryRowMapper.class))).thenReturn(entryList);
-            when(jdbcTemplate.queryForInt(any(String.class), any(Object[].class))).thenReturn(1);
+            when(jdbcTemplate.queryForObject(eq(any(String.class)), any(Object[].class), Integer.class)).thenReturn(1);
             when(getFeedRequest.getPageSize()).thenReturn("13");
             assertEquals("Should get a 200 response", HttpStatus.OK,
                     jdbcFeedSource.getFeed(getFeedRequest).getResponseStatus());

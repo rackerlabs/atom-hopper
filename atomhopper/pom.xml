@@ -401,7 +401,7 @@
                 <dependency>
                     <groupId>org.apache.httpcomponents</groupId>
                     <artifactId>httpclient</artifactId>
-                    <version>4.3.3</version>
+                    <version>4.3.6</version>
                 </dependency>
                 <dependency>
                     <groupId>org.apache.httpcomponents</groupId>
@@ -468,11 +468,11 @@
                                         // Step 2 - upload the file to scan
                                         // Note: I could not make the MultipartEntity to work with
                                         // HttpBuilder class. So I resorted to calling curl
-                                        println "Uploading file ${project.basedir}/target/atomhopper-${version}.war to /api/4.0/uploadfile.do"
+                                        println "Uploading file ${project.basedir}/target/atomhopper-${project.version}.war to /api/4.0/uploadfile.do"
                                         def uploadCurl = ["curl", "--compressed",
                                                           "-u", "${veracode.username}:${veracode.password}",
                                                           "-F", "app_id=${appId}",
-                                                          "-F", "file=@${project.basedir}/target/atomhopper-${version}.war",
+                                                          "-F", "file=@${project.basedir}/target/atomhopper-${project.version}.war",
                                                           "-F", "save_as=atomhopper.war",
                                                           "${veracodeUrl}4.0/uploadfile.do"]
                                         def proc = uploadCurl.execute()
