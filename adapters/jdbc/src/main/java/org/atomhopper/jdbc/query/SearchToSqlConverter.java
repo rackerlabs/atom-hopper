@@ -28,7 +28,7 @@ import java.util.Map;
  *
  * An example configuration might be:
  *
- * A map of { "tid" => "tenantid", "type" => "eventype" } with a mark of ":".
+ * A map of { "tid" => "tenantid", "type" => "eventtype" } with a mark of ":".
  *
  * This maps the following atom categories:
  *

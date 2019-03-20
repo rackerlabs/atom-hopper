@@ -50,7 +50,7 @@ public class AtomHopperServerControl {
             out.flush();
             s.close();
         } catch (IOException ioex) {
-            LOG.error("An error occured while attempting to stop Atom Hopper: " + ioex.getMessage());
+            LOG.error("An error occurred while attempting to stop Atom Hopper: " + ioex.getMessage());
         }
     }
 
