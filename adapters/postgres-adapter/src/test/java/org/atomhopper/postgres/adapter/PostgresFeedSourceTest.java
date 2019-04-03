@@ -100,10 +100,6 @@ public class PostgresFeedSourceTest {
             when(getFeedRequest.getAbdera()).thenReturn(localAbdera);
             when(getFeedRequest.getPageMarker()).thenReturn(MARKER_ID);
             when(getFeedRequest.getDirection()).thenReturn("FORWARD");
-            when(jdbcTemplate.queryForObject(any(String.class),
-                                             any(EntryRowMapper.class),
-                                             any(String.class),
-                                             any(String.class))).thenReturn(null);
             assertEquals("Should get a 404 response", HttpStatus.NOT_FOUND,
                          postgresFeedSource.getFeed(getFeedRequest).getResponseStatus());
         }
@@ -114,10 +110,6 @@ public class PostgresFeedSourceTest {
             when(getFeedRequest.getAbdera()).thenReturn(localAbdera);
             when(getFeedRequest.getPageMarker()).thenReturn(MARKER_ID);
             when(getFeedRequest.getDirection()).thenReturn("BACKWARD");
-            when(jdbcTemplate.queryForObject(any(String.class),
-                                             any(EntryRowMapper.class),
-                                             any(String.class),
-                                             any(String.class))).thenReturn(null);
             assertEquals("Should get a 404 response", HttpStatus.NOT_FOUND,
                          postgresFeedSource.getFeed(getFeedRequest).getResponseStatus());
         }
@@ -125,14 +117,9 @@ public class PostgresFeedSourceTest {
         @Test
         public void shouldGetFeedHead() throws Exception {
             Abdera localAbdera = new Abdera();
-            when(jdbcTemplate.queryForObject(any(String.class),
-                                             any(EntryRowMapper.class),
-                                             any(String.class),
-                                             any(String.class))).thenReturn(persistedEntry);
             when(getFeedRequest.getAbdera()).thenReturn(localAbdera);
             when(getEntryRequest.getAbdera()).thenReturn(localAbdera);
             when(jdbcTemplate.query(any(String.class), any(Object[].class), any(EntryRowMapper.class))).thenReturn(entryList);
-            when(jdbcTemplate.queryForObject(eq(any(String.class)), any(Object[].class), Integer.class)).thenReturn(1);
             assertEquals("Should get a 200 response", HttpStatus.OK,
                          postgresFeedSource.getFeed(getFeedRequest).getResponseStatus());
         }
@@ -141,14 +128,9 @@ public class PostgresFeedSourceTest {
         public void shouldGetFeedHeadWithCategory() throws Exception {
             Abdera localAbdera = new Abdera();
             when(getFeedRequest.getSearchQuery()).thenReturn(SINGLE_CAT);
-            when(jdbcTemplate.queryForObject(any(String.class),
-                                             any(EntryRowMapper.class),
-                                             any(String.class),
-                                             any(String.class))).thenReturn(persistedEntry);
             when(getFeedRequest.getAbdera()).thenReturn(localAbdera);
             when(getEntryRequest.getAbdera()).thenReturn(localAbdera);
             when(jdbcTemplate.query(any(String.class), any(Object[].class), any(EntryRowMapper.class))).thenReturn(entryList);
-            when(jdbcTemplate.queryForObject(eq(any(String.class)), any(Object[].class), Integer.class)).thenReturn(1);
             assertEquals("Should get a 200 response", HttpStatus.OK,
                          postgresFeedSource.getFeed(getFeedRequest).getResponseStatus());
         }
@@ -158,10 +140,6 @@ public class PostgresFeedSourceTest {
             when(getFeedRequest.getPageMarker()).thenReturn(MARKER_ID);
             when(getFeedRequest.getDirection()).thenReturn(FORWARD);
             Abdera localAbdera = new Abdera();
-            when(jdbcTemplate.queryForObject(any(String.class),
-                                             any(EntryRowMapper.class),
-                                             any(String.class),
-                                             any(String.class))).thenReturn(persistedEntry);
             when(getFeedRequest.getAbdera()).thenReturn(localAbdera);
             when(getEntryRequest.getAbdera()).thenReturn(localAbdera);
             when(jdbcTemplate.query(any(String.class), any(Object[].class), any(EntryRowMapper.class))).thenReturn(entryList);
@@ -174,10 +152,6 @@ public class PostgresFeedSourceTest {
             when(getFeedRequest.getPageMarker()).thenReturn(MARKER_ID);
             when(getFeedRequest.getDirection()).thenReturn(BACKWARD);
             Abdera localAbdera = new Abdera();
-            when(jdbcTemplate.queryForObject(any(String.class),
-                                             any(EntryRowMapper.class),
-                                             any(String.class),
-                                             any(String.class))).thenReturn(persistedEntry);
             when(getFeedRequest.getAbdera()).thenReturn(localAbdera);
             when(getEntryRequest.getAbdera()).thenReturn(localAbdera);
             when(jdbcTemplate.query(any(String.class), any(Object[].class), any(EntryRowMapper.class))).thenReturn(entryList);
@@ -191,10 +165,6 @@ public class PostgresFeedSourceTest {
             when(getFeedRequest.getDirection()).thenReturn(FORWARD);
             when(getFeedRequest.getSearchQuery()).thenReturn(SINGLE_CAT);
             Abdera localAbdera = new Abdera();
-            when(jdbcTemplate.queryForObject(any(String.class),
-                                             any(EntryRowMapper.class),
-                                             any(String.class),
-                                             any(String.class))).thenReturn(persistedEntry);
             when(getFeedRequest.getAbdera()).thenReturn(localAbdera);
             when(getEntryRequest.getAbdera()).thenReturn(localAbdera);
             when(jdbcTemplate.query(any(String.class), any(Object[].class), any(EntryRowMapper.class))).thenReturn(entryList);
@@ -208,10 +178,6 @@ public class PostgresFeedSourceTest {
             when(getFeedRequest.getDirection()).thenReturn(BACKWARD);
             when(getFeedRequest.getSearchQuery()).thenReturn(SINGLE_CAT);
             Abdera localAbdera = new Abdera();
-            when(jdbcTemplate.queryForObject(any(String.class),
-                                             any(EntryRowMapper.class),
-                                             any(String.class),
-                                             any(String.class))).thenReturn(persistedEntry);
             when(getFeedRequest.getAbdera()).thenReturn(localAbdera);
             when(getEntryRequest.getAbdera()).thenReturn(localAbdera);
             when(jdbcTemplate.query(any(String.class), any(Object[].class), any(EntryRowMapper.class))).thenReturn(entryList);
@@ -225,10 +191,6 @@ public class PostgresFeedSourceTest {
             when(getFeedRequest.getDirection()).thenReturn(FORWARD);
             when(getFeedRequest.getSearchQuery()).thenReturn(MULTI_CAT);
             Abdera localAbdera = new Abdera();
-            when(jdbcTemplate.queryForObject(any(String.class),
-                                             any(EntryRowMapper.class),
-                                             any(String.class),
-                                             any(String.class))).thenReturn(persistedEntry);
             when(getFeedRequest.getAbdera()).thenReturn(localAbdera);
             when(getEntryRequest.getAbdera()).thenReturn(localAbdera);
             when(jdbcTemplate.query(any(String.class), any(Object[].class), any(EntryRowMapper.class))).thenReturn(entryList);
@@ -242,10 +204,6 @@ public class PostgresFeedSourceTest {
             when(getFeedRequest.getDirection()).thenReturn(BACKWARD);
             when(getFeedRequest.getSearchQuery()).thenReturn(MULTI_CAT);
             Abdera localAbdera = new Abdera();
-            when(jdbcTemplate.queryForObject(any(String.class),
-                                             any(EntryRowMapper.class),
-                                             any(String.class),
-                                             any(String.class))).thenReturn(persistedEntry);
             when(getFeedRequest.getAbdera()).thenReturn(localAbdera);
             when(getEntryRequest.getAbdera()).thenReturn(localAbdera);
             when(jdbcTemplate.query(any(String.class), any(Object[].class), any(EntryRowMapper.class))).thenReturn(entryList);
@@ -309,10 +267,6 @@ public class PostgresFeedSourceTest {
             when( getFeedRequest.getDirection() ).thenReturn( BACKWARD );
             when( getFeedRequest.getFeedName() ).thenReturn( FEED_NAME );
             when( getFeedRequest.getAbdera() ).thenReturn( localAbdera );
-            when(jdbcTemplate.queryForObject( any( String.class ),
-                                              any( EntryRowMapper.class ),
-                                              any( String.class ),
-                                              any( String.class ) ) ).thenReturn( persistedEntry );
             when( jdbcTemplate.query( any( String.class ),
                                       any( Object[].class ),
                                       any( EntryRowMapper.class ) ) ).thenReturn( entryList );
@@ -336,14 +290,9 @@ public class PostgresFeedSourceTest {
             archiveSource.setCurrentUrl( new URL( currentURL ) );
 
             Abdera localAbdera = new Abdera();
-            when(jdbcTemplate.queryForObject(any(String.class),
-                                             any(EntryRowMapper.class),
-                                             any(String.class),
-                                             any(String.class))).thenReturn(persistedEntry);
             when(getFeedRequest.getAbdera()).thenReturn(localAbdera);
             when(getEntryRequest.getAbdera()).thenReturn(localAbdera);
             when(jdbcTemplate.query(any(String.class), any(Object[].class), any(EntryRowMapper.class))).thenReturn(entryList);
-            when(jdbcTemplate.queryForObject(eq(any(String.class)), any(Object[].class), Integer.class)).thenReturn(1);
             assertEquals("Should get a 200 response", HttpStatus.OK,
                          archiveSource.getFeed(getFeedRequest).getResponseStatus());
 
