@@ -13,11 +13,12 @@
     <properties>
         <project.license>apache20</project.license>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <org.springframework.version>3.1.1.RELEASE</org.springframework.version>
+        <org.springframework.version>4.3.22.RELEASE</org.springframework.version>
         <org.springframework.data.version>1.0.0.RELEASE</org.springframework.data.version>
         <org.aspectj.version>1.6.9</org.aspectj.version>
         <cglib.version>2.2</cglib.version>
         <metrics.version>3.0.1</metrics.version>
+        <jetty.version>9.4.14.v20181114</jetty.version>
     </properties>
 
     <licenses>
@@ -233,13 +234,13 @@
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-server</artifactId>
-                <version>8.1.0.v20120127</version>
+                <version>${jetty.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-servlet</artifactId>
-                <version>8.1.0.v20120127</version>
+                <version>${jetty.version}</version>
             </dependency>
 
             <dependency>
@@ -346,7 +347,7 @@
             <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
-                <version>2.3</version>
+                <version>2.10.1</version>
             </dependency>
 
             <dependency>

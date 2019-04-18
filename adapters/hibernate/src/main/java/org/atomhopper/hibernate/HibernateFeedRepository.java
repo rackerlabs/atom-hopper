@@ -191,13 +191,13 @@ public class HibernateFeedRepository implements FeedRepository {
 
     @Override
     public Set<PersistedCategory> updateCategories(final Set<PersistedCategory> categories) {
-        /* Creating caretories can fail if there's another request in parallel
+        /* Creating categories can fail if there's another request in parallel
          * attempting to create the same categories, in another transaction.
          * If that other transaction completes first, then the check for
          * whether categories already exist will indicate that they don't, due
          * to transaction isolation. After the ComplexSessionAction returns,
          * performComplexAction will attempt to commit, which fails due to the
-         * categories already aving been inserted and committed in the other
+         * categories already having been inserted and committed in the other
          * transaction.
          * To handle this, we need to retry the whole transaction. This time
          * around, the criterion that failed the earlier transaction will be
