@@ -18,7 +18,7 @@
         <org.aspectj.version>1.6.9</org.aspectj.version>
         <cglib.version>2.2</cglib.version>
         <metrics.version>3.0.1</metrics.version>
-        <jetty.version>9.4.14.v20181114</jetty.version>
+        <jetty.version>9.4.32.v20200930</jetty.version>
     </properties>
 
     <licenses>
