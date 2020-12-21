@@ -13,7 +13,7 @@
     <properties>
         <project.license>apache20</project.license>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <org.springframework.version>4.3.22.RELEASE</org.springframework.version>
+        <org.springframework.version>5.2.11.RELEASE</org.springframework.version>
         <org.springframework.data.version>1.0.0.RELEASE</org.springframework.data.version>
         <org.aspectj.version>1.6.9</org.aspectj.version>
         <cglib.version>2.2</cglib.version>
@@ -122,13 +122,6 @@
                 <version>8.0.16</version>
             </dependency>
 
-<!--            <dependency>-->
-<!--                <groupId>postgresql</groupId>-->
-<!--                <artifactId>postgresql</artifactId>-->
-<!--                <version>9.1-901-1.jdbc4</version>-->
-<!--            </dependency>-->
-
-            <!-- Latest postgresql driver-->
             <dependency>
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
