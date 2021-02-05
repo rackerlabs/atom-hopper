@@ -1,7 +1,7 @@
 #base tomcat 9 with openjdk 8
 FROM tomcat:9.0.41-jdk8 as tomcat
 
-FROM adoptopenjdk/openjdk8:jdk8u275-b01-alpine-slim
+FROM adoptopenjdk/openjdk8:alpine-slim
 
 LABEL maintainer="AtomHopperTeam@rackspace.com" \
       #Atom Hopper version
