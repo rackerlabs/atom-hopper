@@ -8,13 +8,7 @@ pipeline {
         maven 'MavenTest'
     }
     stages {
-        stage ('Initialize') {
-            steps {
-                sh 'mvn clean'
-            }
-        }
-
-        stage ('Build') {
+        stage ('Test') {
             steps {
                sh 'mvn initialize test'
             }
