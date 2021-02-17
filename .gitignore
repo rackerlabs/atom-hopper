@@ -12,10 +12,18 @@ target
  
 ## generic files to ignore
 *~
+*.classpath
 *.lock
 *.DS_Store
 *.swp
 *.out
+*.gradle
+*.project
+*.settings
+*.theia
+*.vscode
+*pom.xml.releaseBackup
+release.properties
 /test-suite/nb-configuration.xml
 /hopper/nb-configuration.xml
 /server/nb-configuration.xml
