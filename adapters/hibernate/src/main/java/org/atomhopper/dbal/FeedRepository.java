@@ -4,6 +4,7 @@ import org.atomhopper.adapter.jpa.PersistedCategory;
 import org.atomhopper.adapter.jpa.PersistedEntry;
 import org.atomhopper.adapter.jpa.PersistedFeed;
 import org.atomhopper.hibernate.query.CategoryCriteriaGenerator;
+import org.hibernate.Session;
 
 import java.util.Collection;
 import java.util.List;
@@ -33,4 +34,14 @@ public interface FeedRepository {
     Set<PersistedCategory> updateCategories(Set<PersistedCategory> categories);
 
     PersistedEntry getNextMarker(PersistedEntry persistedEntry, String feedName, CategoryCriteriaGenerator criteriaGenerator);
+
+    void addObserver(Observer observer);
+
+    void removeObserver(Observer observer);
+
+    interface Observer {
+        void beforeAction(String name, Session session);
+        void afterAction(String name, Session session);
+    }
+
 }
