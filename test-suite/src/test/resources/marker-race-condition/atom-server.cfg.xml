@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<atom-hopper-config xmlns="http://atomhopper.org/atom/hopper-config/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://atomhopper.org/atom/hopper-config/v1.0 ./../../config/atom-hopper-config.xsd">
+    <defaults>
+        <author name="Atom Hopper" />
+    </defaults>
+
+    <host domain="localhost:8080" scheme="http" />
+
+    <workspace title="Testing Namespace" resource="/namespace/">
+        <categories-descriptor reference="workspace-categories-descriptor" />
+
+        <feed title="Testing Feed" resource="/feed">
+            <feed-source reference="hibernate-feed-source" />
+            <publisher reference="hibernate-feed-publisher" />
+        </feed>
+    </workspace>
+</atom-hopper-config>
