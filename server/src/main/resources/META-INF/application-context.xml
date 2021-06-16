@@ -12,56 +12,56 @@
             http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
      <!-- Hibernate -->
-    <bean name="feed-repository-bean"
-           class="org.atomhopper.hibernate.HibernateFeedRepository">
-        <constructor-arg>
-            <map>
-                 <!-- Start H2 Config -->
-                <entry key="hibernate.connection.url"
-                        value="jdbc:h2:/opt/atomhopper/atom-hopper-db" />
-                <entry key="hibernate.connection.driver_class"
-                        value="org.h2.Driver" />
-                <entry key="hibernate.dialect"
-                        value="org.hibernate.dialect.H2Dialect" />
-                <entry key="hibernate.connection.username" value="sa" />
-                <entry key="hibernate.connection.password" value="" />
-                 <!-- End H2 Config -->
+<!--    <bean name="feed-repository-bean"-->
+<!--           class="org.atomhopper.hibernate.HibernateFeedRepository">-->
+<!--        <constructor-arg>-->
+<!--            <map>-->
+<!--                 &lt;!&ndash; Start H2 Config &ndash;&gt;-->
+<!--                <entry key="hibernate.connection.url"-->
+<!--                        value="jdbc:h2:/opt/atomhopper/atom-hopper-db" />-->
+<!--                <entry key="hibernate.connection.driver_class"-->
+<!--                        value="org.h2.Driver" />-->
+<!--                <entry key="hibernate.dialect"-->
+<!--                        value="org.hibernate.dialect.H2Dialect" />-->
+<!--                <entry key="hibernate.connection.username" value="sa" />-->
+<!--                <entry key="hibernate.connection.password" value="" />-->
+<!--                 &lt;!&ndash; End H2 Config &ndash;&gt;-->
 
-                 <!-- Start MySQL Config -->
-                 <!--
-                 <entry key="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver" />
-                 <entry key="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect" />
-                 <entry key="hibernate.connection.url" value="jdbc:mysql://localhost:8889/atomhopper?createDatabaseIfNotExist=true" />
-                 <entry key="hibernate.connection.username" value="root" />
-                 <entry key="hibernate.connection.password" value="root" />
-                 -->
-                 <!-- End MySQL Config -->
+<!--                 &lt;!&ndash; Start MySQL Config &ndash;&gt;-->
+<!--                 &lt;!&ndash;-->
+<!--                 <entry key="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver" />-->
+<!--                 <entry key="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect" />-->
+<!--                 <entry key="hibernate.connection.url" value="jdbc:mysql://localhost:8889/atomhopper?createDatabaseIfNotExist=true" />-->
+<!--                 <entry key="hibernate.connection.username" value="root" />-->
+<!--                 <entry key="hibernate.connection.password" value="root" />-->
+<!--                 &ndash;&gt;-->
+<!--                 &lt;!&ndash; End MySQL Config &ndash;&gt;-->
 
-                 <!-- Start PostgreSQL Config -->
-                 <!--
-                 <entry key="hibernate.connection.driver_class" value="org.postgresql.Driver" />
-                 <entry key="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
-                 <entry key="hibernate.connection.url" value="jdbc:postgresql://localhost:5432/atomhopper" />
-                 <entry key="hibernate.connection.username" value="postgres" />
-                 <entry key="hibernate.connection.password" value="password" />
-                 -->
-                 <!-- End PostgreSQL Config -->
+<!--                 &lt;!&ndash; Start PostgreSQL Config &ndash;&gt;-->
+<!--                 &lt;!&ndash;-->
+<!--                 <entry key="hibernate.connection.driver_class" value="org.postgresql.Driver" />-->
+<!--                 <entry key="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />-->
+<!--                 <entry key="hibernate.connection.url" value="jdbc:postgresql://localhost:5432/atomhopper" />-->
+<!--                 <entry key="hibernate.connection.username" value="postgres" />-->
+<!--                 <entry key="hibernate.connection.password" value="password" />-->
+<!--                 &ndash;&gt;-->
+<!--                 &lt;!&ndash; End PostgreSQL Config &ndash;&gt;-->
 
-                <entry key="hibernate.hbm2ddl.auto" value="update" />
-                 <!-- <entry key="hibernate.show_sql" value="false" /> -->
-            </map>
-        </constructor-arg>
-    </bean>
+<!--                <entry key="hibernate.hbm2ddl.auto" value="update" />-->
+<!--                 &lt;!&ndash; <entry key="hibernate.show_sql" value="false" /> &ndash;&gt;-->
+<!--            </map>-->
+<!--        </constructor-arg>-->
+<!--    </bean>-->
 
-    <bean name="hibernate-feed-source"
-           class="org.atomhopper.hibernate.adapter.HibernateFeedSource">
-        <property name="feedRepository" ref="feed-repository-bean" />
-    </bean>
+<!--    <bean name="hibernate-feed-source"-->
+<!--           class="org.atomhopper.hibernate.adapter.HibernateFeedSource">-->
+<!--        <property name="feedRepository" ref="feed-repository-bean" />-->
+<!--    </bean>-->
 
-    <bean name="hibernate-feed-publisher"
-           class="org.atomhopper.hibernate.adapter.HibernateFeedPublisher">
-        <property name="feedRepository" ref="feed-repository-bean" />
-    </bean>
+<!--    <bean name="hibernate-feed-publisher"-->
+<!--           class="org.atomhopper.hibernate.adapter.HibernateFeedPublisher">-->
+<!--        <property name="feedRepository" ref="feed-repository-bean" />-->
+<!--    </bean>-->
 
     <!-- Postgres (Perfromance) Data Adapter -->
     <!--
@@ -114,4 +114,80 @@
          <property name="mongoTemplate" ref="mongoTemplate" />
      </bean>
      -->
+
+
+<!--    &lt;!&ndash; DynamoDB service &ndash;&gt;-->
+<!--    &lt;!&ndash; Configure from environment variables &ndash;&gt;-->
+<!--    <bean-->
+<!--            id="awsCredentials"-->
+<!--            class="com.amazonaws.auth.BasicAWSCredentials">-->
+<!--        <constructor-arg value="${amazon.aws.accesskey}" />-->
+<!--        <constructor-arg value="${amazon.aws.secretkey}" />-->
+<!--    </bean>-->
+<!--    &lt;!&ndash; NOTE: It is better to wire the interface (om.amazonaws.services.dynamodbv2.AmazonDynamoDB) inside your code instead of om.amazonaws.services.dynamodbv2.AmazonDynamoDBClient, but leave the bean mapping below to the impl class. &ndash;&gt;-->
+<!--    <bean-->
+<!--            id="client"-->
+<!--            class="com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient">-->
+<!--        <constructor-arg ref="awsCredentials" />-->
+<!--    </bean>-->
+<!--    <bean-->
+<!--            id="region_enum"-->
+<!--            class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">-->
+<!--        <property name="targetClass">-->
+<!--            <value>com.amazonaws.regions.Regions</value>-->
+<!--        </property>-->
+<!--        <property name="targetMethod">-->
+<!--            <value>fromName</value>-->
+<!--        </property>-->
+<!--        <property name="arguments">-->
+<!--            <list>-->
+<!--                <value>${AWS_REGION}</value>-->
+<!--            </list>-->
+<!--        </property>-->
+<!--    </bean>-->
+<!--    <bean-->
+<!--            id="region"-->
+<!--            class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">-->
+<!--        <property name="targetClass">-->
+<!--            <value>com.amazonaws.regions.Region</value>-->
+<!--        </property>-->
+<!--        <property name="targetMethod">-->
+<!--            <value>getRegion</value>-->
+<!--        </property>-->
+<!--        <property name="arguments">-->
+<!--            <list>-->
+<!--                <ref local="region_enum" />-->
+<!--            </list>-->
+<!--        </property>-->
+<!--    </bean>-->
+<!--    <bean-->
+<!--            class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">-->
+<!--        <property name="targetObject">-->
+<!--            <ref local="client" />-->
+<!--        </property>-->
+<!--        <property name="targetMethod">-->
+<!--            <value>setRegion</value>-->
+<!--        </property>-->
+<!--        <property name="arguments">-->
+<!--            <list>-->
+<!--                <ref local="region" />-->
+<!--            </list>-->
+<!--        </property>-->
+<!--    </bean>-->
+<!--    &lt;!&ndash; Use this if setting endjava.lang.NoSuchMethodError: org.springframework.expression.spel.SpelParserConfiguration.<init>(Lorg/springframework/expression/spel/SpelCompilerMode;Ljava/lang/ClassLoader;)Vpoint url is preferred over region, i.e. when using DynamoDB local&ndash;&gt;-->
+<!--    <bean-->
+<!--        class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">-->
+<!--        <property name="targetObject">-->
+<!--            <ref local="client" />-->
+<!--        </property>-->
+<!--        <property name="targetMethod">-->
+<!--            <value>setEndpoint</value>-->
+<!--        </property>-->
+<!--        <property name="arguments">-->
+<!--            <list>-->
+<!--                <value>${amazon.dynamodb.endpoint}</value>-->
+<!--            </list>-->
+<!--        </property>-->
+<!--    </bean>-->
+
 </beans>

@@ -12,7 +12,7 @@
             folder then use this setting:
             <param-value>/META-INF/application-context.xml</param-value>
         -->
-        <param-value>file:///etc/atomhopper/application-context.xml</param-value>
+        <param-value>file:///Users/shub6691/git_repo/atom-hopper/atomhopper/src/main/webapp/META-INF/application-context.xml</param-value>
     </context-param>
     
     <listener>
