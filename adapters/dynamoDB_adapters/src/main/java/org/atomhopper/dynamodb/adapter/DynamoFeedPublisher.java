@@ -2,9 +2,9 @@ package org.atomhopper.dynamodb.adapter;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
-import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
-import com.amazonaws.services.dynamodbv2.model.*;
+import com.amazonaws.services.dynamodbv2.document.*;
+import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
+import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
 import com.yammer.metrics.Metrics;
 import org.apache.abdera.model.Entry;
 import org.apache.commons.lang.StringUtils;
@@ -79,8 +79,7 @@ public class DynamoFeedPublisher implements FeedPublisher {
 //        dateLastUpdated = dateFormatter.format(new Date());
 //        persistedEntry2.setDateLastUpdated(dateLastUpdated);
 //        dynamoDBMapper.save(persistedEntry2);
-       // List<PersistedEntry> list = dynamoDBFeedSource.getFeedBackward("",new Date(),103,"(NOT(cat=cat1))",20);
-
+        // List<PersistedEntry> list = dynamoDBFeedSource.getFeedBackward("",new Date(),103,"(NOT(cat=cat1))",20);
     }
 
     public void setDynamoMapper(DynamoDBMapper mapper) {
@@ -117,8 +116,9 @@ public class DynamoFeedPublisher implements FeedPublisher {
         if (allowOverrideId && entryIdSent && StringUtils.isNotBlank(abderaParsedEntry.getId().toString().trim())) {
             String entryId = abderaParsedEntry.getId().toString();
             // Check to see if entry with this id already exists
-            PersistedEntry exists = getEntry(entryId, postEntryRequest.getFeedName());
-            if (exists != null) {
+            //Returns List of Object found with the entryId and feedName;
+            List<String> exists = getEntry(entryId, postEntryRequest.getFeedName());
+            if (!exists.isEmpty()) {
                 String errMsg = String.format("Unable to persist entry. Reason: entryId (%s) not unique.", entryId);
                 return ResponseBuilder.conflict(errMsg);
             }
@@ -197,8 +197,24 @@ public class DynamoFeedPublisher implements FeedPublisher {
      * @param feedName
      * @return
      */
-    private PersistedEntry getEntry(String entryId, final String feedName) {
-        return mapper.load(PersistedEntry.class, entryId, feedName);//get the mapper object from dynamodb
+    private List<String> getEntry(String entryId, final String feedName) {
+        DynamoDB dynamoDB = new DynamoDB(dynamoDBClient);
+        List<String> persistedEntriesObject = new ArrayList<String>();
+        Table table = dynamoDB.getTable("entries");
+        Index index = table.getIndex("entryId-feed-index");
+        QuerySpec spec = new QuerySpec()
+                .withKeyConditionExpression("entryId = :entryId and feed = :feed")
+                .withValueMap(new ValueMap()
+                        .withString(":entryId", entryId)
+                        .withString(":feed", feedName));
+        ItemCollection<QueryOutcome> persistedEntryItems = index.query(spec);
+        Iterator<Item> itemsIterator = persistedEntryItems.iterator();
+        while (itemsIterator.hasNext()) {
+            Item item = itemsIterator.next();
+            persistedEntriesObject.add(item.toJSONPretty());
+        }
+        return persistedEntriesObject;
+        //return mapper.query(PersistedEntry.class,index.);//get the mapper object from dynamodb
     }
 
     private void incrementCounterForFeed(String feedName) {
