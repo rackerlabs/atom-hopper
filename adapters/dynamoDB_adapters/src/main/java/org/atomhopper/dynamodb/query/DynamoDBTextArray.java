@@ -9,10 +9,9 @@ import java.util.Map;
  * This is class provides {@link java.sql.Array} interface for PostgreSQL
  * <code>text</code> array.
  *
- * @author Valentine Gogichashvili
  *
  */
-public class PostgreSQLTextArray implements java.sql.Array {
+public class DynamoDBTextArray implements java.sql.Array {
 
     private final String[] stringArray;
     private final String stringValue;
@@ -22,7 +21,7 @@ public class PostgreSQLTextArray implements java.sql.Array {
      *
      * @param stringArray
      */
-    public PostgreSQLTextArray(String[] stringArray) {
+    public DynamoDBTextArray(String[] stringArray) {
         if (stringArray == null) {
             this.stringArray = null;
         } else {

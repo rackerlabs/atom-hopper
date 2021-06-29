@@ -6,7 +6,7 @@ import org.atomhopper.adapter.NotImplemented;
 import org.atomhopper.adapter.request.adapter.GetCategoriesRequest;
 import org.atomhopper.adapter.request.feed.FeedRequest;
 
-public class DynamodbFeedInformation implements FeedInformation {
+public class DynamoDBFeedInformation implements FeedInformation {
 
     @Override
     public String getId(FeedRequest feedRequest) {

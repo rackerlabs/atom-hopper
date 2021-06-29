@@ -15,6 +15,7 @@ import org.atomhopper.adapter.ResponseBuilder;
 import org.atomhopper.adapter.request.adapter.DeleteEntryRequest;
 import org.atomhopper.adapter.request.adapter.PostEntryRequest;
 import org.atomhopper.adapter.request.adapter.PutEntryRequest;
+import org.atomhopper.dynamodb.constant.DynamoDBConstant;
 import org.atomhopper.dynamodb.model.PersistedEntry;
 import org.atomhopper.response.AdapterResponse;
 import org.atomhopper.response.EmptyBody;
@@ -32,65 +33,34 @@ import java.util.*;
 
 import static org.apache.abdera.i18n.text.UrlEncoding.decode;
 
-public class DynamoFeedPublisher implements FeedPublisher {
-
+/**
+ * @Author: shub6691
+ * This class is used to publish the records in dynamodb using EntryId,feedName .
+ * Index has been created on the feedName for fast search and getting the entry from the DynamoDb.
+ */
+public class DynamoFeedDBPublisher implements FeedPublisher {
+    private static final Logger LOG = LoggerFactory.getLogger(DynamoFeedDBPublisher.class);
     private AmazonDynamoDBClient dynamoDBClient;
     private DynamoDBMapper mapper;
+    private DynamoDB dynamoDB;
 
-    /*private DynamoFeedPublisher(AmazonDynamoDBClient dynamoDBClient){
-        this.dynamoDBClient=dynamoDBClient;
-        this.mapper=new DynamoDBMapper(dynamoDBClient);
-    }*/
 
     public void setDynamoDBClient(AmazonDynamoDBClient dynamoDBClient) {
         this.dynamoDBClient = dynamoDBClient;
         setDynamoMapper(new DynamoDBMapper(dynamoDBClient));
-        DynamoDBMapper dynamoDBMapper = new DynamoDBMapper(dynamoDBClient);
-        DynamoDBFeedSource dynamoDBFeedSource = new DynamoDBFeedSource(dynamoDBMapper);
-//        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-//        dateFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
-//        String dateLastUpdated = dateFormatter.format(new Date());
-//        PersistedEntry persistedEntry = new PersistedEntry();
-//        persistedEntry.setEntryId("101");
-//        List<String> cat = new ArrayList<String>();
-//        cat.add("cat1");
-//        cat.add("cat2");
-//        persistedEntry.setCategories(cat);
-//        persistedEntry.setFeed("namespace/feed");
-//        persistedEntry.setDateLastUpdated(dateLastUpdated);
-//        dynamoDBMapper.save(persistedEntry);
-//
-//        PersistedEntry persistedEntry1 = new PersistedEntry();
-//        persistedEntry1.setEntryId("101");
-//        List<String> cat1 = new ArrayList<String>();
-//        cat1.add("cat1");
-//        persistedEntry1.setCategories(cat1);
-//        persistedEntry1.setFeed("namespace/feed2");
-//        dateLastUpdated = dateFormatter.format(new Date());
-//        persistedEntry1.setDateLastUpdated(dateLastUpdated);
-//        dynamoDBMapper.save(persistedEntry1);
-//
-//        PersistedEntry persistedEntry2 = new PersistedEntry();
-//        persistedEntry2.setEntryId("103");
-//        List<String> cat2 = new ArrayList<String>();
-//        cat2.add("cat3");
-//        persistedEntry2.setCategories(cat2);
-//        persistedEntry2.setFeed("namespace/feed3");
-//        dateLastUpdated = dateFormatter.format(new Date());
-//        persistedEntry2.setDateLastUpdated(dateLastUpdated);
-//        dynamoDBMapper.save(persistedEntry2);
-        // List<PersistedEntry> list = dynamoDBFeedSource.getFeedBackward("",new Date(),103,"(NOT(cat=cat1))",20);
+        this.dynamoDB = new DynamoDB(dynamoDBClient);
+        setDynamoDB(dynamoDB);
     }
 
     public void setDynamoMapper(DynamoDBMapper mapper) {
         this.mapper = mapper;
     }
 
-    private static final Logger LOG = LoggerFactory.getLogger(DynamoFeedPublisher.class);
-    private static final String UUID_URI_SCHEME = "urn:uuid:";
-    private static final String LINKREL_SELF = "self";
+    public void setDynamoDB(DynamoDB dynamoDB) {
+        this.dynamoDB = dynamoDB;
+    }
 
-    private boolean allowOverrideId = false;
+    private boolean allowOverrideId = true;
     private boolean allowOverrideDate = false;
 
     private Map<String, Counter> counterMap = Collections.synchronizedMap(new HashMap<String, Counter>());
@@ -106,6 +76,12 @@ public class DynamoFeedPublisher implements FeedPublisher {
         this.allowOverrideId = allowOverrideId;
     }
 
+    /**
+     * This method is used to post a new feed into DynamoDB as per the request by using the APACHE ABDERA LIBRARY
+     * @param postEntryRequest: This object has all the data for the feed to be published into DynamoDB which is
+     *                        parsed using the Abdera library.
+     * @return Return the response of the feed in format of atom format
+     */
     @Override
     public AdapterResponse<Entry> postEntry(PostEntryRequest postEntryRequest) {
         final Entry abderaParsedEntry = postEntryRequest.getEntry();
@@ -124,7 +100,7 @@ public class DynamoFeedPublisher implements FeedPublisher {
             }
             persistedEntry.setEntryId(abderaParsedEntry.getId().toString());
         } else {
-            persistedEntry.setEntryId(UUID_URI_SCHEME + UUID.randomUUID().toString());
+            persistedEntry.setEntryId(DynamoDBConstant.UUID_URI_SCHEME + UUID.randomUUID().toString());
             abderaParsedEntry.setId(persistedEntry.getEntryId());
         }
         if (allowOverrideDate) {
@@ -141,7 +117,7 @@ public class DynamoFeedPublisher implements FeedPublisher {
 
         if (abderaParsedEntry.getSelfLink() == null) {
             abderaParsedEntry.addLink(decode(postEntryRequest.urlFor(new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)))
-                    + "entries/" + persistedEntry.getEntryId()).setRel(LINKREL_SELF);
+                    + "entries/" + persistedEntry.getEntryId()).setRel(DynamoDBConstant.LINK_REL_SELF);
         }
 
         persistedEntry.setFeed(postEntryRequest.getFeedName());
@@ -149,7 +125,6 @@ public class DynamoFeedPublisher implements FeedPublisher {
         abderaParsedEntry.setUpdated(persistedEntry.getDateLastUpdated());
         abderaParsedEntry.setPublished(persistedEntry.getCreationDate());
         mapper.save(persistedEntry);//dynamoDB save object
-
         incrementCounterForFeed(postEntryRequest.getFeedName());
         return ResponseBuilder.created(abderaParsedEntry);
     }
@@ -193,15 +168,14 @@ public class DynamoFeedPublisher implements FeedPublisher {
     /**
      * To get the entry from dynamodb based upon two params?
      *
-     * @param entryId
-     * @param feedName
-     * @return
+     * @param entryId:  It is the marker id for entry for every events
+     * @param feedName: feed name is used to search the records in dynamodb
+     * @return : list of entry found if that exits in dynamodb with the entryId and feedName.
      */
     private List<String> getEntry(String entryId, final String feedName) {
-        DynamoDB dynamoDB = new DynamoDB(dynamoDBClient);
         List<String> persistedEntriesObject = new ArrayList<String>();
-        Table table = dynamoDB.getTable("entries");
-        Index index = table.getIndex("entryId-feed-index");
+        Table table = dynamoDB.getTable(DynamoDBConstant.ENTRIES);
+        Index index = table.getIndex(DynamoDBConstant.ENTRY_ID_FEED_INDEX);
         QuerySpec spec = new QuerySpec()
                 .withKeyConditionExpression("entryId = :entryId and feed = :feed")
                 .withValueMap(new ValueMap()
@@ -214,7 +188,6 @@ public class DynamoFeedPublisher implements FeedPublisher {
             persistedEntriesObject.add(item.toJSONPretty());
         }
         return persistedEntriesObject;
-        //return mapper.query(PersistedEntry.class,index.);//get the mapper object from dynamodb
     }
 
     private void incrementCounterForFeed(String feedName) {
@@ -222,7 +195,7 @@ public class DynamoFeedPublisher implements FeedPublisher {
         if (!counterMap.containsKey(feedName)) {
             synchronized (counterMap) {
                 if (!counterMap.containsKey(feedName)) {
-                    Counter counter = Metrics.newCounter(DynamoFeedPublisher
+                    Counter counter = Metrics.newCounter(DynamoFeedDBPublisher
                             .class, "entries-created-for-" + feedName);
                     counterMap.put(feedName, counter);
                 }

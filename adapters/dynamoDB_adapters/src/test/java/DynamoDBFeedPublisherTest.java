@@ -1,21 +1,22 @@
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
+import com.amazonaws.services.dynamodbv2.document.*;
+import com.amazonaws.services.dynamodbv2.document.internal.IteratorSupport;
+import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.parser.stax.FOMEntry;
 import org.atomhopper.adapter.request.adapter.DeleteEntryRequest;
 import org.atomhopper.adapter.request.adapter.PostEntryRequest;
 import org.atomhopper.adapter.request.adapter.PutEntryRequest;
-import org.atomhopper.dynamodb.adapter.DynamoFeedPublisher;
+import org.atomhopper.dynamodb.adapter.DynamoFeedDBPublisher;
 import org.atomhopper.dynamodb.model.PersistedEntry;
 import org.atomhopper.response.AdapterResponse;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
@@ -33,19 +34,15 @@ public class DynamoDBFeedPublisherTest {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
     @Mock
+    private DynamoDB dynamoDB;
+    @Mock
+    DynamoDBQueryExpression<PersistedEntry> querySpec;
+    @Mock
     private DynamoDBMapper dynamoDBMapper;
-
-    private DynamoFeedPublisher dynamoFeedPublisher = new DynamoFeedPublisher();
-    //        @Mock
-//        private DynamoDBMapperConfig dynamoDBMapperConfig;
-//        @Mock
-//        private AmazonDynamoDB dynamoDB;
+    private DynamoFeedDBPublisher dynamoFeedDBPublisher = new DynamoFeedDBPublisher();
     @Mock
     private AmazonDynamoDBClient amazonDynamoDBClient;
-//        @Mock
-//        private ApplicationContext applicationContext;
-//
-//        private DynamoDBTemplate dynamoDBTemplate;
+
 
     private final String MARKER_ID = UUID.randomUUID().toString();
     private final String ENTRY_BODY = "<entry xmlns='http://www.w3.org/2005/Atom'></entry>";
@@ -58,8 +55,9 @@ public class DynamoDBFeedPublisherTest {
 
     @Before
     public void setUp() throws Exception {
-        dynamoFeedPublisher.setDynamoDBClient(amazonDynamoDBClient);
-        dynamoFeedPublisher.setDynamoMapper(dynamoDBMapper);
+        dynamoFeedDBPublisher.setDynamoDBClient(amazonDynamoDBClient);
+        dynamoFeedDBPublisher.setDynamoMapper(dynamoDBMapper);
+        dynamoFeedDBPublisher.setDynamoDB(dynamoDB);
         persistedEntry = new PersistedEntry();
         persistedEntry.setFeed(FEED_NAME);
         persistedEntry.setEntryId(MARKER_ID);
@@ -73,43 +71,42 @@ public class DynamoDBFeedPublisherTest {
         postEntryRequest = mock(PostEntryRequest.class);
         when(postEntryRequest.getEntry()).thenReturn(entry());
         when(postEntryRequest.getFeedName()).thenReturn("namespace/feed");
-
-//        persistedEntry = new PersistedEntry();
-//        persistedEntry.setFeed(FEED_NAME);
-//        persistedEntry.setEntryId(MARKER_ID);
-//        persistedEntry.setEntryBody(ENTRY_BODY);
-//
-//        entryList = new ArrayList<PersistedEntry>();
-//        entryList.add(persistedEntry);
-
     }
 
     @Test
     public void showSaveTheObjectInDynamoDb() throws Exception {
+        dynamoFeedDBPublisher.setAllowOverrideId(false);
         doNothing().when(dynamoDBMapper).save(persistedEntry);
-        when(dynamoDBMapper.load(PersistedEntry.class, persistedEntry.getEntryId()))
-                .thenReturn(persistedEntry);
-        AdapterResponse<Entry> adapterResponse = dynamoFeedPublisher.postEntry(postEntryRequest);
+        AdapterResponse<Entry> adapterResponse = dynamoFeedDBPublisher.postEntry(postEntryRequest);
         assertEquals("Should return HTTP 201 (Created)", HttpStatus.CREATED, adapterResponse.getResponseStatus());
     }
 
     @Test
     public void showErrorIfAlreadyExistsEntryIDInDynamoDb() throws Exception {
-        dynamoFeedPublisher.setAllowOverrideId(true);
-       when(dynamoDBMapper.load(PersistedEntry.class,postEntryRequest.getEntry(),postEntryRequest.getFeedName())).thenReturn(persistedEntry);
-        AdapterResponse<Entry> adapterResponse = dynamoFeedPublisher.postEntry(postEntryRequest);
+        final Table mockTable = mock(Table.class);
+        when(dynamoDB.getTable(any(String.class))).thenReturn(mockTable);
+        final Index mockIndex = mock(Index.class);
+        when(mockTable.getIndex(anyString())).thenReturn(mockIndex);
+        final ItemCollection<QueryOutcome> outcome = mock(ItemCollection.class);
+        when(mockIndex.query(any(QuerySpec.class))).thenReturn(outcome);
+        final IteratorSupport<Item, QueryOutcome> mockIterator = mock(IteratorSupport.class);
+        final Item mockItem = new Item();
+        when(outcome.iterator()).thenReturn(mockIterator);
+        when(mockIterator.hasNext()).thenReturn(true, false);
+        when(mockIterator.next()).thenReturn(mockItem);
+        AdapterResponse<Entry> adapterResponse = dynamoFeedDBPublisher.postEntry(postEntryRequest);
         assertEquals("Should return HTTP 409 (Conflict)", HttpStatus.CONFLICT, adapterResponse.getResponseStatus());
 
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void shouldPutEntry() throws Exception {
-        dynamoFeedPublisher.putEntry(putEntryRequest);
+        dynamoFeedDBPublisher.putEntry(putEntryRequest);
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void shouldDeleteEntry() throws Exception {
-        dynamoFeedPublisher.deleteEntry(deleteEntryRequest);
+        dynamoFeedDBPublisher.deleteEntry(deleteEntryRequest);
     }
 
     public Entry entry() {

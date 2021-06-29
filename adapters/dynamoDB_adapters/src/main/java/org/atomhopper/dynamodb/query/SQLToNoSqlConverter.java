@@ -34,7 +34,7 @@ import java.util.*;
  *     <li>"type:lbaas.usage" => enter "lbaas.usage" into the "eventtype" column</li>
  * </ul>
  */
-public class SearchToSqlConverter {
+public class SQLToNoSqlConverter {
 
     public static final String BAD_SEARCH_REGEX = ".*(\"|,).*";
     public static final String BAD_CHAR_MSG = "Invalid Search Parameter:  '\"' ',' not allowed.";
@@ -59,9 +59,9 @@ public class SearchToSqlConverter {
 
     private Map<String, String> mapPrefix = new HashMap<String, String>();
 
-    public SearchToSqlConverter() { }
+    public SQLToNoSqlConverter() { }
 
-    public SearchToSqlConverter( Map<String, String> mapper, String split ) {
+    public SQLToNoSqlConverter(Map<String, String> mapper, String split ) {
 
         prefixSplit = split;
         mapPrefix = new HashMap<String, String>( mapper );
@@ -218,7 +218,7 @@ public class SearchToSqlConverter {
                 if (!filter.getAttributeName().equals(CATEGORY)) {
                     throw new IllegalArgumentException("Invalid Search Parameter: LDAP attribute name must be 'cat'");
                 }
-                String key = UUID.randomUUID().toString();
+                //String key = UUID.randomUUID().toString();
                 a.put(":"+filter.getAssertionValue(),filter.getAssertionValue());
                 sql.append(CATEGORY_STRING.replaceAll("replaceValue",filter.getAssertionValue()));
                 break;
