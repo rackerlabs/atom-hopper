@@ -23,7 +23,7 @@ public class HibernateFeedRepositoryTestMain {
 
         feedRepository.saveEntry(entry);
 
-        feedRepository.performSimpleAction(new SimpleSessionAction() {
+        feedRepository.performSimpleAction("testmain", new SimpleSessionAction() {
 
             @Override
             public void perform(Session liveSession) {

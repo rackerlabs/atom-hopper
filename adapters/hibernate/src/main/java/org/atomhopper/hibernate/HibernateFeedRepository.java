@@ -1,5 +1,6 @@
 package org.atomhopper.hibernate;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -7,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.atomhopper.adapter.jpa.PersistedCategory;
 import org.atomhopper.adapter.jpa.PersistedEntry;
@@ -31,16 +33,19 @@ public class HibernateFeedRepository implements FeedRepository {
     private final HibernateSessionManager sessionManager;
     private static final String DATE_LAST_UPDATED = "dateLastUpdated";
     private static final String FEED_NAME = "feed.name";
+    private final List<Observer> observers = Collections.synchronizedList(new ArrayList<Observer>());
 
     public HibernateFeedRepository(Map<String, String> parameters) {
         sessionManager = new HibernateSessionManager(parameters);
     }
 
-    public void performSimpleAction(SimpleSessionAction action) {
+    public void performSimpleAction(String description, SimpleSessionAction action) {
         final long begin = System.currentTimeMillis();
         LOG.debug("~!$: Simple Action Session begin: " + begin);
 
         final Session session = sessionManager.getSession();
+
+        beforeAction(description, session);
 
         Transaction tx = null;
 
@@ -57,16 +62,18 @@ public class HibernateFeedRepository implements FeedRepository {
 
             throw new AtomDatabaseException("Failure performing hibernate action: " + action.toString(), ex);
         } finally {
+            afterAction(description, session);
             LOG.debug("~!$: Closing session. Elapsed time: " + (System.currentTimeMillis() - begin));
             session.close();
         }
     }
 
-    public <T> T performComplexAction(ComplexSessionAction<T> action) {
+    public <T> T performComplexAction(String description, ComplexSessionAction<T> action) {
         final long begin = System.currentTimeMillis();
         LOG.debug("~!$: Complex Action Session begin: " + begin);
 
         final Session session = sessionManager.getSession();
+        beforeAction(description, session);
 
         T returnable = null;
         Transaction tx = null;
@@ -86,15 +93,18 @@ public class HibernateFeedRepository implements FeedRepository {
 
             throw new AtomDatabaseException("Failure performing hibernate action: " + action.toString(), ex);
         } finally {
+            afterAction(description, session);
             LOG.debug("~!$: Closing session. Elapsed time: " + (System.currentTimeMillis() - begin));
             session.close();
         }
     }
 
-    public <T> T performComplexActionNonTransactionable(ComplexSessionAction<T> action) {
+    public <T> T performComplexActionNonTransactionable(String description, ComplexSessionAction<T> action) {
         final Session session = sessionManager.getSession();
 
         T returnable = null;
+
+        beforeAction(description, session);
 
         try {
             returnable = action.perform(session);
@@ -103,13 +113,14 @@ public class HibernateFeedRepository implements FeedRepository {
         } catch (Exception ex) {
             throw new AtomDatabaseException("Failure performing hibernate action: " + action.toString(), ex);
         } finally {
+            afterAction(description, session);
             session.close();
         }
     }
 
     @Override
     public Set<PersistedCategory> getCategoriesForFeed(final String feedName) {
-        return performComplexAction(new ComplexSessionAction<Set<PersistedCategory>>() {
+        return performComplexAction("getCategoriesForFeed/" + feedName, new ComplexSessionAction<Set<PersistedCategory>>() {
 
             @Override
             public Set<PersistedCategory> perform(Session liveSession) {
@@ -129,7 +140,7 @@ public class HibernateFeedRepository implements FeedRepository {
 
     @Override
     public List<PersistedEntry> getFeedHead(final String feedName, final CategoryCriteriaGenerator criteriaGenerator, final int pageSize) {
-        return performComplexActionNonTransactionable(new ComplexSessionAction<List<PersistedEntry>>() {
+        return performComplexActionNonTransactionable("getFeedHead/" + feedName, new ComplexSessionAction<List<PersistedEntry>>() {
 
             @Override
             public List<PersistedEntry> perform(Session liveSession) {
@@ -150,7 +161,7 @@ public class HibernateFeedRepository implements FeedRepository {
     @Override
     public List<PersistedEntry> getFeedPage(final String feedName, final PersistedEntry markerEntry, final PageDirection direction,
                                             final CategoryCriteriaGenerator criteriaGenerator, final int pageSize) {
-        return performComplexActionNonTransactionable(new ComplexSessionAction<List<PersistedEntry>>() {
+        return performComplexActionNonTransactionable("getFeedPage/" + feedName, new ComplexSessionAction<List<PersistedEntry>>() {
 
             @Override
             public List<PersistedEntry> perform(Session liveSession) {
@@ -180,7 +191,7 @@ public class HibernateFeedRepository implements FeedRepository {
 
     @Override
     public void saveFeed(final PersistedFeed feed) {
-        performSimpleAction(new SimpleSessionAction() {
+        performSimpleAction("saveFeed", new SimpleSessionAction() {
 
             @Override
             public void perform(Session liveSession) {
@@ -207,7 +218,7 @@ public class HibernateFeedRepository implements FeedRepository {
         AtomDatabaseException firstException = null;
         while (attemptsLeft-- > 0) {
             try {
-                return performComplexAction(new ComplexSessionAction<Set<PersistedCategory>>() {
+                return performComplexAction("updateCategories", new ComplexSessionAction<Set<PersistedCategory>>() {
 
                     @Override
                     public Set<PersistedCategory> perform(Session liveSession) {
@@ -245,7 +256,7 @@ public class HibernateFeedRepository implements FeedRepository {
         AtomDatabaseException firstException = null;
         while (attemptsLeft-- > 0) {
             try {
-                performSimpleAction(new SimpleSessionAction() {
+                performSimpleAction("saveEntry", new SimpleSessionAction() {
 
                     @Override
                     public void perform(Session liveSession) {
@@ -272,7 +283,7 @@ public class HibernateFeedRepository implements FeedRepository {
 
     @Override
     public Collection<PersistedFeed> getAllFeeds() {
-        return performComplexActionNonTransactionable(new ComplexSessionAction<Collection<PersistedFeed>>() {
+        return performComplexActionNonTransactionable("getAllFeeds", new ComplexSessionAction<Collection<PersistedFeed>>() {
 
             @Override
             public Collection<PersistedFeed> perform(Session liveSession) {
@@ -283,7 +294,7 @@ public class HibernateFeedRepository implements FeedRepository {
 
     @Override
     public PersistedEntry getEntry(final String entryId, final String feedName) {
-        return performComplexActionNonTransactionable(new ComplexSessionAction<PersistedEntry>() {
+        return performComplexActionNonTransactionable("getEntry/" + feedName, new ComplexSessionAction<PersistedEntry>() {
 
             @Override
             public PersistedEntry perform(Session liveSession) {
@@ -295,7 +306,7 @@ public class HibernateFeedRepository implements FeedRepository {
 
     @Override
     public PersistedFeed getFeed(final String name) {
-        return performComplexActionNonTransactionable(new ComplexSessionAction<PersistedFeed>() {
+        return performComplexActionNonTransactionable("getFeed/" + name, new ComplexSessionAction<PersistedFeed>() {
 
             @Override
             public PersistedFeed perform(Session liveSession) {
@@ -307,7 +318,7 @@ public class HibernateFeedRepository implements FeedRepository {
     @Override
     public List<PersistedEntry> getLastPage(final String feedName, final int pageSize, final CategoryCriteriaGenerator criteriaGenerator) {
 
-        return performComplexActionNonTransactionable(new ComplexSessionAction<List<PersistedEntry>>() {
+        return performComplexActionNonTransactionable("getLastPage/" + feedName, new ComplexSessionAction<List<PersistedEntry>>() {
 
             @Override
             public List<PersistedEntry> perform(Session liveSession) {
@@ -328,7 +339,7 @@ public class HibernateFeedRepository implements FeedRepository {
     @Override
     public PersistedEntry getNextMarker(final PersistedEntry persistedEntry, final String feedName, final CategoryCriteriaGenerator criteriaGenerator) {
 
-        return performComplexActionNonTransactionable(new ComplexSessionAction<PersistedEntry>() {
+        return performComplexActionNonTransactionable("getNextMarker/" + feedName, new ComplexSessionAction<PersistedEntry>() {
 
             @Override
             public PersistedEntry perform(Session liveSession) {
@@ -346,6 +357,30 @@ public class HibernateFeedRepository implements FeedRepository {
                 return entries.size() > 0 ? (PersistedEntry) entries.get(0) : null;
             }
         });
+    }
+
+    @Override
+    public void addObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    private void beforeAction(String action, Session session) {
+        CopyOnWriteArrayList<Observer> observers = new CopyOnWriteArrayList<Observer>(this.observers);
+        for (FeedRepository.Observer observer : observers) {
+            observer.beforeAction(action, session);
+        }
+    }
+
+    private void afterAction(String action, Session session) {
+        CopyOnWriteArrayList<Observer> observers = new CopyOnWriteArrayList<Observer>(this.observers);
+        for (int i = observers.size() - 1; i >= 0; i--) {
+            observers.get(i).beforeAction(action, session);
+        }
     }
 
     private int safeLongToInt(long value) {
