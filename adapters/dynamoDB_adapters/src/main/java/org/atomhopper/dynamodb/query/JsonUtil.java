@@ -45,17 +45,17 @@ public class JsonUtil {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        //2. Convert JSON to List of Person objects
+        //2. Convert JSON to List of PersistedEntry objects
         //Define Custom Type reference for List<PersistedEntry> type
         TypeReference<List<PersistedEntry>> mapType = new TypeReference<List<PersistedEntry>>() {
         };
-        List<PersistedEntry> jsonToPersonList = null;
+        List<PersistedEntry> jsonToPersistentList = null;
         try {
-            jsonToPersonList = objectMapper.readValue(arrayToJson, mapType);
+            jsonToPersistentList = objectMapper.readValue(arrayToJson, mapType);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return jsonToPersonList;
+        return jsonToPersistentList;
     }
 
 
