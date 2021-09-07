@@ -67,11 +67,6 @@ public class SQLToNoSqlConverter {
         mapPrefix = new HashMap<String, String>( mapper );
     }
 
-
-    public static void main(String[] args) {
-        //System.out.println(new SearchToSqlConverter().getSqlFromSearchString("(AND(cat=CAT1)(OR(cat=CAT2)(cat=CAT3))(NOT(cat=CAT4)))"));
-    }
-
     public String getSqlFromSearchString(String searchString,Map<String,String> map) {
 
         if (StringUtils.isBlank(searchString)) {

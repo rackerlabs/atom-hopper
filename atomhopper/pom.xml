@@ -21,6 +21,13 @@
     <dependencies>
 
         <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-dynamodb</artifactId>
+            <version>1.11.34</version>
+        </dependency>
+
+
+        <dependency>
             <groupId>org.atomhopper</groupId>
             <artifactId>core</artifactId>
         </dependency>
@@ -53,6 +60,12 @@
         <dependency>
             <groupId>org.atomhopper.adapter</groupId>
             <artifactId>jdbc-adapter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.atomhopper.adapter</groupId>
+            <artifactId>dynamoDB_adapters</artifactId>
+            <version>1.2.35-SNAPSHOT</version>
         </dependency>
 
         <dependency>

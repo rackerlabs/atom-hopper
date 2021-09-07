@@ -38,8 +38,8 @@ import static org.apache.abdera.i18n.text.UrlEncoding.decode;
  * This class is used to publish the records in dynamodb using EntryId,feedName .
  * Index has been created on the feedName for fast search and getting the entry from the DynamoDb.
  */
-public class DynamoFeedDBPublisher implements FeedPublisher {
-    private static final Logger LOG = LoggerFactory.getLogger(DynamoFeedDBPublisher.class);
+public class DynamoDBFeedPublisher implements FeedPublisher {
+    private static final Logger LOG = LoggerFactory.getLogger(DynamoDBFeedPublisher.class);
     private AmazonDynamoDBClient dynamoDBClient;
     private DynamoDBMapper mapper;
     private DynamoDB dynamoDB;
@@ -195,7 +195,7 @@ public class DynamoFeedDBPublisher implements FeedPublisher {
         if (!counterMap.containsKey(feedName)) {
             synchronized (counterMap) {
                 if (!counterMap.containsKey(feedName)) {
-                    Counter counter = Metrics.newCounter(DynamoFeedDBPublisher
+                    Counter counter = Metrics.newCounter(DynamoDBFeedPublisher
                             .class, "entries-created-for-" + feedName);
                     counterMap.put(feedName, counter);
                 }
