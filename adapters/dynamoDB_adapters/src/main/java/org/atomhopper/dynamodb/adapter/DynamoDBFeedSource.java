@@ -124,10 +124,10 @@ public class DynamoDBFeedSource implements FeedSource {
     }
 
 
-    public DynamoDBFeedSource(AmazonDynamoDBClient amazonDynamoDBClient, DynamoDBMapper mapper) {
+    public DynamoDBFeedSource(AmazonDynamoDBClient amazonDynamoDBClient) {
         this.amazonDynamoDBClient = amazonDynamoDBClient;
         this.dynamoDB = new DynamoDB(this.amazonDynamoDBClient);
-        this.mapper = mapper;
+        this.mapper = new DynamoDBMapper(amazonDynamoDBClient);
         setDynamoDB(dynamoDB);
     }
 
