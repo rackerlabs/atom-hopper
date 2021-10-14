@@ -1,9 +1,10 @@
 package org.atomhopper.dynamodb.query;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.atomhopper.dynamodb.model.PersistedEntry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.text.Format;
@@ -14,6 +15,7 @@ import java.util.*;
  * Utility class for the methods declared in the dynamoDB feed Source.
  */
 public class JsonUtil {
+    static Logger LOG = LoggerFactory.getLogger(JsonUtil.class);
 
     /**
      * This method is used to return the date from date interval of 2 seconds
@@ -23,10 +25,12 @@ public class JsonUtil {
      * @return date format
      */
     public static String getCurrentDateWithMinusSecond(int seconds) {
+        LOG.info("getCurrentDateWithMinusSecond");
         Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
         calendar.set(Calendar.SECOND, (calendar.get(Calendar.SECOND) - seconds));
+        LOG.info("RETURN RESULT VALUE:" + formatter.format(calendar.getTime()));
         return formatter.format(calendar.getTime());
     }
 
@@ -37,26 +41,22 @@ public class JsonUtil {
      * @return List of PersistentEntry
      */
 
-    public static List<PersistedEntry> getPersistenceEntity(List feedPage) {
+    public static List<PersistedEntry> getPersistenceEntity(List<String> feedPage) {
         ObjectMapper objectMapper = new ObjectMapper();
-        String arrayToJson = null;
-        try {
-            arrayToJson = objectMapper.writeValueAsString(feedPage);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
+        List<PersistedEntry> jsonToPersistentList = new ArrayList<>();
         //2. Convert JSON to List of Person objects
+        //2. Convert JSON to List of PersistedEntry objectschanges
         //Define Custom Type reference for List<PersistedEntry> type
-        TypeReference<List<PersistedEntry>> mapType = new TypeReference<List<PersistedEntry>>() {
+        TypeReference<PersistedEntry> mapType = new TypeReference<PersistedEntry>() {
         };
-        List<PersistedEntry> jsonToPersonList = null;
-        try {
-            jsonToPersonList = objectMapper.readValue(arrayToJson, mapType);
-        } catch (IOException e) {
-            e.printStackTrace();
+        for (String s : feedPage) {
+            try {
+                jsonToPersistentList.add(objectMapper.readValue(s, mapType));
+                LOG.info("PERSISTENT ENTRY DATA:" + jsonToPersistentList);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-        return jsonToPersonList;
+        return jsonToPersistentList;
     }
-
-
 }

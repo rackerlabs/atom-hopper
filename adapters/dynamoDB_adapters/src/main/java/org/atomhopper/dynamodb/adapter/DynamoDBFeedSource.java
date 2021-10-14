@@ -7,6 +7,7 @@ import com.amazonaws.services.dynamodbv2.document.*;
 import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
 import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.yammer.metrics.Metrics;
@@ -313,7 +314,8 @@ public class DynamoDBFeedSource implements FeedSource {
     @Override
     public AdapterResponse<Feed> getFeed(GetFeedRequest getFeedRequest) {
         AdapterResponse<Feed> response = null;
-
+        LOG.info("INSIDE GET FEED METHOD");
+        LOG.info("PRINTING THE GET_FEED_REQUEST OBJECT :" + getFeedRequest);
         TimerContext context = null;
         int pageSize = DynamoDBConstant.PAGE_SIZE;
         final String pageSizeString = getFeedRequest.getPageSize();
@@ -321,8 +323,11 @@ public class DynamoDBFeedSource implements FeedSource {
             pageSize = Integer.parseInt(pageSizeString);
         }
         final String marker = getFeedRequest.getPageMarker();
+        LOG.info("PRINTING THE MARKER FOR THE REQUEST : " + marker);
         final String startingAt = getFeedRequest.getStartingAt();
+        LOG.info("PRINTING THE STARTING_AT FOR THE REQUEST :" + startingAt);
         if (StringUtils.isNotBlank(marker) && StringUtils.isNotBlank(startingAt)) {
+            LOG.info("INSIDE THE IF BLOCK WHERE MARKER AND STARTING ID IS NOT BLANK :" + startingAt);
             response = ResponseBuilder.badRequest("'marker' parameter can not be used together with the 'startingAt' parameter");
             return response;
         }
@@ -330,15 +335,19 @@ public class DynamoDBFeedSource implements FeedSource {
         try {
 
             if (StringUtils.isBlank(marker) && StringUtils.isBlank(startingAt)) {
+                LOG.info("INSIDE THE IF BLOCK WHERE MARKER AND STARTING ID BLANK :" + marker);
                 context = startTimer(String.format("get-feed-head-%s", getMetricBucketForPageSize(pageSize)));
                 response = getFeedHead(getFeedRequest, pageSize);
             } else if (StringUtils.isNotBlank(marker) && marker.equals(DynamoDBConstant.MOCK_LAST_MARKER)) {
+                LOG.info("INSIDE THE IF BLOCK WHERE MARKER IS NOT NULL AND WE HAVE MOCK_LAST_MARKER :" + marker);
                 context = startTimer(String.format("get-last-page-%s", getMetricBucketForPageSize(pageSize)));
                 response = getLastPage(getFeedRequest, pageSize);
             } else if (StringUtils.isNotBlank(marker)) {
+                LOG.info("INSIDE THE IF BLOCK WHERE MARKER  ID IS NOT BLANK :" + marker);
                 context = startTimer(String.format("get-feed-page-%s", getMetricBucketForPageSize(pageSize)));
                 response = getFeedPage(getFeedRequest, marker, pageSize);
             } else {
+                LOG.info("INSIDE THE IF BLOCK WHERE MARKER AND STARTING ID IS NOT BLANK :" + startingAt);
                 // we process 'startingAt' parameter here
                 context = startTimer(String.format("get-feed-page-startingAt-%s", getMetricBucketForPageSize(pageSize)));
                 response = getFeedPageByTimestamp(getFeedRequest, startingAt, pageSize);
@@ -378,15 +387,18 @@ public class DynamoDBFeedSource implements FeedSource {
 
     private AdapterResponse<Feed> getFeedPage(GetFeedRequest getFeedRequest, String marker, int pageSize) throws ParseException {
 
+        LOG.info("INSIDE THE GET_FEED_PAGE METHOD :" + getFeedRequest);
         final String pageDirectionValue = getFeedRequest.getDirection();
         PageDirection pageDirection = PageDirection.FORWARD;
         if (StringUtils.isNotEmpty(pageDirectionValue)) {
             pageDirection = PageDirection.valueOf(pageDirectionValue.toUpperCase());
         }
-
+        LOG.info("PAGE DIRECTION IN GET_FEED_PAGE:" + pageDirectionValue);
         final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
 
+
         List<PersistedEntry> entryMarker = getEntry(marker, getFeedRequest.getFeedName());
+        LOG.info("ENTRY MARKER OF LIST :" + entryMarker.size());
         if (entryMarker.isEmpty()) {
             return ResponseBuilder.notFound("No entry with specified marker found");
         }
@@ -531,10 +543,12 @@ public class DynamoDBFeedSource implements FeedSource {
             List<String> feedPage;
             ValueMap valueMap = new ValueMap();
             valueMap.withString(":feed", feedName);
-            valueMap.withString(":dateLastUpdated", JsonUtil.getCurrentDateWithMinusSecond(2));
+            // valueMap.withString(":dateLastUpdated", JsonUtil.getCurrentDateWithMinusSecond(2));
             feedPage = getQueryBuilderMethod(dynamoDB, "feed = :feed and dateLastUpdated < :dateLastUpdated", pageSize, valueMap, true);
+            LOG.info("GET QUERY_BUILDER_METHOD : " + feedPage);
             // comparator is written to perform sorting based on if two dates are equal then sort output based on entryId in desc order
             List<PersistedEntry> persistedEntryList = JsonUtil.getPersistenceEntity(feedPage);
+            LOG.info("PERSISTEMT ENTRY LIST DATA:" + persistedEntryList.toString());
             Collections.sort(persistedEntryList, (a, b) -> {
                 SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
                 String dateLastUpdated = dateFormatter.format(a.getDateLastUpdated());
@@ -557,6 +571,7 @@ public class DynamoDBFeedSource implements FeedSource {
      * @return
      */
     private AdapterResponse<Feed> getFeedHead(GetFeedRequest getFeedRequest, int pageSize) {
+        LOG.info("INSIDE THE GET_FEED_HEAD METHOD :" + getFeedRequest);
         final Abdera abdera = getFeedRequest.getAbdera();
 
         final String searchString = getFeedRequest.getSearchQuery() != null ? getFeedRequest.getSearchQuery() : "";
@@ -564,6 +579,8 @@ public class DynamoDBFeedSource implements FeedSource {
         List<PersistedEntry> persistedEntries = getFeedHead(getFeedRequest.getFeedName(), pageSize, searchString);
 
         Feed hydratedFeed = hydrateFeed(abdera, persistedEntries, getFeedRequest, pageSize);
+
+        LOG.info("HYDRATED FEED:" + hydratedFeed);
 
         // Set the last link in the feed head
         final String baseFeedUri = decode(getFeedRequest.urlFor(
@@ -597,13 +614,16 @@ public class DynamoDBFeedSource implements FeedSource {
         }
     }
 
-    /** This method is used to return the feed head which means the starting feed for the particular entry
-     * @param feedName: name of the feed
-     * @param pageSize: default is 25, for pagination
+    /**
+     * This method is used to return the feed head which means the starting feed for the particular entry
+     *
+     * @param feedName:     name of the feed
+     * @param pageSize:     default is 25, for pagination
      * @param searchString: Search string to be used to filteration in the query
      * @return List of all the output of PersistedEntry
      */
     private List<PersistedEntry> getFeedHead(final String feedName, final int pageSize, final String searchString) {
+        LOG.info("INSIDE THE GET_FEED_HEAD METHOD WITH CATEGORIES :" + feedName);
 
         List<String> categoriesList = getSearchToSqlConverter().getParamsFromSearchString(searchString);
         int numCats = categoriesList.size();
@@ -634,18 +654,13 @@ public class DynamoDBFeedSource implements FeedSource {
             List<String> feedPage;
             ValueMap valueMap = new ValueMap();
             valueMap.withString(":feed", feedName);
-            valueMap.withString(":dateLastUpdated", JsonUtil.getCurrentDateWithMinusSecond(2));
-            feedPage = getQueryBuilderMethod(dynamoDB, "feed = :feed and dateLastUpdated < :dateLastUpdated", pageSize, valueMap, false);
+            feedPage = getQueryBuilderMethod(dynamoDB, "feed = :feed", pageSize, valueMap, false);
             List<PersistedEntry> persistedEntryList = JsonUtil.getPersistenceEntity(feedPage);
-            Collections.sort(persistedEntryList, (a, b) -> {
-                SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-                String dateLastUpdated = dateFormatter.format(a.getDateLastUpdated());
-                String dateLastUpdatedNextDate = dateFormatter.format(b.getDateLastUpdated());
-                if (dateLastUpdatedNextDate.equals(dateLastUpdated)) {
-                    return b.getEntryId().compareTo(a.getEntryId());
-                }
-                return -1;
-            });
+            try {
+                LOG.debug("PERSISTENT ENTRY LIST DATA OBJECT :" + new ObjectMapper().writeValueAsString(persistedEntryList));
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
             return persistedEntryList;
         } finally {
             stopTimer(context);
@@ -756,8 +771,8 @@ public class DynamoDBFeedSource implements FeedSource {
      * This method is used to get the next marker based for the markerID and the feedName
      *
      * @param persistedEntry: PersistentEntryModel
-     * @param feedName: name of the feed
-     * @param searchString: Category search string for filteration
+     * @param feedName:       name of the feed
+     * @param searchString:   Category search string for filteration
      * @return Persistent model Object
      */
     private PersistedEntry getNextMarker(final PersistedEntry persistedEntry, final String feedName,
@@ -792,28 +807,14 @@ public class DynamoDBFeedSource implements FeedSource {
         List<String> firstUnionPersistentList;
         ValueMap valueMap = new ValueMap();
         valueMap.withString(":feed", persistedEntry.getFeed());
-        valueMap.withString(":feed", persistedEntry.getDateLastUpdated());
-        valueMap.withString(":entryId", persistedEntry.getEntryId());
-        firstUnionPersistentList = getQueryBuilderMethod(dynamoDB, "feed = :feed and dateLastUpdated =:dateLastUpdated and entryId <=:entryId", valueMap);
-
-
+        firstUnionPersistentList = getQueryBuilderMethod(dynamoDB, "feed = :feed ", valueMap);
         List<String> nextUnionListOfPersistedItems;
         ValueMap newValueMap = new ValueMap();
         newValueMap.withString(":feed", persistedEntry.getFeed());
-        newValueMap.withString(":dateLastUpdated", persistedEntry.getDateLastUpdated());
-        nextUnionListOfPersistedItems = getQueryBuilderMethod(dynamoDB, "feed = :feed and dateLastUpdated < :dateLastUpdated", valueMap);
+        nextUnionListOfPersistedItems = getQueryBuilderMethod(dynamoDB, "feed = :feed", valueMap);
         feedPage = Stream.concat(firstUnionPersistentList.stream(), nextUnionListOfPersistedItems.stream())
                 .collect(Collectors.toList());
         List<PersistedEntry> persistedEntryList = JsonUtil.getPersistenceEntity(feedPage);
-        Collections.sort(persistedEntryList, (a, b) -> {
-            SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-            String dateLastUpdated = dateFormatter.format(a.getDateLastUpdated());
-            String dateLastUpdatedNextDate = dateFormatter.format(b.getDateLastUpdated());
-            if (dateLastUpdatedNextDate.equals(dateLastUpdated)) {
-                return b.getEntryId().compareTo(a.getEntryId());
-            }
-            return -1;
-        });
         return persistedEntryList.get(0);
     }
 
@@ -901,6 +902,7 @@ public class DynamoDBFeedSource implements FeedSource {
      * @return : list of entry found if that exits in dynamodb with the entryId and feedName.
      */
     private List<PersistedEntry> getEntry(String entryId, final String feedName) {
+        LOG.info("INSIDE GET_ENTRY METHOD :" + entryId + "feedName :" + feedName);
         Gson gson = new Gson();
         List<PersistedEntry> persistedEntriesObject = new ArrayList<PersistedEntry>();
         Table table = dynamoDB.getTable(DynamoDBConstant.ENTRIES);
@@ -916,6 +918,7 @@ public class DynamoDBFeedSource implements FeedSource {
             Item item = itemsIterator.next();
             persistedEntriesObject.add(gson.fromJson(item.toJSONPretty(), PersistedEntry.class));
         }
+        LOG.info("PERSISTENT_ENTRIES OBJECT:" + persistedEntriesObject);
         return persistedEntriesObject;
     }
 
@@ -929,20 +932,25 @@ public class DynamoDBFeedSource implements FeedSource {
      * @return List of String in json format.
      */
     public List<String> getQueryBuilderMethod(DynamoDB dynamoDB, String conditionExpression, int pageSize, ValueMap valueMap, boolean orderBy) {
+        LOG.info("INSIDE GET_QUERY_BUILDER_METHOD");
         List<String> feedPage = new ArrayList<>();
         Table table = dynamoDB.getTable("entries");
         Index index = table.getIndex("global-feed-index");
+        LOG.info("CONDITION EXPRESSION :" + conditionExpression);
         QuerySpec spec = new QuerySpec()
                 .withKeyConditionExpression(conditionExpression)
                 .withValueMap(valueMap)
                 .withMaxPageSize(pageSize)// for no of page limit to be displayed
                 .withScanIndexForward(orderBy);// for descending order sorting on lastDateUpdated
+        LOG.info("AFTER QUERY SPEC");
         ItemCollection<QueryOutcome> persistedEntryItems = index.query(spec);
+        LOG.info("AFTER QUERY SPEC MAIN METHOD");
         Iterator<Item> itemsIterator = persistedEntryItems.iterator();
         while (itemsIterator.hasNext()) {
             Item item = itemsIterator.next();
             feedPage.add(item.toJSONPretty());
         }
+        LOG.info("FEED PAGE RESULT" + feedPage);
         return feedPage;
     }
 
