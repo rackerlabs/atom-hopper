@@ -52,7 +52,6 @@ public class JsonUtil {
         for (String s : feedPage) {
             try {
                 jsonToPersistentList.add(objectMapper.readValue(s, mapType));
-                LOG.info("PERSISTENT ENTRY DATA:" + jsonToPersistentList);
             } catch (IOException e) {
                 e.printStackTrace();
             }
