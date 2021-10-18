@@ -19,6 +19,7 @@
         <cglib.version>2.2</cglib.version>
         <metrics.version>3.0.1</metrics.version>
         <jetty.version>9.4.17.v20190418</jetty.version>
+        <spring.version>4.2.5.RELEASE</spring.version>
     </properties>
 
     <licenses>
@@ -54,7 +55,7 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-expression</artifactId>
-                <version>4.2.5.RELEASE</version>
+                <version>${spring.version}</version>
             </dependency>
 
 
