@@ -14,7 +14,7 @@
         -->
         <param-value>file:///etc/atomhopper/application-context.xml</param-value>
     </context-param>
-    
+
     <listener>
         <listener-class>org.atomhopper.ExternalConfigLoaderContextListener</listener-class>
     </listener>
@@ -85,13 +85,13 @@
         <servlet-name>Atom-Hopper-Metrics</servlet-name>
         <url-pattern>/atommetrics/*</url-pattern>
     </servlet-mapping>
-    
+
     <env-entry>
         <env-entry-name>logback/configuration-resource</env-entry-name>
         <env-entry-type>java.lang.String</env-entry-type>
         <env-entry-value>file:///etc/atomhopper/logback.xml</env-entry-value>
     </env-entry>
-    
+
     <listener>
         <listener-class>ch.qos.logback.classic.selector.servlet.ContextDetachingSCL</listener-class>
     </listener>
