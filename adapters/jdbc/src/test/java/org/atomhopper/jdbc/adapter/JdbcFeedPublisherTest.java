@@ -1,10 +1,23 @@
 package org.atomhopper.jdbc.adapter;
 
-import java.util.*;
-
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import org.apache.abdera.model.Entry;
+import org.apache.abdera.model.Link;
 import org.apache.abdera.parser.stax.FOMEntry;
 import org.atomhopper.adapter.request.adapter.DeleteEntryRequest;
 import org.atomhopper.adapter.request.adapter.PostEntryRequest;
@@ -16,15 +29,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
-
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
+import org.mockito.Mockito;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -101,8 +106,26 @@ public class JdbcFeedPublisherTest {
                     anyString(), any(java.util.Date.class), any(java.util.Date.class),
                     anyString(), anyString(), any(PostgreSQLTextArray.class)
             })).thenThrow(new DuplicateKeyException("duplicate entry"));
+            Map<String, String> prefixMap = new HashMap<String, String>();
+            prefixMap.put("foo", "bar");
+            prefixMap.put("gee", "wish");
+            jdbcFeedPublisher.setPrefixColumnMap(prefixMap);
             AdapterResponse<Entry> adapterResponse = jdbcFeedPublisher.postEntry(postEntryRequest);
             assertEquals("Should return HTTP 409 (Conflict)", HttpStatus.CONFLICT, adapterResponse.getResponseStatus());
+        }
+        
+        @Test
+        public void postEntryWithAllowOverrideDate() {
+        	jdbcFeedPublisher.setEnableTimers(true);
+        	jdbcFeedPublisher.setAllowOverrideDate(true);
+        	Entry abderaParsedEntry = Mockito.mock(Entry.class);
+        	Mockito.when(postEntryRequest.getEntry()).thenReturn(abderaParsedEntry);
+        	Mockito.when(abderaParsedEntry.getUpdated()).thenReturn(new Date());
+        	Link link = Mockito.mock(Link.class);
+			Mockito.when(abderaParsedEntry.getSelfLink()).thenReturn(link );
+        	AdapterResponse<Entry> adapterResponse = jdbcFeedPublisher.postEntry(postEntryRequest);
+        	
+        	assertEquals("Should return HTTP 201 (Created)", HttpStatus.CREATED, adapterResponse.getResponseStatus());
         }
 
         @Test
@@ -175,6 +198,22 @@ public class JdbcFeedPublisherTest {
             map.put("test1", "test2");
             jdbcFeedPublisher.setParameters(map);
         }
+        
+        
+        @Test
+        public void testCategories() throws Exception {
+            String[] abc = {"test1,test1Result", "result"};
+            Map<String, String> map = new HashMap<String, String>();
+            map.put( "test1", "result" );
+            jdbcFeedPublisher.setPrefixColumnMap(map);
+            jdbcFeedPublisher.setDelimiter(",");
+			JdbcFeedPublisher.Categories categories = jdbcFeedPublisher.new Categories(abc );
+            assertEquals("result", categories.getCategories()[0]);
+            assertEquals("test1Result", categories.getPrefix("test1"));
+            
+        }
+        
+        
 
         public Entry entry() {
             final FOMEntry entry = new FOMEntry();

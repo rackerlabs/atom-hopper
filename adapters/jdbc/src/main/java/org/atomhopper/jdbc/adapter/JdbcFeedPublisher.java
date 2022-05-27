@@ -3,7 +3,6 @@ package org.atomhopper.jdbc.adapter;
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Counter;
 import com.yammer.metrics.core.TimerContext;
-import org.apache.abdera.model.Categories;
 import org.apache.abdera.model.Entry;
 import org.apache.commons.lang.StringUtils;
 import org.atomhopper.adapter.FeedPublisher;
