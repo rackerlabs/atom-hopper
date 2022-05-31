@@ -49,7 +49,11 @@ public class SqlBuilderTest {
         private String result_next_with_cats_and_prefix = "(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id < ? AND( categories @> ?::varchar[]  AND  tenantId = ? )) UNION ALL (SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? AND( categories @> ?::varchar[]  AND  tenantId = ? )ORDER BY datelastupdated DESC, id DESC LIMIT 1) ORDER BY datelastupdated DESC, id DESC LIMIT 1";
         private String result_next_with_cats_not_prefix = "(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id < ? AND NOT ( categories @> ?::varchar[]  AND  tenantId = ? )) UNION ALL (SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? AND NOT ( categories @> ?::varchar[]  AND  tenantId = ? )ORDER BY datelastupdated DESC, id DESC LIMIT 1) ORDER BY datelastupdated DESC, id DESC LIMIT 1";
         private String result_next_with_cats_or_prefix = "(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id < ? AND( categories @> ?::varchar[]  OR  tenantId = ? )) UNION ALL (SELECT * FROM entries WHERE feed = ? AND datelastupdated < ? AND( categories @> ?::varchar[]  OR  tenantId = ? )ORDER BY datelastupdated DESC, id DESC LIMIT 1) ORDER BY datelastupdated DESC, id DESC LIMIT 1";
-
+        private String result_forward_feed_delay = "(SELECT * FROM entries WHERE feed = ? AND datelastupdated = ? AND id > ? AND datelastupdated < now() - interval '1 seconds' ) UNION ALL (SELECT * FROM entries WHERE feed = ? AND datelastupdated > ? AND datelastupdated < now() - interval '1 seconds' ORDER BY datelastupdated ASC, id ASC LIMIT ?) ORDER BY datelastupdated ASC, id ASC LIMIT ?";
+        private String result_head_feed_delay = "SELECT * FROM entries WHERE feed = ? AND datelastupdated < now() - interval '1 seconds' ORDER BY datelastupdated DESC, id DESC LIMIT ?";
+        private String result_last_feed_delay = "SELECT * FROM entries WHERE feed = ? AND datelastupdated < now() - interval '1 seconds' ORDER BY datelastupdated ASC, id ASC LIMIT ?";
+		
+        
         private DateTimeFormatter isoDTF = ISODateTimeFormat.dateTime();
 
         private Map<String, String> map;
@@ -74,6 +78,17 @@ public class SqlBuilderTest {
 
             Assert.assertEquals(result_forward, result);
         }
+        
+        @Test
+        public void ShouldGetSqlForForwardwithFeedDelay() throws Exception {
+
+            SearchToSqlConverter searchToSqlConverter = new SearchToSqlConverter( map, PREFIX_SPLIT );
+            String result = new SqlBuilder( searchToSqlConverter )
+                    .searchType(SearchType.FEED_FORWARD).feedHeadDelayInSeconds(1)
+                    .toString();
+
+            Assert.assertEquals(result_forward_feed_delay, result);
+        }
 
         @Test
         public void ShouldGetSqlForBackward() throws Exception {
@@ -96,6 +111,17 @@ public class SqlBuilderTest {
 
             Assert.assertEquals(result_head, result);
         }
+        
+        @Test
+        public void ShouldGetSqlForHeadwithFeedDelay() throws Exception {
+            SearchToSqlConverter searchToSqlConverter = new SearchToSqlConverter( map, PREFIX_SPLIT );
+
+            String result = new SqlBuilder( searchToSqlConverter )
+                    .searchType( SearchType.FEED_HEAD ).feedHeadDelayInSeconds(1)
+                    .toString();
+
+            Assert.assertEquals(result_head_feed_delay, result);
+        }
 
         @Test
         public void ShouldGetSqlForLast() throws Exception {
@@ -106,6 +132,17 @@ public class SqlBuilderTest {
                     .toString();
 
             Assert.assertEquals(result_last, result);
+        }
+        
+        @Test
+        public void ShouldGetSqlForLastWithFeedDelay() throws Exception {
+            SearchToSqlConverter searchToSqlConverter = new SearchToSqlConverter( map, PREFIX_SPLIT );
+
+            String result = new SqlBuilder( searchToSqlConverter )
+                    .searchType( SearchType.LAST_PAGE ).feedHeadDelayInSeconds(1)
+                    .toString();
+
+            Assert.assertEquals(result_last_feed_delay, result);
         }
 
         @Test
@@ -396,5 +433,22 @@ public class SqlBuilderTest {
             Assert.assertTrue("result string has timezone", result.contains("current_setting('TIMEZONE')"));
             Assert.assertTrue("result string has correct time", result.contains(timestamp));
         }
+        
+        @Test
+        public void shouldGetSelectWithTimestampWithFeedDelay() throws Exception {
+            String startingTimestamp =  "2014-03-03T08:51:32.000Z";
+            DateTime startAt = isoDTF.parseDateTime(startingTimestamp);
+            SearchToSqlConverter searchToSqlConverter = new SearchToSqlConverter( map, PREFIX_SPLIT );
+
+            String result = new SqlBuilder( searchToSqlConverter )
+                                    .searchType( SearchType.BY_TIMESTAMP_BACKWARD )
+                                    .startingTimestamp(startAt).feedHeadDelayInSeconds(1)
+                                    .toString();
+
+            String timestamp = startAt.getHourOfDay() + ":" + startAt.getMinuteOfHour() + ":" + startAt.getSecondOfMinute();
+            Assert.assertTrue("result string has timezone", result.contains("current_setting('TIMEZONE')"));
+            Assert.assertTrue("result string has correct time", result.contains(timestamp));
+        }
+        
     }
 }
