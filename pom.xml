@@ -44,10 +44,6 @@
         <module>adapters/dynamoDB_adapters</module>
     </modules>
 
-    <scm>
-        <connection>scm:git:ssh://git@github.com/rackerlabs/atom-hopper.git</connection>
-      <tag>parentksd-1.2.32</tag>
-  </scm>
 
     <dependencyManagement>
         <dependencies>
