@@ -44,6 +44,9 @@
         <module>adapters/dynamoDB_adapters</module>
     </modules>
 
+    <scm>
+        <connection>scm:git:ssh://git@github.com/rackerlabs/atom-hopper.git</connection>
+  </scm>
 
     <dependencyManagement>
         <dependencies>
