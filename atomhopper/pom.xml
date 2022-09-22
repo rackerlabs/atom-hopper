@@ -99,6 +99,37 @@
         </dependency>
 
         <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-dynamodb</artifactId>
+            <version>1.11.34</version>
+        </dependency>
+        
+        <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-expression</artifactId>
+                <version>4.2.5.RELEASE</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.atomhopper.adapter</groupId>
+                <artifactId>dynamoDB_adapters</artifactId>
+                <version>1.2.35-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
+                <version>2.3.2</version>
+            </dependency>
+            
+            <!-- Runtime, com.sun.xml.bind module -->
+            <dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-runtime</artifactId>
+                <version>2.3.2</version>
+            </dependency>
+
+        <dependency>
             <groupId>com.yammer.metrics</groupId>
             <artifactId>metrics-core</artifactId>
         </dependency>
