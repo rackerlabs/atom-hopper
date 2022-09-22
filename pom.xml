@@ -46,7 +46,7 @@
 
     <scm>
         <connection>scm:git:ssh://git@github.com/rackerlabs/atom-hopper.git</connection>
-      <tag>parent-1.2.35</tag>
+      <tag>parentkk-1.2.35</tag>
   </scm>
 
     <dependencyManagement>
