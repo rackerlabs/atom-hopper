@@ -148,8 +148,8 @@
     <bean
             id="awsCredentials"
             class="com.amazonaws.auth.BasicAWSCredentials">
-        <constructor-arg value="AKIAXKU7XKY6GTJBOYO6" />
-        <constructor-arg value="3badio6B3OHGlCPYhvgmNyoOFgOSWL1K4ivx4pw1" />
+   <!--     <constructor-arg value="" />
+        <constructor-arg value="" /> -->
     </bean>
     <!-- NOTE: It is better to wire the interface (om.amazonaws.services.dynamodbv2.AmazonDynamoDB) inside your code instead of om.amazonaws.services.dynamodbv2.AmazonDynamoDBClient, but leave the bean mapping below to the impl class. -->
     <bean
