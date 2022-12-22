@@ -97,12 +97,6 @@
             <groupId>me.moocar</groupId>
             <artifactId>logback-gelf</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-dynamodb</artifactId>
-            <version>1.12.352</version>
-        </dependency>
         
         <dependency>
                 <groupId>org.springframework</groupId>
