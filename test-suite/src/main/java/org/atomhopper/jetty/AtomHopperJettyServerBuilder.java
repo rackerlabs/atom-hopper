@@ -9,16 +9,19 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.springframework.web.context.ContextLoaderListener;
 
-/**
- *
- *
- */
+
 public class AtomHopperJettyServerBuilder {
 
     private final int portNumber;
+    private String configurationPathAndFile = "";
 
     public AtomHopperJettyServerBuilder(int portNumber) {
         this.portNumber = portNumber;
+    }
+
+    public AtomHopperJettyServerBuilder(int portNumber, String configurationPathAndFile) {
+        this.portNumber = portNumber;
+        this.configurationPathAndFile = configurationPathAndFile;
     }
 
     private Server buildNewInstance() {
@@ -28,7 +31,11 @@ public class AtomHopperJettyServerBuilder {
         final ServletHolder atomHopServer = new ServletHolder(AtomHopperServlet.class);
         final ServletHolder versionServlet = new ServletHolder(AtomHopperVersionServlet.class);
         atomHopServer.setInitParameter(ServletInitParameter.CONTEXT_ADAPTER_CLASS.toString(), ServletSpringContext.class.getName());
-        atomHopServer.setInitParameter(ServletInitParameter.CONFIGURATION_LOCATION.toString(), "classpath:/META-INF/atom-server.cfg.xml");
+        if(configurationPathAndFile.length() <= 0) {
+            atomHopServer.setInitParameter(ServletInitParameter.CONFIGURATION_LOCATION.toString(), "classpath:/META-INF/atom-server.cfg.xml");
+        } else {
+            atomHopServer.setInitParameter(ServletInitParameter.CONFIGURATION_LOCATION.toString(), configurationPathAndFile);
+        }
 
         rootContext.addServlet(versionServlet, "/buildinfo");
         rootContext.addServlet(atomHopServer, "/*");

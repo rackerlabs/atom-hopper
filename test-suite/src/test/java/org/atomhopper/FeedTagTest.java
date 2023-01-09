@@ -5,6 +5,8 @@ import org.apache.abdera.factory.Factory;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Source;
 import org.apache.abdera.protocol.client.AbderaClient;
+import org.apache.abdera.protocol.client.ClientResponse;
+import org.apache.commons.httpclient.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
@@ -124,9 +126,11 @@ public class FeedTagTest extends JettyIntegrationTestHarness {
             //entry.setUpdated(date); //This needs to be auto-generated.
 
             //report("The Entry to Post", entry.toString());  //Commented out to reduced build logs.
-            String postResponse = abderaClient.post("http://localhost:" + getPort() + "/namespace/feed/", entry).getDocument().getRoot().toString();
-            doc = xml.toDOM(postResponse);
-            //report("The Created Entry", postResponse);  //Commented out to reduced build logs.
+            ClientResponse postResponse = abderaClient.post("http://localhost:" + getPort() + "/namespace/feed/", entry);
+            String postResponseText = postResponse.getDocument().getRoot().toString();
+            //report("The Created Entry", postResponseText);  //Commented out to reduced build logs.
+            assertEquals(postResponse.getStatus(), HttpStatus.SC_CREATED);
+            doc = xml.toDOM(postResponseText);
         }
 
         @Test

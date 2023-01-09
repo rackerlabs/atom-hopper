@@ -1,5 +1,7 @@
 package org.atomhopper.hibernate;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -18,10 +20,13 @@ import org.atomhopper.hibernate.actions.ComplexSessionAction;
 import org.atomhopper.hibernate.actions.SimpleSessionAction;
 import org.atomhopper.hibernate.query.CategoryCriteriaGenerator;
 import org.hibernate.Criteria;
+import org.hibernate.LockMode;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.type.TimestampType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -162,13 +167,13 @@ public class HibernateFeedRepository implements FeedRepository {
 
                 switch (direction) {
                     case FORWARD:
-                        criteria.add(Restrictions.gt(DATE_LAST_UPDATED, markerEntry.getCreationDate())).addOrder(Order.asc(DATE_LAST_UPDATED));
+                        criteria.add(Restrictions.gt(DATE_LAST_UPDATED, markerEntry.getDateLastUpdated())).addOrder(Order.asc(DATE_LAST_UPDATED));
                         feedPage.addAll(criteria.list());
                         Collections.reverse(feedPage);
                         break;
 
                     case BACKWARD:
-                        criteria.add(Restrictions.le(DATE_LAST_UPDATED, markerEntry.getCreationDate())).addOrder(Order.desc(DATE_LAST_UPDATED));
+                        criteria.add(Restrictions.le(DATE_LAST_UPDATED, markerEntry.getDateLastUpdated())).addOrder(Order.desc(DATE_LAST_UPDATED));
                         feedPage.addAll(criteria.list());
                         break;
                 }
@@ -254,6 +259,20 @@ public class HibernateFeedRepository implements FeedRepository {
 
                         if (feed == null) {
                             feed = entry.getFeed();
+                        } else {
+                            liveSession.lock(feed, LockMode.PESSIMISTIC_WRITE);
+                        }
+
+                        if (entry.getCreationDate() == null || entry.getDateLastUpdated() == null) {
+                            final Instant now = ((Timestamp)liveSession.createQuery(
+                                "select coalesce(max(current_timestamp()), current_timestamp()) from PersistedFeed"
+                            ).uniqueResult()).toInstant();
+                            if (entry.getCreationDate() == null) {
+                                entry.setCreationDate(now);
+                            }
+                            if (entry.getDateLastUpdated() == null) {
+                                entry.setDateLastUpdated(now);
+                            }
                         }
 
                         liveSession.saveOrUpdate(feed);
