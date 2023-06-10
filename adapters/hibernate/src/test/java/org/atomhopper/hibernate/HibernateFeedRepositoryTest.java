@@ -61,7 +61,7 @@ public class HibernateFeedRepositoryTest {
 
         @Test(expected=AtomDatabaseException.class)
         public void shouldThrowAtomDatabaseException() throws Exception {
-            feedRepository.performSimpleAction(simpleSessionAction);
+            feedRepository.performSimpleAction("test", simpleSessionAction);
         }
     }
 
@@ -87,7 +87,7 @@ public class HibernateFeedRepositoryTest {
         /*This should throw the error because */
         @Test(expected=AtomDatabaseException.class)
         public void shouldThrowAtomDatabaseException() throws Exception {
-            feedRepository.performComplexAction(complexSessionAction);
+            feedRepository.performComplexAction("test", complexSessionAction);
         }
     }
 
@@ -133,7 +133,7 @@ public class HibernateFeedRepositoryTest {
 
         @Test
         public void shouldCreateCategories() {
-            feedRepository.performSimpleAction(new SimpleSessionAction() {
+            feedRepository.performSimpleAction("test", new SimpleSessionAction() {
                 @Override
                 public void perform(Session liveSession) {
                     final PersistedEntry entry = (PersistedEntry) liveSession.createCriteria(PersistedEntry.class)
@@ -147,7 +147,7 @@ public class HibernateFeedRepositoryTest {
 
         @Test
         public void shouldFindEntryInFeed() throws Exception {
-            feedRepository.performSimpleAction(new SimpleSessionAction() {
+            feedRepository.performSimpleAction("test", new SimpleSessionAction() {
                 @Override
                 public void perform(Session liveSession) {
                     final List feeds = liveSession.createCriteria(PersistedFeed.class).list();
