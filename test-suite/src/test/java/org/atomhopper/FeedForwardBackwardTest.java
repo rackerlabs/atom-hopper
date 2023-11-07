@@ -8,6 +8,7 @@ import org.apache.abdera.model.Feed;
 import org.apache.abdera.parser.Parser;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -16,9 +17,14 @@ import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
+import java.io.IOException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -59,13 +65,31 @@ public class FeedForwardBackwardTest extends JettyIntegrationTestHarness {
     
     public static String getFeedDirectionBackwardMethod(String markerId) {
         return getURL() + "?marker=" + markerId + "&direction=backward&limit=10";
+    }
+    
+    public static String getURLMarkerLast() {
+    	return urlAndPort + "/namespace3/feed3/?marker=last";
+    }
+    
+    public static GetMethod getFeedMethodMarkerLast() {
+        return new GetMethod(getURLMarkerLast());
+    }  
+    
+    public static String getURLWithStartingAt() {
+    	return urlAndPort + "/namespace3/feed3/?startingAt=" +"2011-03-10T11:54:30.207Z";
+    }
+    
+    public static GetMethod getFeedMethodWithStartingAt() {
+        return new GetMethod(getURLWithStartingAt());
     } 
+   
     
     public static class WhenRequestingFeed {
         @Test
         public void shouldOrderCorrectlyForwardAndBackward() throws Exception {
             final HttpMethod getFeedMethod = getFeedMethod();
             assertEquals("Hitting Atom Hopper with an empty datastore should return a 200", HttpStatus.SC_OK, httpClient.executeMethod(getFeedMethod));            
+            
             // Create 20 new entries
             for(int i = 1; i < 21; i++) {
                 final HttpMethod postMethod = newPostEntryMethod("<order>" + Integer.toString(i) + "</order>");
@@ -74,6 +98,12 @@ public class FeedForwardBackwardTest extends JettyIntegrationTestHarness {
             
             // namespace3/feed3
             assertEquals("Getting a feed should return a 200", HttpStatus.SC_OK, httpClient.executeMethod(getFeedMethod));
+            
+            final HttpMethod getFeedMethodMarkerLast = getFeedMethodMarkerLast();
+            assertEquals("Getting a feed should return a 200", HttpStatus.SC_OK, httpClient.executeMethod(getFeedMethodMarkerLast));
+            
+            final HttpMethod getFeedMethodWithStartingAt = getFeedMethodWithStartingAt();
+            assertEquals("Getting a feed should return a 200", HttpStatus.SC_OK, httpClient.executeMethod(getFeedMethodWithStartingAt));
 
             // A bit verbose, but it checks the forward and backward direction of the feed
             Parser parser = getInstance().getParser();
@@ -112,6 +142,7 @@ public class FeedForwardBackwardTest extends JettyIntegrationTestHarness {
                     idCount++;
                 }
             }
+            
         }
     }    
 }

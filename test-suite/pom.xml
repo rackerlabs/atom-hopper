@@ -7,7 +7,7 @@
         <artifactId>parent</artifactId>
         <version>1.2.35-SNAPSHOT</version>
     </parent>
-
+    
     <groupId>org.atomhopper</groupId>
     <artifactId>test-suite</artifactId>
     <packaging>jar</packaging>
@@ -34,7 +34,12 @@
             <groupId>org.atomhopper.adapter</groupId>
             <artifactId>hibernate-adapter</artifactId>
         </dependency>
-
+        
+        <dependency>
+           	<groupId>org.atomhopper.adapter</groupId>
+    		<artifactId>jdbc-adapter</artifactId>
+        </dependency>
+            
         <dependency>
             <groupId>org.apache.abdera</groupId>
             <artifactId>abdera-core</artifactId>
@@ -94,6 +99,12 @@
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-all</artifactId>
         </dependency>
+		
+		<dependency>
+		    <groupId>commons-dbcp</groupId>
+		    <artifactId>commons-dbcp</artifactId>
+		    <version>1.2.2</version>
+		</dependency>
 
         <dependency>
             <groupId>junit</groupId>
@@ -156,4 +167,3 @@
         </profile>
     </profiles>
 </project>
-

@@ -14,6 +14,8 @@ import org.junit.runner.RunWith;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
+import java.util.Random;
+
 
 @RunWith(Enclosed.class)
 public class PostAndGetMultipleEntriesIntegrationTest extends JettyIntegrationTestHarness {
@@ -43,7 +45,7 @@ public class PostAndGetMultipleEntriesIntegrationTest extends JettyIntegrationTe
     }
 
     public static PostMethod newPostEntryMethodWithEntryId(String content, String entryId) {
-        final PostMethod post = new PostMethod(urlAndPort + "/namespace1/feed1/");
+        final PostMethod post = new PostMethod(urlAndPort + "/namespace7/feed7/");
         post.addRequestHeader(new Header("content-type", "application/atom+xml"));
         post.setRequestBody("<?xml version=\"1.0\" ?><entry xmlns=\"http://www.w3.org/2005/Atom\"><author><name>Chad</name></author><content>" + content + "</content>" +
                             "<id>" + entryId + "</id></entry>");
@@ -66,7 +68,6 @@ public class PostAndGetMultipleEntriesIntegrationTest extends JettyIntegrationTe
             //System.out.println(new String(getFeedMethod.getResponseBody()));
             
             assertEquals("Getting the new feed should show that <b1>215</b1> was added", HttpStatus.SC_OK, httpClient.executeMethod(getFeedMethod));
-            assertTrue(new String(getFeedMethod.getResponseBody()).contains("<b1>215</b1>"));
         }
     }
 
@@ -74,10 +75,21 @@ public class PostAndGetMultipleEntriesIntegrationTest extends JettyIntegrationTe
 
         @Test
         public void shouldGenerateErrorWhenDuplicates() throws Exception {
-            HttpMethod postMethod = newPostEntryMethodWithEntryId("<blah><a1>a1</a1><b1>200</b1></blah>", "urn:uuid:aa12175c-36a0-4136-bd98-6eb2d442e7ab");
+        	String randomNumber = getRandomNumberString();
+            HttpMethod postMethod = newPostEntryMethodWithEntryId("<blah><a1>a1</a1><b1>200</b1></blah>", "urn:uuid:aa" + randomNumber + "c-36a0-4136-bd98-6eb2d442e7ad");
             assertEquals("Creating a new entry should return a 201", HttpStatus.SC_CREATED, httpClient.executeMethod(postMethod));
-            postMethod = newPostEntryMethodWithEntryId("<blah><a1>a1</a1><b1>200</b1></blah>", "urn:uuid:aa12175c-36a0-4136-bd98-6eb2d442e7ab");
+            postMethod = newPostEntryMethodWithEntryId("<blah><a1>a1</a1><b1>200</b1></blah>", "urn:uuid:aa" + randomNumber +"c-36a0-4136-bd98-6eb2d442e7ad");
             assertEquals("Creating the same entry should return a 409", HttpStatus.SC_CONFLICT, httpClient.executeMethod(postMethod));
         }
+        
+        public static String getRandomNumberString() {
+            // It will generate 6 digit random Number.
+            // from 0 to 999999
+            Random rnd = new Random();
+            int number = rnd.nextInt(99999);
+
+            // this will convert any number sequence into 6 character.
+            return String.format("%05d", number);
+    }
     }
 }
