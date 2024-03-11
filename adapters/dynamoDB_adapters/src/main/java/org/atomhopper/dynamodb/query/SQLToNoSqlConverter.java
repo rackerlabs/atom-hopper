@@ -49,7 +49,7 @@ public class SQLToNoSqlConverter {
     private static final String NOT = " not ";
 
     private static final String CATEGORY = "cat";
-    private static final String CATEGORY_STRING = " (contains(categories,:replaceValue)) ";
+    private static final String CATEGORY_STRING = " (contains(categories, :categories)) ";
 
     public static final String OLD_CATEGORY_STRING = " categories && ?::varchar[] ";
 
@@ -214,8 +214,8 @@ public class SQLToNoSqlConverter {
                     throw new IllegalArgumentException("Invalid Search Parameter: LDAP attribute name must be 'cat'");
                 }
                 //String key = UUID.randomUUID().toString();
-                a.put(":"+filter.getAssertionValue(),filter.getAssertionValue());
-                sql.append(CATEGORY_STRING.replaceAll("replaceValue",filter.getAssertionValue()));
+                a.put(":categories",filter.getAssertionValue());
+                sql.append(CATEGORY_STRING);
                 break;
         }
 

@@ -69,6 +69,9 @@ public class DynamoDBQueryBuilder {
 
             case FEED_BACKWARD:
                 return searchSql;
+                
+            case FEED_FORWARD:
+                return searchSql;
         }
         return null;
     }

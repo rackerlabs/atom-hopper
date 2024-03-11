@@ -122,9 +122,23 @@ public class DynamoDBFeedPublisher implements FeedPublisher {
 
         persistedEntry.setFeed(postEntryRequest.getFeedName());
         persistedEntry.setEntryBody(entryToString(abderaParsedEntry));
-        abderaParsedEntry.setUpdated(persistedEntry.getDateLastUpdated());
-        abderaParsedEntry.setPublished(persistedEntry.getCreationDate());
-        mapper.save(persistedEntry);//dynamoDB save object
+        
+        // abderaParsedEntry.setPublished(persistedEntry.getCreationDate());
+        
+        try{
+            if(null != abderaParsedEntry.getUpdated()){
+                persistedEntry.setDateLastUpdated(getDateFormatInStringAWS(abderaParsedEntry.getUpdated()));
+            }else{
+                persistedEntry.setDateLastUpdated(getDateFormatInStringAWS(new Date()));
+            }
+            
+            abderaParsedEntry.setUpdated(persistedEntry.getDateLastUpdated());
+            abderaParsedEntry.setPublished(persistedEntry.getCreationDate());
+            mapper.save(persistedEntry);
+        }catch(Exception e){
+        }
+
+       //dynamoDB save object
         incrementCounterForFeed(postEntryRequest.getFeedName());
         return ResponseBuilder.created(abderaParsedEntry);
     }
@@ -213,6 +227,11 @@ public class DynamoDBFeedPublisher implements FeedPublisher {
      */
     private String getDateFormatInString(Date date) {
         Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return formatter.format(date);
+    }
+
+    private static String getDateFormatInStringAWS(Date date) {
+        Format formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         return formatter.format(date);
     }
 }

@@ -185,7 +185,7 @@ public class DynamoDBFeedSourceTest {
         newList.add("fe9eedc8-d10c-47a6-9209-f755ea8c35c3");
         newList.add("<entry xmlns='http://www.w3.org/2005/Atom'></entry>");
         DynamoDBFeedSource mainModel = Mockito.mock(DynamoDBFeedSource.class);
-        Mockito.when(mainModel.getQueryBuilderMethod(dynamoDB, "feed = :feed and dateLastUpdated < :dateLastUpdated", 25, new ValueMap(), true)).thenReturn(newList);
+        Mockito.when(mainModel.getQueryBuilderMethod(dynamoDB, "feed = :feed", "dateLastUpdated < :dateLastUpdated", 25, new ValueMap(), true)).thenReturn(newList);
         assertEquals("Should get a 200 response", HttpStatus.OK,
                 dynamoDBFeedSource.getFeed(getFeedRequest).getResponseStatus());
     }
