@@ -288,7 +288,7 @@ public class DynamoDBFeedSource implements FeedSource {
         ValueMap valueMap = new ValueMap();
         valueMap.withString(":feed", feed);
         valueMap.withString(":dateLastUpdated", String.valueOf(markerDate));
-        return getQueryBuilderMethod(dynamoDB, "feed = :feed" , getTimeStampValueFilter(direction), valueMap);
+        return getQueryBuilderMethod(dynamoDB, "feed = :feed and " + getTimeStampValueFilter(direction) , null, valueMap);
     }
 
     /**
@@ -514,23 +514,13 @@ public class DynamoDBFeedSource implements FeedSource {
         List<String> categoriesList = getSearchToSqlConverter().getParamsFromSearchString(searchString);
         int numCats = categoriesList.size();
 
-        Object[] parms = null;
+        String filterExpression = null;
 
         if (numCats > 0) {
-            parms = new Object[numCats + 2];
-            int index = 0;
-            parms[index++] = feedName;
-            for (String s : categoriesList) {
-                parms[index++] = s;
-            }
-            parms[index++] = pageSize;
-
-        } else {
-            parms = new Object[]{feedName, pageSize};
+            filterExpression = "(contains(categories, :categories))";
         }
 
         TimerContext context = null;
-        List<PersistedEntry> lastPersistedEntries;
         try {
             if (numCats > 0) {
                 context = startTimer(
@@ -542,7 +532,7 @@ public class DynamoDBFeedSource implements FeedSource {
             List<String> feedPage;
             ValueMap valueMap = new ValueMap();
             valueMap.withString(":feed", feedName);
-            feedPage = getQueryBuilderMethod(dynamoDB, "feed = :feed" ,"dateLastUpdated < :dateLastUpdated", pageSize, valueMap, true);
+            feedPage = getQueryBuilderMethod(dynamoDB, "feed = :feed and dateLastUpdated < :dateLastUpdated" ,filterExpression, pageSize, valueMap, true);
             // comparator is written to perform sorting based on if two dates are equal then sort output based on entryId in desc order
             List<PersistedEntry> persistedEntryList = JsonUtil.getPersistenceEntity(feedPage);
             Collections.sort(persistedEntryList, (a, b) -> {
@@ -619,18 +609,11 @@ public class DynamoDBFeedSource implements FeedSource {
         List<String> categoriesList = getSearchToSqlConverter().getParamsFromSearchString(searchString);
         int numCats = categoriesList.size();
 
-        Object[] parms = null;
+        
+        String filterExpression = null;
 
         if (numCats > 0) {
-            parms = new Object[numCats + 2];
-            int index = 0;
-            parms[index++] = feedName;
-            for (String s : categoriesList) {
-                parms[index++] = s;
-            }
-            parms[index++] = pageSize;
-        } else {
-            parms = new Object[]{feedName, pageSize};
+            filterExpression = "(contains(categories, :categories))";
         }
 
         TimerContext context = null;
@@ -645,7 +628,10 @@ public class DynamoDBFeedSource implements FeedSource {
             List<String> feedPage;
             ValueMap valueMap = new ValueMap();
             valueMap.withString(":feed", feedName);
-            feedPage = getQueryBuilderMethod(dynamoDB, "feed = :feed",null, pageSize, valueMap, false);
+            for(String s: categoriesList){
+                valueMap.withString(":categories", s);
+            }
+            feedPage = getQueryBuilderMethod(dynamoDB, "feed = :feed",filterExpression, pageSize, valueMap, false);
             List<PersistedEntry> persistedEntryList = JsonUtil.getPersistenceEntity(feedPage);
             return persistedEntryList;
         } finally {
@@ -765,41 +751,25 @@ public class DynamoDBFeedSource implements FeedSource {
         List<String> categoriesList = getSearchToSqlConverter().getParamsFromSearchString(searchString);
         int numCats = categoriesList.size();
 
-        Object[] parms = null;
+        String filterExpression = null;
 
-        if (categoriesList.size() > 0) {
-            parms = new Object[numCats * 2 + 5];
-            int index = 0;
-            parms[index++] = feedName;
-            parms[index++] = persistedEntry.getDateLastUpdated();
-            parms[index++] = persistedEntry.getEntryId();
-            for (String s : categoriesList) {
-                parms[index++] = s;
-            }
-            parms[index++] = feedName;
-            parms[index++] = persistedEntry.getDateLastUpdated();
-            for (String s : categoriesList) {
-                parms[index++] = s;
-            }
-
-        } else {
-            parms = new Object[]{feedName, persistedEntry.getDateLastUpdated(), persistedEntry.getEntryId(),
-                    feedName, persistedEntry.getDateLastUpdated()};
+        if (numCats > 0) {
+            filterExpression = "(contains(categories, :categories))";
         }
 
-        List<String> feedPage;
+
+
         List<String> firstUnionPersistentList;
         ValueMap valueMap = new ValueMap();
         valueMap.withString(":feed", persistedEntry.getFeed());
-        firstUnionPersistentList = getQueryBuilderMethod(dynamoDB, "feed = :feed ",null, valueMap);
-        List<String> nextUnionListOfPersistedItems;
-        ValueMap newValueMap = new ValueMap();
-        newValueMap.withString(":feed", persistedEntry.getFeed());
-        
-        nextUnionListOfPersistedItems = getQueryBuilderMethod(dynamoDB, "feed = :feed",null, valueMap);
-        feedPage = Stream.concat(firstUnionPersistentList.stream(), nextUnionListOfPersistedItems.stream())
-                .collect(Collectors.toList());
-        List<PersistedEntry> persistedEntryList = JsonUtil.getPersistenceEntity(feedPage);
+
+        for(String s: categoriesList){
+
+            valueMap.withString(":categories", s);
+        }
+
+        firstUnionPersistentList = getQueryBuilderMethod(dynamoDB, "feed = :feed ",filterExpression, valueMap);
+        List<PersistedEntry> persistedEntryList = JsonUtil.getPersistenceEntity(firstUnionPersistentList);
         return persistedEntryList.get(0);
     }
 
@@ -934,7 +904,13 @@ public class DynamoDBFeedSource implements FeedSource {
             .withScanIndexForward(orderBy);
         }
         // for descending order sorting on lastDateUpdated
-        ItemCollection<QueryOutcome> persistedEntryItems = index.query(spec);
+        ItemCollection<QueryOutcome> persistedEntryItems = null;
+        try{
+            persistedEntryItems = index.query(spec);
+        }catch(Exception e){
+            LOG.error("Exception " + e + e.getMessage());
+        }
+        
         Iterator<Item> itemsIterator = persistedEntryItems.iterator();
         while (itemsIterator.hasNext()) {
             Item item = itemsIterator.next();
@@ -952,17 +928,15 @@ public class DynamoDBFeedSource implements FeedSource {
      * @return List of String in json format.
      */
     public List<String> getQueryBuilderMethod(DynamoDB dynamoDB, String conditionExpression,String filterExpression, ValueMap valueMap) {
-        LOG.error("getQueryBuilderMethod");
-        LOG.error("conditionExpression " + conditionExpression);
-        LOG.error("valueMap" + valueMap.toString());
+
         List<String> feedPage = new ArrayList<>();
         Table table = dynamoDB.getTable("entries");
         Index index = table.getIndex("global-feed-index");
         QuerySpec spec;
         if(null != filterExpression){
           spec  = new QuerySpec()
-            .withKeyConditionExpression(conditionExpression + " and " + filterExpression)
-            // .withFilterExpression(filterExpression)
+            .withKeyConditionExpression(conditionExpression)
+            .withFilterExpression(filterExpression)
             .withScanIndexForward(true)
             .withValueMap(valueMap);
         }else{
