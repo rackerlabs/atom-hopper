@@ -276,15 +276,11 @@ public class SQLToNoSqlConverter {
                 if( prefixSplit != null ) {
 
                     int index = filter.getAssertionValue().indexOf( prefixSplit );
-
                     if ( index != -1 ) {
 
                         String prefix = filter.getAssertionValue().substring( 0, index );
-                        String value = filter.getAssertionValue().substring( index + prefixSplit.length() );
-
                         if ( mapPrefix.containsKey( prefix ) ) {
-
-                            param = value;
+                            param = filter.getAssertionValue();
                         }
                     }
                 }
