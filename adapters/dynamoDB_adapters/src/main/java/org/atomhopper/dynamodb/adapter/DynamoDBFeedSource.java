@@ -7,7 +7,6 @@ import com.amazonaws.services.dynamodbv2.document.*;
 import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
 import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.yammer.metrics.Metrics;
@@ -764,8 +763,12 @@ public class DynamoDBFeedSource implements FeedSource {
         valueMap.withString(":feed", persistedEntry.getFeed());
 
         for(String s: categoriesList){
-
-            valueMap.withString(":categories", s);
+            if(s.charAt(0) == '{'){
+                valueMap.withString(":categories", s.substring(1,s.length() -1));
+            }else{
+                valueMap.withString(":categories", s);
+            }
+            
         }
 
         firstUnionPersistentList = getQueryBuilderMethod(dynamoDB, "feed = :feed ",filterExpression, valueMap);
