@@ -28,49 +28,34 @@ public final class CategoryStringGenerator {
     public static List<String> getPostgresCategoryString(String searchString, Map<String, String> mapPrefix, String prefixSplit ) {
 
         List<String> finalList = new ArrayList<String>();
-
-
         if (searchString == null || !(searchString.trim().length() > 0)) {
-
             finalList.add( "{}" );
             return finalList;
         }
 
         List<String> categories = parse(searchString.trim().toLowerCase());
-
         List<String> catHolder = new ArrayList<String>();
 
         // find if any categories are prefixed, if so, split them out.
         for( String cat : categories ) {
-
             if (cat.matches( SQLToNoSqlConverter.BAD_SEARCH_REGEX ) ) {
-
                 throw new IllegalArgumentException( SQLToNoSqlConverter.BAD_CHAR_MSG );
             }
 
-
             if (prefixSplit != null ) {
-
                 int index = cat.indexOf( prefixSplit );
-
                 if ( index != -1 ) {
-
                     String prefix = cat.substring( 0, index );
-                    String value = cat.substring( index + prefixSplit.length() );
 
                     if ( mapPrefix.containsKey( prefix ) ) {
-
                         addToFinalList( finalList, catHolder );
-
-                        finalList.add( value );
+                        finalList.add( cat );
                     }
                     else {
-
                         catHolder.add( cat );
                     }
                 }
                 else {
-
                     catHolder.add( cat );
                 }
             }
@@ -80,7 +65,6 @@ public final class CategoryStringGenerator {
         }
 
         addToFinalList( finalList, catHolder );
-
         return finalList;
     }
 
