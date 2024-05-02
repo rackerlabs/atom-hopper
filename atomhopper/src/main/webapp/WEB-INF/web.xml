@@ -71,6 +71,11 @@
         </init-param>
     </servlet>
 
+    <servlet id="atom-hopper-health-check">
+        <servlet-name>Atom-Hopper-Health-Check</servlet-name>
+        <servlet-class>org.atomhopper.AtomHopperHealthCheckServlet</servlet-class>
+    </servlet>
+
     <servlet-mapping id="atom-hopper-mapping">
         <servlet-name>Atom-Hopper</servlet-name>
         <url-pattern>/*</url-pattern>
@@ -84,6 +89,11 @@
     <servlet-mapping id="metrics-mapping">
         <servlet-name>Atom-Hopper-Metrics</servlet-name>
         <url-pattern>/atommetrics/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping id="atom-hopper-health-check-mapping">
+        <servlet-name>Atom-Hopper-Health-Check</servlet-name>
+        <url-pattern>/healthcheck</url-pattern>
     </servlet-mapping>
 
     <env-entry>
