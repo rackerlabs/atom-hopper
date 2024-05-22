@@ -2,11 +2,9 @@ package org.atomhopper.dynamodb.adapter;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.document.*;
 import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
 import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.yammer.metrics.Metrics;
@@ -41,11 +39,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.apache.abdera.i18n.text.UrlEncoding.decode;
 
@@ -502,16 +497,17 @@ public class DynamoDBFeedSource implements FeedSource {
         int numCats = categoriesList.size();
         int counter = numCats;
                                                                                               
-        String filterExpression = null;
+        StringBuilder filterExpr = null;
         if (counter > 0) {
-            filterExpression = "(contains(categories, :categories"+ (numCats - counter)+")";
+            filterExpr = new StringBuilder();
+            filterExpr.append("(contains(categories, :categories").append(numCats - counter).append(")");
             counter--;
             while(counter > 0){
-                filterExpression = filterExpression + " and contains(categories, :categories"+ (numCats - counter)+")";
+                filterExpr.append(" and contains(categories, :categories").append(numCats - counter).append(")");
                 counter--;
             }
-            filterExpression = filterExpression + ")";
-            }
+            filterExpr.append(")");
+        }
                                                         
             TimerContext context = null;
         try {
@@ -533,7 +529,7 @@ public class DynamoDBFeedSource implements FeedSource {
                     valueMap.withString(":categories"+i, s);
                 }
             }
-            feedPage = getQueryBuilderMethod(dynamoDB, "feed = :feed",filterExpression, pageSize, valueMap, true);
+            feedPage = getQueryBuilderMethod(dynamoDB, "feed = :feed",null != filterExpr? filterExpr.toString(): null, pageSize, valueMap, true);
             List<PersistedEntry> persistedEntryList = JsonUtil.getPersistenceEntity(feedPage);
             return persistedEntryList;
         } finally {
@@ -600,16 +596,16 @@ public class DynamoDBFeedSource implements FeedSource {
         int numCats = categoriesList.size();
         int counter = numCats;
         
-        String filterExpression = null;
-
+        StringBuilder filterExpr = null;
         if (counter > 0) {
-            filterExpression = "(contains(categories, :categories"+ (numCats - counter)+")";
+            filterExpr = new StringBuilder();
+            filterExpr.append("(contains(categories, :categories").append(numCats - counter).append(")");
             counter--;
             while(counter > 0){
-                filterExpression = filterExpression + " and contains(categories, :categories"+ (numCats - counter)+")";
+                filterExpr.append(" and contains(categories, :categories").append(numCats - counter).append(")");
                 counter--;
             }
-            filterExpression = filterExpression + ")";
+            filterExpr.append(")");
         }
         
 
@@ -633,7 +629,7 @@ public class DynamoDBFeedSource implements FeedSource {
                     valueMap.withString(":categories"+i, s);
                 }
             }
-            feedPage = getQueryBuilderMethod(dynamoDB, "feed = :feed",filterExpression, pageSize, valueMap, false);
+            feedPage = getQueryBuilderMethod(dynamoDB, "feed = :feed",null != filterExpr? filterExpr.toString(): null, pageSize, valueMap, false);
             List<PersistedEntry> persistedEntryList = JsonUtil.getPersistenceEntity(feedPage);
             return persistedEntryList;
         } finally {
@@ -753,16 +749,16 @@ public class DynamoDBFeedSource implements FeedSource {
         List<String> categoriesList = getSearchToSqlConverter().getParamsFromSearchString(searchString);
         int numCats = categoriesList.size();
         int counter = numCats;                               
-        String filterExpression = null;
-
+        StringBuilder filterExpr = null;
         if (counter > 0) {
-            filterExpression = "(contains(categories, :categories"+ (numCats - counter)+")";
+            filterExpr = new StringBuilder();
+            filterExpr.append("(contains(categories, :categories").append(numCats - counter).append(")");
             counter--;
             while(counter > 0){
-                filterExpression = filterExpression + " and contains(categories, :categories"+ (numCats - counter)+")";
+                filterExpr.append(" and contains(categories, :categories").append(numCats - counter).append(")");
                 counter--;
             }
-            filterExpression = filterExpression + ")";
+            filterExpr.append(")");
         }
 
 
@@ -770,6 +766,7 @@ public class DynamoDBFeedSource implements FeedSource {
         List<String> firstUnionPersistentList;
         ValueMap valueMap = new ValueMap();
         valueMap.withString(":feed", persistedEntry.getFeed());
+        valueMap.withString(":dateLastUpdated", persistedEntry.getDateLastUpdated());
 
         for(int i = 0; i < categoriesList.size() ; i++){
             String s = categoriesList.get(i);
@@ -780,9 +777,9 @@ public class DynamoDBFeedSource implements FeedSource {
             }
         }
 
-        firstUnionPersistentList = getQueryBuilderMethod(dynamoDB, "feed = :feed ",filterExpression, valueMap);
+        firstUnionPersistentList = getQueryBuilderMethod(dynamoDB, "feed = :feed and dateLastUpdated < :dateLastUpdated",null!=filterExpr ? filterExpr.toString():null,1, valueMap,false);
         List<PersistedEntry> persistedEntryList = JsonUtil.getPersistenceEntity(firstUnionPersistentList);
-        return persistedEntryList.get(0);
+        return persistedEntryList.size() > 0 ? persistedEntryList.get(0) : null;
     }
 
 
