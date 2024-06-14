@@ -1,6 +1,7 @@
 package org.atomhopper.hibernate.adapter;
 
 import java.net.URL;
+import java.time.Instant;
 import java.util.*;
 
 import static junit.framework.Assert.assertEquals;
@@ -72,6 +73,9 @@ public class HibernateFeedSourceTest {
             persistedEntry.setFeed(persistedFeed);
             persistedEntry.setEntryId(ID);
             persistedEntry.setEntryBody(ENTRY_BODY);
+            Instant now = Instant.now();
+            persistedEntry.setCreationDate(now);
+            persistedEntry.setDateLastUpdated(now);
         }
 
         @Test(expected = UnsupportedOperationException.class)

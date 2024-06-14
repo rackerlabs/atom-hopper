@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -44,12 +44,14 @@ public class PersistedEntryTest {
     public static class WhenAccessingPersistedEntries {
 
         private PersistedEntry persistedEntry;
-        private Date date;
+        private Instant date;
         private Set<PersistedCategory> persistedCategories;
 
         @Before
         public void setUp() throws Exception {
             persistedEntry = new PersistedEntry();
+            persistedEntry.setCreationDate(Instant.now());
+            persistedEntry.setDateLastUpdated(Instant.now());
         }
 
         @Test
@@ -57,7 +59,7 @@ public class PersistedEntryTest {
             assertNotNull("Getting creation date should not return null.", persistedEntry.getCreationDate());
             date = persistedEntry.getCreationDate();
             assertEquals("Getting creation date should return a Date object.", persistedEntry.getCreationDate(), date);
-            persistedEntry.setCreationDate(new Date());
+            persistedEntry.setCreationDate(Instant.now());
             assertNotSame("Setting the creation date should update the object.", persistedEntry.getCreationDate(), date);
         }
 
@@ -66,8 +68,8 @@ public class PersistedEntryTest {
             assertNotNull("Getting the date last updated should not return null.", persistedEntry.getDateLastUpdated());
             date = persistedEntry.getDateLastUpdated();
             assertEquals("Getting the date last updated should return a date object.", persistedEntry.getDateLastUpdated(), date);
-            persistedEntry.setDateLastUpdated(new Date());
-            assertNotSame("Setting the date last updated should change last updated date.", persistedEntry.getDateLastUpdated().equals(date));
+            persistedEntry.setDateLastUpdated(Instant.now());
+            assertNotSame("Setting the date last updated should change last updated date.", persistedEntry.getDateLastUpdated(), date);
         }
 
         @Test

@@ -15,7 +15,10 @@ import org.atomhopper.response.EmptyBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.UUID;
 
 public class MigrationFeedPublisher implements FeedPublisher {
@@ -58,8 +61,6 @@ public class MigrationFeedPublisher implements FeedPublisher {
     @Override
     public AdapterResponse<Entry> postEntry(PostEntryRequest postEntryRequest) {
 
-        PersistedEntry entry = new PersistedEntry();
-
         // If allowOverrideId is false then set the Id
         // Also set the id if allowOverrideId is true, but no Id was sent in the entry
         if (!allowOverrideId || postEntryRequest.getEntry().getId() == null || StringUtils.isBlank(postEntryRequest.getEntry().getId().toString().trim())) {
@@ -69,7 +70,10 @@ public class MigrationFeedPublisher implements FeedPublisher {
         // If allowOverrideDate is false then set the DateLastUpdated
         // Also set the DateLastUpdated if allowOverrideDate is true, but no DateLastUpdated was sent in the entry
         if (!allowOverrideDate || postEntryRequest.getEntry().getUpdated() == null) {
-            postEntryRequest.getEntry().setUpdated(entry.getDateLastUpdated());
+            final Calendar localNow = Calendar.getInstance(TimeZone.getDefault());
+            localNow.setTimeInMillis(System.currentTimeMillis());
+
+            postEntryRequest.getEntry().setUpdated(localNow.getTime());
         }
 
         switch (writeTo) {

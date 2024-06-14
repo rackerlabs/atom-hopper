@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation=
+         "http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+     <!-- Hibernate -->
+    <bean name="feed-repository-bean"
+           class="org.atomhopper.hibernate.HibernateFeedRepository">
+        <constructor-arg>
+            <map>
+                 <!-- Start H2 Config -->
+              <entry key="hibernate.connection.url"
+                     value="jdbc:h2:/tmp/atomhopper/atom-hopper-db" />
+              <entry key="hibernate.connection.driver_class"
+                        value="org.h2.Driver" />
+                <entry key="hibernate.dialect"
+                        value="org.hibernate.dialect.H2Dialect" />
+                <entry key="hibernate.connection.username" value="sa" />
+                <entry key="hibernate.connection.password" value="" />
+                 <!-- End H2 Config -->
+
+                <entry key="hibernate.hbm2ddl.auto" value="update" />
+            </map>
+        </constructor-arg>
+    </bean>
+
+    <bean name="hibernate-feed-source"
+           class="org.atomhopper.hibernate.adapter.HibernateFeedSource">
+        <property name="feedRepository" ref="feed-repository-bean" />
+    </bean>
+
+    <bean name="hibernate-feed-publisher"
+           class="org.atomhopper.hibernate.adapter.HibernateFeedPublisher">
+        <property name="feedRepository" ref="feed-repository-bean" />
+    </bean>
+
+</beans>
