@@ -3,6 +3,8 @@ package org.atomhopper.dynamodb.query;
 import com.unboundid.ldap.sdk.Filter;
 import com.unboundid.ldap.sdk.LDAPException;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -36,6 +38,8 @@ import java.util.*;
  */
 public class SQLToNoSqlConverter {
 
+    static Logger LOG = LoggerFactory.getLogger(SQLToNoSqlConverter.class);
+
     public static final String BAD_SEARCH_REGEX = ".*(\"|,).*";
     public static final String BAD_CHAR_MSG = "Invalid Search Parameter:  '\"' ',' not allowed.";
 
@@ -44,12 +48,12 @@ public class SQLToNoSqlConverter {
     private static final String OPEN_CURLY_BRACKET = "{";
     private static final String CLOSED_CURLY_BRACKET = "}";
     private static final String PLUS_SIGN = "+";
-    private static final String AND = " AND ";
-    private static final String OR = " OR ";
+    private static final String AND = " and ";
+    private static final String OR = " or ";
     private static final String NOT = " not ";
 
     private static final String CATEGORY = "cat";
-    private static final String CATEGORY_STRING = " (contains(categories, :categories)) ";
+    private static final String CATEGORY_STRING = "contains(categories, :categories%d)";
 
     public static final String OLD_CATEGORY_STRING = " categories && ?::varchar[] ";
 
@@ -58,6 +62,8 @@ public class SQLToNoSqlConverter {
     private String prefixSplit = null;
 
     private Map<String, String> mapPrefix = new HashMap<String, String>();
+
+    private int key = 0;
 
     public SQLToNoSqlConverter() { }
 
@@ -163,6 +169,68 @@ public class SQLToNoSqlConverter {
         return params;
     }
 
+    public String getSqlFromLdapFilter(Filter filter) {
+        LOG.error("inside the LDAP filter");
+        LOG.error("filter: " + filter);
+        StringBuilder sql = new StringBuilder();
+
+        Filter[] filters = filter.getComponents();
+        LOG.error("filter and" + filters);
+        Filter notFilter = filter.getNOTComponent();
+        LOG.error("NOt vale : " + notFilter);
+
+        switch (filter.getFilterType()) {
+
+            case Filter.FILTER_TYPE_AND:
+                for (int x=0 ; x < filters.length; x++) {
+                    if (x == 0) {
+                        sql.append(OPEN_PARENS);
+                    }
+                    if (x > 0) {
+                        sql.append(AND);
+                    }
+                    sql.append(getSqlFromLdapFilter(filters[x]));
+                    if (x == filters.length - 1) {
+                        sql.append(CLOSED_PARENS);
+                    }
+                }
+                break;
+
+            case Filter.FILTER_TYPE_OR:
+                for (int x=0 ; x < filters.length; x++) {
+                    if (x == 0) {
+                        sql.append(OPEN_PARENS);
+                    }
+                    if (x > 0) {
+                        sql.append(OR);
+                    }
+                    sql.append(getSqlFromLdapFilter(filters[x]));
+                    if (x == filters.length - 1) {
+                        sql.append(CLOSED_PARENS);
+                    }
+                }
+                break;
+
+            case Filter.FILTER_TYPE_NOT:
+                sql.append(OPEN_PARENS);
+                sql.append(NOT);
+                sql.append(getSqlFromLdapFilter(notFilter));
+                sql.append(CLOSED_PARENS);
+                break;
+
+            case Filter.FILTER_TYPE_EQUALITY:
+                
+                if (!filter.getAttributeName().equals(CATEGORY)) {
+                    throw new IllegalArgumentException("Invalid Search Parameter: LDAP attribute name must be 'cat'");
+                }
+                sql.append(String.format(CATEGORY_STRING,key));
+                key++;
+                break;
+        }
+        LOG.error("Final SQL string2: " + sql.toString());
+        return sql.toString();
+    }
+
     private String getSqlFromLdapFilter(Filter filter,Map<String,String> a) {
 
         StringBuilder sql = new StringBuilder();
@@ -214,8 +282,8 @@ public class SQLToNoSqlConverter {
                     throw new IllegalArgumentException("Invalid Search Parameter: LDAP attribute name must be 'cat'");
                 }
                 //String key = UUID.randomUUID().toString();
-                a.put(":categories",filter.getAssertionValue());
-                sql.append(CATEGORY_STRING);
+                a.put(":categories" + key,filter.getAssertionValue());
+                sql.append(String.format(CATEGORY_STRING,key));
                 break;
         }
 
