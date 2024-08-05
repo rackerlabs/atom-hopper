@@ -395,6 +395,7 @@ public class DynamoDBFeedSource implements FeedSource {
                         pageDirection,
                         searchString, pageSize),
                 getFeedRequest, pageSize);
+        LOG.error("getFeedPage: " + feed );
         return ResponseBuilder.found(feed);
     }
 
@@ -413,6 +414,7 @@ public class DynamoDBFeedSource implements FeedSource {
                                                      final String markerId,
                                                      final PageDirection direction, final String searchString,
                                                      final int pageSize) {
+        LOG.error("enhancedGetFeedPage START");
         List<PersistedEntry> feedPage = new LinkedList<PersistedEntry>();
 
         TimerContext context = null;
@@ -460,6 +462,7 @@ public class DynamoDBFeedSource implements FeedSource {
         } finally {
             stopTimer(context);
         }
+        LOG.error("enhancedGetFeedPage END");
         return feedPage;
     }
 
@@ -593,8 +596,13 @@ public class DynamoDBFeedSource implements FeedSource {
      * @return List of all the output of PersistedEntry
      */
     private List<PersistedEntry> getFeedHead(final String feedName, final int pageSize, final String searchString) {
+        List<String> categoriesList = getSearchToSqlConverter().getParamsFromSearchString(searchString);
+        int numCats = categoriesList.size();
+        int counter = numCats;
+
         LOG.error("Filter String finding");
         String filterString = null;
+        LOG.error("searchString: " + searchString);
         if(null != searchString && searchString.startsWith("(")){
             String searchS = textToLDapSearch(searchString);
             Filter filter = null;
@@ -608,29 +616,26 @@ public class DynamoDBFeedSource implements FeedSource {
                     filterString =  getSearchToSqlConverter().getSqlFromLdapFilter(filter);
                     LOG.error("finalString " + filterString);
                 }
-        }
-        List<String> categoriesList = getSearchToSqlConverter().getParamsFromSearchString(searchString);
-        int numCats = categoriesList.size();
-        int counter = numCats;
-        
-        StringBuilder filterExpr = null;
-        if (counter > 0) {
-            filterExpr = new StringBuilder();
-            filterExpr.append("(contains(categories, :categories").append(numCats - counter).append(")");
-            counter--;
-            while(counter > 0){
-                filterExpr.append(" and contains(categories, :categories").append(numCats - counter).append(")");
+        }else if(null != searchString && searchString.startsWith("+")){
+            StringBuilder filterExpr = null;
+            if (counter > 0) {
+                filterExpr = new StringBuilder();
+                filterExpr.append("(contains(categories, :categories").append(numCats - counter).append(")");
                 counter--;
+                while(counter > 0){
+                    filterExpr.append(" and contains(categories, :categories").append(numCats - counter).append(")");
+                    counter--;
+                }
+                filterExpr.append(")");
+                filterString = filterExpr.toString();
             }
-            filterExpr.append(")");
         }
         
 
         TimerContext context = null;
         try {
             if (numCats > 0) {
-                context = startTimer(
-                        String.format("db-get-feed-head-with-cats-%s", getMetricBucketForPageSize(pageSize)));
+                context = startTimer(String.format("db-get-feed-head-with-cats-%s", getMetricBucketForPageSize(pageSize)));
             } else {
                 context = startTimer(String.format("db-get-feed-head-%s", getMetricBucketForPageSize(pageSize)));
             }
@@ -678,7 +683,8 @@ public class DynamoDBFeedSource implements FeedSource {
     }
 
     private Feed hydrateFeed(Abdera abdera, List<PersistedEntry> persistedEntries,
-                             GetFeedRequest getFeedRequest, final int pageSize) {                     
+                             GetFeedRequest getFeedRequest, final int pageSize) {    
+        LOG.error("hydrateFeed START");
         final Feed hydratedFeed = abdera.newFeed();
         final String baseFeedUri = decode(getFeedRequest.urlFor(
                 new EnumKeyedTemplateParameters<URITemplate>(URITemplate.FEED)));
@@ -711,7 +717,7 @@ public class DynamoDBFeedSource implements FeedSource {
 
             final PersistedEntry lastEntryInCollection = persistedEntries.get(persistedEntries.size() - 1);
             nextEntry = getNextMarker(lastEntryInCollection, getFeedRequest.getFeedName(), searchString);
-
+            LOG.error("nextEntry: " + nextEntry);
             if (nextEntry != null) {
                 // Set the next link
                 hydratedFeed.addLink(new StringBuilder().append(baseFeedUri)
@@ -728,7 +734,7 @@ public class DynamoDBFeedSource implements FeedSource {
                             .append(DynamoDBConstant.AND_DIRECTION_EQ_BACKWARD).toString())
                     .setRel(FeedSource.REL_ARCHIVE_NEXT);
         }
-
+        LOG.error("dddddddddd");
         for (PersistedEntry persistedFeedEntry : persistedEntries) {
             hydratedFeed.addEntry(hydrateEntry(persistedFeedEntry, abdera));
         }
@@ -747,7 +753,7 @@ public class DynamoDBFeedSource implements FeedSource {
                 LOG.warn("User requested " + getFeedRequest.getFeedName() + " feed with limit " + pageSize + ", but no entries are available");
             }
         }
-
+        LOG.error("hydrateFeed END");
         return hydratedFeed;
     }
 
@@ -761,7 +767,13 @@ public class DynamoDBFeedSource implements FeedSource {
      */
     private PersistedEntry getNextMarker(final PersistedEntry persistedEntry, final String feedName,
                                          final String searchString) {
+        LOG.error("getNextMarker START");
+        LOG.error("searchString NextMarker: " + searchString);
 
+        List<String> categoriesList = getSearchToSqlConverter().getParamsFromSearchString(searchString);
+        int numCats = categoriesList.size();
+        int counter = numCats; 
+        LOG.error("counter: " + counter);
         String filterString = null;
         if(null != searchString && searchString.startsWith("(")){
             String searchS = textToLDapSearch(searchString);
@@ -774,20 +786,19 @@ public class DynamoDBFeedSource implements FeedSource {
                 if(null != filter){
                     filterString =  getSearchToSqlConverter().getSqlFromLdapFilter(filter);
                 }
-        }
-        List<String> categoriesList = getSearchToSqlConverter().getParamsFromSearchString(searchString);
-        int numCats = categoriesList.size();
-        int counter = numCats;                               
-        StringBuilder filterExpr = null;
-        if (counter > 0) {
-            filterExpr = new StringBuilder();
-            filterExpr.append("(contains(categories, :categories").append(numCats - counter).append(")");
-            counter--;
-            while(counter > 0){
-                filterExpr.append(" and contains(categories, :categories").append(numCats - counter).append(")");
+        }else if(null != searchString && searchString.startsWith("+")){
+            StringBuilder filterExpr = null;
+            if (counter > 0) {
+                filterExpr = new StringBuilder();
+                filterExpr.append("(contains(categories, :categories").append(numCats - counter).append(")");
                 counter--;
+                while(counter > 0){
+                    filterExpr.append(" and contains(categories, :categories").append(numCats - counter).append(")");
+                    counter--;
+                }
+                filterExpr.append(")");
+                filterString = filterExpr.toString();
             }
-            filterExpr.append(")");
         }
 
 
@@ -806,14 +817,16 @@ public class DynamoDBFeedSource implements FeedSource {
             }
         }
 
-        firstUnionPersistentList = getQueryBuilderMethod(dynamoDB, "feed = :feed and dateLastUpdated < :dateLastUpdated",null!=filterString ? filterString.toString():null,1, valueMap,false);
+        firstUnionPersistentList = getQueryBuilderMethod(dynamoDB, "feed = :feed and dateLastUpdated > :dateLastUpdated",null!=filterString ? filterString.toString():null,1, valueMap,false);
 
         List<PersistedEntry> persistedEntryList = JsonUtil.getPersistenceEntity(firstUnionPersistentList);
+        LOG.error("getNextMarker END");
         return persistedEntryList.size() > 0 ? persistedEntryList.get(0) : null;
     }
 
 
     private void addFeedSelfLink(Feed feed, String baseFeedUri, GetFeedRequest getFeedRequest, int pageSize, String searchString) {
+        LOG.error("addFeedSelfLink START");
         StringBuilder queryParams = new StringBuilder();
         boolean markerIsSet = false;
 
@@ -840,6 +853,7 @@ public class DynamoDBFeedSource implements FeedSource {
             }
         }
         feed.addLink(queryParams.toString()).setRel(Link.REL_SELF);
+        LOG.error("addFeedSelfLink END");
     }
 
 
@@ -896,6 +910,7 @@ public class DynamoDBFeedSource implements FeedSource {
      * @return : list of entry found if that exits in dynamodb with the entryId and feedName.
      */
     private List<PersistedEntry> getEntry(String entryId, final String feedName) {
+        LOG.error("getEntry START");
         Gson gson = new Gson();
         List<PersistedEntry> persistedEntriesObject = new ArrayList<PersistedEntry>();
         Table table = dynamoDB.getTable(DynamoDBConstant.ENTRIES);
@@ -911,6 +926,7 @@ public class DynamoDBFeedSource implements FeedSource {
             Item item = itemsIterator.next();
             persistedEntriesObject.add(gson.fromJson(item.toJSONPretty(), PersistedEntry.class));
         }
+        LOG.error("getEntry END");
         return persistedEntriesObject;
     }
 
@@ -927,8 +943,13 @@ public class DynamoDBFeedSource implements FeedSource {
         List<String> feedPage = new ArrayList<>();
         Table table = dynamoDB.getTable("entries");
         Index index = table.getIndex("global-feed-index");
+        LOG.error("conditionExpression: " + conditionExpression);
+        LOG.error("filterExpression: " + filterExpression);
+        LOG.error("valueMap: " + valueMap);
+        LOG.error("pageSize: " + pageSize);
         QuerySpec spec = null;
         if(null!= filterExpression){
+        LOG.error("if me gaya");
             spec = new QuerySpec()
                 .withKeyConditionExpression(conditionExpression)
                 .withFilterExpression(filterExpression)
@@ -936,6 +957,7 @@ public class DynamoDBFeedSource implements FeedSource {
                 .withMaxResultSize(pageSize)// for no of page limit to be displayed
                 .withScanIndexForward(orderBy);
         }else{
+            LOG.error("else me gaya");
             spec = new QuerySpec()
             .withKeyConditionExpression(conditionExpression)
             .withValueMap(valueMap)
@@ -945,7 +967,9 @@ public class DynamoDBFeedSource implements FeedSource {
         // for descending order sorting on lastDateUpdated
         ItemCollection<QueryOutcome> persistedEntryItems = null;
         try{
+            LOG.error("before query");
             persistedEntryItems = index.query(spec);
+            LOG.error("after query");
         }catch(Exception e){
             LOG.error("Exception " + e + e.getMessage());   
         }
@@ -954,6 +978,12 @@ public class DynamoDBFeedSource implements FeedSource {
         while (itemsIterator.hasNext()) {
             Item item = itemsIterator.next();
             feedPage.add(item.toJSONPretty());
+        }
+        if(null != feedPage){
+            LOG.error("feedPage Size: " + feedPage.size());
+        }
+        else{
+            LOG.error("feedPage is null");
         }
         return feedPage;
     }
