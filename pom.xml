@@ -19,6 +19,7 @@
         <cglib.version>2.2</cglib.version>
         <metrics.version>3.0.1</metrics.version>
         <jetty.version>9.4.17.v20190418</jetty.version>
+        <spring.version>4.2.5.RELEASE</spring.version>
     </properties>
 
     <licenses>
@@ -40,6 +41,7 @@
         <module>atomhopper</module>
         <module>test-suite</module>
         <module>documentation</module>
+        <module>adapters/dynamoDB_adapters</module>
     </modules>
 
     <scm>
@@ -49,6 +51,14 @@
 
     <dependencyManagement>
         <dependencies>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-expression</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
+
             <dependency>
                 <groupId>org.atomhopper</groupId>
                 <artifactId>core</artifactId>
@@ -381,15 +391,12 @@
             <id>releases.maven.research.rackspace.com</id>
 
             <name>Rackspace Research Releases</name>
-            <url>https://maven.research.rackspacecloud.com/content/repositories/releases</url>
-        </repository>
-
+            <url>https://maven.research.rackspacecloud.com/content/repositories/releases</url>        </repository>
         <snapshotRepository>
             <id>snapshots.maven.research.rackspace.com</id>
 
             <name>Rackspace Research Snapshots</name>
-            <url>https://maven.research.rackspacecloud.com/content/repositories/snapshots</url>
-        </snapshotRepository>
+            <url>https://maven.research.rackspacecloud.com/content/repositories/snapshots</url>        </snapshotRepository>
     </distributionManagement>
 
     <build>

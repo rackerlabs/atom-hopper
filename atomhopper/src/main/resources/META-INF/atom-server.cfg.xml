@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!---
-
 NOTE: Place this file in the following folder: /etc/atomhopper/atom-server.cfg.xml
-
 -->
 <atom-hopper-config xmlns="http://atomhopper.org/atom/hopper-config/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://atomhopper.org/atom/hopper-config/v1.0 ./../../config/atom-hopper-config.xsd">
     <defaults>
@@ -15,23 +13,23 @@ NOTE: Place this file in the following folder: /etc/atomhopper/atom-server.cfg.x
         will be incorrect.
         Scheme should be either "http" or "https"
     -->
-    <host domain="domain.com" scheme="http" />
+    <host domain="localhost:8080" scheme="http" />
 
     <!--
         The following configuration is to enable the feature to return
         feed pages in JSON format. The reference attribute must be
         a valid bean name that's defined in your application-context.xml.
     -->
-    <provider-filters>
+<!--     <provider-filters>
         <provider-filter reference="json-filter"/>
-    </provider-filters>
+    </provider-filters> -->
 
     <workspace title="Testing Namespace" resource="/namespace/">
         <categories-descriptor reference="workspace-categories-descriptor" />
 
         <feed title="Testing Feed" resource="/feed">
-            <feed-source reference="hibernate-feed-source" />
-            <publisher reference="hibernate-feed-publisher" />
+<!--             <feed-source reference="hibernate-feed-source" /> -->
+            <publisher reference="dynamodb-feed-publisher" />
         </feed>
     </workspace>
 </atom-hopper-config>
