@@ -200,4 +200,5 @@ public class FeedAdapter extends TargetAwareAbstractCollectionAdapter {
             return ProviderHelper.servererror(request, ex.getMessage(), ex);
         }
     }
+
 }
