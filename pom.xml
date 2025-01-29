@@ -13,7 +13,7 @@
     <properties>
         <project.license>apache20</project.license>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <org.springframework.version>6.0.17</org.springframework.version>
+        <org.springframework.version>5.0.0.RELEASE</org.springframework.version>
         <org.springframework.data.version>1.0.0.RELEASE</org.springframework.data.version>
         <org.aspectj.version>1.6.9</org.aspectj.version>
         <cglib.version>2.2</cglib.version>
@@ -405,11 +405,11 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>2.3.2</version>
+                    <version>3.13.0</version>
 
                     <configuration>
-                        <source>1.6</source>
-                        <target>1.6</target>
+                        <source>1.8</source>
+                        <target>1.8</target>
                     </configuration>
                 </plugin>
 
