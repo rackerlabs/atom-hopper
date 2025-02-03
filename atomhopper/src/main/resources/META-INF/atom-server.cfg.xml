@@ -20,9 +20,9 @@ NOTE: Place this file in the following folder: /etc/atomhopper/atom-server.cfg.x
         feed pages in JSON format. The reference attribute must be
         a valid bean name that's defined in your application-context.xml.
     -->
-<!--     <provider-filters>
+     <provider-filters>
         <provider-filter reference="json-filter"/>
-    </provider-filters> -->
+    </provider-filters>
 
     <workspace title="Testing Namespace" resource="/namespace/">
         <categories-descriptor reference="workspace-categories-descriptor" />
