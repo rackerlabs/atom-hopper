@@ -114,4 +114,8 @@
          <property name="mongoTemplate" ref="mongoTemplate" />
      </bean>
      -->
+
+<!--    adding UnifiedParser as a bean-->
+    <bean id="unifiedParser" class=" org.atomhopper.util.jsonparsingwork.UnifiedParser">
+    </bean>
 </beans>
