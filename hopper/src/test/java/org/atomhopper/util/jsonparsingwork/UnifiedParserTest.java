@@ -66,5 +66,6 @@ public class UnifiedParserTest {
             assertEquals("autoscale", ((Entry) doc.getRoot()).getTitle());
         }
     }
+
 }
 
