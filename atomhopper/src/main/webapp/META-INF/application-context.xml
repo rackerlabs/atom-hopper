@@ -225,4 +225,7 @@
     <!--        <property name="dynamoDBClient" ref="client"></property>-->
     <!--    </bean>-->
 
+    <bean id="unifiedParser" class=" org.atomhopper.util.jsonparsingwork.UnifiedParser">
+    </bean>
+
 </beans>

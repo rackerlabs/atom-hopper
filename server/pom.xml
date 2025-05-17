@@ -10,7 +10,7 @@
 
     <groupId>org.atomhopper</groupId>
     <artifactId>ah-jetty-server</artifactId>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
 
     <name>ATOM Hopper - Default Jetty Server</name>
 
