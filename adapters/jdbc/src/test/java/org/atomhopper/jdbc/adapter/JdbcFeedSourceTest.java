@@ -11,6 +11,7 @@ import org.apache.abdera.Abdera;
 import org.apache.abdera.i18n.iri.IRI;
 import org.apache.abdera.model.Element;
 import org.apache.abdera.model.Feed;
+import org.apache.abdera.parser.Parser;
 import org.atomhopper.adapter.AdapterHelper;
 import org.atomhopper.adapter.request.adapter.GetEntryRequest;
 import org.atomhopper.adapter.request.adapter.GetFeedRequest;
@@ -76,6 +77,7 @@ public class JdbcFeedSourceTest {
 
             // Mocks
             abdera = mock(Abdera.class);
+
             getFeedRequest = mock(GetFeedRequest.class);
             getEntryRequest = mock(GetEntryRequest.class);
             jdbcTemplate = mock(JdbcTemplate.class);
@@ -83,6 +85,9 @@ public class JdbcFeedSourceTest {
             jdbcFeedSource = new JdbcFeedSource();
             jdbcFeedSource.setJdbcTemplate(jdbcTemplate);
             jdbcFeedSource.setArchiveUrl( new URL( ARCHIVE_LINK ) );
+
+            Parser parser = new Abdera().getParser();
+            jdbcFeedSource.setParser(parser);
 
             // Mock GetEntryRequest
             when( getEntryRequest.getFeedName() ).thenReturn(FEED_NAME);

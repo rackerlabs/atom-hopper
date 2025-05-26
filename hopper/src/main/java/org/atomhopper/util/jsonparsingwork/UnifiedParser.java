@@ -3,15 +3,22 @@ import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Element;
 import org.apache.abdera.parser.Parser;
 import org.apache.abdera.parser.ParserOptions;
+import org.springframework.stereotype.Component;
+
 import javax.xml.stream.XMLStreamReader;
 import java.io.InputStream;
 import java.io.Reader;
 import java.nio.channels.ReadableByteChannel;
 
+@Component
 public class UnifiedParser implements Parser {
 
-    private final Parser xmlparser = new org.apache.abdera.parser.stax.FOMParser();
+    private final Parser xmlparser ;
     private final JsonAtomParser jsonParser = new JsonAtomParser() ;
+
+    public UnifiedParser(Parser xmlparser){
+        this.xmlparser = xmlparser;
+    }
 
 
     public Document<Element> parse(InputStream in, String contentType, ParserOptions options){

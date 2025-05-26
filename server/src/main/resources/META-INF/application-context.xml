@@ -116,6 +116,14 @@
      -->
 
 <!--    adding UnifiedParser as a bean-->
-    <bean id="unifiedParser" class=" org.atomhopper.util.jsonparsingwork.UnifiedParser">
+    <bean id="parser" class=" org.atomhopper.util.jsonparsingwork.UnifiedParser">
+        <constructor-arg ref="defaultFomParser"/>
     </bean>
+
+    <bean id="defaultFomParser" class="org.apache.abdera.parser.stax.FOMParser" />
+
+    <bean id="jdbcFeedSource" class="org.atomhopper.jdbc.adapter.JdbcFeedSource" >
+        <property name="parser" ref="parser"/>
+    </bean>
+
 </beans>

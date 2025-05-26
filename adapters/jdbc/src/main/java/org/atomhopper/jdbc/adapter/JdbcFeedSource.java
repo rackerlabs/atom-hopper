@@ -3,10 +3,8 @@ package org.atomhopper.jdbc.adapter;
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.TimerContext;
 import org.apache.abdera.Abdera;
-import org.apache.abdera.model.Document;
-import org.apache.abdera.model.Entry;
-import org.apache.abdera.model.Feed;
-import org.apache.abdera.model.Link;
+import org.apache.abdera.model.*;
+import org.apache.abdera.parser.Parser;
 import org.apache.commons.lang.StringUtils;
 import org.atomhopper.adapter.*;
 import org.atomhopper.adapter.request.adapter.GetEntryRequest;
@@ -17,6 +15,7 @@ import org.atomhopper.jdbc.query.SearchToSqlConverter;
 import org.atomhopper.jdbc.query.SearchType;
 import org.atomhopper.jdbc.query.SqlBuilder;
 import org.atomhopper.response.AdapterResponse;
+import org.atomhopper.util.jsonparsingwork.UnifiedParser;
 import org.atomhopper.util.uri.template.EnumKeyedTemplateParameters;
 import org.atomhopper.util.uri.template.URITemplate;
 import org.joda.time.DateTime;
@@ -25,6 +24,7 @@ import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -87,6 +87,15 @@ public class JdbcFeedSource implements FeedSource, InitializingBean {
     private Map<String, String> mapColumn = new HashMap<String, String>();
 
     private String split;
+
+    //going to inject the UnifiedParser
+    private Parser parser;
+
+    @Autowired
+    public void setParser(Parser parser){
+        this.parser = parser;
+    }
+
 
     private AdapterHelper helper = new AdapterHelper();
 
@@ -348,19 +357,38 @@ public class JdbcFeedSource implements FeedSource, InitializingBean {
 
     private Entry hydrateEntry(PersistedEntry persistedEntry, Abdera abderaReference) {
 
-        final Document<Entry> hydratedEntryDocument = abderaReference.getParser().parse(
-              new StringReader( persistedEntry.getEntryBody() ) );
+//        final Document<Entry> hydratedEntryDocument = abderaReference.getParser().parse(
+//              new StringReader( persistedEntry.getEntryBody() ) );
+        String entryBody = persistedEntry.getEntryBody();
+        String contentType;
+        if(entryBody.trim().startsWith("{")){
+            contentType = "application/json";
+        }
+        else{
+            contentType = "application/atom+xml";
+        }
+
+        if (parser == null) {
+            LOG.error("Parser is null at line 372! Make sure it's injected.");
+            throw new IllegalStateException("Parser was not injected into JdbcFeedSource");
+        }
+
+
+        final Document<Element> hydratedEntryDocument = parser.parse(
+                new StringReader(entryBody), contentType, parser.getDefaultParserOptions());
 
         Entry entry = null;
 
         if (hydratedEntryDocument != null) {
-            entry = hydratedEntryDocument.getRoot();
+            entry = (Entry)hydratedEntryDocument.getRoot();
             entry.setUpdated(persistedEntry.getDateLastUpdated());
             entry.setPublished(persistedEntry.getCreationDate());
         }
 
         return entry;
     }
+
+
 
     @Override
     public AdapterResponse<Entry> getEntry(GetEntryRequest getEntryRequest) {
