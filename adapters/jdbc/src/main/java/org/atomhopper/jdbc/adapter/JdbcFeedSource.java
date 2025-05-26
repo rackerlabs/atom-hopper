@@ -89,9 +89,9 @@ public class JdbcFeedSource implements FeedSource, InitializingBean {
     private String split;
 
     //going to inject the UnifiedParser
+    @Autowired
     private Parser parser;
 
-    @Autowired
     public void setParser(Parser parser){
         this.parser = parser;
     }

@@ -129,10 +129,11 @@ public class JdbcFeedSourceTest {
 
             final String currentURL = "http://current.com/namespace/feed";
 
-            JdbcFeedSource archiveSource = new JdbcFeedSource();
+            JdbcFeedSource  archiveSource = new JdbcFeedSource();
             archiveSource.setJdbcTemplate( jdbcTemplate );
             archiveSource.setCurrentUrl( new URL( currentURL ) );
 
+            archiveSource.setParser(new Abdera().getParser());
             Abdera localAbdera = new Abdera();
             when(getFeedRequest.getAbdera()).thenReturn(localAbdera);
             when(getFeedRequest.getDirection()).thenReturn("forward");
