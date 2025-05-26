@@ -8,6 +8,7 @@ import org.apache.abdera.Abdera;
 import org.apache.abdera.i18n.iri.IRI;
 import org.apache.abdera.model.Element;
 import org.apache.abdera.model.Feed;
+import org.apache.abdera.parser.Parser;
 import org.atomhopper.adapter.AdapterHelper;
 import org.atomhopper.adapter.jpa.PersistedEntry;
 import org.atomhopper.adapter.jpa.PersistedFeed;
@@ -72,6 +73,9 @@ public class HibernateFeedSourceTest {
             persistedEntry.setFeed(persistedFeed);
             persistedEntry.setEntryId(ID);
             persistedEntry.setEntryBody(ENTRY_BODY);
+
+            Parser parser = new Abdera().getParser();
+            hibernateFeedSource.setParser(parser);
         }
 
         @Test(expected = UnsupportedOperationException.class)

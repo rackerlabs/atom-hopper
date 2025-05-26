@@ -64,16 +64,20 @@ public class FeedForwardBackwardTest extends JettyIntegrationTestHarness {
     public static class WhenRequestingFeed {
         @Test
         public void shouldOrderCorrectlyForwardAndBackward() throws Exception {
-            final HttpMethod getFeedMethod = getFeedMethod();
-            assertEquals("Hitting Atom Hopper with an empty datastore should return a 200", HttpStatus.SC_OK, httpClient.executeMethod(getFeedMethod));            
+            //final HttpMethod getFeedMethod = getFeedMethod();
+            HttpMethod getFeedMethod1 = getFeedMethod();
+            assertEquals("Hitting Atom Hopper with an empty datastore should return a 200", HttpStatus.SC_OK, httpClient.executeMethod(getFeedMethod1));
             // Create 20 new entries
             for(int i = 1; i < 21; i++) {
                 final HttpMethod postMethod = newPostEntryMethod("<order>" + Integer.toString(i) + "</order>");
                 assertEquals("Creating a new entry should return a 201", HttpStatus.SC_CREATED, httpClient.executeMethod(postMethod));
             }
-            
+
             // namespace3/feed3
-            assertEquals("Getting a feed should return a 200", HttpStatus.SC_OK, httpClient.executeMethod(getFeedMethod));
+            //assertEquals("Getting a feed should return a 200", HttpStatus.SC_OK, httpClient.executeMethod(getFeedMethod));
+            //create fresh method instance for the second call
+            HttpMethod getFeedMethod2 = getFeedMethod();
+            assertEquals("Getting a feed should return a 200", HttpStatus.SC_OK, httpClient.executeMethod(getFeedMethod2));
 
             // A bit verbose, but it checks the forward and backward direction of the feed
             Parser parser = getInstance().getParser();
@@ -81,25 +85,25 @@ public class FeedForwardBackwardTest extends JettyIntegrationTestHarness {
             Document<Feed> doc = parser.parse(url.openStream(), url.toString());
             Feed feed = doc.getRoot();
             List<String> idList = new ArrayList<String>();
- 
+
             // Get the IDs in their default order
             for (Entry entry : feed.getEntries()) {
                 idList.add(entry.getId().toString());
             }
-            
+
             if(!(idList.isEmpty())) {
                 int idCount = 0;
-                
+
                 // Check the feed backward with the first id as the marker
                 URL urlBackward = new URL(getFeedDirectionBackwardMethod(idList.get(0)));
                 Document<Feed> docBackward = parser.parse(urlBackward.openStream(), urlBackward.toString());
                 Feed feedBackward = docBackward.getRoot();
-                
+
                 for (Entry entry : feedBackward.getEntries()) {
                     assertEquals("The entries should be in backward order", entry.getId().toString(), idList.get(idCount));
                     idCount++;
                 }
-                
+
                 // Check the feed forward with the last id as the marker
                 URL urlForward = new URL(getFeedDirectionForwardMethod(idList.get(idList.size() - 1)));
                 Document<Feed> docForward = parser.parse(urlForward.openStream(), urlForward.toString());
@@ -113,5 +117,5 @@ public class FeedForwardBackwardTest extends JettyIntegrationTestHarness {
                 }
             }
         }
-    }    
+   }
 }

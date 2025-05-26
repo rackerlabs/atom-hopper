@@ -1,10 +1,8 @@
 package org.atomhopper.postgres.adapter;
 
 import org.apache.abdera.Abdera;
-import org.apache.abdera.model.Document;
-import org.apache.abdera.model.Entry;
-import org.apache.abdera.model.Feed;
-import org.apache.abdera.model.Link;
+import org.apache.abdera.model.*;
+import org.apache.abdera.parser.Parser;
 import org.apache.commons.lang.StringUtils;
 import org.atomhopper.adapter.FeedInformation;
 import org.atomhopper.adapter.FeedSource;
@@ -22,6 +20,7 @@ import org.atomhopper.util.uri.template.EnumKeyedTemplateParameters;
 import org.atomhopper.util.uri.template.URITemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.io.StringReader;
@@ -51,6 +50,14 @@ public class PostgresFeedSource implements FeedSource {
     private static final int PAGE_SIZE = 25;
     private JdbcTemplate jdbcTemplate;
     private AdapterHelper helper = new AdapterHelper();
+
+
+    @Autowired
+    private Parser parser;
+
+    public void setParser(Parser parser){
+        this.parser = parser;
+    }
 
     public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -166,13 +173,31 @@ public class PostgresFeedSource implements FeedSource {
 
     private Entry hydrateEntry(PersistedEntry persistedEntry, Abdera abderaReference) {
 
-        final Document<Entry> hydratedEntryDocument = abderaReference.getParser().parse(
-                new StringReader(persistedEntry.getEntryBody()));
+        //final Document<Entry> hydratedEntryDocument = abderaReference.getParser().parse(
+               // new StringReader(persistedEntry.getEntryBody()));
+
+        String entryBody = persistedEntry.getEntryBody();
+        String contentType;
+        if(entryBody.trim().startsWith("{")){
+            contentType = "application/json";
+        }
+        else{
+            contentType = "application/atom+xml";
+        }
+
+        if (parser == null) {
+            LOG.error("Making sure parser is injected.");
+            throw new IllegalStateException("Parser was not injected into Postgres");
+        }
+
+
+        final Document<Element> hydratedEntryDocument = parser.parse(
+                new StringReader(entryBody), contentType, parser.getDefaultParserOptions());
 
         Entry entry = null;
 
         if (hydratedEntryDocument != null) {
-            entry = hydratedEntryDocument.getRoot();
+            entry = (Entry) hydratedEntryDocument.getRoot();
             entry.setUpdated(persistedEntry.getDateLastUpdated());
             entry.setPublished(persistedEntry.getCreationDate());
         }

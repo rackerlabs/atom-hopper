@@ -369,7 +369,7 @@ public class JdbcFeedSource implements FeedSource, InitializingBean {
         }
 
         if (parser == null) {
-            LOG.error("Parser is null at line 372! Make sure it's injected.");
+            LOG.error("Making sure parser is injected.");
             throw new IllegalStateException("Parser was not injected into JdbcFeedSource");
         }
 

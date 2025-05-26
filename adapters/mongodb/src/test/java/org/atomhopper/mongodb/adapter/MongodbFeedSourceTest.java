@@ -10,6 +10,7 @@ import org.apache.abdera.Abdera;
 import org.apache.abdera.i18n.iri.IRI;
 import org.apache.abdera.model.Element;
 import org.apache.abdera.model.Feed;
+import org.apache.abdera.parser.Parser;
 import org.atomhopper.adapter.AdapterHelper;
 import org.atomhopper.adapter.request.adapter.GetEntryRequest;
 import org.atomhopper.adapter.request.adapter.GetFeedRequest;
@@ -70,6 +71,9 @@ public class MongodbFeedSourceTest {
             mongodbFeedSource = new MongodbFeedSource();
             mongodbFeedSource.setMongoTemplate(mongoTemplate);
             mongodbFeedSource.setArchiveUrl( new URL( ARCHIVE_LINK ) );
+
+            Parser parser = new Abdera().getParser();
+            mongodbFeedSource.setParser(parser);
 
             // Mock MongoTemplate
             //when(mongoTemplate.findOne(query, PersistedEntry.class)).thenReturn(persistedEntry);

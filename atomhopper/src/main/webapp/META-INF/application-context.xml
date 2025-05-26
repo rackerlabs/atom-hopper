@@ -165,4 +165,20 @@
         <property name="parser" ref="parser"/>
     </bean>
 
+    <bean id="hibernateFeedSource" class="org.atomhopper.hibernate.adapter.HibernateFeedSource" >
+        <property name="parser" ref="parser"/>
+    </bean>
+
+    <bean id="dynamodbFeedSource" class="org.atomhopper.dynamodb.adapter.DynamoDBFeedSource" >
+        <property name="parser" ref="parser"/>
+    </bean>
+
+    <bean id="mongodbFeedSource" class="org.atomhopper.mongodb.adapter.MongodbFeedSource" >
+        <property name="parser" ref="parser"/>
+    </bean>
+
+    <bean id="postgresFeedSource" class="org.atomhopper.postgres.adapter.PostgresFeedSource" >
+        <property name="parser" ref="parser"/>
+    </bean>
+
 </beans>

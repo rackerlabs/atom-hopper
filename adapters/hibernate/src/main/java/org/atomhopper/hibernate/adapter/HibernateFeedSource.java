@@ -10,11 +10,12 @@ import java.util.UUID;
 import org.apache.abdera.Abdera;
 import static org.apache.abdera.i18n.text.UrlEncoding.decode;
 import static org.apache.abdera.i18n.text.UrlEncoding.encode;
-import org.apache.abdera.model.Document;
-import org.apache.abdera.model.Entry;
-import org.apache.abdera.model.Feed;
-import org.apache.abdera.model.Link;
+
+
+import org.apache.abdera.model.*;
+import org.apache.abdera.parser.Parser;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
 import org.atomhopper.adapter.FeedInformation;
 import org.atomhopper.adapter.FeedSource;
 import org.atomhopper.adapter.NotImplemented;
@@ -30,12 +31,26 @@ import org.atomhopper.hibernate.query.SimpleCategoryCriteriaGenerator;
 import org.atomhopper.response.AdapterResponse;
 import org.atomhopper.util.uri.template.EnumKeyedTemplateParameters;
 import org.atomhopper.util.uri.template.URITemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HibernateFeedSource implements FeedSource {
 
     private static final int PAGE_SIZE = 25;
     private FeedRepository feedRepository;
     private AdapterHelper helper = new AdapterHelper();
+
+    static Logger LOG = LoggerFactory.getLogger(
+            HibernateFeedSource.class
+    );
+
+    @Autowired
+    private Parser parser;
+
+    public void setParser(Parser parser) {
+        this.parser = parser;
+    }
 
     public void setFeedRepository(FeedRepository feedRepository) {
         this.feedRepository = feedRepository;
@@ -157,11 +172,29 @@ public class HibernateFeedSource implements FeedSource {
     }
 
     private Entry hydrateEntry(PersistedEntry persistedEntry, Abdera abderaReference) {
-        final Document<Entry> hydratedEntryDocument = abderaReference.getParser().parse(new StringReader(persistedEntry.getEntryBody()));
+        //final Document<Entry> hydratedEntryDocument = abderaReference.getParser().parse(new StringReader(persistedEntry.getEntryBody()));
+
+        String entryBody = persistedEntry.getEntryBody();
+        String contentType;
+        if(entryBody.trim().startsWith("{")){
+            contentType = "application/json";
+        }
+        else{
+            contentType = "application/atom+xml";
+        }
+
+        if (parser == null) {
+            LOG.error(" Making sure Parser is injected.");
+            throw new IllegalStateException("Parser was not injected into HibernateFeedSource");
+        }
+
+
+        final Document<Element> hydratedEntryDocument = parser.parse(
+                new StringReader(entryBody), contentType, parser.getDefaultParserOptions());
         Entry entry = null;
 
         if (hydratedEntryDocument != null) {
-            entry = hydratedEntryDocument.getRoot();
+            entry = (Entry) hydratedEntryDocument.getRoot();
 
             entry.setUpdated(persistedEntry.getDateLastUpdated());
             entry.setPublished(persistedEntry.getCreationDate());

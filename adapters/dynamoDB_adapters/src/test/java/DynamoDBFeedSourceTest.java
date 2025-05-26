@@ -7,6 +7,7 @@ import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
 import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
 import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Feed;
+import org.apache.abdera.parser.Parser;
 import org.atomhopper.adapter.request.adapter.GetEntryRequest;
 import org.atomhopper.adapter.request.adapter.GetFeedRequest;
 import org.atomhopper.dynamodb.adapter.DynamoDBFeedSource;
@@ -90,6 +91,10 @@ public class DynamoDBFeedSourceTest {
         getEntryRequest = mock(GetEntryRequest.class);
 
         dynamoDBFeedSource.setArchiveUrl(new URL(ARCHIVE_LINK));
+
+        Parser parser = new Abdera().getParser();
+        dynamoDBFeedSource.setParser(parser);
+
 
         // Mock GetEntryRequest
         when(getEntryRequest.getFeedName()).thenReturn(FEED_NAME);
