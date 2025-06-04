@@ -150,16 +150,51 @@
             <id>build-rpm</id>
             <build>
                 <plugins>
+
+<!--                    <plugin>-->
+<!--                        <groupId>org.apache.maven.plugins</groupId>-->
+<!--                        <artifactId>maven-resources-plugin</artifactId>-->
+<!--                        <version>3.2.0</version>-->
+<!--                    </plugin>-->
+
+<!--                    &lt;!&ndash; Maven JAR Plugin (adds pom.properties & pom.xml) &ndash;&gt;-->
+<!--                    <plugin>-->
+<!--                        <groupId>org.apache.maven.plugins</groupId>-->
+<!--                        <artifactId>maven-jar-plugin</artifactId>-->
+<!--                        <version>3.2.2</version>-->
+<!--                        <configuration>-->
+<!--                            <archive>-->
+<!--                                <manifest>-->
+<!--                                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>-->
+<!--                                </manifest>-->
+<!--                            </archive>-->
+<!--                        </configuration>-->
+<!--                    </plugin>-->
+
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-compiler-plugin</artifactId>
                     </plugin>
 
+<!--                    <plugin>-->
+<!--                        <groupId>org.apache.maven.plugins</groupId>-->
+<!--                        <artifactId>maven-war-plugin</artifactId>-->
+<!--                        <configuration>-->
+<!--                            <failOnMissingWebXml>true</failOnMissingWebXml>-->
+<!--                        </configuration>-->
+<!--                    </plugin>-->
+
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-war-plugin</artifactId>
+                        <version>3.3.2</version>
                         <configuration>
                             <failOnMissingWebXml>true</failOnMissingWebXml>
+                            <archive>
+                                <manifest>
+                                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                </manifest>
+                            </archive>
                         </configuration>
                     </plugin>
 

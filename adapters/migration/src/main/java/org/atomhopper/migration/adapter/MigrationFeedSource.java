@@ -2,6 +2,7 @@ package org.atomhopper.migration.adapter;
 
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
+import org.apache.abdera.parser.Parser;
 import org.atomhopper.adapter.FeedInformation;
 import org.atomhopper.adapter.FeedSource;
 import org.atomhopper.adapter.NotImplemented;
@@ -9,6 +10,7 @@ import org.atomhopper.adapter.request.adapter.GetEntryRequest;
 import org.atomhopper.adapter.request.adapter.GetFeedRequest;
 import org.atomhopper.migration.domain.MigrationReadFrom;
 import org.atomhopper.response.AdapterResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.net.URL;
 import java.util.Map;
@@ -18,6 +20,7 @@ public class MigrationFeedSource implements FeedSource {
     private FeedSource oldFeedSource;
     private FeedSource newFeedSource;
     private MigrationReadFrom readFrom;
+
 
     public void setOldFeedSource(FeedSource oldFeedSource) {
         this.oldFeedSource = oldFeedSource;

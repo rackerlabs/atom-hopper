@@ -15,6 +15,7 @@
     <name>ATOM Hopper - ATOMpub Server Framework</name>
 
     <dependencies>
+
         <dependency>
             <groupId>org.atomhopper</groupId>
             <artifactId>test-util</artifactId>
@@ -186,7 +187,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.2.2</version>
                 <configuration>
                     <archive>
                         <manifest>
