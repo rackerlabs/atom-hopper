@@ -18,6 +18,7 @@ import org.atomhopper.dbal.FeedRepository;
 import org.atomhopper.dbal.PageDirection;
 import org.atomhopper.hibernate.query.CategoryCriteriaGenerator;
 import org.atomhopper.hibernate.query.SimpleCategoryCriteriaGenerator;
+import org.atomhopper.util.jsonparsingwork.NewParserFactory;
 import org.hibernate.Criteria;
 import org.junit.Before;
 import org.junit.Test;
@@ -75,7 +76,9 @@ public class HibernateFeedSourceTest {
             persistedEntry.setEntryBody(ENTRY_BODY);
 
             Parser parser = new Abdera().getParser();
-            hibernateFeedSource.setParser(parser);
+            NewParserFactory parserFactory = mock(NewParserFactory.class);
+            when(parserFactory.getParser()).thenReturn(parser);
+            hibernateFeedSource.setParserFactory(parserFactory);
         }
 
         @Test(expected = UnsupportedOperationException.class)

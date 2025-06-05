@@ -29,6 +29,7 @@ import org.atomhopper.dbal.FeedRepository;
 import org.atomhopper.dbal.PageDirection;
 import org.atomhopper.hibernate.query.SimpleCategoryCriteriaGenerator;
 import org.atomhopper.response.AdapterResponse;
+import org.atomhopper.util.jsonparsingwork.NewParserFactory;
 import org.atomhopper.util.uri.template.EnumKeyedTemplateParameters;
 import org.atomhopper.util.uri.template.URITemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,12 +46,12 @@ public class HibernateFeedSource implements FeedSource {
             HibernateFeedSource.class
     );
 
-    @Autowired
-    private Parser parser;
+    private NewParserFactory parserFactory;
 
-    public void setParser(Parser parser) {
-        this.parser = parser;
+    public void setParserFactory(NewParserFactory parserFactory){
+        this.parserFactory = parserFactory;
     }
+
 
     public void setFeedRepository(FeedRepository feedRepository) {
         this.feedRepository = feedRepository;
@@ -183,8 +184,10 @@ public class HibernateFeedSource implements FeedSource {
             contentType = "application/atom+xml";
         }
 
+        Parser parser = parserFactory.getParser();
+
         if (parser == null) {
-            LOG.error(" Making sure Parser is injected.");
+            LOG.error(" This is because parser is NULL.");
             throw new IllegalStateException("Parser was not injected into HibernateFeedSource");
         }
 

@@ -122,12 +122,16 @@
 
     <bean id="defaultFomParser" class="org.apache.abdera.parser.stax.FOMParser" />
 
+    <bean id="parserfactory" class="org.atomhopper.util.jsonparsingwork.NewParserFactory" >
+        <property name="unifiedParser" ref="parser"/>
+    </bean>
+
     <bean id="jdbcFeedSource" class="org.atomhopper.jdbc.adapter.JdbcFeedSource" >
         <property name="parser" ref="parser"/>
     </bean>
 
     <bean id="hibernateFeedSource" class="org.atomhopper.hibernate.adapter.HibernateFeedSource" >
-        <property name="parser" ref="parser"/>
+        <property name="parserFactory" ref="parserfactory"/>
     </bean>
 
     <bean id="dynamodbFeedSource" class="org.atomhopper.dynamodb.adapter.DynamoDBFeedSource" >

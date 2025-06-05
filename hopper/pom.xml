@@ -15,12 +15,10 @@
     <name>ATOM Hopper - ATOMpub Server Framework</name>
 
     <dependencies>
-
         <dependency>
             <groupId>org.atomhopper</groupId>
             <artifactId>test-util</artifactId>
         </dependency>
-
 
         <dependency>
             <groupId>javax</groupId>
@@ -174,27 +172,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-
-            <!-- Maven Resources Plugin (copies resources into JAR) -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.2.0</version>
-            </plugin>
-
-            <!-- Maven JAR Plugin (adds pom.properties & pom.xml) -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.2</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                        </manifest>
-                    </archive>
-                </configuration>
             </plugin>
         </plugins>
     </build>
