@@ -213,12 +213,5 @@ public class UnifiedParserTest {
         Reader reader = new StringReader(sampleJson);
         unifiedParser.parse(reader, null, options);
     }
-
-
-
-
-
-
-
 }
 
