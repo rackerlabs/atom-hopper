@@ -89,7 +89,7 @@ public class UnifiedParserTest {
 
         InputStream stream = new ByteArrayInputStream(sampleJson.getBytes());
 
-        Document<?> doc = unifiedParser.parse(stream, "application/json", options);
+        Document<?> doc = unifiedParser.parseWithContentType(stream, "application/json", options);
 
         assertNotNull("Parsed document should not be null", doc);
         assertTrue(doc.getRoot() instanceof Entry);
@@ -109,7 +109,7 @@ public class UnifiedParserTest {
     public void testValidXmlInputStream() throws IOException {
 
         InputStream stream = new ByteArrayInputStream(sampleXml.getBytes());
-        Document<Element> result = unifiedParser.parse(stream, "application/atom+xml", options);
+        Document<Element> result = unifiedParser.parseWithContentType(stream, "application/atom+xml", options);
         //shouldnt be null
         assertNotNull("Parsed document should not be null", result);
         assertEquals("entry", result.getRoot().getQName().getLocalPart());
@@ -125,7 +125,7 @@ public class UnifiedParserTest {
     public void testValidJsonReader() throws IOException {
 
         Reader jsonReader = new StringReader(sampleJson);
-        Document<?> result = unifiedParser.parse(jsonReader, "application/json", options);
+        Document<?> result = unifiedParser.parseWithContentType(jsonReader, "application/json", options);
         assertNotNull("Parsed document should not be null", result);
         assertTrue("Root should be an instance of Entry", result.getRoot() instanceof Entry);
         assertEquals("entry", result.getRoot().getQName().getLocalPart());
@@ -140,7 +140,7 @@ public class UnifiedParserTest {
     @Test
     public void testValidXmlReader() throws IOException {
         Reader xmlReader = new StringReader(sampleXml);
-        Document<Element> result = unifiedParser.parse(xmlReader, "application/atom+xml", options);
+        Document<Element> result = unifiedParser.parseWithContentType(xmlReader, "application/atom+xml", options);
         assertNotNull(result);
         assertEquals("entry", result.getRoot().getQName().getLocalPart());
         WriterFactory writerFactory = new Abdera().getWriterFactory();
@@ -155,63 +155,63 @@ public class UnifiedParserTest {
     @Test(expected = Exception.class)
     public void testEmptyJson() throws IOException{
         InputStream jsonStream = new ByteArrayInputStream("".getBytes());
-        unifiedParser.parse(jsonStream, "application/json", options);
+        unifiedParser.parseWithContentType(jsonStream, "application/json", options);
     }
 
 
     @Test(expected = Exception.class)
     public void testEmptyXml() throws IOException{
         InputStream xmlStream = new ByteArrayInputStream("".getBytes());
-        unifiedParser.parse(xmlStream, "application/atom+xml", options);
+        unifiedParser.parseWithContentType(xmlStream, "application/atom+xml", options);
     }
 
 
     @Test(expected = Exception.class)
     public void testEmptyJsonReaderInput() throws IOException{
         Reader jsonReader = new StringReader("");
-        unifiedParser.parse(jsonReader, "application/json", options);
+        unifiedParser.parseWithContentType(jsonReader, "application/json", options);
     }
 
     @Test(expected = Exception.class)
     public void testEmptyXmlReaderInput() throws IOException{
         Reader xmlReader = new StringReader("");
-        unifiedParser.parse(xmlReader, "application/atom+xml", options);
+        unifiedParser.parseWithContentType(xmlReader, "application/atom+xml", options);
     }
 
     @Test(expected = Exception.class)
     public void testHeaderJsonButBodyXml() throws IOException {
         InputStream stream = new ByteArrayInputStream(sampleXml.getBytes());
-        unifiedParser.parse(stream, "application/json", options);
+        unifiedParser.parseWithContentType(stream, "application/json", options);
     }
 
     @Test(expected = Exception.class)
     public void testHeaderXmlButBodyJson() throws IOException {
         InputStream stream = new ByteArrayInputStream(sampleJson.getBytes());
-        unifiedParser.parse(stream, "application/atom+xml", options);
+        unifiedParser.parseWithContentType(stream, "application/atom+xml", options);
     }
 
     @Test(expected = Exception.class)
     public void testReaderHeaderJsonButBodyXml() throws IOException {
         Reader reader = new StringReader(sampleXml);
-        unifiedParser.parse(reader, "application/json", options);
+        unifiedParser.parseWithContentType(reader, "application/json", options);
     }
 
     @Test(expected = Exception.class)
     public void testReaderHeaderXmlButBodyJson() throws IOException {
         Reader reader = new StringReader(sampleJson);
-        unifiedParser.parse(reader, "application/atom+xml", options);
+        unifiedParser.parseWithContentType(reader, "application/atom+xml", options);
     }
 
     @Test(expected = Exception.class)
     public void testNoContentType() throws IOException {
         InputStream stream = new ByteArrayInputStream(sampleJson.getBytes());
-        unifiedParser.parse(stream, null, options);
+        unifiedParser.parseWithContentType(stream, null, options);
     }
 
     @Test(expected = Exception.class)
     public void testReaderNoContentType() throws IOException {
         Reader reader = new StringReader(sampleJson);
-        unifiedParser.parse(reader, null, options);
+        unifiedParser.parseWithContentType(reader, null, options);
     }
 
     @Test
