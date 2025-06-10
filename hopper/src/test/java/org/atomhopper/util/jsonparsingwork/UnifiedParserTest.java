@@ -213,5 +213,27 @@ public class UnifiedParserTest {
         Reader reader = new StringReader(sampleJson);
         unifiedParser.parse(reader, null, options);
     }
+
+    @Test
+    public void testJsonReaderWithBaseUrlAndDefaultOptions() {
+        Reader reader = new StringReader(sampleJson);
+        Document<?> result = unifiedParser.parse(reader, "application/json", "http://example.org");
+        assertNotNull(result);
+        assertEquals("entry", result.getRoot().getQName().getLocalPart());
+    }
+
+    @Test
+    public void testXmlReaderWithBaseUrlAndDefaultOptions() {
+        Reader reader = new StringReader(sampleXml);
+        Document<?> result = unifiedParser.parse(reader, "application/atom+xml", "http://example.org");
+        assertNotNull(result);
+        assertEquals("entry", result.getRoot().getQName().getLocalPart());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testNullReaderThrowsException() {
+        unifiedParser.parse(null, "application/json", "http://example.org");
+    }
+
 }
 

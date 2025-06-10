@@ -35,7 +35,24 @@ public class UnifiedParser implements Parser {
     }
 
     private boolean isJsonContent(String contentType) {
-        return contentType != null && contentType.toLowerCase().contains("json");
+        if (contentType == null) {
+            return false;
+        }
+        String normalized = contentType.toLowerCase();
+        return normalized.contains("json") ||
+                normalized.contains("javascript") ||
+                normalized.contains("text/json");
+    }
+
+    private boolean isXmlContent(String contentType) {
+        if (contentType == null) {
+            return false;
+        }
+        String normalized = contentType.toLowerCase();
+        return normalized.contains("xml") ||
+                normalized.contains("atom") ||
+                normalized.contains("application/xml") ||
+                normalized.contains("text/xml");
     }
 
     private boolean isJsonContent(ParserOptions options) {
@@ -57,7 +74,7 @@ public class UnifiedParser implements Parser {
 
         try {
             // Default to XML parsing since we can't determine content type from ParserOptions
-            return xmlParser.parse(in, options);
+            return xmlParser.parse(in,null, options);
         } catch (Exception e) {
             Exception exception = e;
             if (!(exception instanceof ParseException)) {
@@ -83,7 +100,7 @@ public class UnifiedParser implements Parser {
             if (isJsonContent(base)) {
                 LOG.debug("Routing to JSON parser for base: {}", base);
                 // Route to JSON parser
-                return (Document<T>) jsonParser.parse(in, base, options);
+                return jsonParser.parse(in, base, options);
             }
             else {
                 LOG.debug("Routing to XML parser for base: {}", base);
@@ -110,7 +127,7 @@ public class UnifiedParser implements Parser {
         try {
             if (isJsonContent(base)) {
                 LOG.debug("Routing to JSON parser for base: {}", base);
-                return (Document<T>) jsonParser.parse(reader, base, options);
+                return jsonParser.parse(reader, base, options);
             } else {
                 LOG.debug("Routing to XML parser for base: {}", base);
                 return xmlParser.parse(reader, base, options);
@@ -186,6 +203,33 @@ public class UnifiedParser implements Parser {
             return xmlParser.parse(ch, base, options);
         } catch (Exception e) {
             LOG.error("Parsing failed for base: {} with error: {}", base, e.getMessage(), e);
+            throw (e instanceof ParseException) ? (ParseException) e : new ParseException(e);
+        }
+    }
+
+    public <T extends Element> Document<T> parse(Reader reader, String contentType, String base) throws ParseException {
+        return parse(reader, contentType, base, getDefaultParserOptions());
+    }
+
+    public <T extends Element> Document<T> parse(Reader reader, String contentType, String base, ParserOptions options) throws ParseException {
+        if (reader == null) {
+            LOG.warn("Reader is null");
+            throw new IllegalArgumentException("Reader cannot be null");
+        }
+
+        try {
+            if (isJsonContent(contentType)) {
+                LOG.debug("Using JSON parser for content type: {}", contentType);
+                return jsonParser.parse(reader, base, options);
+            } else if (isXmlContent(contentType)) {
+                LOG.debug("Using XML parser for content type: {}", contentType);
+                return xmlParser.parse(reader, base, options);
+            } else {
+                LOG.warn("Unknown content type: {}. Defaulting to XML parser", contentType);
+                return xmlParser.parse(reader, base, options);
+            }
+        } catch (Exception e) {
+            LOG.error("Parsing failed for content type: {}", contentType, e);
             throw (e instanceof ParseException) ? (ParseException) e : new ParseException(e);
         }
     }
