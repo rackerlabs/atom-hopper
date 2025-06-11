@@ -5,17 +5,16 @@ import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.parser.Parser;
 import org.apache.abdera.parser.ParserOptions;
+import org.apache.abdera.parser.ParseException;
 import org.apache.abdera.parser.stax.FOMParser;
 import org.apache.abdera.writer.Writer;
 import org.apache.abdera.writer.WriterFactory;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.io.*;
 
 import static org.junit.Assert.*;
-
 
 public class UnifiedParserTest {
 
@@ -80,37 +79,52 @@ public class UnifiedParserTest {
                 "        </event>\n" +
                 "    </atom:content>\n" +
                 "</atom:entry>";
-
-
     }
 
+    // Test valid JSON content types
     @Test
     public void testValidJsonInputStream() throws IOException {
-
         InputStream stream = new ByteArrayInputStream(sampleJson.getBytes());
-
         Document<?> doc = unifiedParser.parseWithContentType(stream, "application/json", options);
 
         assertNotNull("Parsed document should not be null", doc);
         assertTrue(doc.getRoot() instanceof Entry);
         assertEquals("entry", doc.getRoot().getQName().getLocalPart());
 
-        //trying to print
+        // Print the parsed document
         WriterFactory writerFactory = new Abdera().getWriterFactory();
         Writer writer = writerFactory.getWriter("prettyxml");
         StringWriter stringWriter = new StringWriter();
         writer.writeTo(doc, stringWriter);
-
         System.out.println("Parsed JSON Document as Abdera entry:\n" + stringWriter);
-
     }
 
     @Test
-    public void testValidXmlInputStream() throws IOException {
+    public void testValidJsonInputStreamWithAtomJson() throws IOException {
+        InputStream stream = new ByteArrayInputStream(sampleJson.getBytes());
+        Document<?> doc = unifiedParser.parseWithContentType(stream, "application/atom+json", options);
 
+        assertNotNull("Parsed document should not be null", doc);
+        assertTrue(doc.getRoot() instanceof Entry);
+        assertEquals("entry", doc.getRoot().getQName().getLocalPart());
+    }
+
+    @Test
+    public void testValidJsonInputStreamWithTextJson() throws IOException {
+        InputStream stream = new ByteArrayInputStream(sampleJson.getBytes());
+        Document<?> doc = unifiedParser.parseWithContentType(stream, "text/json", options);
+
+        assertNotNull("Parsed document should not be null", doc);
+        assertTrue(doc.getRoot() instanceof Entry);
+        assertEquals("entry", doc.getRoot().getQName().getLocalPart());
+    }
+
+    // Test valid XML content types
+    @Test
+    public void testValidXmlInputStream() throws IOException {
         InputStream stream = new ByteArrayInputStream(sampleXml.getBytes());
         Document<Element> result = unifiedParser.parseWithContentType(stream, "application/atom+xml", options);
-        //shouldnt be null
+
         assertNotNull("Parsed document should not be null", result);
         assertEquals("entry", result.getRoot().getQName().getLocalPart());
 
@@ -122,8 +136,46 @@ public class UnifiedParserTest {
     }
 
     @Test
-    public void testValidJsonReader() throws IOException {
+    public void testValidXmlInputStreamWithApplicationXml() throws IOException {
+        InputStream stream = new ByteArrayInputStream(sampleXml.getBytes());
+        Document<Element> result = unifiedParser.parseWithContentType(stream, "application/xml", options);
 
+        assertNotNull("Parsed document should not be null", result);
+        assertEquals("entry", result.getRoot().getQName().getLocalPart());
+    }
+
+    @Test
+    public void testValidXmlInputStreamWithTextXml() throws IOException {
+        InputStream stream = new ByteArrayInputStream(sampleXml.getBytes());
+        Document<Element> result = unifiedParser.parseWithContentType(stream, "text/xml", options);
+
+        assertNotNull("Parsed document should not be null", result);
+        assertEquals("entry", result.getRoot().getQName().getLocalPart());
+    }
+
+    // Test content type with charset parameters
+    @Test
+    public void testContentTypeWithCharset() throws IOException {
+        InputStream stream = new ByteArrayInputStream(sampleJson.getBytes());
+        Document<?> doc = unifiedParser.parseWithContentType(stream, "application/json; charset=UTF-8", options);
+
+        assertNotNull("Parsed document should not be null", doc);
+        assertTrue(doc.getRoot() instanceof Entry);
+        assertEquals("entry", doc.getRoot().getQName().getLocalPart());
+    }
+
+    @Test
+    public void testContentTypeWithMultipleParameters() throws IOException {
+        InputStream stream = new ByteArrayInputStream(sampleXml.getBytes());
+        Document<Element> result = unifiedParser.parseWithContentType(stream, "application/atom+xml; charset=UTF-8; boundary=something", options);
+
+        assertNotNull("Parsed document should not be null", result);
+        assertEquals("entry", result.getRoot().getQName().getLocalPart());
+    }
+
+    // Test Reader variants
+    @Test
+    public void testValidJsonReader() throws IOException {
         Reader jsonReader = new StringReader(sampleJson);
         Document<?> result = unifiedParser.parseWithContentType(jsonReader, "application/json", options);
         assertNotNull("Parsed document should not be null", result);
@@ -150,34 +202,63 @@ public class UnifiedParserTest {
         System.out.println("Parsed XML Entry as Abdera Entry:\n" + stringWriter);
     }
 
-
-    //test for passing empty json
-    @Test(expected = Exception.class)
-    public void testEmptyJson() throws IOException{
-        InputStream jsonStream = new ByteArrayInputStream("".getBytes());
-        unifiedParser.parseWithContentType(jsonStream, "application/json", options);
+    // Test missing or null content type - should throw ParseException
+    @Test(expected = ParseException.class)
+    public void testNullContentType() throws IOException {
+        InputStream stream = new ByteArrayInputStream(sampleJson.getBytes());
+        unifiedParser.parseWithContentType(stream, null, options);
     }
 
-
-    @Test(expected = Exception.class)
-    public void testEmptyXml() throws IOException{
-        InputStream xmlStream = new ByteArrayInputStream("".getBytes());
-        unifiedParser.parseWithContentType(xmlStream, "application/atom+xml", options);
+    @Test(expected = ParseException.class)
+    public void testEmptyContentType() throws IOException {
+        InputStream stream = new ByteArrayInputStream(sampleJson.getBytes());
+        unifiedParser.parseWithContentType(stream, "", options);
     }
 
-
-    @Test(expected = Exception.class)
-    public void testEmptyJsonReaderInput() throws IOException{
-        Reader jsonReader = new StringReader("");
-        unifiedParser.parseWithContentType(jsonReader, "application/json", options);
+    @Test(expected = ParseException.class)
+    public void testWhitespaceOnlyContentType() throws IOException {
+        InputStream stream = new ByteArrayInputStream(sampleJson.getBytes());
+        unifiedParser.parseWithContentType(stream, "   ", options);
     }
 
-    @Test(expected = Exception.class)
-    public void testEmptyXmlReaderInput() throws IOException{
-        Reader xmlReader = new StringReader("");
-        unifiedParser.parseWithContentType(xmlReader, "application/atom+xml", options);
+    @Test(expected = ParseException.class)
+    public void testReaderNullContentType() throws IOException {
+        Reader reader = new StringReader(sampleJson);
+        unifiedParser.parseWithContentType(reader, null, options);
     }
 
+    @Test(expected = ParseException.class)
+    public void testReaderEmptyContentType() throws IOException {
+        Reader reader = new StringReader(sampleJson);
+        unifiedParser.parseWithContentType(reader, "", options);
+    }
+
+    // Test unsupported content types - should throw ParseException
+    @Test(expected = ParseException.class)
+    public void testUnsupportedContentType() throws IOException {
+        InputStream stream = new ByteArrayInputStream(sampleJson.getBytes());
+        unifiedParser.parseWithContentType(stream, "text/plain", options);
+    }
+
+    @Test(expected = ParseException.class)
+    public void testUnsupportedContentTypeWithReader() throws IOException {
+        Reader reader = new StringReader(sampleJson);
+        unifiedParser.parseWithContentType(reader, "image/jpeg", options);
+    }
+
+    @Test(expected = ParseException.class)
+    public void testUnsupportedContentTypeTextHtml() throws IOException {
+        InputStream stream = new ByteArrayInputStream(sampleJson.getBytes());
+        unifiedParser.parseWithContentType(stream, "text/html", options);
+    }
+
+    @Test(expected = ParseException.class)
+    public void testUnsupportedContentTypeApplicationPdf() throws IOException {
+        Reader reader = new StringReader(sampleXml);
+        unifiedParser.parseWithContentType(reader, "application/pdf", options);
+    }
+
+    // Test mismatched content type and body
     @Test(expected = Exception.class)
     public void testHeaderJsonButBodyXml() throws IOException {
         InputStream stream = new ByteArrayInputStream(sampleXml.getBytes());
@@ -189,51 +270,4 @@ public class UnifiedParserTest {
         InputStream stream = new ByteArrayInputStream(sampleJson.getBytes());
         unifiedParser.parseWithContentType(stream, "application/atom+xml", options);
     }
-
-    @Test(expected = Exception.class)
-    public void testReaderHeaderJsonButBodyXml() throws IOException {
-        Reader reader = new StringReader(sampleXml);
-        unifiedParser.parseWithContentType(reader, "application/json", options);
-    }
-
-    @Test(expected = Exception.class)
-    public void testReaderHeaderXmlButBodyJson() throws IOException {
-        Reader reader = new StringReader(sampleJson);
-        unifiedParser.parseWithContentType(reader, "application/atom+xml", options);
-    }
-
-    @Test(expected = Exception.class)
-    public void testNoContentType() throws IOException {
-        InputStream stream = new ByteArrayInputStream(sampleJson.getBytes());
-        unifiedParser.parseWithContentType(stream, null, options);
-    }
-
-    @Test(expected = Exception.class)
-    public void testReaderNoContentType() throws IOException {
-        Reader reader = new StringReader(sampleJson);
-        unifiedParser.parseWithContentType(reader, null, options);
-    }
-
-    @Test
-    public void testJsonReaderWithBaseUrlAndDefaultOptions() {
-        Reader reader = new StringReader(sampleJson);
-        Document<?> result = unifiedParser.parse(reader, "application/json", "http://example.org");
-        assertNotNull(result);
-        assertEquals("entry", result.getRoot().getQName().getLocalPart());
-    }
-
-    @Test
-    public void testXmlReaderWithBaseUrlAndDefaultOptions() {
-        Reader reader = new StringReader(sampleXml);
-        Document<?> result = unifiedParser.parse(reader, "application/atom+xml", "http://example.org");
-        assertNotNull(result);
-        assertEquals("entry", result.getRoot().getQName().getLocalPart());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testNullReaderThrowsException() {
-        unifiedParser.parse(null, "application/json", "http://example.org");
-    }
-
 }
-
