@@ -29,7 +29,7 @@ import org.atomhopper.dbal.FeedRepository;
 import org.atomhopper.dbal.PageDirection;
 import org.atomhopper.hibernate.query.SimpleCategoryCriteriaGenerator;
 import org.atomhopper.response.AdapterResponse;
-import org.atomhopper.util.jsonparsingwork.NewParserFactory;
+import  org.atomhopper.abdera.parser.UnifiedParserFactory;
 import org.atomhopper.util.uri.template.EnumKeyedTemplateParameters;
 import org.atomhopper.util.uri.template.URITemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,9 +46,9 @@ public class HibernateFeedSource implements FeedSource {
             HibernateFeedSource.class
     );
 
-    private NewParserFactory parserFactory;
+    private UnifiedParserFactory parserFactory;
 
-    public void setParserFactory(NewParserFactory parserFactory){
+    public void setParserFactory(UnifiedParserFactory parserFactory){
         this.parserFactory = parserFactory;
     }
 
