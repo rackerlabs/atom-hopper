@@ -1,18 +1,20 @@
 package org.atomhopper.util.jsonparsingwork;
+
 import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Element;
 import org.apache.abdera.parser.ParseException;
 import org.apache.abdera.parser.Parser;
 import org.apache.abdera.parser.ParserOptions;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.xml.stream.XMLStreamReader;
+import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.nio.channels.ReadableByteChannel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Component
 public class UnifiedParser implements Parser {
@@ -31,111 +33,80 @@ public class UnifiedParser implements Parser {
         this.xmlParser = xmlParser;
         this.jsonParser = new JsonAtomParser();
         this.defaultParserOptions = xmlParser.getDefaultParserOptions();
-        LOG.info("UnifiedParser is initialised with XMLParser: {}", xmlParser.getClass().getSimpleName());
+        LOG.info("UnifiedParser is initialized with XMLParser: {}", xmlParser.getClass().getSimpleName());
     }
 
     private boolean isJsonContent(String contentType) {
         if (contentType == null) {
             return false;
         }
-        String normalized = contentType.toLowerCase();
-        return normalized.contains("json") ||
-                normalized.contains("javascript") ||
-                normalized.contains("text/json");
+        String normalized = contentType.toLowerCase().trim();
+        return normalized.startsWith("application/json") ||
+                normalized.startsWith("text/json") ||
+                normalized.contains("+json");
     }
 
     private boolean isXmlContent(String contentType) {
         if (contentType == null) {
             return false;
         }
-        String normalized = contentType.toLowerCase();
-        return normalized.contains("xml") ||
-                normalized.contains("atom") ||
-                normalized.contains("application/xml") ||
-                normalized.contains("text/xml");
+        String normalized = contentType.toLowerCase().trim();
+        return normalized.startsWith("application/xml") ||
+                normalized.startsWith("text/xml") ||
+                normalized.startsWith("application/atom+xml") ||
+                normalized.contains("+xml");
     }
 
-    private boolean isJsonContent(ParserOptions options) {
-        // Since ParserOptions doesn't have getMimeType(), we need a different approach
-        // This could be:
-        // 1. Check a custom property/attribute if your ParserOptions implementation supports it
-        // 2. Use a custom extended ParserOptions interface
-        // 3. Pass content type separately as a parameter
-        // For now, return false as default behavior
-        return false;
+    private void validateContentType(String contentType) {
+        if (contentType == null || contentType.trim().isEmpty()) {
+            LOG.error("Content-Type header is missing or empty");
+            throw new IllegalArgumentException("Content-Type header is required");
+        }
+
+        if (!isJsonContent(contentType) && !isXmlContent(contentType)) {
+            LOG.error("Unsupported Content-Type: {}", contentType);
+            throw new IllegalArgumentException("Unsupported Content-Type: " + contentType);
+        }
     }
 
     @Override
     public <T extends Element> Document<T> parse(InputStream in, ParserOptions options) throws ParseException {
         if (in == null) {
-            LOG.warn("InputStream is null in parse() method");
-            throw new IllegalArgumentException("InputStream cannot be null");
+            throw new ParseException("Input stream cannot be null");
         }
-
         try {
-            // Default to XML parsing since we can't determine content type from ParserOptions
-            return xmlParser.parse(in,null, options);
-        } catch (Exception e) {
-            Exception exception = e;
-            if (!(exception instanceof ParseException)) {
-                exception = new ParseException(exception);
+            if (!in.markSupported()) {
+                in = new BufferedInputStream(in);
             }
-            throw (ParseException) exception;
+            in.mark(1024);
+            if (in.read() == -1) {
+                throw new ParseException("Empty input stream");
+            }
+            in.reset();
+            return xmlParser.parse(in, options);
+        } catch (IOException e) {
+            throw new ParseException("Error reading input stream", e);
         }
     }
 
     @Override
     public <T extends Element> Document<T> parse(InputStream in, String base) throws ParseException {
-        return parse(in, base, getDefaultParserOptions());
+        throw new UnsupportedOperationException("Content-Type header is required for parsing. Use parseWithContentType() or parseFromHttpRequest() methods instead.");
     }
 
     @Override
     public <T extends Element> Document<T> parse(InputStream in, String base, ParserOptions options) throws ParseException {
-        if (in == null) {
-            LOG.warn("InputStream is null in parse() method with ParserOptions" );
-            throw new IllegalArgumentException("InputStream cannot be null");
-        }
-
-        try {
-            if (isJsonContent(base)) {
-                LOG.debug("Routing to JSON parser for base: {}", base);
-                // Route to JSON parser
-                return jsonParser.parse(in, base, options);
-            }
-            else {
-                LOG.debug("Routing to XML parser for base: {}", base);
-                return xmlParser.parse(in, base, options);
-            }
-        } catch (Exception e) {
-            LOG.error("Parsing failed for base: {} with error: {}", base, e.getMessage(), e);
-            throw (e instanceof ParseException) ? (ParseException) e : new ParseException(e);
-        }
+        throw new UnsupportedOperationException("Content-Type header is required for parsing. Use parseWithContentType() or parseFromHttpRequest() methods instead.");
     }
 
     @Override
     public <T extends Element> Document<T> parse(Reader reader, String base) throws ParseException {
-        return parse(reader, base, getDefaultParserOptions());
+        throw new UnsupportedOperationException("Content-Type header is required for parsing. Use parseWithContentType() methods instead.");
     }
 
     @Override
     public <T extends Element> Document<T> parse(Reader reader, String base, ParserOptions options) throws ParseException {
-        if (reader == null) {
-            LOG.warn("Reader cannot be null");
-            throw new IllegalArgumentException("Reader cannot be null");
-        }
-
-        try {
-            if (isJsonContent(base)) {
-                LOG.debug("Routing to JSON parser for base: {}", base);
-                return jsonParser.parse(reader, base, options);
-            } else {
-                LOG.debug("Routing to XML parser for base: {}", base);
-                return xmlParser.parse(reader, base, options);
-            }
-        } catch (Exception e) {
-            LOG.error("Parsing failed for base: {} with error: {}", base, e.getMessage(), e);
-            throw (e instanceof ParseException) ? (ParseException) e : new ParseException(e);
-        }
+        throw new UnsupportedOperationException("Content-Type header is required for parsing. Use parseWithContentType() methods instead.");
     }
 
     @Override
@@ -146,7 +117,7 @@ public class UnifiedParser implements Parser {
     @Override
     public <T extends Element> Document<T> parse(XMLStreamReader reader, String base, ParserOptions options) throws ParseException {
         if (reader == null) {
-            LOG.warn("Reader cannot be null, line 132");
+            LOG.warn("XMLStreamReader cannot be null");
             throw new IllegalArgumentException("XMLStreamReader cannot be null");
         }
 
@@ -162,56 +133,64 @@ public class UnifiedParser implements Parser {
 
     @Override
     public <T extends Element> Document<T> parse(InputStream in) throws ParseException {
-        return parse(in, getDefaultParserOptions());
+        throw new UnsupportedOperationException("Content-Type header is required for parsing. Use parseWithContentType() or parseFromHttpRequest() methods instead.");
     }
 
     @Override
     public <T extends Element> Document<T> parse(Reader reader) throws ParseException {
-        return parse(reader, null, getDefaultParserOptions());
+        throw new UnsupportedOperationException("Content-Type header is required for parsing. Use parseWithContentType() methods instead.");
     }
 
     @Override
     public <T extends Element> Document<T> parse(Reader reader, ParserOptions options) throws ParseException {
-        return parse(reader, null, options);
+        throw new UnsupportedOperationException("Content-Type header is required for parsing. Use parseWithContentType() methods instead.");
     }
 
     @Override
     public <T extends Element> Document<T> parse(ReadableByteChannel ch) throws ParseException {
-        return parse(ch, getDefaultParserOptions());
+        throw new UnsupportedOperationException("Content-Type header is required for parsing. Use parseWithContentType() methods instead.");
     }
 
     @Override
     public <T extends Element> Document<T> parse(ReadableByteChannel ch, String base) throws ParseException {
-        return parse(ch, base, getDefaultParserOptions());
+        throw new UnsupportedOperationException("Content-Type header is required for parsing. Use parseWithContentType() methods instead.");
     }
 
     @Override
     public <T extends Element> Document<T> parse(ReadableByteChannel ch, ParserOptions options) throws ParseException {
-        return parse(ch, null, options);
+        throw new UnsupportedOperationException("Content-Type header is required for parsing. Use parseWithContentType() methods instead.");
     }
 
     @Override
     public <T extends Element> Document<T> parse(ReadableByteChannel ch, String base, ParserOptions options) throws ParseException {
-        if (ch == null) {
-            LOG.warn("ReadableByteChannel cant be bull , line 179");
-            throw new IllegalArgumentException("ReadableByteChannel cannot be null");
+        throw new UnsupportedOperationException("Content-Type header is required for parsing. Use parseWithContentType() methods instead.");
+    }
+
+    public <T extends Element> Document<T> parseWithContentType(InputStream in, String contentType, ParserOptions options) throws ParseException {
+        validateContentType(contentType);
+
+        if (in == null) {
+            LOG.warn("InputStream is null");
+            throw new IllegalArgumentException("InputStream cannot be null");
         }
 
         try {
-            // Default to XML parsing since we can't determine content type from ParserOptions
-            LOG.debug("Routing to XML parser for base : {}", base);
-            return xmlParser.parse(ch, base, options);
+            if (isJsonContent(contentType)) {
+                LOG.debug("Routing to JSON parser for Content-Type: {}", contentType);
+                return jsonParser.parse(in, options);
+            } else {
+                LOG.debug("Routing to XML parser for Content-Type: {}", contentType);
+                return xmlParser.parse(in, options);
+            }
         } catch (Exception e) {
-            LOG.error("Parsing failed for base: {} with error: {}", base, e.getMessage(), e);
+            LOG.error("Error parsing with Content-Type {}: {}", contentType, e.getMessage(), e);
             throw (e instanceof ParseException) ? (ParseException) e : new ParseException(e);
         }
     }
 
-    public <T extends Element> Document<T> parse(Reader reader, String contentType, String base) throws ParseException {
-        return parse(reader, contentType, base, getDefaultParserOptions());
-    }
+    public <T extends Element> Document<T> parseWithContentType(Reader reader, String contentType, ParserOptions options) throws ParseException {
+        validateContentType(contentType);
 
-    public <T extends Element> Document<T> parse(Reader reader, String contentType, String base, ParserOptions options) throws ParseException {
         if (reader == null) {
             LOG.warn("Reader is null");
             throw new IllegalArgumentException("Reader cannot be null");
@@ -219,17 +198,66 @@ public class UnifiedParser implements Parser {
 
         try {
             if (isJsonContent(contentType)) {
-                LOG.debug("Using JSON parser for content type: {}", contentType);
-                return jsonParser.parse(reader, base, options);
-            } else if (isXmlContent(contentType)) {
-                LOG.debug("Using XML parser for content type: {}", contentType);
-                return xmlParser.parse(reader, base, options);
+                LOG.debug("Routing to JSON parser for Content-Type: {}", contentType);
+                return jsonParser.parse(reader, options);
             } else {
-                LOG.warn("Unknown content type: {}. Defaulting to XML parser", contentType);
+                LOG.debug("Routing to XML parser for Content-Type: {}", contentType);
+                return xmlParser.parse(reader, options);
+            }
+        } catch (Exception e) {
+            LOG.error("Error parsing with Content-Type {}: {}", contentType, e.getMessage(), e);
+            throw (e instanceof ParseException) ? (ParseException) e : new ParseException(e);
+        }
+    }
+
+    public <T extends Element> Document<T> parseWithContentType(InputStream in, String base, String contentType) throws ParseException {
+        return parseWithContentType(in, base, contentType, getDefaultParserOptions());
+    }
+
+    public <T extends Element> Document<T> parseWithContentType(InputStream in, String base, String contentType, ParserOptions options) throws ParseException {
+        validateContentType(contentType);
+
+        if (in == null) {
+            LOG.warn("InputStream is null");
+            throw new IllegalArgumentException("InputStream cannot be null");
+        }
+
+        try {
+            if (isJsonContent(contentType)) {
+                LOG.debug("Routing to JSON parser for base: {}, Content-Type: {}", base, contentType);
+                return jsonParser.parse(in, base, options);
+            } else {
+                LOG.debug("Routing to XML parser for base: {}, Content-Type: {}", base, contentType);
+                return xmlParser.parse(in, base, options);
+            }
+        } catch (Exception e) {
+            LOG.error("Error parsing with base {} and Content-Type {}: {}", base, contentType, e.getMessage(), e);
+            throw (e instanceof ParseException) ? (ParseException) e : new ParseException(e);
+        }
+    }
+
+    public <T extends Element> Document<T> parseWithContentType(Reader reader, String base, String contentType) throws ParseException {
+        return parseWithContentType(reader, base, contentType, getDefaultParserOptions());
+    }
+
+    public <T extends Element> Document<T> parseWithContentType(Reader reader, String base, String contentType, ParserOptions options) throws ParseException {
+        validateContentType(contentType);
+
+        if (reader == null) {
+            LOG.warn("Reader is null");
+            throw new IllegalArgumentException("Reader cannot be null");
+        }
+
+        try {
+            if (isJsonContent(contentType)) {
+                LOG.debug("Routing to JSON parser for base: {}, Content-Type: {}", base, contentType);
+                return jsonParser.parse(reader, base, options);
+            } else {
+                LOG.debug("Routing to XML parser for base: {}, Content-Type: {}", base, contentType);
                 return xmlParser.parse(reader, base, options);
             }
         } catch (Exception e) {
-            LOG.error("Parsing failed for content type: {}", contentType, e);
+            LOG.error("Error parsing with base {} and Content-Type {}: {}", base, contentType, e.getMessage(), e);
             throw (e instanceof ParseException) ? (ParseException) e : new ParseException(e);
         }
     }
@@ -243,90 +271,5 @@ public class UnifiedParser implements Parser {
     public Parser setDefaultParserOptions(ParserOptions parserOptions) {
         this.defaultParserOptions = parserOptions;
         return this;
-    }
-
-    // Custom methods that accept content type for proper JSON/XML routing
-    public <T extends Element> Document<T> parseWithContentType(InputStream in, String contentType, ParserOptions options) throws ParseException {
-        if (in == null) {
-            LOG.warn("InputStream is null in parseWithContentType(InputStream, contentType)");
-            throw new IllegalArgumentException("InputStream cannot be null");
-        }
-
-        try {
-            if (isJsonContent(contentType)) {
-                LOG.debug("Routing to JSON parser for contentType: {}", contentType);
-                return (Document<T>) jsonParser.parse(in, options);
-            } else {
-                LOG.debug("Routing to XML parser for contentType: {}", contentType);
-                return xmlParser.parse(in, options);
-            }
-        } catch (Exception e) {
-            LOG.error("Error parsing InputStream with contentType {}: {}", contentType, e.getMessage(), e);
-            throw (e instanceof ParseException) ? (ParseException) e : new ParseException(e);
-        }
-    }
-
-    public <T extends Element> Document<T> parseWithContentType(Reader reader, String contentType, ParserOptions options) throws ParseException {
-        if (reader == null) {
-            LOG.warn("Reader is null in parseWithContentType(Reader, contentType)");
-            throw new IllegalArgumentException("Reader cannot be null");
-        }
-
-        try {
-            if (isJsonContent(contentType)) {
-                LOG.debug("Routing to JSON parser for contentType: {}", contentType);
-                return (Document<T>) jsonParser.parse(reader, options);
-            } else {
-                LOG.debug("Routing to XML parser for contentType: {}", contentType);
-                return xmlParser.parse(reader, options);
-            }
-        } catch (Exception e) {
-
-            LOG.error("Error parsing Reader with contentType {}: {}", contentType, e.getMessage(), e);
-            throw (e instanceof ParseException) ? (ParseException) e : new ParseException(e);
-
-        }
-    }
-
-    public <T extends Element> Document<T> parseWithContentType(InputStream in, String base, String contentType, ParserOptions options) throws ParseException {
-        if (in == null) {
-            LOG.warn("InputStream is null in parseWithContentType(InputStream, base, contentType)");
-            throw new IllegalArgumentException("InputStream cannot be null");
-        }
-
-        try {
-            if (isJsonContent(contentType)) {
-                LOG.debug("Routing to JSON parser for base: {}, contentType: {}", base, contentType);
-                return jsonParser.parse(in, base, options);
-            } else {
-                LOG.debug("Routing to XML parser for base: {}, contentType: {}", base, contentType);
-                return xmlParser.parse(in, base, options);
-            }
-        } catch (Exception e) {
-
-            LOG.error("Error parsing InputStream with base {} and contentType {}: {}", base, contentType, e.getMessage(), e);
-            throw (e instanceof ParseException) ? (ParseException) e : new ParseException(e);
-        }
-    }
-
-    public <T extends Element> Document<T> parseWithContentType(Reader reader, String base, String contentType, ParserOptions options) throws ParseException {
-        if (reader == null) {
-            LOG.warn("Reader is null in parseWithContentType(Reader, base, contentType)");
-            throw new IllegalArgumentException("Reader cannot be null");
-        }
-
-        try {
-            if (isJsonContent(contentType)) {
-                LOG.debug("Routing to JSON parser for base: {}, contentType: {}", base, contentType);
-                return jsonParser.parse(reader, base, options);
-            } else {
-                LOG.debug("Routing to XML parser for base: {}, contentType: {}", base, contentType);
-                return xmlParser.parse(reader, base, options);
-            }
-        } catch (Exception e) {
-
-            LOG.error("Error parsing Reader with base {} and contentType {}: {}", base, contentType, e.getMessage(), e);
-            throw (e instanceof ParseException) ? (ParseException) e : new ParseException(e);
-        }
     }
 }
