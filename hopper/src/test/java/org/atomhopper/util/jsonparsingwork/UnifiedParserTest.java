@@ -9,6 +9,7 @@ import org.apache.abdera.parser.ParseException;
 import org.apache.abdera.parser.stax.FOMParser;
 import org.apache.abdera.writer.Writer;
 import org.apache.abdera.writer.WriterFactory;
+import org.atomhopper.abdera.parser.UnifiedParser;
 import org.junit.Before;
 import org.junit.Test;
 
