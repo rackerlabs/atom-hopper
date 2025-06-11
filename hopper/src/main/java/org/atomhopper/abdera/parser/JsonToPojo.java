@@ -1,6 +1,10 @@
-package org.atomhopper.util.jsonparsingwork;
+package org.atomhopper.abdera.parser;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.*;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 
 
 public class JsonToPojo{

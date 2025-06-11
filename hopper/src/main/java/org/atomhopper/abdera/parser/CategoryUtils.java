@@ -1,10 +1,12 @@
 
-package org.atomhopper.util.jsonparsingwork;
-import java.util.*;
+package org.atomhopper.abdera.parser;
 
 import org.apache.abdera.Abdera;
 import org.apache.abdera.factory.Factory;
 import org.apache.abdera.model.Category;
+
+import java.util.*;
+
 //collects the categories , manipulates and returns the list
 public class CategoryUtils {
 

@@ -1,9 +1,8 @@
-package org.atomhopper.util.jsonparsingwork;
+package org.atomhopper.abdera.parser;
+
 import org.apache.abdera.Abdera;
 import org.apache.abdera.factory.Factory;
 import org.apache.abdera.model.*;
-import org.apache.abdera.model.ExtensibleElement;
-
 
 import javax.xml.namespace.QName;
 import java.util.List;

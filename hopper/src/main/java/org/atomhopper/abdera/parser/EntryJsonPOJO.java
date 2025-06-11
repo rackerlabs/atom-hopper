@@ -1,10 +1,9 @@
-package org.atomhopper.util.jsonparsingwork;
+package org.atomhopper.abdera.parser;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.abdera.Abdera;
 import org.apache.abdera.factory.Factory;
-import org.apache.abdera.model.Category;
 import org.apache.abdera.model.Element;
 
 import javax.xml.namespace.QName;

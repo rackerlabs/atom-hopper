@@ -1,8 +1,8 @@
-package org.atomhopper.util.jsonparsingwork;
+package org.atomhopper.abdera.parser;
 
 import org.apache.abdera.parser.Parser;
 
-public class NewParserFactory {
+public class UnifiedParserFactory {
 
     private Parser unifiedParser;
 

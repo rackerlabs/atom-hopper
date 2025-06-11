@@ -1,20 +1,21 @@
-package org.atomhopper.util.jsonparsingwork;
+package org.atomhopper.abdera.parser;
 
-import org.apache.abdera.parser.Parser;
-import org.apache.abdera.parser.ParseException;
+import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Element;
 import org.apache.abdera.model.Entry;
+import org.apache.abdera.parser.ParseException;
+import org.apache.abdera.parser.Parser;
 import org.apache.abdera.parser.ParserOptions;
-import org.apache.abdera.Abdera;
-import javax.xml.stream.XMLStreamReader;
-import java.io.*;
-import java.nio.channels.ReadableByteChannel;
-import java.nio.channels.Channels;
-
-import org.apache.juli.logging.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.xml.stream.XMLStreamReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 
 
 public class JsonAtomParser implements Parser {
