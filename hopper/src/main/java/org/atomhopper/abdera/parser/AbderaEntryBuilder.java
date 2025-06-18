@@ -10,7 +10,7 @@ import java.util.List;
 
 public abstract class AbderaEntryBuilder{
 
-    public static Entry EntryBuiderMethod(EntryJsonPOJO.Root root) {
+    public static Entry EntryBuiderMethod(EntryJsonPOJO root) {
         Abdera abderaObj = new Abdera();
         Factory factory = abderaObj.getFactory();
         Entry entryObj = factory.newEntry();

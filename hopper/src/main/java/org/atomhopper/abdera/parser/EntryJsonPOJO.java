@@ -15,18 +15,14 @@ import java.util.Map;
 
 public class EntryJsonPOJO {
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class Root {
+    private EntryWrapper entry;
 
-        private EntryWrapper entry;
+    public EntryWrapper getEntry() {
+        return entry;
+    }
 
-        public EntryWrapper getEntry() {
-            return entry;
-        }
-
-        public void setEntry(EntryWrapper entry_data) {
-            this.entry = entry_data;
-        }
+    public void setEntry(EntryWrapper entry) {
+        this.entry = entry;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

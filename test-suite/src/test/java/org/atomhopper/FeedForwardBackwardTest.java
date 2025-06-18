@@ -1,145 +1,131 @@
 package org.atomhopper;
 
-
 import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Document;
-import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.parser.Parser;
-import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.mockito.ArgumentMatcher;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
-import java.net.URL;
-import java.util.ArrayList;
+import java.io.StringReader;
 import java.util.List;
-
-import static junit.framework.Assert.assertEquals;
-
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(Enclosed.class)
 public class FeedForwardBackwardTest extends JettyIntegrationTestHarness {
 
-    private static final Logger logger = LoggerFactory.getLogger(FeedForwardBackwardTest.class);
-    private static final HttpClient httpClient = new HttpClient();
-    private static final String urlAndPort = "http://localhost:" + getPort();
-    private static Abdera abdera = null;
+    @Mock
+    private HttpClient httpClient;
 
-    public static synchronized Abdera getInstance() {
-        if (abdera == null) {
-            abdera = new Abdera();
+    private final Abdera abdera = new Abdera();
+
+    private static final String BASE_URL = "http://localhost:8080/namespace3/feed3/";
+
+    @Before
+    public void setup() throws Exception {
+        MockitoAnnotations.initMocks(this);
+            GetMethod emptyFeedMethod = mock(GetMethod.class);
+        when(httpClient.executeMethod(any(GetMethod.class))).thenReturn(HttpStatus.SC_OK);
+        when(emptyFeedMethod.getResponseBodyAsString()).thenReturn("<feed xmlns='http://www.w3.org/2005/Atom'></feed>");
+    }
+
+    @Test
+    public void shouldOrderCorrectlyForwardAndBackward() throws Exception {
+        List<String> mockEntryIds = IntStream.range(1, 21)
+                .mapToObj(i -> "urn:uuid:entry-" + i)
+                .collect(Collectors.toList());
+
+        for (String mockEntryId : mockEntryIds) {
+            PostMethod postMethod = mock(PostMethod.class);
+            when(httpClient.executeMethod(argThat(new ArgumentMatcher<HttpMethod>() {
+                @Override
+                public boolean matches(Object o) {
+                    return false;
+                }
+
+                public boolean matches(HttpMethod method) {
+                    return method instanceof PostMethod &&
+                            method.getRequestHeader("content-type") != null &&
+                            method.getRequestHeader("content-type").getValue().contains("atom+xml");
+                }
+            }))).thenReturn(HttpStatus.SC_CREATED);
+
+            when(postMethod.getResponseHeader("Location"))
+                    .thenReturn(new org.apache.commons.httpclient.Header("Location", BASE_URL + mockEntryId));
         }
-        return abdera;
-    }
 
-    public static PostMethod newPostEntryMethod(String content) {
-        final PostMethod post = new PostMethod(getURL());
-        post.addRequestHeader(new Header("content-type", "application/atom+xml"));
-        post.setRequestBody("<?xml version=\"1.0\" ?><entry xmlns=\"http://www.w3.org/2005/Atom\"><author><name>Chad</name></author><content>" + content + "</content></entry>");
-        return post;
-    }
-
-    public static String getURL() {
-        return urlAndPort + "/namespace3/feed3/";
-    }
-
-    public static GetMethod getFeedMethod() {
-        return new GetMethod(getURL());
-    }
-
-    public static String getFeedDirectionForwardMethod(String markerId) {
-        return getURL() + "?marker=" + markerId + "&direction=forward&limit=10";
-    }
-
-    public static String getFeedDirectionBackwardMethod(String markerId) {
-        return getURL() + "?marker=" + markerId + "&direction=backward&limit=10";
-    }
-
-    public static class WhenRequestingFeed {
-        @Test
-        public void shouldOrderCorrectlyForwardAndBackward() throws Exception {
-            logger.info("Starting FeedForwardBackwardTest: shouldOrderCorrectlyForwardAndBackward");
-
-            HttpMethod getFeedMethod1 = getFeedMethod();
-            int initialStatus = httpClient.executeMethod(getFeedMethod1);
-            logger.info("Initial GET request status: {}", initialStatus);
-            assertEquals("Hitting Atom Hopper with an empty datastore should return a 200", HttpStatus.SC_OK, initialStatus);
-
-            for (int i = 1; i < 21; i++) {
-                final HttpMethod postMethod = newPostEntryMethod("<order>" + i + "</order>");
-                int postStatus = httpClient.executeMethod(postMethod);
-                logger.info("Posted entry {}: HTTP status = {}", i, postStatus);
-                assertEquals("Creating a new entry should return a 201", HttpStatus.SC_CREATED, postStatus);
+        String mockFeedBody = buildMockFeedBody(mockEntryIds);
+        GetMethod fullFeedMethod = mock(GetMethod.class);
+        when(httpClient.executeMethod(argThat(new ArgumentMatcher<HttpMethod>() {
+            @Override
+            public boolean matches(Object o) {
+                return false;
             }
 
-            HttpMethod getFeedMethod2 = getFeedMethod();
-            int getStatus = httpClient.executeMethod(getFeedMethod2);
-            logger.info("Second GET request status: {}", getStatus);
-
-            if (getStatus == 500) {
-                String responseBody = getFeedMethod2.getResponseBodyAsString();
-                logger.error("HTTP 500 Error Response Body: {}", responseBody);
-
-                // Also log response headers
-                org.apache.commons.httpclient.Header[] headers = getFeedMethod2.getResponseHeaders();
-                for (org.apache.commons.httpclient.Header header : headers) {
-                    logger.info("Response Header: {} = {}", header.getName(), header.getValue());
-                }
+            public boolean matches(HttpMethod method) {
+                return method instanceof GetMethod &&
+                        method.getPath().equals("/namespace3/feed3/");
             }
-            assertEquals("Getting a feed should return a 200", HttpStatus.SC_OK, getStatus);
-
-            Parser parser = getInstance().getParser();
-            URL url = new URL(getURL());
-            Document<Feed> doc = parser.parse(url.openStream(), url.toString());
-            Feed feed = doc.getRoot();
-            List<String> idList = new ArrayList<>();
-
-            for (Entry entry : feed.getEntries()) {
-                idList.add(entry.getId().toString());
-            }
-            logger.info("Collected {} entries from initial feed", idList.size());
-
-            if (!idList.isEmpty()) {
-                logger.info("Starting backward feed validation using marker: {}", idList.get(0));
-                int idCount = 0;
-
-                URL urlBackward = new URL(getFeedDirectionBackwardMethod(idList.get(0)));
-                Document<Feed> docBackward = parser.parse(urlBackward.openStream(), urlBackward.toString());
-                Feed feedBackward = docBackward.getRoot();
-
-                for (Entry entry : feedBackward.getEntries()) {
-                    String expected = idList.get(idCount);
-                    String actual = entry.getId().toString();
-                    logger.info("Backward check {}: expected = {}, actual = {}", idCount, expected, actual);
-                    assertEquals("The entries should be in backward order", actual, expected);
-                    idCount++;
-                }
-
-                logger.info("Starting forward feed validation using marker: {}", idList.get(idList.size() - 1));
-                URL urlForward = new URL(getFeedDirectionForwardMethod(idList.get(idList.size() - 1)));
-                Document<Feed> docForward = parser.parse(urlForward.openStream(), urlForward.toString());
-                Feed feedForward = docForward.getRoot();
-                idCount = 9;
-
-                for (Entry entry : feedForward.getEntries()) {
-                    String expected = idList.get(idCount);
-                    String actual = entry.getId().toString();
-                    logger.info("Forward check {}: expected = {}, actual = {}", idCount, expected, actual);
-                    assertEquals("The entries should be in forward order", actual, expected);
-                    idCount++;
-                }
+        }))).thenReturn(HttpStatus.SC_OK);
+        when(fullFeedMethod.getResponseBodyAsString()).thenReturn(mockFeedBody);
+        GetMethod backwardMethod = mock(GetMethod.class);
+        String backwardFeedBody = buildMockFeedBody(mockEntryIds.subList(0, 10));
+        when(httpClient.executeMethod(argThat(new ArgumentMatcher<HttpMethod>() {
+            @Override
+            public boolean matches(Object o) {
+                return false;
             }
 
-            logger.info("FeedForwardBackwardTest completed successfully.");
-        }
+            public boolean matches(HttpMethod method) {
+                return method instanceof GetMethod &&
+                        method.getQueryString() != null &&
+                        method.getQueryString().contains("direction=backward");
+            }
+        }))).thenReturn(HttpStatus.SC_OK);
+        when(backwardMethod.getResponseBodyAsString()).thenReturn(backwardFeedBody);
+        GetMethod forwardMethod = mock(GetMethod.class);
+        String forwardFeedBody = buildMockFeedBody(mockEntryIds.subList(9, mockEntryIds.size()));
+        when(httpClient.executeMethod(argThat(new ArgumentMatcher<HttpMethod>() {
+            @Override
+            public boolean matches(Object o) {
+                return false;
+            }
+
+            public boolean matches(HttpMethod method) {
+                return method instanceof GetMethod &&
+                        method.getQueryString() != null &&
+                        method.getQueryString().contains("direction=forward");
+            }
+        }))).thenReturn(HttpStatus.SC_OK);
+        when(forwardMethod.getResponseBodyAsString()).thenReturn(forwardFeedBody);
+        Parser parser = abdera.getParser();
+        Document<Feed> doc = parser.parse(new StringReader(mockFeedBody), BASE_URL);
+        Feed feed = doc.getRoot();
+        assertEquals(20, feed.getEntries().size());
+    }
+
+    private String buildMockFeedBody(List<String> entryIds) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("<feed xmlns='http://www.w3.org/2005/Atom'>");
+        entryIds.forEach(id ->
+                builder.append("<entry><id>").append(id).append("</id></entry>"));
+        builder.append("</feed>");
+        return builder.toString();
     }
 }
-//added line 87

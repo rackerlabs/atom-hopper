@@ -170,34 +170,24 @@ public class MongodbFeedSource implements FeedSource {
     }
 
     private Entry hydrateEntry(PersistedEntry persistedEntry, Abdera abderaReference) {
-        //final Document<Entry> hydratedEntryDocument = abderaReference.getParser().parse(new StringReader(persistedEntry.getEntryBody()));
-        String entryBody = persistedEntry.getEntryBody();
-        String contentType;
-        if(entryBody.trim().startsWith("{")){
-            contentType = "application/json";
-        }
-        else{
-            contentType = "application/atom+xml";
-        }
-
         if (parser == null) {
-            LOG.error("Making sure parser is injected.");
+            LOG.error("Parser was not injected");
             throw new IllegalStateException("Parser was not injected into MongoDB");
         }
 
-
         final Document<Element> hydratedEntryDocument = parser.parse(
-                new StringReader(entryBody), contentType, parser.getDefaultParserOptions());
+                new StringReader(persistedEntry.getEntryBody()),
+                persistedEntry.getEntryBody().trim().startsWith("{") ? "application/json" : "application/atom+xml",
+                parser.getDefaultParserOptions()
+        );
 
-        Entry entry = null;
-
-        if (hydratedEntryDocument != null) {
-            entry = (Entry) hydratedEntryDocument.getRoot();
-
-            entry.setUpdated(persistedEntry.getDateLastUpdated());
-            entry.setPublished(persistedEntry.getCreationDate());
+        if (hydratedEntryDocument == null) {
+            return null;
         }
 
+        Entry entry = (Entry) hydratedEntryDocument.getRoot();
+        entry.setUpdated(persistedEntry.getDateLastUpdated());
+        entry.setPublished(persistedEntry.getCreationDate());
         return entry;
     }
 

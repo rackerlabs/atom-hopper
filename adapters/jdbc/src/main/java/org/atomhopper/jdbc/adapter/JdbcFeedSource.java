@@ -15,7 +15,6 @@ import org.atomhopper.jdbc.query.SearchToSqlConverter;
 import org.atomhopper.jdbc.query.SearchType;
 import org.atomhopper.jdbc.query.SqlBuilder;
 import org.atomhopper.response.AdapterResponse;
-import org.atomhopper.util.jsonparsingwork.UnifiedParser;
 import org.atomhopper.util.uri.template.EnumKeyedTemplateParameters;
 import org.atomhopper.util.uri.template.URITemplate;
 import org.joda.time.DateTime;
@@ -355,40 +354,28 @@ public class JdbcFeedSource implements FeedSource, InitializingBean {
         return hydratedFeed;
     }
 
-    private Entry hydrateEntry(PersistedEntry persistedEntry, Abdera abderaReference) {
-
-//        final Document<Entry> hydratedEntryDocument = abderaReference.getParser().parse(
-//              new StringReader( persistedEntry.getEntryBody() ) );
-        String entryBody = persistedEntry.getEntryBody();
-        String contentType;
-        if(entryBody.trim().startsWith("{")){
-            contentType = "application/json";
-        }
-        else{
-            contentType = "application/atom+xml";
-        }
-
+    private Entry hydrateEntry(PersistedEntry persistedEntry, Abdera abderaReference, String contentType) {
         if (parser == null) {
             LOG.error("Making sure parser is injected.");
             throw new IllegalStateException("Parser was not injected into JdbcFeedSource");
         }
-
-
         final Document<Element> hydratedEntryDocument = parser.parse(
-                new StringReader(entryBody), contentType, parser.getDefaultParserOptions());
+                new StringReader(persistedEntry.getEntryBody()),
+                contentType,
+                parser.getDefaultParserOptions());
 
         Entry entry = null;
-
         if (hydratedEntryDocument != null) {
-            entry = (Entry)hydratedEntryDocument.getRoot();
+            entry = (Entry) hydratedEntryDocument.getRoot();
             entry.setUpdated(persistedEntry.getDateLastUpdated());
             entry.setPublished(persistedEntry.getCreationDate());
         }
-
         return entry;
     }
 
-
+    private Entry hydrateEntry(PersistedEntry persistedEntry, Abdera abderaReference) {
+        return hydrateEntry(persistedEntry, abderaReference, "application/atom+xml");
+    }
 
     @Override
     public AdapterResponse<Entry> getEntry(GetEntryRequest getEntryRequest) {

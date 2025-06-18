@@ -11,12 +11,12 @@ public class JsonToPojo{
 
     public static final ObjectMapper mapper = new ObjectMapper();
 //taking the inputStream and generating instance of EntryJSON
-    public static EntryJsonPOJO.Root fromInputStream(InputStream in) throws IOException{
-        return mapper.readValue(in, EntryJsonPOJO.Root.class);
+    public static EntryJsonPOJO fromInputStream(InputStream in) throws IOException{
+        return mapper.readValue(in, EntryJsonPOJO.class);
     }
 //converting reader to POJO
-    public static EntryJsonPOJO.Root fromReader(Reader reader) throws IOException{
-        return mapper.readValue(reader, EntryJsonPOJO.Root.class);
+    public static EntryJsonPOJO fromReader(Reader reader) throws IOException{
+        return mapper.readValue(reader, EntryJsonPOJO.class);
     }
 
 }

@@ -31,7 +31,7 @@ public JsonAtomParser() {
     }
 
 
-    private <T extends Element> Document<T> parseJsonToDocument(EntryJsonPOJO.Root entryPojo) throws ParseException {
+    private <T extends Element> Document<T> parseJsonToDocument(EntryJsonPOJO entryPojo) throws ParseException {
         try {
             // Convert JSON POJO directly to Abdera Entry
             Entry entry = AbderaEntryBuilder.EntryBuiderMethod(entryPojo);
@@ -55,7 +55,7 @@ public JsonAtomParser() {
 
         try {
             // JSON InputStream -> POJO -> Document
-            EntryJsonPOJO.Root entryPojo = JsonToPojo.fromInputStream(in);
+            EntryJsonPOJO entryPojo = JsonToPojo.fromInputStream(in);
             LOG.debug("Successfully parsed JSON to POJO");
             return parseJsonToDocument(entryPojo);
         } catch (IOException e) {
@@ -77,7 +77,7 @@ public JsonAtomParser() {
         try {
             // JSON Reader -> POJO -> Document
             LOG.debug("Parsing JSON from Reader");
-            EntryJsonPOJO.Root entryPojo = JsonToPojo.fromReader(reader);
+            EntryJsonPOJO entryPojo = JsonToPojo.fromReader(reader);
             LOG.debug("Successfully parsed JSON to POJO from Reader");
             return parseJsonToDocument(entryPojo);
         } catch (IOException e) {
