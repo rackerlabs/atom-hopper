@@ -10,7 +10,7 @@ import java.util.List;
 
 public abstract class AbderaEntryBuilder{
 
-    public static Entry EntryBuiderMethod(EntryJsonPOJO root) {
+    public static Entry EntryBuiderMethod(EntryJsonPOJO entryJsonPOJO) {
         Abdera abderaObj = new Abdera();
         Factory factory = abderaObj.getFactory();
         Entry entryObj = factory.newEntry();
@@ -18,14 +18,14 @@ public abstract class AbderaEntryBuilder{
         entryObj.declareNS("http://www.w3.org/2005/Atom", "atom");
         entryObj.declareNS("http://www.w3.org/2001/XMLSchema", "xsd");
 
-        entryObj.setTitle(root.getEntry().getTitle());
-        entryObj.setId("urn:uuid:" + root.getEntry().getContent().getEvent().getId());
+        entryObj.setTitle(entryJsonPOJO.getEntry().getTitle());
+        entryObj.setId("urn:uuid:" + entryJsonPOJO.getEntry().getContent().getEvent().getId());
         //entryObj.setUpdated(root.getEntry().getUpdated());
         //entryObj.setPublished(root.getEntry().getPublished());
 
         //handling the categories
-        List<EntryJsonPOJO.CategoryJSON> jsonCategories = root.getEntry().getCategories();
-        List<Category> abdera_entry_categories = CategoryUtils.collectAllCategories(jsonCategories, root.getEntry().getContent().getEvent());
+        List<EntryJsonPOJO.CategoryJSON> jsonCategories = entryJsonPOJO.getEntry().getCategories();
+        List<Category> abdera_entry_categories = CategoryUtils.collectAllCategories(jsonCategories, entryJsonPOJO.getEntry().getContent().getEvent());
         for(Category category: abdera_entry_categories){
             entryObj.addCategory(category);
         }
@@ -35,7 +35,7 @@ public abstract class AbderaEntryBuilder{
         content.setContentType(Content.Type.XML);
 
         //making Event node
-        EntryJsonPOJO.Event event_data = root.getEntry().getContent().getEvent();
+        EntryJsonPOJO.Event event_data = entryJsonPOJO.getEntry().getContent().getEvent();
         Element event = factory.newElement(new QName("http://docs.rackspace.com/core/event", "event"));
         if (event_data.getId() != null) event.setAttributeValue("id", event_data.getId());
         if (event_data.getVersion() != null) event.setAttributeValue("version", event_data.getVersion());

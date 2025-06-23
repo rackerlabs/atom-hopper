@@ -12,7 +12,11 @@ import com.unboundid.ldap.sdk.LDAPException;
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.TimerContext;
 import org.apache.abdera.Abdera;
-import org.apache.abdera.model.*;
+import org.apache.abdera.model.Entry;
+import org.apache.abdera.model.Feed;
+import org.apache.abdera.model.Link;
+import org.apache.abdera.model.Element;
+import org.apache.abdera.model.Document;
 import org.apache.abdera.parser.Parser;
 import org.apache.commons.lang.StringUtils;
 import org.atomhopper.adapter.*;
@@ -869,19 +873,10 @@ public class DynamoDBFeedSource implements FeedSource {
 
 
     private Entry hydrateEntry(PersistedEntry persistedEntry, Abdera abderaReference) {
+        return hydrateEntry(persistedEntry, abderaReference, "application/atom+xml");
+    }
 
-//        final Document<Entry> hydratedEntryDocument = abderaReference.getParser().parse(
-//                new StringReader(persistedEntry.getEntryBody()));
-
-        String entryBody = persistedEntry.getEntryBody();
-        String contentType;
-        if(entryBody.trim().startsWith("{")){
-            contentType = "application/json";
-        }
-        else{
-            contentType = "application/atom+xml";
-        }
-
+    private Entry hydrateEntry(PersistedEntry persistedEntry, Abdera abderaReference, String contentTypeHeader) {
         if (parser == null) {
             LOG.error("Making sure parser is injected.");
             throw new IllegalStateException("Parser was not injected into DynamoDB");
@@ -889,7 +884,9 @@ public class DynamoDBFeedSource implements FeedSource {
 
 
         final Document<Element> hydratedEntryDocument = parser.parse(
-                new StringReader(entryBody), contentType, parser.getDefaultParserOptions());
+                new StringReader(persistedEntry.getEntryBody()),
+                contentTypeHeader,
+                parser.getDefaultParserOptions());
 
         Entry entry = null;
 

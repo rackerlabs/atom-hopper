@@ -28,6 +28,8 @@ import org.junit.runner.RunWith;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
+
+import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 
 
@@ -55,6 +57,7 @@ public class HibernateFeedSourceTest {
 
         @Before
         public void setUp() throws Exception {
+            MockitoAnnotations.initMocks(this);
             hibernateFeedSource = new HibernateFeedSource();
             hibernateFeedSource.setArchiveUrl( new URL( ARCHIVE_LINK ) );
             // Mocks
@@ -75,10 +78,10 @@ public class HibernateFeedSourceTest {
             persistedEntry.setEntryId(ID);
             persistedEntry.setEntryBody(ENTRY_BODY);
 
-            Parser parser = new Abdera().getParser();
+            Parser parser = new Abdera().getParserFactory().getParser();
             UnifiedParserFactory parserFactory = mock(UnifiedParserFactory.class);
             when(parserFactory.getParser()).thenReturn(parser);
-            hibernateFeedSource.setParserFactory(parserFactory);
+            hibernateFeedSource.setParser(parser);
         }
 
         @Test(expected = UnsupportedOperationException.class)

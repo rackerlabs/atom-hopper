@@ -1,7 +1,11 @@
 package org.atomhopper.postgres.adapter;
 
 import org.apache.abdera.Abdera;
-import org.apache.abdera.model.*;
+import org.apache.abdera.model.Entry;
+import org.apache.abdera.model.Feed;
+import org.apache.abdera.model.Link;
+import org.apache.abdera.model.Element;
+import org.apache.abdera.model.Document;
 import org.apache.abdera.parser.Parser;
 import org.apache.commons.lang.StringUtils;
 import org.atomhopper.adapter.FeedInformation;

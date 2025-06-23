@@ -13,9 +13,10 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.InputStream;
 import java.io.Reader;
 import java.nio.channels.ReadableByteChannel;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Component
 public class UnifiedParser implements Parser {
@@ -37,12 +38,33 @@ public class UnifiedParser implements Parser {
         LOG.info("UnifiedParser is initialized with XMLParser: {}", xmlParser.getClass().getSimpleName());
     }
 
+    private static final Set<String> JSON_TYPES = Collections.unmodifiableSet(
+            new HashSet<>(Arrays.asList(
+                    ContentType.APPLICATION_JSON.getValue(),
+                    ContentType.TEXT_JSON.getValue(),
+                    ContentType.VENDOR_JSON.getValue()
+            ))
+    );
+
+    private static final Set<String> XML_TYPES = Collections.unmodifiableSet(
+            new HashSet<>(Arrays.asList(
+                    ContentType.APPLICATION_XML.getValue(),
+                    ContentType.TEXT_XML.getValue(),
+                    ContentType.APPLICATION_ATOM_XML.getValue()
+            ))
+    );
     private boolean isJsonContent(String contentType) {
-        return ContentType.isJson(contentType);
+        if (contentType == null) return false;
+        String normalized = contentType.toLowerCase().trim();
+        return JSON_TYPES.stream().anyMatch(normalized::contains)
+                || normalized.contains("+json");
     }
 
     private boolean isXmlContent(String contentType) {
-        return ContentType.isXml(contentType);
+        if (contentType == null) return false;
+        String normalized = contentType.toLowerCase().trim();
+        return XML_TYPES.stream().anyMatch(normalized::contains)
+                || normalized.contains("+xml");
     }
 
     private void validateContentType(String contentType) {
@@ -51,7 +73,7 @@ public class UnifiedParser implements Parser {
             throw new IllegalArgumentException("Content-Type header is required");
         }
 
-        if (!ContentType.isJson(contentType) && !ContentType.isXml(contentType)) {
+        if (!isJsonContent(contentType) && !isXmlContent(contentType)) {
             LOG.error("Unsupported Content-Type: {}", contentType);
             throw new IllegalArgumentException("Unsupported Content-Type: " + contentType);
         }
@@ -152,7 +174,7 @@ public class UnifiedParser implements Parser {
         }
 
         try {
-            if (ContentType.isJson(contentType)) {
+            if (isJsonContent(contentType)) {
                 LOG.debug("Routing to JSON parser for Content-Type: {}", contentType);
                 return jsonParser.parse(in, getDefaultParserOptions());
             } else {

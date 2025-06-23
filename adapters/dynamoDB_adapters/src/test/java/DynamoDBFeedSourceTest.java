@@ -92,7 +92,7 @@ public class DynamoDBFeedSourceTest {
 
         dynamoDBFeedSource.setArchiveUrl(new URL(ARCHIVE_LINK));
 
-        Parser parser = new Abdera().getParser();
+        Parser parser = Abdera.getNewParserFactory().getParser();
         dynamoDBFeedSource.setParser(parser);
 
 
