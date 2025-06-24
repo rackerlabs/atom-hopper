@@ -187,8 +187,8 @@ public class HibernateFeedSource implements FeedSource {
 
     private Entry hydrateEntry(PersistedEntry persistedEntry, Abdera abderaReference, String contentTypeHeader) {
         if (parser == null) {
-            LOG.error("Making sure parser is injected.");
-            throw new IllegalStateException("Parser was not injected into DynamoDB");
+            LOG.error("Failed to initialize HibernateFeedSource: parser dependency was not injected.");
+            throw new IllegalStateException("Parser was not injected into HibernateFeedSource");
         }
 
 

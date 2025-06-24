@@ -15,8 +15,8 @@ import java.io.Reader;
 import java.nio.channels.ReadableByteChannel;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class UnifiedParser implements Parser {
@@ -39,32 +39,37 @@ public class UnifiedParser implements Parser {
     }
 
     private static final Set<String> JSON_TYPES = Collections.unmodifiableSet(
-            new HashSet<>(Arrays.asList(
-                    ContentType.APPLICATION_JSON.getValue(),
-                    ContentType.TEXT_JSON.getValue(),
-                    ContentType.VENDOR_JSON.getValue()
-            ))
+            Arrays.stream(ContentType.values())
+                    .filter(c -> c.getCategory() == ContentType.Category.JSON)
+                    .map(ContentType::getValue)
+                    .collect(Collectors.toSet())
     );
 
     private static final Set<String> XML_TYPES = Collections.unmodifiableSet(
-            new HashSet<>(Arrays.asList(
-                    ContentType.APPLICATION_XML.getValue(),
-                    ContentType.TEXT_XML.getValue(),
-                    ContentType.APPLICATION_ATOM_XML.getValue()
-            ))
-    );
+            Arrays.stream(ContentType.values())
+                    .filter(c -> c.getCategory() == ContentType.Category.XML)
+                    .map(ContentType::getValue)
+                    .collect(Collectors.toSet()));
+
+    private static String normalizeContentType(String contentType) {
+        // Strip off any parameters like "; charset=UTF-8"
+        int semicolonIndex = contentType.indexOf(';');
+        if (semicolonIndex != -1) {
+            contentType = contentType.substring(0, semicolonIndex);
+        }
+        return contentType.trim().toLowerCase();
+    }
+
     private boolean isJsonContent(String contentType) {
         if (contentType == null) return false;
-        String normalized = contentType.toLowerCase().trim();
-        return JSON_TYPES.stream().anyMatch(normalized::contains)
-                || normalized.contains("+json");
+        String normalized = normalizeContentType(contentType);
+        return JSON_TYPES.contains(normalized) || normalized.endsWith("+json");
     }
 
     private boolean isXmlContent(String contentType) {
         if (contentType == null) return false;
-        String normalized = contentType.toLowerCase().trim();
-        return XML_TYPES.stream().anyMatch(normalized::contains)
-                || normalized.contains("+xml");
+        String normalized = normalizeContentType(contentType);
+        return XML_TYPES.contains(normalized) || normalized.endsWith("+xml");
     }
 
     private void validateContentType(String contentType) {
