@@ -14,9 +14,6 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.nio.channels.ReadableByteChannel;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Component
 public class UnifiedParser implements Parser {
@@ -38,19 +35,6 @@ public class UnifiedParser implements Parser {
         LOG.info("UnifiedParser is initialized with XMLParser: {}", xmlParser.getClass().getSimpleName());
     }
 
-    private static final Set<String> JSON_TYPES = Collections.unmodifiableSet(
-            Arrays.stream(ContentType.values())
-                    .filter(c -> c.getCategory() == ContentType.Category.JSON)
-                    .map(ContentType::getValue)
-                    .collect(Collectors.toSet())
-    );
-
-    private static final Set<String> XML_TYPES = Collections.unmodifiableSet(
-            Arrays.stream(ContentType.values())
-                    .filter(c -> c.getCategory() == ContentType.Category.XML)
-                    .map(ContentType::getValue)
-                    .collect(Collectors.toSet()));
-
     private static String normalizeContentType(String contentType) {
         // Strip off any parameters like "; charset=UTF-8"
         int semicolonIndex = contentType.indexOf(';');
@@ -63,13 +47,21 @@ public class UnifiedParser implements Parser {
     private boolean isJsonContent(String contentType) {
         if (contentType == null) return false;
         String normalized = normalizeContentType(contentType);
-        return JSON_TYPES.contains(normalized) || normalized.endsWith("+json");
+        boolean isKnownJsonType = Arrays.stream(ContentType.values())
+                .filter(ContentType::isJson)
+                .anyMatch(ct -> ct.getValue().equalsIgnoreCase(normalized));
+        boolean isVendorJsonType = normalized.endsWith("+json");
+        return isKnownJsonType || isVendorJsonType;
     }
 
     private boolean isXmlContent(String contentType) {
         if (contentType == null) return false;
         String normalized = normalizeContentType(contentType);
-        return XML_TYPES.contains(normalized) || normalized.endsWith("+xml");
+        boolean isKnownXmlType = Arrays.stream(ContentType.values())
+                .filter(ContentType::isXml)
+                .anyMatch(ct -> ct.getValue().equalsIgnoreCase(normalized));
+        boolean isVendorXmlType = normalized.endsWith("+xml");
+        return isKnownXmlType || isVendorXmlType;
     }
 
     private void validateContentType(String contentType) {

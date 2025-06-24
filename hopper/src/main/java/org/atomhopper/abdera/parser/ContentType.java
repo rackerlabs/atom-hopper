@@ -1,33 +1,37 @@
 package org.atomhopper.abdera.parser;
 
 public enum ContentType {
-    APPLICATION_JSON("application/json", Category.JSON),
-    TEXT_JSON("text/json", Category.JSON),
-    VENDOR_JSON("application/vnd.api+json", Category.JSON),
-    RACKSPACE_VENDOR_JSON("application/vnd.rackspace.atom+json", Category.JSON),
+    // JSON types
+    APPLICATION_JSON("application/json", Type.JSON),
+    TEXT_JSON("text/json", Type.JSON),
+    VENDOR_JSON("application/vnd.api+json", Type.JSON),
+    RACKSPACE_VENDOR_JSON("application/vnd.rackspace.atom+json", Type.JSON),
 
-    APPLICATION_XML("application/xml", Category.XML),
-    TEXT_XML("text/xml", Category.XML),
-    APPLICATION_ATOM_XML("application/atom+xml", Category.XML);
+    // XML types
+    APPLICATION_XML("application/xml", Type.XML),
+    TEXT_XML("text/xml", Type.XML),
+    APPLICATION_ATOM_XML("application/atom+xml", Type.XML);
 
     private final String value;
-    private final Category category;
+    private final Type type;
 
-    ContentType(String value, Category category) {
+    private enum Type { JSON, XML }
+
+    ContentType(String value, Type type) {
         this.value = value;
-        this.category = category;
+        this.type = type;
     }
 
     public String getValue() {
         return value;
     }
 
-    public Category getCategory() {
-        return category;
+    public boolean isJson() {
+        return type == Type.JSON;
     }
 
-    public enum Category {
-        JSON, XML
+    public boolean isXml() {
+        return type == Type.XML;
     }
 }
 
