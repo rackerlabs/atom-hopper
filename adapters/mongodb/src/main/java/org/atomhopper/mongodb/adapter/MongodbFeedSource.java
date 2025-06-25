@@ -5,13 +5,14 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.*;
+
+
 import org.apache.abdera.Abdera;
 import static org.apache.abdera.i18n.text.UrlEncoding.decode;
 import static org.apache.abdera.i18n.text.UrlEncoding.encode;
-import org.apache.abdera.model.Document;
-import org.apache.abdera.model.Entry;
-import org.apache.abdera.model.Feed;
-import org.apache.abdera.model.Link;
+
+import org.apache.abdera.model.*;
+import org.apache.abdera.parser.Parser;
 import org.apache.commons.lang.StringUtils;
 import org.atomhopper.adapter.FeedInformation;
 import org.atomhopper.adapter.FeedSource;
@@ -29,6 +30,9 @@ import org.atomhopper.mongodb.query.SimpleCategoryCriteriaGenerator;
 import org.atomhopper.response.AdapterResponse;
 import org.atomhopper.util.uri.template.EnumKeyedTemplateParameters;
 import org.atomhopper.util.uri.template.URITemplate;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Order;
@@ -36,12 +40,21 @@ import org.springframework.data.mongodb.core.query.Query;
 
 public class MongodbFeedSource implements FeedSource {
 
+    static Logger LOG = (Logger) LoggerFactory.getLogger(MongodbFeedSource.class );
+
     private static final int PAGE_SIZE = 25;
     private static final String DATE_LAST_UPDATED = "dateLastUpdated";
     private static final String FEED = "feed";
     private static final String ID = "_id";
     private MongoTemplate mongoTemplate;
     private AdapterHelper helper = new AdapterHelper();
+
+    @Autowired
+    private Parser parser;
+
+    public void setParser(Parser parser){
+        this.parser = parser;
+    }
 
     public void setMongoTemplate(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
@@ -157,16 +170,24 @@ public class MongodbFeedSource implements FeedSource {
     }
 
     private Entry hydrateEntry(PersistedEntry persistedEntry, Abdera abderaReference) {
-        final Document<Entry> hydratedEntryDocument = abderaReference.getParser().parse(new StringReader(persistedEntry.getEntryBody()));
-        Entry entry = null;
-
-        if (hydratedEntryDocument != null) {
-            entry = hydratedEntryDocument.getRoot();
-
-            entry.setUpdated(persistedEntry.getDateLastUpdated());
-            entry.setPublished(persistedEntry.getCreationDate());
+        if (parser == null) {
+            LOG.error("Parser was not injected");
+            throw new IllegalStateException("Parser was not injected into MongoDB");
         }
 
+        final Document<Element> hydratedEntryDocument = parser.parse(
+                new StringReader(persistedEntry.getEntryBody()),
+                persistedEntry.getEntryBody().trim().startsWith("{") ? "application/json" : "application/atom+xml",
+                parser.getDefaultParserOptions()
+        );
+
+        if (hydratedEntryDocument == null) {
+            return null;
+        }
+
+        Entry entry = (Entry) hydratedEntryDocument.getRoot();
+        entry.setUpdated(persistedEntry.getDateLastUpdated());
+        entry.setPublished(persistedEntry.getCreationDate());
         return entry;
     }
 

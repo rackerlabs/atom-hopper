@@ -8,6 +8,7 @@ import org.apache.abdera.Abdera;
 import org.apache.abdera.i18n.iri.IRI;
 import org.apache.abdera.model.Element;
 import org.apache.abdera.model.Feed;
+import org.apache.abdera.parser.Parser;
 import org.atomhopper.adapter.AdapterHelper;
 import org.atomhopper.adapter.jpa.PersistedEntry;
 import org.atomhopper.adapter.jpa.PersistedFeed;
@@ -17,6 +18,7 @@ import org.atomhopper.dbal.FeedRepository;
 import org.atomhopper.dbal.PageDirection;
 import org.atomhopper.hibernate.query.CategoryCriteriaGenerator;
 import org.atomhopper.hibernate.query.SimpleCategoryCriteriaGenerator;
+import org.atomhopper.abdera.parser.UnifiedParserFactory;
 import org.hibernate.Criteria;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,6 +28,8 @@ import org.junit.runner.RunWith;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
+
+import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 
 
@@ -53,6 +57,7 @@ public class HibernateFeedSourceTest {
 
         @Before
         public void setUp() throws Exception {
+            MockitoAnnotations.initMocks(this);
             hibernateFeedSource = new HibernateFeedSource();
             hibernateFeedSource.setArchiveUrl( new URL( ARCHIVE_LINK ) );
             // Mocks
@@ -72,6 +77,11 @@ public class HibernateFeedSourceTest {
             persistedEntry.setFeed(persistedFeed);
             persistedEntry.setEntryId(ID);
             persistedEntry.setEntryBody(ENTRY_BODY);
+
+            Parser parser = new Abdera().getParserFactory().getParser();
+            UnifiedParserFactory parserFactory = mock(UnifiedParserFactory.class);
+            when(parserFactory.getParser()).thenReturn(parser);
+            hibernateFeedSource.setParser(parser);
         }
 
         @Test(expected = UnsupportedOperationException.class)

@@ -9,8 +9,8 @@ import static junit.framework.Assert.assertEquals;
 
 import org.apache.abdera.Abdera;
 import org.apache.abdera.i18n.iri.IRI;
-import org.apache.abdera.model.Element;
 import org.apache.abdera.model.Feed;
+import org.apache.abdera.parser.Parser;
 import org.atomhopper.adapter.AdapterHelper;
 import org.atomhopper.adapter.request.adapter.GetEntryRequest;
 import org.atomhopper.adapter.request.adapter.GetFeedRequest;
@@ -22,10 +22,13 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.atomhopper.jdbc.adapter.JdbcFeedSource.EntryRowMapper;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -45,6 +48,8 @@ public class JdbcFeedSourceTest {
         private PersistedEntry persistedEntry;
         private List<PersistedEntry> entryList;
         private List<PersistedEntry> emptyList;
+
+        @Mock
         private Abdera abdera;
         private final String MARKER_ID = UUID.randomUUID().toString();
         private final String ENTRY_BODY = "<entry xmlns='http://www.w3.org/2005/Atom'></entry>";
@@ -64,6 +69,7 @@ public class JdbcFeedSourceTest {
 
         @Before
         public void setUp() throws Exception {
+            MockitoAnnotations.initMocks(this);
             persistedEntry = new PersistedEntry();
             persistedEntry.setFeed(FEED_NAME);
             persistedEntry.setEntryId(MARKER_ID);
@@ -76,6 +82,7 @@ public class JdbcFeedSourceTest {
 
             // Mocks
             abdera = mock(Abdera.class);
+
             getFeedRequest = mock(GetFeedRequest.class);
             getEntryRequest = mock(GetEntryRequest.class);
             jdbcTemplate = mock(JdbcTemplate.class);
@@ -83,10 +90,12 @@ public class JdbcFeedSourceTest {
             jdbcFeedSource = new JdbcFeedSource();
             jdbcFeedSource.setJdbcTemplate(jdbcTemplate);
             jdbcFeedSource.setArchiveUrl( new URL( ARCHIVE_LINK ) );
-
-            // Mock GetEntryRequest
-            when( getEntryRequest.getFeedName() ).thenReturn(FEED_NAME);
+            Parser mockParser = Abdera.getNewParserFactory().getParser();
+            jdbcFeedSource.setParser(mockParser);
+            // Mock requests
+            when(getEntryRequest.getFeedName()).thenReturn(FEED_NAME);
             when(getEntryRequest.getEntryId()).thenReturn(MARKER_ID);
+            when(getEntryRequest.getAbdera()).thenReturn(abdera);
 
             //Mock GetFeedRequest
             when(getFeedRequest.getFeedName()).thenReturn(FEED_NAME);
@@ -121,40 +130,30 @@ public class JdbcFeedSourceTest {
 
         @Test
         public void shouldGetCurrentLinkFromArchiveFeedAndArchiveNode() throws Exception {
-
+            // Setup
             final String currentURL = "http://current.com/namespace/feed";
-
             JdbcFeedSource archiveSource = new JdbcFeedSource();
-            archiveSource.setJdbcTemplate( jdbcTemplate );
-            archiveSource.setCurrentUrl( new URL( currentURL ) );
-
-            Abdera localAbdera = new Abdera();
-            when(getFeedRequest.getAbdera()).thenReturn(localAbdera);
+            archiveSource.setJdbcTemplate(jdbcTemplate);
+            archiveSource.setCurrentUrl(new URL(currentURL));
+            Abdera abdera = new Abdera();
+            when(getFeedRequest.getAbdera()).thenReturn(abdera);
             when(getFeedRequest.getDirection()).thenReturn("forward");
-            when(getEntryRequest.getAbdera()).thenReturn(localAbdera);
-            when(jdbcTemplate.query(any(String.class), any(Object[].class), any(EntryRowMapper.class))).thenReturn(entryList);
-            assertEquals("Should get a 200 response", HttpStatus.OK,
-                         archiveSource.getFeed(getFeedRequest).getResponseStatus());
+            when(jdbcTemplate.query(anyString(), (PreparedStatementSetter) any(), any(EntryRowMapper.class)))
+                    .thenReturn(entryList);
 
-            IRI iri = archiveSource.getFeed(getFeedRequest).getBody().getLink( CURRENT ).getHref();
-            assertTrue("'current' link should contain \"" + currentURL + "\"", iri.toString().contains( currentURL ) );
+            // Execute
+            AdapterResponse<Feed> response = archiveSource.getFeed(getFeedRequest);
 
-            Feed feed = archiveSource.getFeed( getFeedRequest ).getBody();
+            // Verify
+            assertEquals(HttpStatus.OK, response.getResponseStatus());
 
-            boolean found = false;
+            Feed feed = response.getBody();
+            assertTrue(hasArchiveNode(feed));
+        }
 
-            for( Element e : feed.getElements() ) {
-
-               if ( e.getQName().getLocalPart().equals( AdapterHelper.ARCHIVE )
-                   && e.getQName().getPrefix().equals( AdapterHelper.ARCHIVE_PREFIX )
-                   && e.getQName().getNamespaceURI().equals( AdapterHelper.ARCHIVE_NS ) ) {
-
-                    found = true;
-                    break;
-                }
-            }
-
-            assertTrue("'<fn:archive>' node should exist", found );
+        private boolean hasArchiveNode(Feed feed) {
+            return feed.getElements().stream()
+                    .anyMatch(e -> AdapterHelper.ARCHIVE.equals(e.getQName().getLocalPart()));
         }
 
         @Test

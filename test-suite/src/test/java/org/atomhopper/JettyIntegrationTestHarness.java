@@ -17,8 +17,29 @@ public class JettyIntegrationTestHarness {
 
     @BeforeClass
     public static void startServer() throws Exception {
-        serverInstance = new AtomHopperJettyServerBuilder(getPort()).newServer();
-        serverInstance.start();
+        System.out.println("=== STARTING SERVER ON PORT " + getPort() + " ===");
+
+        java.net.URL atomServerConfig = JettyIntegrationTestHarness.class.getResource("/META-INF/atom-server.cfg.xml");
+        java.net.URL appContextConfig = JettyIntegrationTestHarness.class.getResource("/META-INF/application-context.xml");
+
+        System.out.println("atom-server.cfg.xml found: " + (atomServerConfig != null));
+        System.out.println("application-context.xml found: " + (appContextConfig != null));
+
+        try {
+            serverInstance = new AtomHopperJettyServerBuilder(getPort()).newServer();
+            System.out.println("=== SERVER INSTANCE CREATED ===");
+            serverInstance.start();
+            System.out.println("=== SERVER STARTED SUCCESSFULLY ===");
+
+            System.out.println("Server is running: " + serverInstance.isRunning());
+            System.out.println("Server is started: " + serverInstance.isStarted());
+
+
+        } catch (Exception e) {
+            System.err.println("=== SERVER STARTUP FAILED ===");
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     @AfterClass
@@ -32,3 +53,6 @@ public class JettyIntegrationTestHarness {
         return 24156;
     }
 }
+
+// added line 20 , try and catch block sop lines
+//line 34 and 38

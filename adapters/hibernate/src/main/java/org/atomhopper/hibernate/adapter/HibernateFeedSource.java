@@ -9,11 +9,14 @@ import java.util.Map;
 import java.util.UUID;
 import org.apache.abdera.Abdera;
 import static org.apache.abdera.i18n.text.UrlEncoding.decode;
-import static org.apache.abdera.i18n.text.UrlEncoding.encode;
-import org.apache.abdera.model.Document;
-import org.apache.abdera.model.Entry;
+
+
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.model.Link;
+import org.apache.abdera.model.Element;
+import org.apache.abdera.model.Entry;
+import org.apache.abdera.model.Document;
+import org.apache.abdera.parser.Parser;
 import org.apache.commons.lang.StringUtils;
 import org.atomhopper.adapter.FeedInformation;
 import org.atomhopper.adapter.FeedSource;
@@ -28,14 +31,36 @@ import org.atomhopper.dbal.FeedRepository;
 import org.atomhopper.dbal.PageDirection;
 import org.atomhopper.hibernate.query.SimpleCategoryCriteriaGenerator;
 import org.atomhopper.response.AdapterResponse;
+import  org.atomhopper.abdera.parser.UnifiedParserFactory;
 import org.atomhopper.util.uri.template.EnumKeyedTemplateParameters;
 import org.atomhopper.util.uri.template.URITemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class HibernateFeedSource implements FeedSource {
 
     private static final int PAGE_SIZE = 25;
     private FeedRepository feedRepository;
     private AdapterHelper helper = new AdapterHelper();
+
+    @Autowired
+    private Parser parser;
+
+    static Logger LOG = LoggerFactory.getLogger(
+            HibernateFeedSource.class
+    );
+
+    public void setParser(Parser parser){
+        this.parser = parser;
+    }
+
+    private UnifiedParserFactory parserFactory;
+
+    public void setParserFactory(UnifiedParserFactory parserFactory){
+        this.parserFactory = parserFactory;
+    }
+
 
     public void setFeedRepository(FeedRepository feedRepository) {
         this.feedRepository = feedRepository;
@@ -157,11 +182,25 @@ public class HibernateFeedSource implements FeedSource {
     }
 
     private Entry hydrateEntry(PersistedEntry persistedEntry, Abdera abderaReference) {
-        final Document<Entry> hydratedEntryDocument = abderaReference.getParser().parse(new StringReader(persistedEntry.getEntryBody()));
+        return hydrateEntry(persistedEntry, abderaReference, "application/atom+xml");
+    }
+
+    private Entry hydrateEntry(PersistedEntry persistedEntry, Abdera abderaReference, String contentTypeHeader) {
+        if (parser == null) {
+            LOG.error("Failed to initialize HibernateFeedSource: parser dependency was not injected.");
+            throw new IllegalStateException("Parser was not injected into HibernateFeedSource");
+        }
+
+
+        final Document<Element> hydratedEntryDocument = parser.parse(
+                new StringReader(persistedEntry.getEntryBody()),
+                contentTypeHeader,
+                parser.getDefaultParserOptions());
+
         Entry entry = null;
 
         if (hydratedEntryDocument != null) {
-            entry = hydratedEntryDocument.getRoot();
+            entry = (Entry) hydratedEntryDocument.getRoot();
 
             entry.setUpdated(persistedEntry.getDateLastUpdated());
             entry.setPublished(persistedEntry.getCreationDate());

@@ -19,6 +19,18 @@ public class AtomHopperVersionServlet extends HttpServlet {
     private static final Logger LOG = LoggerFactory.getLogger(AtomHopperVersionServlet.class);
     private static final String POM_PROPERTIES_LOCATION = "META-INF/maven/org.atomhopper/atomhopper/pom.properties";
 
+//    private Properties loadProperties() {
+//        Properties properties = new Properties();
+//        try {
+//            InputStream inStream = getServletContext().getResourceAsStream("/" + POM_PROPERTIES_LOCATION);
+//            properties.load(inStream);
+//            inStream.close();
+//        } catch (Exception e){
+//            LOG.error("Unable to load pom.properties", e);
+//        }
+//        return properties;
+//    }
+
     private Properties loadProperties() {
         Properties properties = new Properties();
         try {
@@ -30,6 +42,7 @@ public class AtomHopperVersionServlet extends HttpServlet {
         }
         return properties;
     }
+
 
     private Properties getProperties(){
         return loadProperties();

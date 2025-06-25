@@ -19,6 +19,7 @@ public class MigrationFeedSource implements FeedSource {
     private FeedSource newFeedSource;
     private MigrationReadFrom readFrom;
 
+
     public void setOldFeedSource(FeedSource oldFeedSource) {
         this.oldFeedSource = oldFeedSource;
     }

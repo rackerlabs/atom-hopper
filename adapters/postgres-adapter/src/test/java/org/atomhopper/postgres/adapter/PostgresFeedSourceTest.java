@@ -11,6 +11,7 @@ import org.apache.abdera.Abdera;
 import org.apache.abdera.i18n.iri.IRI;
 import org.apache.abdera.model.Element;
 import org.apache.abdera.model.Feed;
+import org.apache.abdera.parser.Parser;
 import org.atomhopper.adapter.AdapterHelper;
 import org.atomhopper.adapter.request.adapter.GetEntryRequest;
 import org.atomhopper.adapter.request.adapter.GetFeedRequest;
@@ -80,6 +81,9 @@ public class PostgresFeedSourceTest {
             // Mock GetEntryRequest
             when(getEntryRequest.getFeedName()).thenReturn(FEED_NAME);
             when(getEntryRequest.getEntryId()).thenReturn(MARKER_ID);
+
+            Parser parser = new Abdera().getParser();
+            postgresFeedSource.setParser(parser);
 
             //Mock GetFeedRequest
             when(getFeedRequest.getFeedName()).thenReturn(FEED_NAME);
@@ -288,6 +292,9 @@ public class PostgresFeedSourceTest {
             PostgresFeedSource archiveSource = new PostgresFeedSource();
             archiveSource.setJdbcTemplate( jdbcTemplate );
             archiveSource.setCurrentUrl( new URL( currentURL ) );
+
+            Parser parser = new Abdera().getParser();
+            archiveSource.setParser(parser);
 
             Abdera localAbdera = new Abdera();
             when(getFeedRequest.getAbdera()).thenReturn(localAbdera);

@@ -3,12 +3,19 @@ package org.atomhopper.jdbc.adapter;
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.TimerContext;
 import org.apache.abdera.Abdera;
-import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.model.Link;
+import org.apache.abdera.model.Element;
+import org.apache.abdera.model.Document;
+import org.apache.abdera.parser.Parser;
 import org.apache.commons.lang.StringUtils;
-import org.atomhopper.adapter.*;
+
+import org.atomhopper.adapter.FeedSource;
+import org.atomhopper.adapter.AdapterHelper;
+import org.atomhopper.adapter.ResponseBuilder;
+import org.atomhopper.adapter.NotImplemented;
+import org.atomhopper.adapter.FeedInformation;
 import org.atomhopper.adapter.request.adapter.GetEntryRequest;
 import org.atomhopper.adapter.request.adapter.GetFeedRequest;
 import org.atomhopper.dbal.PageDirection;
@@ -25,6 +32,7 @@ import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -36,7 +44,15 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Date;
+import java.util.UUID;
+import java.util.LinkedList;
+import java.util.Collections;
+import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import static org.apache.abdera.i18n.text.UrlEncoding.decode;
@@ -87,6 +103,15 @@ public class JdbcFeedSource implements FeedSource, InitializingBean {
     private Map<String, String> mapColumn = new HashMap<String, String>();
 
     private String split;
+
+    //going to inject the UnifiedParser
+    @Autowired
+    private Parser parser;
+
+    public void setParser(Parser parser){
+        this.parser = parser;
+    }
+
 
     private AdapterHelper helper = new AdapterHelper();
 
@@ -346,20 +371,27 @@ public class JdbcFeedSource implements FeedSource, InitializingBean {
         return hydratedFeed;
     }
 
-    private Entry hydrateEntry(PersistedEntry persistedEntry, Abdera abderaReference) {
-
-        final Document<Entry> hydratedEntryDocument = abderaReference.getParser().parse(
-              new StringReader( persistedEntry.getEntryBody() ) );
+    private Entry hydrateEntry(PersistedEntry persistedEntry, Abdera abderaReference, String contentType) {
+        if (parser == null) {
+            LOG.error("Making sure parser is injected.");
+            throw new IllegalStateException("Parser was not injected into JdbcFeedSource");
+        }
+        final Document<Element> hydratedEntryDocument = parser.parse(
+                new StringReader(persistedEntry.getEntryBody()),
+                contentType,
+                parser.getDefaultParserOptions());
 
         Entry entry = null;
-
         if (hydratedEntryDocument != null) {
-            entry = hydratedEntryDocument.getRoot();
+            entry = (Entry) hydratedEntryDocument.getRoot();
             entry.setUpdated(persistedEntry.getDateLastUpdated());
             entry.setPublished(persistedEntry.getCreationDate());
         }
-
         return entry;
+    }
+
+    private Entry hydrateEntry(PersistedEntry persistedEntry, Abdera abderaReference) {
+        return hydrateEntry(persistedEntry, abderaReference, "application/atom+xml");
     }
 
     @Override
