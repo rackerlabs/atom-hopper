@@ -1,5 +1,7 @@
-## intellij stuff
+## IDE stuff
 .idea/
+.kiro/
+.vscode/
 
 ## java specific
 !.gitignore
