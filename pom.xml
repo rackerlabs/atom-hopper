@@ -398,12 +398,12 @@
         <repository>
             <id>github</id>
             <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/rackerlabs/atom-hopper.git</url>
+            <url>https://maven.pkg.github.com/rackerlabs/atom-hopper</url>
         </repository>
         <snapshotRepository>
-            <id>snapshots</id>
+            <id>github</id>
             <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/rackerlabs/atom-hopper.git</url>
+            <url>https://maven.pkg.github.com/rackerlabs/atom-hopper</url>
         </snapshotRepository>
     </distributionManagement>
 
