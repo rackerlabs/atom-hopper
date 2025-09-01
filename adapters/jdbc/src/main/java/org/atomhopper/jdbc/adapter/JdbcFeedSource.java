@@ -28,6 +28,8 @@ import org.atomhopper.util.uri.template.EnumKeyedTemplateParameters;
 import org.atomhopper.util.uri.template.URITemplate;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
+
+import java.sql.Array;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -826,7 +828,14 @@ public class JdbcFeedSource implements FeedSource, InitializingBean {
             entry.setEntryId(rs.getString("entryid"));
 
 
-            List<String> cats = new ArrayList<String>( Arrays.asList( (String[])rs.getArray( "categories" ).getArray() ) );
+            List<String> cats = new ArrayList<String>();
+            Array categoriesArray = rs.getArray("categories");
+            if (categoriesArray != null) {
+                String[] categoryStrings = (String[]) categoriesArray.getArray();
+                if (categoryStrings != null) {
+                    cats.addAll(Arrays.asList(categoryStrings));
+                }
+            }
 
             for( String column : mapColumn.keySet() ) {
 
