@@ -36,7 +36,7 @@ RUN mkdir -p "${CATALINA_HOME}" "${AH_HOME}" /etc/atomhopper/ /var/log/atomhoppe
 WORKDIR ${AH_HOME}
 
 COPY --from=tomcat /usr/local/tomcat ${CATALINA_HOME}
-COPY start.sh .
+COPY docker/start.sh .
 
 RUN apk --no-cache add curl unzip \
     && echo "Downloading AtomHopper ${AH_VERSION} from GitHub Packages..." \
