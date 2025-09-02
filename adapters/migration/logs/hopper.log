@@ -1,2 +1,0 @@
-2025-09-02 14:30:09.535 [main] ERROR o.a.m.adapter.MigrationFeedPublisher - Error writing entry to NEW feed:namespace/feed EntryId=urn:uuid:75f8cf3e-abe3-4825-a859-55f2aadbd0bc
-2025-09-02 14:30:09.580 [main] ERROR o.a.m.adapter.MigrationFeedPublisher - Error writing entry to OLD feed:namespace/feed EntryId=urn:uuid:b1d96c44-180a-4b78-8722-3d80b89923bb
