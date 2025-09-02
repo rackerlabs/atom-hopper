@@ -1,0 +1,51 @@
+name: Docker Build and Deploy
+
+on:
+  push:
+    branches:
+      - fix/postgresql-array-handling    #branch name which is used for image building
+
+jobs:
+  build:
+    runs-on: self-hosted
+    permissions:
+      contents: read
+      packages: read
+
+    env:
+      ECR_REPOSITORY: atomhopper
+      AWS_REGION: us-east-1
+
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v3
+
+      - name: Set Short commit SHA as image tag
+        run: echo "IMAGE_TAG=$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
+
+      - name: GitHub Packages login
+        run: |
+          echo "Logging into GitHub Container Registry..."
+          echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          echo "Logging into GitHub Packages Maven registry..."
+          echo ${{ secrets.GITHUB_TOKEN }} | docker login maven.pkg.github.com -u ${{ github.actor }} --password-stdin
+
+      - name: AWS ECR login
+        run: |
+          aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+      - name: Build docker image
+        run: |
+          cd docker
+          echo "Building Docker image with GitHub authentication..."
+          docker build \
+            --build-arg GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
+            --build-arg GITHUB_ACTOR=${{ github.actor }} \
+            --progress=plain \
+            -t atomhopper:latest-alpine .
+          echo "Tagging images for ECR..."
+          docker tag atomhopper:latest-alpine ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+          docker tag atomhopper:latest-alpine ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:latest
+      - name: Push docker image to registry
+        run: |
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:latest
