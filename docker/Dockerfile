@@ -38,11 +38,25 @@ WORKDIR ${AH_HOME}
 COPY --from=tomcat /usr/local/tomcat ${CATALINA_HOME}
 COPY docker/start.sh .
 
-RUN apk --no-cache add curl unzip \
+RUN apk --no-cache add curl unzip file \
     && echo "Downloading AtomHopper ${AH_VERSION} from GitHub Packages..." \
-    && curl -f -u ${GITHUB_ACTOR}:${GITHUB_TOKEN} -o atomhopper.war \
+    && echo "URL: https://maven.pkg.github.com/rackerlabs/atom-hopper/org/atomhopper/atomhopper/${AH_VERSION}/atomhopper-${AH_VERSION}.war" \
+    && curl -v -u ${GITHUB_ACTOR}:${GITHUB_TOKEN} -o atomhopper.war \
        "https://maven.pkg.github.com/rackerlabs/atom-hopper/org/atomhopper/atomhopper/${AH_VERSION}/atomhopper-${AH_VERSION}.war" \
-    && echo "Download completed, extracting configuration files..." \
+    && echo "Download completed. File info:" \
+    && ls -la atomhopper.war \
+    && file atomhopper.war \
+    && echo "First 200 bytes of downloaded file:" \
+    && head -c 200 atomhopper.war \
+    && echo "" \
+    && echo "Checking if file is a valid ZIP/WAR..." \
+    && if ! unzip -t atomhopper.war > /dev/null 2>&1; then \
+        echo "ERROR: Downloaded file is not a valid WAR/ZIP file"; \
+        echo "Content of downloaded file:"; \
+        cat atomhopper.war; \
+        exit 1; \
+    fi \
+    && echo "Extracting configuration files..." \
     && unzip atomhopper.war META-INF/application-context.xml META-INF/template-logback.xml WEB-INF/classes/META-INF/atom-server.cfg.xml -d . \
     && mv META-INF/application-context.xml WEB-INF/classes/META-INF/atom-server.cfg.xml /etc/atomhopper/ \
     && mv META-INF/template-logback.xml /etc/atomhopper/logback.xml \
