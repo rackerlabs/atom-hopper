@@ -28,6 +28,9 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
+
+import java.sql.Array;
+import java.sql.SQLException;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.io.StringReader;
@@ -794,7 +797,20 @@ public class JdbcFeedSource implements FeedSource, InitializingBean {
             entry.setEntryId(rs.getString("entryid"));
 
 
-            List<String> cats = new ArrayList<String>( Arrays.asList( (String[])rs.getArray( "categories" ).getArray() ) );
+            List<String> cats = new ArrayList<String>();
+            try {
+                Array categoriesArray = rs.getArray("categories");
+                if (categoriesArray != null) {
+                    String[] categoryArray = (String[]) categoriesArray.getArray();
+                    if (categoryArray != null) {
+                        cats.addAll(Arrays.asList(categoryArray));
+                    }
+                }
+            } catch (SQLException e) {
+                LOG.warn("Failed to process categories array: {}", e.getMessage(), e);
+            } catch (NullPointerException e) {
+                LOG.warn("Null pointer encountered while processing categories: {}", e.getMessage(), e);
+            }
 
             for( String column : mapColumn.keySet() ) {
 

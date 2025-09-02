@@ -121,6 +121,11 @@ public class DynamoDBFeedSource implements FeedSource {
     }
 
 
+    // Default constructor for Spring instantiation
+    public DynamoDBFeedSource() {
+        // Spring will inject dependencies via setters
+    }
+
     public DynamoDBFeedSource(AmazonDynamoDBClient amazonDynamoDBClient) {
         this.amazonDynamoDBClient = amazonDynamoDBClient;
         this.dynamoDB = new DynamoDB(this.amazonDynamoDBClient);
@@ -130,6 +135,15 @@ public class DynamoDBFeedSource implements FeedSource {
 
     public void setDynamoDB(DynamoDB dynamoDB) {
         this.dynamoDB = dynamoDB;
+    }
+
+    // Setter for Spring dependency injection
+    public void setAmazonDynamoDBClient(AmazonDynamoDBClient amazonDynamoDBClient) {
+        this.amazonDynamoDBClient = amazonDynamoDBClient;
+        if (amazonDynamoDBClient != null) {
+            this.dynamoDB = new DynamoDB(amazonDynamoDBClient);
+            this.mapper = new DynamoDBMapper(amazonDynamoDBClient);
+        }
     }
 
     /**

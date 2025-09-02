@@ -5,7 +5,7 @@
     <groupId>org.atomhopper</groupId>
     <artifactId>parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.2.35-SNAPSHOT</version>
+    <version>1.2.35</version>
     <name>ATOM Hopper - ATOMpub Server Collection</name>
 
     <url>http://atomhopper.org/</url>
@@ -99,6 +99,12 @@
             <dependency>
                 <groupId>org.atomhopper.adapter</groupId>
                 <artifactId>jdbc-adapter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.atomhopper.adapter</groupId>
+                <artifactId>dynamoDB_adapters</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
