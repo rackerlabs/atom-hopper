@@ -1,0 +1,36 @@
+2025-09-02 14:30:12.157 [main] DEBUG com.amazonaws.AmazonWebServiceClient - Internal logging successfully configured to commons logger: true
+2025-09-02 14:30:12.187 [main] DEBUG com.amazonaws.metrics.AwsSdkMetrics - Admin mbean registered under com.amazonaws.management:type=AwsSdkMetrics
+2025-09-02 14:30:12.351 [main] ERROR o.a.d.adapter.DynamoDBFeedSource - Filter String finding
+2025-09-02 14:30:12.351 [main] ERROR o.a.d.adapter.DynamoDBFeedSource - searchString: 
+2025-09-02 14:30:12.351 [main] ERROR o.a.d.adapter.DynamoDBFeedSource - conditionExpression: feed = :feed
+2025-09-02 14:30:12.351 [main] ERROR o.a.d.adapter.DynamoDBFeedSource - filterExpression: null
+2025-09-02 14:30:12.352 [main] ERROR o.a.d.adapter.DynamoDBFeedSource - valueMap: {:feed=namespace/feed}
+2025-09-02 14:30:12.352 [main] ERROR o.a.d.adapter.DynamoDBFeedSource - pageSize: 25
+2025-09-02 14:30:12.352 [main] ERROR o.a.d.adapter.DynamoDBFeedSource - else me gaya
+2025-09-02 14:30:12.353 [main] ERROR o.a.d.adapter.DynamoDBFeedSource - before query
+2025-09-02 14:30:12.353 [main] ERROR o.a.d.adapter.DynamoDBFeedSource - after query
+2025-09-02 14:30:12.353 [main] ERROR o.a.d.adapter.DynamoDBFeedSource - feedPage Size: 0
+2025-09-02 14:30:12.354 [main] ERROR o.a.d.adapter.DynamoDBFeedSource - hydrateFeed START
+2025-09-02 14:30:12.371 [main] ERROR o.a.d.adapter.DynamoDBFeedSource - addFeedSelfLink START
+2025-09-02 14:30:12.374 [main] ERROR o.a.d.adapter.DynamoDBFeedSource - addFeedSelfLink END
+2025-09-02 14:30:12.376 [main] ERROR o.a.d.adapter.DynamoDBFeedSource - dddddddddd
+2025-09-02 14:30:12.376 [main] ERROR o.a.d.adapter.DynamoDBFeedSource - hydrateFeed END
+2025-09-02 14:30:12.384 [main] ERROR o.a.d.adapter.DynamoDBFeedSource - getEntry START
+2025-09-02 14:30:12.399 [main] ERROR o.a.d.adapter.DynamoDBFeedSource - getEntry END
+2025-09-02 14:30:12.405 [main] ERROR o.a.d.adapter.DynamoDBFeedSource - getEntry START
+2025-09-02 14:30:12.405 [main] ERROR o.a.d.adapter.DynamoDBFeedSource - getEntry END
+2025-09-02 14:30:12.466 [main] DEBUG org.apache.axiom.om.util.StAXUtils - About to create XMLOutputFactory implementation with classloader=sun.misc.Launcher$AppClassLoader@3d4eac69
+2025-09-02 14:30:12.466 [main] DEBUG org.apache.axiom.om.util.StAXUtils - The classloader for javax.xml.stream.XMLOutputFactory is: null
+2025-09-02 14:30:12.472 [main] DEBUG o.a.a.u.s.d.StAXDialectDetector - StAX implementation at jar:file:/Users/srihari.kalthireddy/.m2/repository/org/codehaus/woodstox/wstx-asl/3.2.6/wstx-asl-3.2.6.jar!/ is:
+  Title:         WoodSToX XML-processor
+  Symbolic name: null
+  Vendor:        woodstox.codehaus.org
+  Version:       3.2.6
+2025-09-02 14:30:12.472 [main] DEBUG o.a.a.u.s.d.StAXDialectDetector - Detected StAX dialect: Woodstox
+2025-09-02 14:30:12.473 [main] DEBUG org.apache.axiom.om.util.StAXUtils - Created XMLOutputFactory = class org.apache.axiom.util.stax.wrapper.ImmutableXMLOutputFactory for classloader=sun.misc.Launcher$AppClassLoader@3d4eac69
+2025-09-02 14:30:12.473 [main] DEBUG org.apache.axiom.om.util.StAXUtils - Configuration = DEFAULT
+2025-09-02 14:30:12.473 [main] DEBUG org.apache.axiom.om.util.StAXUtils - Size of XMLOutFactory map for this configuration = 1
+2025-09-02 14:30:12.473 [main] DEBUG org.apache.axiom.om.util.StAXUtils - Configurations for which factories have been cached = [DEFAULT]
+2025-09-02 14:30:12.478 [main] DEBUG org.apache.axiom.om.util.StAXUtils - XMLStreamWriter is org.apache.axiom.util.stax.dialect.WoodstoxStreamWriterWrapper
+2025-09-02 14:30:12.479 [main] DEBUG o.a.a.om.impl.MTOMXMLStreamWriter - Calling MTOMXMLStreamWriter.flush
+2025-09-02 14:30:12.479 [main] DEBUG o.a.a.om.impl.MTOMXMLStreamWriter - close
