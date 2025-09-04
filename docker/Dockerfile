@@ -15,7 +15,7 @@ RUN if [ -z "$GITHUB_TOKEN" ] || [ -z "$GITHUB_ACTOR" ]; then \
 
 LABEL maintainer="AtomHopperTeam@rackspace.com" \
       #Atom Hopper version
-      version="1.2.35" \
+      version="1.2.33" \
       description="Docker image for Atom Hopper"
 
     #The database type
@@ -26,7 +26,7 @@ ENV DB_TYPE=H2 \
     DB_PASSWORD= \
     #Database Host:Port
     DB_HOST=h2 \
-    AH_VERSION=1.2.35 \
+    AH_VERSION=1.2.33 \
     CATALINA_HOME=/opt/tomcat \
     AH_HOME=/opt/atomhopper  \
     PATH=${PATH}:${CATALINA_HOME}/bin:${AH_HOME}

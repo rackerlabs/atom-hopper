@@ -221,8 +221,8 @@
         <property name="dynamoDBClient" ref="client"></property>
     </bean>
 
-    <bean id="dynamodbFeedSource" name="dynamodbFeedSource" class="org.atomhopper.dynamodb.adapter.DynamoDBFeedSource">
-        <property name="amazonDynamoDBClient" ref="client"></property>
-    </bean>
+    <!--    <bean id="dynamodb-feed-source" name="dynamodb-feed-source" class="org.atomhopper.dynamodb.adapter.DynamoDBFeedSource">-->
+    <!--        <property name="dynamoDBClient" ref="client"></property>-->
+    <!--    </bean>-->
 
 </beans>
