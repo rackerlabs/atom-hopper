@@ -29,7 +29,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
-import java.sql.Array;
 import java.sql.SQLException;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -38,8 +37,15 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Date;
+import java.util.UUID;
+import java.util.LinkedList;
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 import static org.apache.abdera.i18n.text.UrlEncoding.decode;
@@ -799,16 +805,12 @@ public class JdbcFeedSource implements FeedSource, InitializingBean {
 
             List<String> cats = new ArrayList<String>();
             try {
-                Array categoriesArray = rs.getArray("categories");
-                if (categoriesArray != null) {
-                    String[] categoryArray = (String[]) categoriesArray.getArray();
-                    if (categoryArray != null) {
-                        cats.addAll(Arrays.asList(categoryArray));
-                    }
-                }
+                cats.addAll(Arrays.asList((String[]) rs.getArray("categories").getArray()));
             } catch (SQLException e) {
+                // Handle PostgreSQL-specific array processing errors
                 LOG.warn("Failed to process categories array: {}", e.getMessage(), e);
             } catch (NullPointerException e) {
+                // Handle cases where array or its elements are null
                 LOG.warn("Null pointer encountered while processing categories: {}", e.getMessage(), e);
             }
 
