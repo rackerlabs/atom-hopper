@@ -65,6 +65,7 @@
         <dependency>
             <groupId>org.atomhopper.adapter</groupId>
             <artifactId>dynamoDB_adapters</artifactId>
+            <version>1.2.35-SNAPSHOT</version>
         </dependency>
 
         <dependency>
