@@ -28,7 +28,7 @@ NOTE: Place this file in the following folder: /etc/atomhopper/atom-server.cfg.x
         <categories-descriptor reference="workspace-categories-descriptor" />
 
         <feed title="Testing Feed" resource="/feed">
-<!--             <feed-source reference="hibernate-feed-source" /> -->
+            <!--             <feed-source reference="hibernate-feed-source" /> -->
             <publisher reference="dynamodb-feed-publisher" />
         </feed>
     </workspace>

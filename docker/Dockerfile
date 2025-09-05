@@ -26,7 +26,7 @@ RUN mkdir -p "${CATALINA_HOME}" "${AH_HOME}" /etc/atomhopper/ /var/log/atomhoppe
 WORKDIR ${AH_HOME}
 
 COPY --from=tomcat /usr/local/tomcat ${CATALINA_HOME}
-COPY start.sh .
+COPY docker/start.sh .
 
 RUN apk --no-cache add curl \
     && curl -o atomhopper.war https://maven.research.rackspacecloud.com/content/repositories/releases/org/atomhopper/atomhopper/${AH_VERSION}/atomhopper-${AH_VERSION}.war \
@@ -39,5 +39,4 @@ RUN apk --no-cache add curl \
 
 EXPOSE 8080
 
-CMD ["start.sh"]
-
+CMD ["/opt/atomhopper/start.sh"]
