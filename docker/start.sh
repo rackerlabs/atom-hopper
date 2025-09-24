@@ -7,7 +7,17 @@ then
     echo "Replacing application-context.xml with original config."
     mv $APP_CTX_PATH/application-context.xml.orig $APP_CTX_PATH/application-context.xml
 fi
+
+# Restore original atom-server.cfg.xml if it exists
+if [[ -e $APP_CTX_PATH/atom-server.cfg.xml.orig ]]
+then
+    echo "Replacing atom-server.cfg.xml with original config."
+    mv $APP_CTX_PATH/atom-server.cfg.xml.orig $APP_CTX_PATH/atom-server.cfg.xml
+fi
+
 echo "Database type selected:"$DB_TYPE
+echo "Domain configured:"$AH_DOMAIN
+echo "Scheme configured:"$AH_SCHEME
 
 #DB configuration
 if [[ $DB_TYPE != 'H2' ]] ; then
@@ -31,6 +41,21 @@ if [[ $DB_TYPE != 'H2' ]] ; then
         sed -i -e "s/:postgresql:\/\/localhost:5432/:postgresql:\/\/$DB_HOST/g" $APP_CTX_PATH/application-context.xml
     fi
 fi
+
+# Domain and Scheme configuration
+echo "Configuring domain and scheme..."
+
+# Backup original atom-server.cfg.xml if not already backed up
+if [[ ! -e $APP_CTX_PATH/atom-server.cfg.xml.orig ]]
+then
+    cp $APP_CTX_PATH/atom-server.cfg.xml $APP_CTX_PATH/atom-server.cfg.xml.orig
+fi
+
+# Replace domain and scheme in atom-server.cfg.xml
+sed -i "s/domain=\"[^\"]*\"/domain=\"${AH_DOMAIN}\"/g" $APP_CTX_PATH/atom-server.cfg.xml
+sed -i "s/scheme=\"[^\"]*\"/scheme=\"${AH_SCHEME}\"/g" $APP_CTX_PATH/atom-server.cfg.xml
+
+echo "Domain configuration completed. Using domain: $AH_DOMAIN, scheme: $AH_SCHEME"
 
 #Start tomcat server
 sh /opt/tomcat/bin/catalina.sh run

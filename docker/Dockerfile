@@ -1,7 +1,7 @@
 #base tomcat 9 with openjdk 8
-FROM tomcat:9.0.41-jdk8 as tomcat
+FROM tomcat:9.0-jdk8 as tomcat
 
-FROM adoptopenjdk/openjdk8:alpine-slim
+FROM openjdk:8-jre-alpine
 
 LABEL maintainer="AtomHopperTeam@rackspace.com" \
       #Atom Hopper version
@@ -16,6 +16,10 @@ ENV DB_TYPE=H2 \
     DB_PASSWORD= \
     #Database Host:Port
     DB_HOST=h2 \
+    #Domain for link generation (can be internal or external)
+    AH_DOMAIN=localhost:8080 \
+    #Scheme for link generation (http or https)
+    AH_SCHEME=http \
     AH_VERSION=1.2.33 \
     CATALINA_HOME=/opt/tomcat \
     AH_HOME=/opt/atomhopper  \
@@ -26,7 +30,7 @@ RUN mkdir -p "${CATALINA_HOME}" "${AH_HOME}" /etc/atomhopper/ /var/log/atomhoppe
 WORKDIR ${AH_HOME}
 
 COPY --from=tomcat /usr/local/tomcat ${CATALINA_HOME}
-COPY docker/start.sh .
+COPY start.sh .
 
 RUN apk --no-cache add curl \
     && curl -o atomhopper.war https://maven.research.rackspacecloud.com/content/repositories/releases/org/atomhopper/atomhopper/${AH_VERSION}/atomhopper-${AH_VERSION}.war \
