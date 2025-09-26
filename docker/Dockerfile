@@ -16,11 +16,17 @@ ENV DB_TYPE=H2 \
     DB_PASSWORD= \
     #Database Host:Port
     DB_HOST=h2 \
-    #Domain for link generation (can be internal or external)
-    AH_DOMAIN=localhost:8080 \
-    #Scheme for link generation (http or https)
-    AH_SCHEME=http \
-    AH_VERSION=1.2.33 \
+    #Internal domain for internal API calls
+    AH_INTERNAL_DOMAIN=localhost:8080 \
+    #External domain for public API responses
+    AH_EXTERNAL_DOMAIN=localhost:8080 \
+    #Internal scheme (http or https)
+    AH_INTERNAL_SCHEME=http \
+    #External scheme (http or https)
+    AH_EXTERNAL_SCHEME=http \
+    #Domain selection mode: internal, external, or request-based
+    AH_DOMAIN_MODE=external \
+    AH_VERSION=1.2.35-SNAPSHOT \
     CATALINA_HOME=/opt/tomcat \
     AH_HOME=/opt/atomhopper  \
     PATH=${PATH}:${CATALINA_HOME}/bin:${AH_HOME}
@@ -30,10 +36,13 @@ RUN mkdir -p "${CATALINA_HOME}" "${AH_HOME}" /etc/atomhopper/ /var/log/atomhoppe
 WORKDIR ${AH_HOME}
 
 COPY --from=tomcat /usr/local/tomcat ${CATALINA_HOME}
-COPY start.sh .
+COPY docker/start.sh .
+
+# Copy the locally built WAR file instead of downloading
+# Note: Build the project first with 'mvn clean package' from the root directory
+COPY atomhopper/target/atomhopper-*.war atomhopper.war
 
 RUN apk --no-cache add curl \
-    && curl -o atomhopper.war https://maven.research.rackspacecloud.com/content/repositories/releases/org/atomhopper/atomhopper/${AH_VERSION}/atomhopper-${AH_VERSION}.war \
     && unzip atomhopper.war META-INF/application-context.xml META-INF/template-logback.xml WEB-INF/classes/META-INF/atom-server.cfg.xml -d . \
     && mv META-INF/application-context.xml WEB-INF/classes/META-INF/atom-server.cfg.xml /etc/atomhopper/ \
     && mv META-INF/template-logback.xml /etc/atomhopper/logback.xml \

@@ -37,38 +37,72 @@ For specific database configuration of your choice (PostgreSQL, MySQL) provide v
 - `DB_HOST`: Database host and port (e.g., "10.0.0.1:5432")
 
 ### Domain Configuration
-For dynamic domain configuration (internal vs external):
-- `AH_DOMAIN`: Domain and port for link generation (e.g., "internal.example.com:8080", "api.example.com")
-- `AH_SCHEME`: URL scheme for link generation ("http" or "https")
+For dual domain support (internal vs external):
+- `AH_INTERNAL_DOMAIN`: Internal domain for internal API calls (e.g., "internal.cloudfeeds.local:8080")
+- `AH_EXTERNAL_DOMAIN`: External domain for public API responses (e.g., "feeds.example.com")
+- `AH_INTERNAL_SCHEME`: Internal URL scheme ("http" or "https")
+- `AH_EXTERNAL_SCHEME`: External URL scheme ("http" or "https")
+- `AH_DOMAIN_MODE`: Domain selection mode ("internal", "external", or "request-based")
 
 ## Examples
 
-### PostgreSQL with External Domain
+### Build Requirements
+Before building the Docker image, ensure the WAR file is built:
+```bash
+# Build the project first
+mvn clean package
+
+# Then build the Docker image
+cd docker
+docker build -t atomhopper:latest .
+```
+
+### PostgreSQL with Dual Domain Support
 ```bash
 $docker run -d --name atomhopper -p 8080:8080 \
   -e DB_TYPE=PostgreSQL \
   -e DB_USER=postgresql \
   -e DB_PASSWORD=postgresql \
   -e DB_HOST=10.0.0.1:5432 \
-  -e AH_DOMAIN=api.example.com \
-  -e AH_SCHEME=https \
-  atomhopper:latest-alpine
+  -e AH_INTERNAL_DOMAIN=internal.cloudfeeds.local:8080 \
+  -e AH_EXTERNAL_DOMAIN=feeds.example.com \
+  -e AH_INTERNAL_SCHEME=http \
+  -e AH_EXTERNAL_SCHEME=https \
+  -e AH_DOMAIN_MODE=external \
+  atomhopper:latest
 ```
 
-### Internal Domain Configuration
+### Internal-Only Configuration
 ```bash
-$docker run -d --name atomhopper -p 8080:8080 \
-  -e AH_DOMAIN=internal.cloudfeeds.local:8080 \
-  -e AH_SCHEME=http \
-  atomhopper:latest-alpine
+$docker run -d --name atomhopper-internal -p 8080:8080 \
+  -e AH_INTERNAL_DOMAIN=internal.cloudfeeds.local:8080 \
+  -e AH_EXTERNAL_DOMAIN=internal.cloudfeeds.local:8080 \
+  -e AH_INTERNAL_SCHEME=http \
+  -e AH_EXTERNAL_SCHEME=http \
+  -e AH_DOMAIN_MODE=internal \
+  atomhopper:latest
 ```
 
-### External Domain Configuration  
+### External-Only Configuration  
 ```bash
-$docker run -d --name atomhopper -p 8080:8080 \
-  -e AH_DOMAIN=feeds.example.com \
-  -e AH_SCHEME=https \
-  atomhopper:latest-alpine
+$docker run -d --name atomhopper-external -p 8080:8080 \
+  -e AH_INTERNAL_DOMAIN=feeds.example.com \
+  -e AH_EXTERNAL_DOMAIN=feeds.example.com \
+  -e AH_INTERNAL_SCHEME=https \
+  -e AH_EXTERNAL_SCHEME=https \
+  -e AH_DOMAIN_MODE=external \
+  atomhopper:latest
+```
+
+### Request-Based Domain Switching (Future Enhancement)
+```bash
+$docker run -d --name atomhopper-smart -p 8080:8080 \
+  -e AH_INTERNAL_DOMAIN=internal.cloudfeeds.local:8080 \
+  -e AH_EXTERNAL_DOMAIN=feeds.example.com \
+  -e AH_INTERNAL_SCHEME=http \
+  -e AH_EXTERNAL_SCHEME=https \
+  -e AH_DOMAIN_MODE=request-based \
+  atomhopper:latest
 ```
 
 
