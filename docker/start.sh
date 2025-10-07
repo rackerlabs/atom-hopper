@@ -16,9 +16,7 @@ then
 fi
 
 echo "Database type selected:"$DB_TYPE
-echo "Internal domain configured:"$AH_INTERNAL_DOMAIN
 echo "External domain configured:"$AH_EXTERNAL_DOMAIN
-echo "Internal scheme configured:"$AH_INTERNAL_SCHEME
 echo "External scheme configured:"$AH_EXTERNAL_SCHEME
 echo "Domain mode:"$AH_DOMAIN_MODE
 
@@ -54,43 +52,25 @@ then
     cp $APP_CTX_PATH/atom-server.cfg.xml $APP_CTX_PATH/atom-server.cfg.xml.orig
 fi
 
-# Determine which domain to use based on mode
-case "$AH_DOMAIN_MODE" in
-    "internal")
-        SELECTED_DOMAIN="$AH_INTERNAL_DOMAIN"
-        SELECTED_SCHEME="$AH_INTERNAL_SCHEME"
-        echo "Using internal domain configuration"
-        ;;
-    "external")
-        SELECTED_DOMAIN="$AH_EXTERNAL_DOMAIN"
-        SELECTED_SCHEME="$AH_EXTERNAL_SCHEME"
-        echo "Using external domain configuration"
-        ;;
-    "request-based")
-        # For request-based mode, we'll use external as default
-        # The application would need custom logic to switch domains based on request headers
-        SELECTED_DOMAIN="$AH_EXTERNAL_DOMAIN"
-        SELECTED_SCHEME="$AH_EXTERNAL_SCHEME"
-        echo "Using request-based domain configuration (defaulting to external)"
-        echo "Note: Request-based switching requires application-level implementation"
-        ;;
-    *)
-        # Default to external
-        SELECTED_DOMAIN="$AH_EXTERNAL_DOMAIN"
-        SELECTED_SCHEME="$AH_EXTERNAL_SCHEME"
-        echo "Using default external domain configuration"
-        ;;
-esac
+# For request-based mode, we use external as fallback in config
+# The actual domain resolution happens at runtime based on request headers
+SELECTED_DOMAIN="$AH_EXTERNAL_DOMAIN"
+SELECTED_SCHEME="$AH_EXTERNAL_SCHEME"
 
-# Replace domain and scheme in atom-server.cfg.xml
+if [ "$AH_DOMAIN_MODE" = "request-based" ]; then
+    echo "Using request-based domain configuration"
+    echo "Fallback domain: $SELECTED_DOMAIN, fallback scheme: $SELECTED_SCHEME"
+    echo "Actual domains will be determined from incoming request Host headers"
+else
+    echo "Using static external domain configuration"
+    echo "Domain: $SELECTED_DOMAIN, scheme: $SELECTED_SCHEME"
+fi
+
+# Replace domain and scheme in atom-server.cfg.xml (used as fallback)
 sed -i "s/domain=\"[^\"]*\"/domain=\"${SELECTED_DOMAIN}\"/g" $APP_CTX_PATH/atom-server.cfg.xml
 sed -i "s/scheme=\"[^\"]*\"/scheme=\"${SELECTED_SCHEME}\"/g" $APP_CTX_PATH/atom-server.cfg.xml
 
-# Set environment variables for potential application use
-export AH_SELECTED_DOMAIN="$SELECTED_DOMAIN"
-export AH_SELECTED_SCHEME="$SELECTED_SCHEME"
-
-echo "Domain configuration completed. Using domain: $SELECTED_DOMAIN, scheme: $SELECTED_SCHEME"
+echo "Domain configuration completed."
 
 #Start tomcat server
 sh /opt/tomcat/bin/catalina.sh run

@@ -16,58 +16,38 @@
     -->
 <!--        <bean name="json-filter"          class="org.apache.abdera.ext.json.JSONFilter"/> -->
 
-    <!--    &lt;!&ndash; Hibernate &ndash;&gt;-->
-    <!--    <bean name="feed-repository-bean" class="org.atomhopper.hibernate.HibernateFeedRepository">-->
-    <!--        <constructor-arg>-->
-    <!--            <map>-->
-    <!--                &lt;!&ndash; Start H2 Config &ndash;&gt;-->
-    <!--                <entry key="hibernate.connection.url" value="jdbc:h2:/opt/atomhopper/atom-hopper-db" />-->
-    <!--                <entry key="hibernate.connection.driver_class" value="org.h2.Driver" />-->
-    <!--                <entry key="hibernate.dialect" value="org.hibernate.dialect.H2Dialect" />-->
-    <!--                <entry key="hibernate.connection.username" value="sa" />-->
-    <!--                <entry key="hibernate.connection.password" value="" />-->
-    <!--                &lt;!&ndash; End H2 Config &ndash;&gt;-->
+    <!-- Hibernate -->
+    <bean name="feed-repository-bean" class="org.atomhopper.hibernate.HibernateFeedRepository">
+        <constructor-arg>
+            <map>
+                <!-- Start H2 Config -->
+                <entry key="hibernate.connection.url" value="jdbc:h2:/opt/atomhopper/atom-hopper-db" />
+                <entry key="hibernate.connection.driver_class" value="org.h2.Driver" />
+                <entry key="hibernate.dialect" value="org.hibernate.dialect.H2Dialect" />
+                <entry key="hibernate.connection.username" value="sa" />
+                <entry key="hibernate.connection.password" value="" />
+                <!-- End H2 Config -->
 
-    <!--                &lt;!&ndash; Start MySQL Config &ndash;&gt;-->
-    <!--                &lt;!&ndash;-->
-    <!--                <entry key="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver" />-->
-    <!--                <entry key="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect" />-->
-    <!--                <entry key="hibernate.connection.url" value="jdbc:mysql://localhost:8889/atomhopper?createDatabaseIfNotExist=true" />-->
-    <!--                <entry key="hibernate.connection.username" value="root" />-->
-    <!--                <entry key="hibernate.connection.password" value="root" />-->
-    <!--                &ndash;&gt;-->
-    <!--                &lt;!&ndash; End MySQL Config &ndash;&gt;-->
+                <entry key="hibernate.hbm2ddl.auto" value="update" />
+                <!-- <entry key="hibernate.show_sql" value="false" /> -->
 
-    <!--                &lt;!&ndash; Start PostgreSQL Config &ndash;&gt;-->
-    <!--                &lt;!&ndash;-->
-    <!--                <entry key="hibernate.connection.driver_class" value="org.postgresql.Driver" />-->
-    <!--                <entry key="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />-->
-    <!--                <entry key="hibernate.connection.url" value="jdbc:postgresql://localhost:5432/atomhopper" />-->
-    <!--                <entry key="hibernate.connection.username" value="postgres" />-->
-    <!--                <entry key="hibernate.connection.password" value="password" />-->
-    <!--                &ndash;&gt;-->
-    <!--                &lt;!&ndash; End PostgreSQL Config &ndash;&gt;-->
+                <!-- Start C3P0 Config -->
+                <entry key="hibernate.c3p0.min_size" value="10" />
+                <entry key="hibernate.c3p0.max_size" value="25" />
+                <entry key="hibernate.c3p0.timeout" value="300" />
+                <entry key="hibernate.c3p0.idle_test_period" value="10" />
+                <!-- End C3P0 Config -->
+            </map>
+        </constructor-arg>
+    </bean>
 
-    <!--                <entry key="hibernate.hbm2ddl.auto" value="update" />-->
-    <!--                &lt;!&ndash; <entry key="hibernate.show_sql" value="false" /> &ndash;&gt;-->
+    <bean name="hibernate-feed-source" class="org.atomhopper.hibernate.adapter.HibernateFeedSource">
+        <property name="feedRepository" ref="feed-repository-bean" />
+    </bean>
 
-    <!--                &lt;!&ndash; Start C3P0 Config &ndash;&gt;-->
-    <!--                <entry key="hibernate.c3p0.min_size" value="10" />-->
-    <!--                <entry key="hibernate.c3p0.max_size" value="25" />-->
-    <!--                <entry key="hibernate.c3p0.timeout" value="300" />-->
-    <!--                <entry key="hibernate.c3p0.idle_test_period" value="10" />-->
-    <!--                &lt;!&ndash; End C3P0 Config &ndash;&gt;-->
-    <!--            </map>-->
-    <!--        </constructor-arg>-->
-    <!--    </bean>-->
-
-    <!--    <bean name="hibernate-feed-source" class="org.atomhopper.hibernate.adapter.HibernateFeedSource">-->
-    <!--        <property name="feedRepository" ref="feed-repository-bean" />-->
-    <!--    </bean>-->
-
-    <!--    <bean name="hibernate-feed-publisher" class="org.atomhopper.hibernate.adapter.HibernateFeedPublisher">-->
-    <!--        <property name="feedRepository" ref="feed-repository-bean" />-->
-    <!--    </bean>-->
+    <bean name="hibernate-feed-publisher" class="org.atomhopper.hibernate.adapter.HibernateFeedPublisher">
+        <property name="feedRepository" ref="feed-repository-bean" />
+    </bean>
 
     <!-- Postgres (Perfromance) Data Adapter -->
     <!--
@@ -145,18 +125,21 @@
 
     <!-- DynamoDB service -->
     <!-- Configure from environment variables -->
+    <!-- Commented out for H2 database setup
     <bean
             id="awsCredentials"
             class="com.amazonaws.auth.BasicAWSCredentials">
-   <!--     <constructor-arg value="" />
-        <constructor-arg value="" /> -->
+        <constructor-arg value="" />
+        <constructor-arg value="" />
     </bean>
-    <!-- NOTE: It is better to wire the interface (om.amazonaws.services.dynamodbv2.AmazonDynamoDB) inside your code instead of om.amazonaws.services.dynamodbv2.AmazonDynamoDBClient, but leave the bean mapping below to the impl class. -->
+    NOTE: It is better to wire the interface (om.amazonaws.services.dynamodbv2.AmazonDynamoDB) inside your code instead of om.amazonaws.services.dynamodbv2.AmazonDynamoDBClient, but leave the bean mapping below to the impl class.
     <bean
             id="client"
             class="com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient">
         <constructor-arg ref="awsCredentials" />
     </bean>
+    -->
+    <!-- AWS/DynamoDB configuration commented out for H2 database setup
     <bean
             id="region_enum"
             class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
@@ -183,29 +166,29 @@
         </property>
         <property name="arguments">
             <list>
-                <ref local="region_enum" />
+                <ref bean="region_enum" />
             </list>
         </property>
     </bean>
     <bean
             class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
         <property name="targetObject">
-            <ref local="client" />
+            <ref bean="client" />
         </property>
         <property name="targetMethod">
             <value>setRegion</value>
         </property>
         <property name="arguments">
             <list>
-                <ref local="region" />
+                <ref bean="region" />
             </list>
         </property>
     </bean>
-    <!-- Use this if setting endpoint url is preferred over region, i.e. when using DynamoDB local-->
+    Use this if setting endpoint url is preferred over region, i.e. when using DynamoDB local
     <bean
             class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
         <property name="targetObject">
-            <ref local="client" />
+            <ref bean="client" />
         </property>
         <property name="targetMethod">
             <value>setEndpoint</value>
@@ -216,13 +199,16 @@
             </list>
         </property>
     </bean>
+    -->
 
+    <!-- DynamoDB beans commented out for H2 database setup
     <bean id="dynamodb-feed-publisher" name="dynamodb-feed-publisher" class="org.atomhopper.dynamodb.adapter.DynamoDBFeedPublisher">
         <property name="dynamoDBClient" ref="client"></property>
     </bean>
 
-    <!--    <bean id="dynamodb-feed-source" name="dynamodb-feed-source" class="org.atomhopper.dynamodb.adapter.DynamoDBFeedSource">-->
-    <!--        <property name="dynamoDBClient" ref="client"></property>-->
-    <!--    </bean>-->
+    <bean id="dynamodb-feed-source" name="dynamodb-feed-source" class="org.atomhopper.dynamodb.adapter.DynamoDBFeedSource">
+        <property name="dynamoDBClient" ref="client"></property>
+    </bean>
+    -->
 
 </beans>

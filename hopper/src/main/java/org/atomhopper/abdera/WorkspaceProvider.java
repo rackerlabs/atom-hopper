@@ -104,8 +104,12 @@ public class WorkspaceProvider implements Provider {
                     ? (TemplateParameters) param
                     : new EnumKeyedTemplateParameters((Enum) key);
 
-            templateParameters.set(URITemplateParameter.HOST_DOMAIN, hostConfiguration.getDomain());
-            templateParameters.set(URITemplateParameter.HOST_SCHEME, hostConfiguration.getScheme());
+            // Dynamically determine domain and scheme based on request
+            String requestDomain = getRequestBasedDomain(request);
+            String requestScheme = getRequestBasedScheme(request);
+            
+            templateParameters.set(URITemplateParameter.HOST_DOMAIN, requestDomain);
+            templateParameters.set(URITemplateParameter.HOST_SCHEME, requestScheme);
 
             //This is what happens when you don't use enumerations :p
             if (resolvedTarget.getType() == TargetType.TYPE_SERVICE) {
@@ -213,6 +217,65 @@ public class WorkspaceProvider implements Provider {
 
     public void addFilter(Filter... filters) {
         this.filters.addAll(Arrays.asList(filters));
+    }
+
+    /**
+     * Determines the appropriate domain based on the incoming request.
+     * Uses the request's Host header if available, otherwise falls back to configured domain.
+     */
+    private String getRequestBasedDomain(RequestContext request) {
+        // Check if we should use request-based domain resolution
+        String domainMode = System.getProperty("AH_DOMAIN_MODE", System.getenv("AH_DOMAIN_MODE"));
+        if (!"request-based".equals(domainMode)) {
+            // Use configured domain for backward compatibility
+            return hostConfiguration.getDomain();
+        }
+
+        // Extract domain from request Host header
+        String hostHeader = request.getHeader("Host");
+        if (hostHeader != null && !hostHeader.trim().isEmpty()) {
+            return hostHeader.trim();
+        }
+
+        // Fallback to external domain if Host header is not available
+        String externalDomain = System.getProperty("AH_EXTERNAL_DOMAIN", System.getenv("AH_EXTERNAL_DOMAIN"));
+        return externalDomain != null ? externalDomain : hostConfiguration.getDomain();
+    }
+
+    /**
+     * Determines the appropriate scheme based on the incoming request.
+     * Uses the request's X-Forwarded-Proto header or scheme if available, otherwise falls back to configured scheme.
+     */
+    private String getRequestBasedScheme(RequestContext request) {
+        // Check if we should use request-based domain resolution
+        String domainMode = System.getProperty("AH_DOMAIN_MODE", System.getenv("AH_DOMAIN_MODE"));
+        if (!"request-based".equals(domainMode)) {
+            // Use configured scheme for backward compatibility
+            return hostConfiguration.getScheme();
+        }
+
+        // Check if we have a Host header - if not, use fallback scheme
+        String hostHeader = request.getHeader("Host");
+        if (hostHeader == null || hostHeader.trim().isEmpty()) {
+            String externalScheme = System.getProperty("AH_EXTERNAL_SCHEME", System.getenv("AH_EXTERNAL_SCHEME"));
+            return externalScheme != null ? externalScheme : hostConfiguration.getScheme();
+        }
+
+        // Check X-Forwarded-Proto header (common in load balancer setups)
+        String forwardedProto = request.getHeader("X-Forwarded-Proto");
+        if (forwardedProto != null && !forwardedProto.trim().isEmpty()) {
+            return forwardedProto.trim().toLowerCase();
+        }
+
+        // Extract scheme from request URI
+        String requestScheme = request.getUri().getScheme();
+        if (requestScheme != null && !requestScheme.trim().isEmpty()) {
+            return requestScheme.toLowerCase();
+        }
+
+        // Fallback to external scheme if no request info available
+        String externalScheme = System.getProperty("AH_EXTERNAL_SCHEME", System.getenv("AH_EXTERNAL_SCHEME"));
+        return externalScheme != null ? externalScheme : hostConfiguration.getScheme();
     }
 
     @Override

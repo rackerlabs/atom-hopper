@@ -16,16 +16,12 @@ ENV DB_TYPE=H2 \
     DB_PASSWORD= \
     #Database Host:Port
     DB_HOST=h2 \
-    #Internal domain for internal API calls
-    AH_INTERNAL_DOMAIN=localhost:8080 \
-    #External domain for public API responses
+    #External domain for public API responses (fallback when request-based fails)
     AH_EXTERNAL_DOMAIN=localhost:8080 \
-    #Internal scheme (http or https)
-    AH_INTERNAL_SCHEME=http \
-    #External scheme (http or https)
+    #External scheme (http or https) (fallback when request-based fails)
     AH_EXTERNAL_SCHEME=http \
-    #Domain selection mode: internal, external, or request-based
-    AH_DOMAIN_MODE=external \
+    #Domain selection mode: external or request-based
+    AH_DOMAIN_MODE=request-based \
     AH_VERSION=1.2.35-SNAPSHOT \
     CATALINA_HOME=/opt/tomcat \
     AH_HOME=/opt/atomhopper  \
