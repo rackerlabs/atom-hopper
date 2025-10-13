@@ -28,8 +28,8 @@ NOTE: Place this file in the following folder: /etc/atomhopper/atom-server.cfg.x
         <categories-descriptor reference="workspace-categories-descriptor" />
 
         <feed title="Testing Feed" resource="/feed">
-            <feed-source reference="hibernate-feed-source" />
-            <publisher reference="hibernate-feed-publisher" />
+            <feed-source reference="jdbc-feed-source" />
+            <publisher reference="jdbc-feed-publisher" />
         </feed>
     </workspace>
 </atom-hopper-config>

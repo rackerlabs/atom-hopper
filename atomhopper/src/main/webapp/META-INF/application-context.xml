@@ -11,42 +11,39 @@
           http://www.springframework.org/schema/beans
           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
+    <!-- Property placeholder configurer to resolve environment variables -->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="systemPropertiesMode" value="2" />
+        <property name="searchSystemEnvironment" value="true" />
+    </bean>
+
     <!-- if you need to return feed pages in JSON format, you'll need to reference
          this bean from atom-server.cfg.xml
     -->
 <!--        <bean name="json-filter"          class="org.apache.abdera.ext.json.JSONFilter"/> -->
 
-    <!-- Hibernate -->
-    <bean name="feed-repository-bean" class="org.atomhopper.hibernate.HibernateFeedRepository">
-        <constructor-arg>
-            <map>
-                <!-- Start H2 Config -->
-                <entry key="hibernate.connection.url" value="jdbc:h2:/opt/atomhopper/atom-hopper-db" />
-                <entry key="hibernate.connection.driver_class" value="org.h2.Driver" />
-                <entry key="hibernate.dialect" value="org.hibernate.dialect.H2Dialect" />
-                <entry key="hibernate.connection.username" value="sa" />
-                <entry key="hibernate.connection.password" value="" />
-                <!-- End H2 Config -->
-
-                <entry key="hibernate.hbm2ddl.auto" value="update" />
-                <!-- <entry key="hibernate.show_sql" value="false" /> -->
-
-                <!-- Start C3P0 Config -->
-                <entry key="hibernate.c3p0.min_size" value="10" />
-                <entry key="hibernate.c3p0.max_size" value="25" />
-                <entry key="hibernate.c3p0.timeout" value="300" />
-                <entry key="hibernate.c3p0.idle_test_period" value="10" />
-                <!-- End C3P0 Config -->
-            </map>
-        </constructor-arg>
+    <!-- JDBC (Production) Data Adapter -->
+    <bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource">
+        <property name="driverClassName" value="${DB_DRIVER:org.postgresql.Driver}" />
+        <property name="url" value="${DB_URL:jdbc:postgresql://postgres:5432/atomhopper}" />
+        <property name="username" value="${DB_USER:postgres}" />
+        <property name="password" value="${DB_PASSWORD:password}" />
+        <property name="minIdle" value="10" />
+        <property name="maxIdle" value="25" />
+        <property name="initialSize" value="10" />
+        <property name="maxActive" value="50" />
+        <property name="validationQuery" value="SELECT 1" />
+        <property name="testWhileIdle" value="true" />
+        <property name="timeBetweenEvictionRunsMillis" value="10000" />
     </bean>
-
-    <bean name="hibernate-feed-source" class="org.atomhopper.hibernate.adapter.HibernateFeedSource">
-        <property name="feedRepository" ref="feed-repository-bean" />
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"></property>
     </bean>
-
-    <bean name="hibernate-feed-publisher" class="org.atomhopper.hibernate.adapter.HibernateFeedPublisher">
-        <property name="feedRepository" ref="feed-repository-bean" />
+    <bean id="jdbc-feed-publisher" name="jdbc-feed-publisher" class="org.atomhopper.jdbc.adapter.JdbcFeedPublisher">
+        <property name="jdbcTemplate" ref="jdbcTemplate"></property>
+    </bean>
+    <bean id="jdbc-feed-source" name="jdbc-feed-source" class="org.atomhopper.jdbc.adapter.JdbcFeedSource">
+        <property name="jdbcTemplate" ref="jdbcTemplate"></property>
     </bean>
 
     <!-- Postgres (Perfromance) Data Adapter -->
@@ -201,7 +198,7 @@
     </bean>
     -->
 
-    <!-- DynamoDB beans commented out for H2 database setup
+    <!-- DynamoDB beans commented out for JDBC adapter usage
     <bean id="dynamodb-feed-publisher" name="dynamodb-feed-publisher" class="org.atomhopper.dynamodb.adapter.DynamoDBFeedPublisher">
         <property name="dynamoDBClient" ref="client"></property>
     </bean>

@@ -9,13 +9,17 @@ LABEL maintainer="AtomHopperTeam@rackspace.com" \
       description="Docker image for Atom Hopper"
 
     #The database type
-ENV DB_TYPE=H2 \
+ENV DB_TYPE=PostgreSQL \
+    #Database driver class
+    DB_DRIVER=org.postgresql.Driver \
+    #Database connection URL
+    DB_URL=jdbc:postgresql://localhost:5432/atomhopper \
     #Database username
-    DB_USER=sa \
+    DB_USER=postgres \
     #Database password
-    DB_PASSWORD= \
-    #Database Host:Port
-    DB_HOST=h2 \
+    DB_PASSWORD=password \
+    #Database Host:Port (legacy, kept for compatibility)
+    DB_HOST=localhost:5432 \
     #External domain for public API responses (fallback when request-based fails)
     AH_EXTERNAL_DOMAIN=localhost:8080 \
     #External scheme (http or https) (fallback when request-based fails)
