@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <!-- 
+    ========================================================================
+    AWS Secrets Manager Integration Example Configuration
+    ========================================================================
+    
+    This file demonstrates how to configure AWS Secrets Manager integration
+    for Atom Hopper. This configuration is OPTIONAL and only needed if you
+    want to use AWS Secrets Manager for storing sensitive configuration.
+    
+    To enable AWS Secrets Manager:
+    1. Uncomment the beans below
+    2. Configure AWS credentials and region
+    3. Use placeholders in your bean properties: ${aws-secretsmanager:secret-name}
+    
+    ========================================================================
+    -->
+
+    <!-- 
+    ========================================================================
+    Step 1: Register the PropertySource Registrar
+    ========================================================================
+    This bean registers the AWS Secrets Manager PropertySource with Spring.
+    It must be defined before any beans that use AWS Secrets Manager placeholders.
+    -->
+    <!--
+    <bean class="org.atomhopper.aws.AwsSecretsManagerPropertySourceRegistrar"/>
+    -->
+
+    <!-- 
+    ========================================================================
+    Step 2: Configure AWS Secrets Manager Client
+    ========================================================================
+    Configure the AWS SDK SecretsManagerClient with your credentials and region.
+    
+    Option A: Static Credentials (shown below)
+    Option B: Default Credential Provider Chain (comment out credentialsProvider)
+    Option C: IAM Role (use DefaultCredentialsProvider when running on EC2/ECS)
+    -->
+    <!--
+    <bean id="awsCredentials" class="software.amazon.awssdk.auth.credentials.AwsBasicCredentials" 
+          factory-method="create">
+        <constructor-arg value="${aws.access.key.id}"/>
+        <constructor-arg value="${aws.secret.access.key}"/>
+    </bean>
+
+    <bean id="awsCredentialsProvider" class="software.amazon.awssdk.auth.credentials.StaticCredentialsProvider"
+          factory-method="create">
+        <constructor-arg ref="awsCredentials"/>
+    </bean>
+
+    <bean id="awsRegion" class="software.amazon.awssdk.regions.Region" factory-method="of">
+        <constructor-arg value="${aws.region:us-east-1}"/>
+    </bean>
+
+    <bean id="awsSecretsManagerClient" class="software.amazon.awssdk.services.secretsmanager.SecretsManagerClient"
+          factory-method="builder" destroy-method="close">
+        <property name="region" ref="awsRegion"/>
+        <property name="credentialsProvider" ref="awsCredentialsProvider"/>
+    </bean>
+    -->
+
+    <!-- 
+    ========================================================================
+    Step 3: Use AWS Secrets Manager Placeholders in Your Beans
+    ========================================================================
+    
+    Placeholder Syntax:
+    - ${aws-secretsmanager:secret-name}           - Retrieves entire secret as string
+    - ${aws-secretsmanager:secret-name/key}       - Retrieves specific key from JSON secret
+    
+    Examples:
+    -->
+
+    <!-- Example 1: PostgreSQL DataSource with AWS Secrets Manager -->
+    <!--
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="org.postgresql.Driver" />
+        <property name="url" value="jdbc:postgresql://localhost:5432/atomhopper" />
+        <property name="username" value="${aws-secretsmanager:db-credentials/username}" />
+        <property name="password" value="${aws-secretsmanager:db-credentials/password}" />
+        <property name="minIdle" value="10" />
+        <property name="maxIdle" value="25" />
+        <property name="initialSize" value="10" />
+        <property name="maxActive" value="50" />
+    </bean>
+    -->
+
+    <!-- Example 2: Hibernate Configuration with AWS Secrets Manager -->
+    <!--
+    <bean name="feed-repository-bean" class="org.atomhopper.hibernate.HibernateFeedRepository">
+        <constructor-arg>
+            <map>
+                <entry key="hibernate.connection.driver_class" value="org.postgresql.Driver" />
+                <entry key="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
+                <entry key="hibernate.connection.url" value="jdbc:postgresql://localhost:5432/atomhopper" />
+                <entry key="hibernate.connection.username" value="${aws-secretsmanager:db-credentials/username}" />
+                <entry key="hibernate.connection.password" value="${aws-secretsmanager:db-credentials/password}" />
+                <entry key="hibernate.hbm2ddl.auto" value="update" />
+            </map>
+        </constructor-arg>
+    </bean>
+    -->
+
+    <!-- 
+    ========================================================================
+    AWS Secrets Manager Secret Format
+    ========================================================================
+    
+    For JSON secrets with multiple keys, use this format in AWS Secrets Manager:
+    
+    {
+      "username": "myuser",
+      "password": "mypassword",
+      "host": "db.example.com",
+      "port": "5432"
+    }
+    
+    Then reference individual keys:
+    - ${aws-secretsmanager:db-credentials/username}
+    - ${aws-secretsmanager:db-credentials/password}
+    - ${aws-secretsmanager:db-credentials/host}
+    
+    For simple string secrets, omit the key:
+    - ${aws-secretsmanager:api-key}
+    
+    ========================================================================
+    -->
+
+    <!-- 
+    ========================================================================
+    Additional Placeholder Usage Patterns
+    ========================================================================
+    -->
+
+    <!-- Pattern 1: Complete JDBC URL from Secret -->
+    <!--
+    Store the entire JDBC connection string in a single secret for maximum flexibility.
+    Secret name: "atomhopper/jdbc-url"
+    Secret value: "jdbc:postgresql://prod-db.example.com:5432/atomhopper?ssl=true"
+    
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="url" value="${aws-secretsmanager:atomhopper/jdbc-url}" />
+        <property name="username" value="${aws-secretsmanager:atomhopper/db/username}" />
+        <property name="password" value="${aws-secretsmanager:atomhopper/db/password}" />
+    </bean>
+    -->
+
+    <!-- Pattern 2: Composite URL from Multiple Secret Keys -->
+    <!--
+    Build connection strings dynamically from individual secret components.
+    Secret name: "atomhopper/db/config"
+    Secret value: {"host": "db.example.com", "port": "5432", "database": "atomhopper"}
+    
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="url" value="jdbc:postgresql://${aws-secretsmanager:atomhopper/db/config/host}:${aws-secretsmanager:atomhopper/db/config/port}/${aws-secretsmanager:atomhopper/db/config/database}" />
+        <property name="username" value="${aws-secretsmanager:atomhopper/db/credentials/username}" />
+        <property name="password" value="${aws-secretsmanager:atomhopper/db/credentials/password}" />
+    </bean>
+    -->
+
+    <!-- Pattern 3: Mixing AWS Secrets with Environment Variables -->
+    <!--
+    Combine AWS Secrets Manager with traditional environment variables and property files.
+    Use AWS for sensitive data, environment variables for deployment-specific config.
+    
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="url" value="${DB_URL:jdbc:postgresql://localhost:5432/atomhopper}" />
+        <property name="username" value="${aws-secretsmanager:db-credentials/username}" />
+        <property name="password" value="${aws-secretsmanager:db-credentials/password}" />
+        <property name="maxActive" value="${DB_POOL_SIZE:50}" />
+    </bean>
+    -->
+
+    <!-- Pattern 4: Default Values with AWS Secrets Manager -->
+    <!--
+    Provide fallback values when secrets are not available (useful for local development).
+    Note: This uses Spring's standard default value syntax with ':'
+    
+    <bean id="apiClient" class="com.example.ApiClient">
+        <property name="apiKey" value="${aws-secretsmanager:api-key:dev-api-key-12345}" />
+        <property name="endpoint" value="${API_ENDPOINT:http://localhost:8080}" />
+    </bean>
+    -->
+
+    <!-- Pattern 5: Multiple Database Credentials -->
+    <!--
+    Manage credentials for multiple databases or services from different secrets.
+    
+    <bean id="primaryDataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="url" value="jdbc:postgresql://primary-db:5432/atomhopper" />
+        <property name="username" value="${aws-secretsmanager:primary-db/credentials/username}" />
+        <property name="password" value="${aws-secretsmanager:primary-db/credentials/password}" />
+    </bean>
+
+    <bean id="replicaDataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="url" value="jdbc:postgresql://replica-db:5432/atomhopper" />
+        <property name="username" value="${aws-secretsmanager:replica-db/credentials/username}" />
+        <property name="password" value="${aws-secretsmanager:replica-db/credentials/password}" />
+    </bean>
+    -->
+
+    <!-- Pattern 6: MongoDB Connection with AWS Secrets Manager -->
+    <!--
+    Secure MongoDB credentials using AWS Secrets Manager.
+    Secret name: "atomhopper/mongodb"
+    Secret value: {"username": "mongouser", "password": "secure-password"}
+    
+    <mongo:db-factory id="mongoDbFactory"
+            dbname="atomhopper"
+            username="${aws-secretsmanager:atomhopper/mongodb/username}"
+            password="${aws-secretsmanager:atomhopper/mongodb/password}"
+            mongo-ref="mongo"/>
+    -->
+
+    <!-- Pattern 7: External API Keys and Tokens -->
+    <!--
+    Store third-party API credentials securely.
+    Secret name: "atomhopper/external-api"
+    Secret value: {"api-key": "abc123", "api-secret": "xyz789", "endpoint": "https://api.example.com"}
+    
+    <bean id="externalApiClient" class="com.example.ExternalApiClient">
+        <property name="apiKey" value="${aws-secretsmanager:atomhopper/external-api/api-key}" />
+        <property name="apiSecret" value="${aws-secretsmanager:atomhopper/external-api/api-secret}" />
+        <property name="endpoint" value="${aws-secretsmanager:atomhopper/external-api/endpoint}" />
+    </bean>
+    -->
+
+    <!-- 
+    ========================================================================
+    Common Use Cases
+    ========================================================================
+    
+    1. DATABASE CREDENTIALS
+       - Store username/password in AWS Secrets Manager
+       - Keep connection URLs in environment variables or properties
+       - Rotate credentials without redeploying application
+    
+    2. API KEYS AND TOKENS
+       - Secure third-party API credentials
+       - Manage different keys per environment (dev/staging/prod)
+       - Centralize credential management
+    
+    3. ENCRYPTION KEYS
+       - Store encryption keys for data-at-rest encryption
+       - Manage key rotation through AWS Secrets Manager
+       - Separate key management from application code
+    
+    4. MULTI-TENANT CONFIGURATIONS
+       - Store tenant-specific credentials
+       - Use secret naming conventions: tenant-{id}/db/credentials
+       - Dynamically resolve credentials based on tenant context
+    
+    5. CERTIFICATE AND KEYSTORE PASSWORDS
+       - Secure SSL/TLS certificate passwords
+       - Store keystore passwords for secure communications
+       - Manage certificate rotation
+    
+    ========================================================================
+    -->
+
+    <!-- 
+    ========================================================================
+    Best Practices
+    ========================================================================
+    
+    1. SECRET NAMING CONVENTIONS
+       - Use hierarchical naming: {app}/{env}/{resource}/{key}
+       - Example: atomhopper/prod/db/credentials
+       - Makes secrets easier to manage and audit
+    
+    2. JSON STRUCTURE FOR RELATED SECRETS
+       - Group related credentials in single JSON secret
+       - Example: {"username": "user", "password": "pass", "host": "db.example.com"}
+       - Reduces number of secrets to manage
+    
+    3. ENVIRONMENT-SPECIFIC SECRETS
+       - Use different secret names per environment
+       - Example: atomhopper/dev/db vs atomhopper/prod/db
+       - Configure environment via property: ${aws.secretsmanager.prefix:atomhopper/dev}
+    
+    4. CREDENTIAL ROTATION
+       - AWS Secrets Manager supports automatic rotation
+       - Application automatically picks up new credentials
+       - No application restart required (with caching TTL)
+    
+    5. LEAST PRIVILEGE ACCESS
+       - Grant IAM permissions only for required secrets
+       - Use IAM policies to restrict secret access by name pattern
+       - Example: Allow GetSecretValue for "atomhopper/*" only
+    
+    6. MONITORING AND AUDITING
+       - Enable AWS CloudTrail for secret access logging
+       - Monitor failed secret retrieval attempts
+       - Set up alerts for unauthorized access attempts
+    
+    7. LOCAL DEVELOPMENT
+       - Use default values for local development
+       - Example: ${aws-secretsmanager:db/password:localDevPassword}
+       - Or use LocalStack for local AWS service emulation
+    
+    8. CACHING CONSIDERATIONS
+       - PropertySource implementation caches secrets
+       - Reduces AWS API calls and improves performance
+       - Balance cache TTL with security requirements
+    
+    ========================================================================
+    -->
+
+    <!-- 
+    ========================================================================
+    Troubleshooting
+    ========================================================================
+    
+    ISSUE: "Unable to load AWS credentials"
+    SOLUTION: 
+    - Verify AWS credentials are configured (access key/secret key)
+    - Check IAM role permissions if running on EC2/ECS
+    - Ensure credentials have secretsmanager:GetSecretValue permission
+    
+    ISSUE: "Secret not found"
+    SOLUTION:
+    - Verify secret name matches exactly (case-sensitive)
+    - Check AWS region configuration
+    - Confirm secret exists in the specified region
+    
+    ISSUE: "Access denied to secret"
+    SOLUTION:
+    - Verify IAM permissions include secretsmanager:GetSecretValue
+    - Check resource-based policies on the secret
+    - Ensure KMS key permissions if secret is encrypted
+    
+    ISSUE: "Placeholder not resolved"
+    SOLUTION:
+    - Verify AwsSecretsManagerPropertySource bean is registered
+    - Check placeholder syntax: ${aws-secretsmanager:secret-name}
+    - Ensure AWS client bean is properly configured
+    
+    ISSUE: "Application startup slow"
+    SOLUTION:
+    - Secrets are fetched during application startup
+    - Consider caching secrets with appropriate TTL
+    - Use connection pooling for AWS SDK client
+    
+    ========================================================================
+    -->
+
+</beans>

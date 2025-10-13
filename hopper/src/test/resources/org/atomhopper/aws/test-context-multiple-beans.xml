@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+            http://www.springframework.org/schema/context
+            http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+    <!-- Enable standard property placeholder resolution -->
+    <context:property-placeholder/>
+
+    <!-- Multiple beans with different properties -->
+    <bean id="testBean1" class="org.atomhopper.aws.TestBean">
+        <property name="property" value="${bean1.property}"/>
+    </bean>
+
+    <bean id="testBean2" class="org.atomhopper.aws.TestBean">
+        <property name="property" value="${bean2.property}"/>
+    </bean>
+
+</beans>

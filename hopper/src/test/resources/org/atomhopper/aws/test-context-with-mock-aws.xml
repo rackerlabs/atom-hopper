@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <!-- Register AWS Secrets Manager PropertySource -->
+    <bean id="awsSecretsManagerPropertySourceRegistrar" 
+          class="org.atomhopper.aws.AwsSecretsManagerPropertySourceRegistrar"/>
+
+    <!-- Mock AWS SecretsManagerClient using factory bean -->
+    <bean id="awsSecretsManagerClient" class="org.atomhopper.aws.MockSecretsManagerClientFactory" 
+          factory-method="createMockClient"/>
+
+    <!-- Test bean to verify context loading -->
+    <bean id="testBean" class="org.atomhopper.aws.TestBean">
+        <property name="property" value="test-value"/>
+    </bean>
+
+</beans>

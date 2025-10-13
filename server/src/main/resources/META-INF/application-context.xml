@@ -11,6 +11,67 @@
             http://www.springframework.org/schema/beans
             http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
+    <!-- ========================================================================
+         AWS Secrets Manager Integration (Optional)
+         
+         This section demonstrates how to configure AWS Secrets Manager integration
+         to securely manage sensitive configuration values like database credentials.
+         
+         PREREQUISITES:
+         1. Add AWS SDK v2 dependency to your pom.xml:
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>secretsmanager</artifactId>
+                <version>2.20.26</version>
+            </dependency>
+         
+         2. Ensure AwsSecretsManagerPropertySource class is available in classpath
+         
+         PLACEHOLDER SYNTAX:
+         - ${aws-secretsmanager:secret-name} - Retrieves entire secret as string
+         - ${aws-secretsmanager:secret-name/key} - Retrieves specific key from JSON secret
+         
+         AUTHENTICATION OPTIONS:
+         Option 1: Explicit credentials (shown below)
+         Option 2: Default AWS credential provider chain (remove credentialsProvider property)
+         Option 3: IAM role (when running on EC2/ECS - remove credentialsProvider property)
+         
+         ======================================================================== -->
+    <!--
+    <bean id="awsCredentials" class="software.amazon.awssdk.auth.credentials.AwsBasicCredentials" 
+          factory-method="create">
+        <constructor-arg value="${aws.access.key.id}"/>
+        <constructor-arg value="${aws.secret.access.key}"/>
+    </bean>
+    
+    <bean id="awsCredentialsProvider" class="software.amazon.awssdk.auth.credentials.StaticCredentialsProvider" 
+          factory-method="create">
+        <constructor-arg ref="awsCredentials"/>
+    </bean>
+    
+    <bean id="awsRegion" class="software.amazon.awssdk.regions.Region" 
+          factory-method="of">
+        <constructor-arg value="${aws.region:us-east-1}"/>
+    </bean>
+    
+    <bean id="secretsManagerClient" class="software.amazon.awssdk.services.secretsmanager.SecretsManagerClient" 
+          factory-method="builder" destroy-method="close">
+        <property name="region" ref="awsRegion"/>
+        <property name="credentialsProvider" ref="awsCredentialsProvider"/>
+    </bean>
+    
+    <bean id="awsSecretsManagerPropertySource" class="org.atomhopper.aws.AwsSecretsManagerPropertySource">
+        <constructor-arg name="secretsManagerClient" ref="secretsManagerClient"/>
+    </bean>
+    -->
+    
+    <!-- ========================================================================
+         AWS Secrets Manager Usage Examples
+         
+         Once configured, you can use AWS Secrets Manager placeholders in any
+         Spring bean property. Below are common use cases:
+         ======================================================================== -->
+
      <!-- Hibernate -->
     <bean name="feed-repository-bean"
            class="org.atomhopper.hibernate.HibernateFeedRepository">
@@ -46,6 +107,30 @@
                  <entry key="hibernate.connection.password" value="password" />
                  -->
                  <!-- End PostgreSQL Config -->
+                 
+                 <!-- Start PostgreSQL Config with AWS Secrets Manager -->
+                 <!--
+                 EXAMPLE: Using AWS Secrets Manager for database credentials
+                 
+                 Assumes a secret named "atomhopper/db/postgres" with JSON structure:
+                 {
+                   "username": "postgres",
+                   "password": "secure-password-from-aws",
+                   "host": "db.example.com",
+                   "port": "5432",
+                   "database": "atomhopper"
+                 }
+                 
+                 <entry key="hibernate.connection.driver_class" value="org.postgresql.Driver" />
+                 <entry key="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
+                 <entry key="hibernate.connection.url" 
+                        value="jdbc:postgresql://${aws-secretsmanager:atomhopper/db/postgres/host}:${aws-secretsmanager:atomhopper/db/postgres/port}/${aws-secretsmanager:atomhopper/db/postgres/database}" />
+                 <entry key="hibernate.connection.username" 
+                        value="${aws-secretsmanager:atomhopper/db/postgres/username}" />
+                 <entry key="hibernate.connection.password" 
+                        value="${aws-secretsmanager:atomhopper/db/postgres/password}" />
+                 -->
+                 <!-- End PostgreSQL Config with AWS Secrets Manager -->
 
                 <entry key="hibernate.hbm2ddl.auto" value="update" />
                  <!-- <entry key="hibernate.show_sql" value="false" /> -->
@@ -63,13 +148,50 @@
         <property name="feedRepository" ref="feed-repository-bean" />
     </bean>
 
-    <!-- Postgres (Perfromance) Data Adapter -->
+    <!-- Postgres (Performance) Data Adapter -->
     <!--
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="org.postgresql.Driver" />
         <property name="url" value="jdbc:postgresql://localhost:5432/atomhopper" />
         <property name="username" value="postgres" />
         <property name="password" value="password" />
+        <property name="minIdle" value="10" />
+        <property name="maxIdle" value="25" />
+        <property name="initialSize" value="10" />
+        <property name="maxActive" value="50" />
+    </bean>
+
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+    <bean id="postgres-feed-publisher" name="postgres-feed-publisher" class="org.atomhopper.postgres.adapter.PostgresFeedPublisher">
+        <property name="jdbcTemplate" ref="jdbcTemplate"></property>
+    </bean>
+
+    <bean id="postgres-feed-source" name="postgres-feed-source" class="org.atomhopper.postgres.adapter.PostgresFeedSource">
+        <property name="jdbcTemplate" ref="jdbcTemplate"></property>
+    </bean>
+    -->
+    
+    <!-- Postgres (Performance) Data Adapter with AWS Secrets Manager -->
+    <!--
+    EXAMPLE: Using AWS Secrets Manager for JDBC connection pool credentials
+    
+    This example shows how to use AWS Secrets Manager with the high-performance
+    Postgres adapter using Apache Commons DBCP connection pooling.
+    
+    Assumes a secret named "atomhopper/db/credentials" with JSON structure:
+    {
+      "username": "atomhopper_user",
+      "password": "secure-db-password"
+    }
+    
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="org.postgresql.Driver" />
+        <property name="url" value="jdbc:postgresql://localhost:5432/atomhopper" />
+        <property name="username" value="${aws-secretsmanager:atomhopper/db/credentials/username}" />
+        <property name="password" value="${aws-secretsmanager:atomhopper/db/credentials/password}" />
         <property name="minIdle" value="10" />
         <property name="maxIdle" value="25" />
         <property name="initialSize" value="10" />
@@ -114,4 +236,65 @@
          <property name="mongoTemplate" ref="mongoTemplate" />
      </bean>
      -->
+     
+    <!-- ========================================================================
+         Additional AWS Secrets Manager Usage Examples
+         ======================================================================== -->
+    
+    <!-- EXAMPLE 1: Simple string secret (API key, token, etc.) -->
+    <!--
+    Assumes a secret named "atomhopper/api-key" containing a plain string value
+    
+    <bean id="externalApiClient" class="com.example.ApiClient">
+        <property name="apiKey" value="${aws-secretsmanager:atomhopper/api-key}" />
+    </bean>
+    -->
+    
+    <!-- EXAMPLE 2: Multiple secrets from different sources -->
+    <!--
+    Mix AWS Secrets Manager with environment variables and property files
+    
+    <bean id="configuredService" class="com.example.ConfiguredService">
+        <property name="dbPassword" value="${aws-secretsmanager:db/password}" />
+        <property name="apiEndpoint" value="${API_ENDPOINT:http://localhost:8080}" />
+        <property name="timeout" value="${service.timeout:30000}" />
+    </bean>
+    -->
+    
+    <!-- EXAMPLE 3: MongoDB with AWS Secrets Manager -->
+    <!--
+    Assumes a secret named "atomhopper/mongodb" with JSON structure:
+    {
+      "username": "mongouser",
+      "password": "secure-mongo-password"
+    }
+    
+    <mongo:db-factory id="mongoDbFactory"
+            dbname="atomhopper"
+            username="${aws-secretsmanager:atomhopper/mongodb/username}"
+            password="${aws-secretsmanager:atomhopper/mongodb/password}"
+            mongo-ref="mongo"/>
+    -->
+    
+    <!-- EXAMPLE 4: Entire connection string from single secret -->
+    <!--
+    Assumes a secret named "atomhopper/jdbc-url" containing the full JDBC URL
+    
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="url" value="${aws-secretsmanager:atomhopper/jdbc-url}" />
+        <property name="username" value="${aws-secretsmanager:atomhopper/db/credentials/username}" />
+        <property name="password" value="${aws-secretsmanager:atomhopper/db/credentials/password}" />
+    </bean>
+    -->
+    
+    <!-- EXAMPLE 5: Default values with AWS Secrets Manager -->
+    <!--
+    Use Spring's default value syntax with AWS Secrets Manager placeholders
+    Falls back to default if secret doesn't exist or AWS is not configured
+    
+    <bean id="serviceConfig" class="com.example.ServiceConfig">
+        <property name="password" value="${aws-secretsmanager:optional/secret:defaultPassword}" />
+    </bean>
+    -->
+    
 </beans>

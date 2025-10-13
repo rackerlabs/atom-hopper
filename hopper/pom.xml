@@ -135,6 +135,11 @@
             <artifactId>tomcat-jdbc</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>secretsmanager</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -164,4 +169,3 @@
         </plugins>
     </build>
 </project>
-
