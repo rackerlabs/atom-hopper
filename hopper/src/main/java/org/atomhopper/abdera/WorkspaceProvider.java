@@ -19,6 +19,7 @@ import org.atomhopper.util.uri.template.URITemplate;
 import org.atomhopper.util.uri.template.URITemplateParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.abdera.protocol.server.ProviderHelper;
 
 public class WorkspaceProvider implements Provider {
 
