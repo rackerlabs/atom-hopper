@@ -18,7 +18,7 @@ WORKDIR /app
 COPY . .
 
 # Build the application
-RUN mvn clean package -DskipTests
+RUN mvn clean package -DskipTests -pl '!documentation'
 
 # Second stage: runtime image
 FROM openjdk:8-jre-alpine
