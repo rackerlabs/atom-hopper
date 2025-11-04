@@ -12,7 +12,7 @@
 
 
     <groupId>org.atomhopper.adapter</groupId>
-    <artifactId>dynamoDB_adapters</artifactId>
+    <artifactId>dynamodb-adapters</artifactId>
     <packaging>jar</packaging>
     <build>
         <plugins>
