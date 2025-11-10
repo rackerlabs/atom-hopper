@@ -43,6 +43,40 @@ The current status of the Atom Hopper Data Adapters is as follows:
 
 To find out how to install and run Atom Hopper please see the [Atom Hopper Wiki](https://github.com/rackerlabs/atom-hopper/wiki)
 
+###Health Check and Version Endpoints###
+
+Atom Hopper provides multiple endpoints for monitoring and version information:
+
+#### Health Check Endpoint (Recommended for ECS Load Balancers)
+* **Endpoint**: `GET /health`
+* **Purpose**: Lightweight health check for load balancers and monitoring systems
+* **Response**: JSON format with service status
+* **Status Code**: 200 OK
+* **Example Response**:
+```json
+{
+  "service": "atomhopper",
+  "status": "ok", 
+  "version": "1.14.1-SNAPSHOT"
+}
+```
+
+#### Build Information Endpoint (Legacy)
+* **Endpoint**: `GET /buildinfo`
+* **Purpose**: Detailed build information from Maven properties
+* **Response**: JSON format with Maven properties
+* **Status Code**: 200 OK
+* **Example Response**:
+```json
+{
+  "version": "1.14.1-SNAPSHOT",
+  "groupId": "org.atomhopper",
+  "artifactId": "atomhopper"
+}
+```
+
+**Note**: The `/health` endpoint is optimized for frequent health checks and does not perform any database operations. Use `/buildinfo` for detailed build information.
+
 ###Notes Regarding licensing###
 
 *All files contained with this distribution of Atom Hopper are licenced 
