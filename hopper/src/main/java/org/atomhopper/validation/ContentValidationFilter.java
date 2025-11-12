@@ -111,34 +111,14 @@ public class ContentValidationFilter implements Filter {
     }
 
     private ResponseContext validateJsonContent(RequestContext request, FilterChain chain) {
-        try {
-            // Read and validate JSON syntax
-            InputStream inputStream = request.getInputStream();
-            if (inputStream == null) {
-                return createBadRequestResponse("Request body is empty");
-            }
-
-            // Read the content into a byte array
-            byte[] content = readInputStreamToByteArray(inputStream);
-            if (content.length == 0) {
-                return createBadRequestResponse("JSON content is empty");
-            }
-
-            String jsonContent = new String(content, "UTF-8").trim();
-            if (jsonContent.isEmpty()) {
-                return createBadRequestResponse("JSON content is empty");
-            }
-
-            // Basic JSON syntax validation
-            if (!isValidJsonSyntax(jsonContent)) {
-                return createBadRequestResponse("Invalid JSON syntax");
-            }
-
-        } catch (IOException e) {
-            LOG.error("Error reading JSON content", e);
-            return createBadRequestResponse("Error reading request content");
-        }
-
+        // For JSON validation, we'll do a simpler approach to avoid consuming the input stream
+        // The main application will handle detailed JSON parsing
+        
+        // Just check if content type is JSON and let the application handle the rest
+        // If there are JSON syntax errors, they should be caught by the application layer
+        
+        // For now, let the request continue and let the application handle JSON validation
+        // This avoids the issue of consuming the input stream before the application can read it
         return chain.next(request);
     }
 

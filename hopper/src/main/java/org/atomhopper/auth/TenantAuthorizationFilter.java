@@ -25,7 +25,10 @@ public class TenantAuthorizationFilter implements Filter {
     public ResponseContext filter(RequestContext request, FilterChain chain) {
         // Skip authorization for health checks and version endpoints
         String path = request.getUri().getPath();
+        LOG.info("TenantAuthorizationFilter: Processing request to {}", path);
+        
         if (path.endsWith("/health") || path.endsWith("/buildinfo") || path.endsWith("/atommetrics")) {
+            LOG.info("TenantAuthorizationFilter: Skipping authorization for system endpoint");
             return chain.next(request);
         }
 
@@ -49,7 +52,7 @@ public class TenantAuthorizationFilter implements Filter {
         // Check tenant access
         if (enforceRoleBasedAccess && requestedTenant != null) {
             // Special case: identity:user-admin users should be denied access to identity feeds
-            if ("identity".equals(requestedTenant) && userRoles != null && userRoles.contains("user-admin") && userTenant != null && userTenant.contains("identity")) {
+            if ("identity".equals(requestedTenant) && userRoles != null && userRoles.contains("user-admin")) {
                 LOG.warn("Identity user-admin {} denied access to identity feed", userId);
                 return createForbiddenResponse();
             }
