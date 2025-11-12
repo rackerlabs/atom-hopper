@@ -11,6 +11,42 @@
             http://www.springframework.org/schema/beans
             http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
+    <!-- Property placeholder configurer to resolve environment variables -->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="systemPropertiesMode" value="2" />
+        <property name="searchSystemEnvironment" value="true" />
+    </bean>
+
+    <!-- Authentication and Authorization Filters -->
+    <bean name="keystone-auth-filter" class="org.atomhopper.auth.KeystoneAuthenticationFilter">
+        <property name="keystoneUri" value="${KEYSTONE_URI:https://staging.identity-internal.api.rackspacecloud.com}" />
+        <property name="adminToken" value="${KEYSTONE_ADMIN_TOKEN:}" />
+        <property name="cacheTimeout" value="${AUTH_CACHE_TIMEOUT:300}" />
+    </bean>
+    
+    <bean name="tenant-auth-filter" class="org.atomhopper.auth.TenantAuthorizationFilter">
+        <property name="enforceRoleBasedAccess" value="${ENFORCE_RBAC:true}" />
+    </bean>
+
+    <!-- Content Validation Filter -->
+    <bean name="content-validation-filter" class="org.atomhopper.validation.ContentValidationFilter" />
+    
+    <!-- Category Validation Filter -->
+    <bean name="category-validation-filter" class="org.atomhopper.validation.CategoryValidationFilter" />
+
+    <!-- Categories Descriptor -->
+    <bean name="workspace-categories-descriptor" class="org.atomhopper.config.WorkspaceCategoriesDescriptor">
+        <property name="allowedCategories">
+            <list>
+                <value>compute</value>
+                <value>storage</value>
+                <value>network</value>
+                <value>identity</value>
+                <value>monitoring</value>
+            </list>
+        </property>
+    </bean>
+
      <!-- Hibernate -->
     <bean name="feed-repository-bean"
            class="org.atomhopper.hibernate.HibernateFeedRepository">

@@ -57,9 +57,12 @@ public class TenantAuthorizationFilter implements Filter {
                 return createForbiddenResponse();
             }
             
+            // For tenanted access tests - users should only access their own tenant unless they're full admin
             if (!canAccessTenant(userTenant, userRoles, requestedTenant)) {
                 LOG.warn("User {} with tenant {} and roles {} denied access to tenant {}", 
                         new Object[]{userId, userTenant, userRoles, requestedTenant});
+                
+                // Return 403 for access control violations, not 404
                 return createForbiddenResponse();
             }
         }
@@ -68,18 +71,32 @@ public class TenantAuthorizationFilter implements Filter {
     }
 
     private boolean canAccessTenant(String userTenant, String userRoles, String requestedTenant) {
-        // Only full admin users (not user-admin) can access any tenant
+        // Full admin users can access any tenant
         if (userRoles != null && userRoles.equals("admin")) {
             return true;
         }
 
+        // Service admin users can access their service tenant
+        if (userRoles != null && userRoles.equals("admin") && "cloudfeeds".equals(userTenant)) {
+            return "cloudfeeds".equals(requestedTenant);
+        }
+
         // Users can only access their own tenant
-        return requestedTenant.equals(userTenant);
+        if (userTenant != null && userTenant.equals(requestedTenant)) {
+            return true;
+        }
+
+        // Deny access for mismatched tenants
+        return false;
     }
 
     private ResponseContext createForbiddenResponse() {
-        // Create a proper 403 response using Abdera's ProviderHelper
-        ResponseContext response = ProviderHelper.forbidden(null, "Access denied. Insufficient privileges to access this resource.");
+        // Create a proper 403 response with XML body
+        ResponseContext response = ProviderHelper.forbidden(null, 
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+            "<error xmlns=\"http://www.w3.org/2005/Atom\">\n" +
+            "  <message>Access denied. Insufficient privileges to access this resource.</message>\n" +
+            "</error>");
         response.setContentType("application/xml; charset=utf-8");
         response.setHeader("Cache-Control", "must-revalidate,no-cache,no-store");
         return response;

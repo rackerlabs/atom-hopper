@@ -12,6 +12,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -62,6 +63,10 @@ public class CategoryValidationFilter implements Filter {
                 return validationResult;
             }
 
+            // Reset the input stream for the next filter by creating a new one from the content
+            byte[] content = readInputStreamToByteArray(inputStream);
+            request.setAttribute(RequestContext.Scope.REQUEST, "inputStreamContent", content);
+
         } catch (Exception e) {
             LOG.error("Error validating categories", e);
             // Let the request continue - validation errors will be caught by content validation
@@ -101,9 +106,25 @@ public class CategoryValidationFilter implements Filter {
     }
 
     private ResponseContext createBadRequestResponse(String message) {
-        ResponseContext response = ProviderHelper.badrequest(null, escapeXml(message));
+        String xmlBody = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                        "<error xmlns=\"http://www.w3.org/2005/Atom\">\n" +
+                        "  <message>" + escapeXml(message) + "</message>\n" +
+                        "</error>";
+        ResponseContext response = ProviderHelper.badrequest(null, xmlBody);
         response.setContentType("application/xml; charset=utf-8");
         return response;
+    }
+
+    private byte[] readInputStreamToByteArray(InputStream inputStream) throws IOException {
+        byte[] buffer = new byte[8192];
+        int bytesRead;
+        java.io.ByteArrayOutputStream outputStream = new java.io.ByteArrayOutputStream();
+        
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            outputStream.write(buffer, 0, bytesRead);
+        }
+        
+        return outputStream.toByteArray();
     }
 
     private String escapeXml(String text) {

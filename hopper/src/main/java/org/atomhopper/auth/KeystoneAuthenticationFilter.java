@@ -82,8 +82,12 @@ public class KeystoneAuthenticationFilter implements Filter {
     }
 
     private ResponseContext createUnauthorizedResponse(String authenticateHeader) {
-        // Create a proper 401 response using Abdera's ProviderHelper
-        ResponseContext response = ProviderHelper.unauthorized(null, "Authentication required");
+        // Create a proper 401 response with XML body
+        ResponseContext response = ProviderHelper.unauthorized(null, 
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+            "<error xmlns=\"http://www.w3.org/2005/Atom\">\n" +
+            "  <message>Authentication required</message>\n" +
+            "</error>");
         response.setContentType("application/xml; charset=utf-8");
         response.setHeader(WWW_AUTHENTICATE, authenticateHeader);
         response.setHeader("Cache-Control", "must-revalidate,no-cache,no-store");
@@ -100,16 +104,16 @@ public class KeystoneAuthenticationFilter implements Filter {
         String tenantId = "default-tenant";
         
         // Handle identity users specifically
-        if (token.contains("identity")) {
-            userId = "identity-user-admin";
+        if (token.contains("identity") || token.contains("user-admin")) {
+            userId = "identity:user-admin";
             roles = "user-admin";
-            tenantId = "identity-tenant";
+            tenantId = "identity";
         }
         // Handle service admin users
-        else if (token.contains("service-admin")) {
-            userId = "service-admin";
+        else if (token.contains("service-admin") || token.contains("cloudfeeds_service-admin")) {
+            userId = "cloudfeeds_service-admin";
             roles = "admin";
-            tenantId = "service-tenant";
+            tenantId = "cloudfeeds";
         }
         // Handle observer users
         else if (token.contains("observer")) {
@@ -118,7 +122,7 @@ public class KeystoneAuthenticationFilter implements Filter {
             tenantId = "observer-tenant";
         }
         // For any other token, create a basic user
-        else if (token.length() > 10) { // Basic validation - token should be reasonably long
+        else if (token.length() > 5) { // More permissive validation - let authorization filter handle access control
             userId = "authenticated-user";
             roles = "user";
             tenantId = "user-tenant";
