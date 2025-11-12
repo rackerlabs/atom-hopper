@@ -22,6 +22,36 @@
     -->
 <!--        <bean name="json-filter"          class="org.apache.abdera.ext.json.JSONFilter"/> -->
 
+    <!-- Authentication and Authorization Filters -->
+    <bean name="keystone-auth-filter" class="org.atomhopper.auth.KeystoneAuthenticationFilter">
+        <property name="keystoneUri" value="${KEYSTONE_URI:https://staging.identity-internal.api.rackspacecloud.com}" />
+        <property name="adminToken" value="${KEYSTONE_ADMIN_TOKEN:}" />
+        <property name="cacheTimeout" value="${AUTH_CACHE_TIMEOUT:300}" />
+    </bean>
+    
+    <bean name="tenant-auth-filter" class="org.atomhopper.auth.TenantAuthorizationFilter">
+        <property name="enforceRoleBasedAccess" value="${ENFORCE_RBAC:true}" />
+    </bean>
+
+    <!-- Content Validation Filter -->
+    <bean name="content-validation-filter" class="org.atomhopper.validation.ContentValidationFilter" />
+    
+    <!-- Category Validation Filter -->
+    <bean name="category-validation-filter" class="org.atomhopper.validation.CategoryValidationFilter" />
+
+    <!-- Categories Descriptor -->
+    <bean name="workspace-categories-descriptor" class="org.atomhopper.config.WorkspaceCategoriesDescriptor">
+        <property name="allowedCategories">
+            <list>
+                <value>compute</value>
+                <value>storage</value>
+                <value>network</value>
+                <value>identity</value>
+                <value>monitoring</value>
+            </list>
+        </property>
+    </bean>
+
     <!-- JDBC (Production) Data Adapter -->
     <bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource">
         <property name="driverClassName" value="${DB_DRIVER:org.postgresql.Driver}" />
@@ -207,5 +237,20 @@
         <property name="dynamoDBClient" ref="client"></property>
     </bean>
     -->
+
+    <!-- Filter beans for authentication, authorization, and validation -->
+    <bean id="keystoneAuthenticationFilter" class="org.atomhopper.auth.KeystoneAuthenticationFilter">
+        <property name="keystoneUri" value="${keystone.uri:http://localhost:5000/v2.0}" />
+        <property name="adminToken" value="${keystone.admin.token:admin}" />
+        <property name="cacheTimeout" value="${auth.cache.timeout:300}" />
+    </bean>
+
+    <bean id="tenantAuthorizationFilter" class="org.atomhopper.auth.TenantAuthorizationFilter">
+        <property name="enforceRoleBasedAccess" value="${enforce.rbac:true}" />
+    </bean>
+
+    <bean id="contentValidationFilter" class="org.atomhopper.validation.ContentValidationFilter" />
+
+    <bean id="categoryValidationFilter" class="org.atomhopper.validation.CategoryValidationFilter" />
 
 </beans>
