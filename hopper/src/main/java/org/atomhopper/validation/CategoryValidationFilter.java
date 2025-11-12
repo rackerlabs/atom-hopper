@@ -71,6 +71,12 @@ public class CategoryValidationFilter implements Filter {
     }
 
     private ResponseContext validateCategories(Document doc, RequestContext request) {
+        // Check for multiple title elements (only one allowed)
+        NodeList titles = doc.getElementsByTagNameNS("http://www.w3.org/2005/Atom", "title");
+        if (titles.getLength() > 1) {
+            return createBadRequestResponse("Only one atom:title node is allowed per entry");
+        }
+        
         NodeList categories = doc.getElementsByTagNameNS("http://www.w3.org/2005/Atom", "category");
         
         for (int i = 0; i < categories.getLength(); i++) {
@@ -95,7 +101,9 @@ public class CategoryValidationFilter implements Filter {
     }
 
     private ResponseContext createBadRequestResponse(String message) {
-        return ProviderHelper.badrequest(null, escapeXml(message));
+        ResponseContext response = ProviderHelper.badrequest(null, escapeXml(message));
+        response.setContentType("application/xml; charset=utf-8");
+        return response;
     }
 
     private String escapeXml(String text) {

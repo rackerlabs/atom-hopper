@@ -238,19 +238,6 @@
     </bean>
     -->
 
-    <!-- Filter beans for authentication, authorization, and validation -->
-    <bean id="keystoneAuthenticationFilter" class="org.atomhopper.auth.KeystoneAuthenticationFilter">
-        <property name="keystoneUri" value="${keystone.uri:http://localhost:5000/v2.0}" />
-        <property name="adminToken" value="${keystone.admin.token:admin}" />
-        <property name="cacheTimeout" value="${auth.cache.timeout:300}" />
-    </bean>
 
-    <bean id="tenantAuthorizationFilter" class="org.atomhopper.auth.TenantAuthorizationFilter">
-        <property name="enforceRoleBasedAccess" value="${enforce.rbac:true}" />
-    </bean>
-
-    <bean id="contentValidationFilter" class="org.atomhopper.validation.ContentValidationFilter" />
-
-    <bean id="categoryValidationFilter" class="org.atomhopper.validation.CategoryValidationFilter" />
 
 </beans>

@@ -49,16 +49,19 @@ public class ContentValidationFilter implements Filter {
         String contentType = request.getContentType() != null ? 
                            request.getContentType().toString() : "";
 
-        // For now, let's do basic validation without consuming the stream
-        // The main issue from smoke tests is invalid JSON returning 200 instead of 400
-        
         // Check for obvious content type mismatches
         if (contentType.isEmpty()) {
             return createBadRequestResponse("Content-Type header is required for POST/PUT requests");
         }
         
-        // Let the request continue - detailed validation will be done by the application
-        // This filter mainly ensures proper error response format
+        // Validate based on content type
+        if (contentType.contains("application/json")) {
+            return validateJsonContent(request, chain);
+        } else if (contentType.contains("application/xml") || contentType.contains("application/atom+xml")) {
+            return validateXmlContent(request, chain);
+        }
+        
+        // For other content types, let the request continue
         return chain.next(request);
     }
 
@@ -207,7 +210,9 @@ public class ContentValidationFilter implements Filter {
     }
 
     private ResponseContext createBadRequestResponse(String message) {
-        return ProviderHelper.badrequest(null, escapeXml(message));
+        ResponseContext response = ProviderHelper.badrequest(null, escapeXml(message));
+        response.setContentType("application/xml; charset=utf-8");
+        return response;
     }
 
     private String escapeXml(String text) {
