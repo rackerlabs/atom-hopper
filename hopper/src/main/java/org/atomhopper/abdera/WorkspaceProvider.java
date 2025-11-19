@@ -165,10 +165,10 @@ public class WorkspaceProvider implements Provider {
                 transactionEnd(transaction, request, response);
             }
         } else {
-            response = ProviderHelper.notfound(request).setContentType(XML);
+            response = buildNotFoundResponse(request, "Requested workspace or feed was not found");
         }
 
-        return response != null ? response : ProviderHelper.badrequest(request).setContentType(XML);
+        return response != null ? response : buildBadRequestResponse(request, "Unable to process request");
     }
 
     private ResponseContext handleAdapterException(Exception ex, Transactional transaction, RequestContext request) {
@@ -186,7 +186,7 @@ public class WorkspaceProvider implements Provider {
         }
 
         transactionCompensate(transaction, request, ex);
-        return ProviderHelper.servererror(request, ex).setContentType(XML);
+        return buildServerErrorResponse(request, ex);
     }
 
     private void transactionCompensate(Transactional transactional, RequestContext request, Throwable e) {
@@ -293,5 +293,36 @@ public class WorkspaceProvider implements Provider {
     @Override
     public Map<TargetType, RequestProcessor> getRequestProcessors() {
         return Collections.unmodifiableMap(this.requestProcessors);
+    }
+
+    private ResponseContext buildBadRequestResponse(RequestContext request, String message) {
+        return ProviderHelper.badrequest(request, buildErrorBody(message)).setContentType(XML);
+    }
+
+    private ResponseContext buildNotFoundResponse(RequestContext request, String message) {
+        return ProviderHelper.notfound(request, buildErrorBody(message)).setContentType(XML);
+    }
+
+    private ResponseContext buildServerErrorResponse(RequestContext request, Throwable throwable) {
+        return ProviderHelper.servererror(request, throwable).setContentType(XML);
+    }
+
+    private String buildErrorBody(String message) {
+        String safeMessage = escapeXml(message == null ? "Unknown error" : message);
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "<error xmlns=\"http://www.w3.org/2005/Atom\">\n" +
+                "  <message>" + safeMessage + "</message>\n" +
+                "</error>";
+    }
+
+    private String escapeXml(String text) {
+        if (text == null) {
+            return "";
+        }
+        return text.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&apos;");
     }
 }

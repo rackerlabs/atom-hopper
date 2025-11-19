@@ -1,11 +1,12 @@
 package org.atomhopper.validation;
 
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import org.apache.abdera.protocol.server.Filter;
 import org.apache.abdera.protocol.server.FilterChain;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.ResponseContext;
 import org.apache.abdera.protocol.server.ProviderHelper;
-import org.atomhopper.util.ResponseValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -147,51 +148,18 @@ public class ContentValidationFilter implements Filter {
     }
 
     private boolean isValidJsonSyntax(String json) {
-        // Basic JSON syntax validation
-        json = json.trim();
-        
-        if (json.isEmpty()) {
+        String payload = json == null ? "" : json.trim();
+        if (payload.isEmpty()) {
             return false;
         }
 
-        // Must start and end with proper brackets/braces
-        if ((json.startsWith("{") && json.endsWith("}")) ||
-            (json.startsWith("[") && json.endsWith("]"))) {
-            
-            // Check for balanced brackets/braces (simplified)
-            int braceCount = 0;
-            int bracketCount = 0;
-            boolean inString = false;
-            boolean escaped = false;
-
-            for (char c : json.toCharArray()) {
-                if (escaped) {
-                    escaped = false;
-                    continue;
-                }
-
-                if (c == '\\') {
-                    escaped = true;
-                    continue;
-                }
-
-                if (c == '"' && !escaped) {
-                    inString = !inString;
-                    continue;
-                }
-
-                if (!inString) {
-                    if (c == '{') braceCount++;
-                    else if (c == '}') braceCount--;
-                    else if (c == '[') bracketCount++;
-                    else if (c == ']') bracketCount--;
-                }
-            }
-
-            return braceCount == 0 && bracketCount == 0;
+        try {
+            JsonParser.parseString(payload);
+            return true;
+        } catch (JsonSyntaxException ex) {
+            LOG.warn("Invalid JSON payload: {}", ex.getMessage());
+            return false;
         }
-
-        return false;
     }
 
     private byte[] readInputStreamToByteArray(InputStream inputStream) throws IOException {

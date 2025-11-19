@@ -8,6 +8,11 @@ import org.apache.abdera.protocol.server.ProviderHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Authorization filter that enforces tenant-based access control
  */
@@ -51,16 +56,18 @@ public class TenantAuthorizationFilter implements Filter {
 
         // Check tenant access
         if (enforceRoleBasedAccess && requestedTenant != null) {
+            Set<String> normalizedRoles = parseRoles(userRoles);
+
             // Special case: identity:user-admin users should be denied access to identity feeds
-            if ("identity".equals(requestedTenant) && userRoles != null && userRoles.contains("user-admin")) {
+            if ("identity".equals(requestedTenant) && normalizedRoles.contains("user-admin")) {
                 LOG.warn("Identity user-admin {} denied access to identity feed", userId);
                 return createForbiddenResponse();
             }
             
             // For tenanted access tests - users should only access their own tenant unless they're full admin
-            if (!canAccessTenant(userTenant, userRoles, requestedTenant)) {
+            if (!canAccessTenant(userTenant, normalizedRoles, requestedTenant)) {
                 LOG.warn("User {} with tenant {} and roles {} denied access to tenant {}", 
-                        new Object[]{userId, userTenant, userRoles, requestedTenant});
+                        new Object[]{userId, userTenant, normalizedRoles, requestedTenant});
                 
                 // Return 403 for access control violations, not 404
                 return createForbiddenResponse();
@@ -70,24 +77,43 @@ public class TenantAuthorizationFilter implements Filter {
         return chain.next(request);
     }
 
-    private boolean canAccessTenant(String userTenant, String userRoles, String requestedTenant) {
-        // Full admin users can access any tenant
-        if (userRoles != null && userRoles.equals("admin")) {
+    private boolean canAccessTenant(String userTenant, Set<String> userRoles, String requestedTenant) {
+        if (requestedTenant == null) {
+            return false;
+        }
+
+        if (userRoles.isEmpty()) {
+            return requestedTenant.equals(userTenant);
+        }
+
+        if (isGlobalServiceAdmin(userRoles)) {
             return true;
         }
 
-        // Service admin users can access their service tenant
-        if (userRoles != null && userRoles.equals("admin") && "cloudfeeds".equals(userTenant)) {
-            return "cloudfeeds".equals(requestedTenant);
-        }
+        return requestedTenant.equals(userTenant);
+    }
 
-        // Users can only access their own tenant
-        if (userTenant != null && userTenant.equals(requestedTenant)) {
-            return true;
+    private boolean isGlobalServiceAdmin(Set<String> roles) {
+        for (String role : roles) {
+            String normalized = role.toLowerCase();
+            if (normalized.endsWith("service-admin") || normalized.endsWith("global-admin")) {
+                return true;
+            }
         }
-
-        // Deny access for mismatched tenants
         return false;
+    }
+
+    private Set<String> parseRoles(String roles) {
+        if (roles == null || roles.trim().isEmpty()) {
+            return Collections.emptySet();
+        }
+
+        Set<String> roleSet = new HashSet<>();
+        Arrays.stream(roles.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .forEach(roleSet::add);
+        return roleSet;
     }
 
     private ResponseContext createForbiddenResponse() {
