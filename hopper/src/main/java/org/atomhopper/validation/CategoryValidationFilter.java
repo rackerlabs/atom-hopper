@@ -2,18 +2,19 @@ package org.atomhopper.validation;
 
 import org.apache.abdera.protocol.server.Filter;
 import org.apache.abdera.protocol.server.FilterChain;
+import org.apache.abdera.protocol.server.ProviderHelper;
 import org.apache.abdera.protocol.server.RequestContext;
 import org.apache.abdera.protocol.server.ResponseContext;
-import org.apache.abdera.protocol.server.ProviderHelper;
+import org.atomhopper.util.RequestBodyCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.ByteArrayInputStream;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -39,47 +40,48 @@ public class CategoryValidationFilter implements Filter {
             return chain.next(request);
         }
 
-        String contentType = request.getContentType() != null ? 
+        String contentType = request.getContentType() != null ?
                            request.getContentType().toString() : "";
+        String normalizedContentType = contentType.toLowerCase();
 
-        if (!contentType.contains("application/atom+xml") && !contentType.contains("application/xml")) {
+        if (!normalizedContentType.contains("application/atom+xml") &&
+                !normalizedContentType.contains("application/xml")) {
             return chain.next(request);
         }
 
+        RequestContext bufferedRequest = request;
         try {
-            InputStream inputStream = request.getInputStream();
-            if (inputStream == null) {
-                return chain.next(request);
+            bufferedRequest = RequestBodyCache.buffer(request);
+            byte[] content = RequestBodyCache.getBody(bufferedRequest);
+            if (content.length == 0) {
+                return chain.next(bufferedRequest);
             }
 
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true);
             DocumentBuilder builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(inputStream);
+            Document doc = builder.parse(new ByteArrayInputStream(content));
 
-            // Validate categories in the entry
-            ResponseContext validationResult = validateCategories(doc, request);
+            ResponseContext validationResult = validateCategories(doc, bufferedRequest);
             if (validationResult != null) {
                 return validationResult;
             }
 
-            // Reset the input stream for the next filter by creating a new one from the content
-            byte[] content = readInputStreamToByteArray(inputStream);
-            request.setAttribute(RequestContext.Scope.REQUEST, "inputStreamContent", content);
+            return chain.next(bufferedRequest);
 
         } catch (Exception e) {
             LOG.error("Error validating categories", e);
             // Let the request continue - validation errors will be caught by content validation
         }
 
-        return chain.next(request);
+        return chain.next(bufferedRequest);
     }
 
     private ResponseContext validateCategories(Document doc, RequestContext request) {
         // Check for multiple title elements (only one allowed)
         NodeList titles = doc.getElementsByTagNameNS("http://www.w3.org/2005/Atom", "title");
         if (titles.getLength() > 1) {
-            return createBadRequestResponse("Only one atom:title node is allowed per entry");
+            return createBadRequestResponse(request, "Only one atom:title node is allowed per entry");
         }
         
         NodeList categories = doc.getElementsByTagNameNS("http://www.w3.org/2005/Atom", "category");
@@ -90,14 +92,14 @@ public class CategoryValidationFilter implements Filter {
             
             // Validate term length
             if (term != null && term.length() > MAX_CATEGORY_TERM_LENGTH) {
-                return createBadRequestResponse(
+                return createBadRequestResponse(request,
                     String.format("Category term exceeds maximum length of %d characters", MAX_CATEGORY_TERM_LENGTH));
             }
             
             // Check for restricted categories in functional test feeds
             String path = request.getUri().getPath();
-            if (path.contains("functional") && RESTRICTED_CATEGORIES.contains(term.toLowerCase())) {
-                return createBadRequestResponse(
+            if (term != null && path.contains("functional") && RESTRICTED_CATEGORIES.contains(term.toLowerCase())) {
+                return createBadRequestResponse(request,
                     String.format("Category term '%s' is not allowed in this feed", term));
             }
         }
@@ -105,26 +107,14 @@ public class CategoryValidationFilter implements Filter {
         return null; // No validation errors
     }
 
-    private ResponseContext createBadRequestResponse(String message) {
+    private ResponseContext createBadRequestResponse(RequestContext request, String message) {
         String xmlBody = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                         "<error xmlns=\"http://www.w3.org/2005/Atom\">\n" +
                         "  <message>" + escapeXml(message) + "</message>\n" +
                         "</error>";
-        ResponseContext response = ProviderHelper.badrequest(null, xmlBody);
+        ResponseContext response = ProviderHelper.badrequest(request, xmlBody);
         response.setContentType("application/xml; charset=utf-8");
         return response;
-    }
-
-    private byte[] readInputStreamToByteArray(InputStream inputStream) throws IOException {
-        byte[] buffer = new byte[8192];
-        int bytesRead;
-        java.io.ByteArrayOutputStream outputStream = new java.io.ByteArrayOutputStream();
-        
-        while ((bytesRead = inputStream.read(buffer)) != -1) {
-            outputStream.write(buffer, 0, bytesRead);
-        }
-        
-        return outputStream.toByteArray();
     }
 
     private String escapeXml(String text) {
