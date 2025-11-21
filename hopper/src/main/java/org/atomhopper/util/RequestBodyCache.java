@@ -1,64 +1,69 @@
 package org.atomhopper.util;
 
 import org.apache.abdera.protocol.server.RequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Utility for caching the request body so that filters can safely read and
- * validate the content without consuming the underlying input stream.
+ * Utility class for caching request body content to allow multiple reads
  */
-public final class RequestBodyCache {
+public class RequestBodyCache {
 
-    public static final String CACHED_BODY_ATTRIBUTE = RequestBodyCache.class.getName() + ".BODY";
+    private static final Logger LOG = LoggerFactory.getLogger(RequestBodyCache.class);
+    private static final String CACHED_BODY_ATTRIBUTE = "cached.request.body";
 
-    private RequestBodyCache() {
-    }
-
+    /**
+     * Buffers the request body content and stores it in the request attributes
+     * 
+     * @param request The original RequestContext
+     * @return The same RequestContext with buffered body content
+     * @throws IOException if there's an error reading the request body
+     */
     public static RequestContext buffer(RequestContext request) throws IOException {
-        if (request instanceof CachedRequestContext) {
-            ensureAttributePresent((CachedRequestContext) request);
+        // Check if already buffered
+        byte[] cachedBody = (byte[]) request.getAttribute(RequestContext.Scope.REQUEST, CACHED_BODY_ATTRIBUTE);
+        if (cachedBody != null) {
             return request;
         }
 
-        byte[] body = readAll(request.getInputStream());
-        CachedRequestContext cached = new CachedRequestContext(request, body);
-        cached.setAttribute(RequestContext.Scope.REQUEST, CACHED_BODY_ATTRIBUTE, body);
-        return cached;
-    }
-
-    public static byte[] getBody(RequestContext request) throws IOException {
-        Object cached = request.getAttribute(RequestContext.Scope.REQUEST, CACHED_BODY_ATTRIBUTE);
-        if (cached instanceof byte[]) {
-            return (byte[]) cached;
-        }
-
-        RequestContext buffered = buffer(request);
-        Object body = buffered.getAttribute(RequestContext.Scope.REQUEST, CACHED_BODY_ATTRIBUTE);
-        return body instanceof byte[] ? (byte[]) body : new byte[0];
-    }
-
-    private static void ensureAttributePresent(CachedRequestContext request) {
-        Object cached = request.getAttribute(RequestContext.Scope.REQUEST, CACHED_BODY_ATTRIBUTE);
-        if (!(cached instanceof byte[])) {
-            request.setAttribute(RequestContext.Scope.REQUEST, CACHED_BODY_ATTRIBUTE, request.getBody());
-        }
-    }
-
-    private static byte[] readAll(InputStream inputStream) throws IOException {
+        // Read and cache the body
+        InputStream inputStream = request.getInputStream();
         if (inputStream == null) {
-            return new byte[0];
+            cachedBody = new byte[0];
+        } else {
+            cachedBody = readInputStream(inputStream);
         }
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        byte[] buffer = new byte[8192];
+        // Store in request attributes
+        request.setAttribute(RequestContext.Scope.REQUEST, CACHED_BODY_ATTRIBUTE, cachedBody);
+        
+        return request;
+    }
+
+    /**
+     * Gets the cached body content from a buffered request
+     * 
+     * @param request The buffered RequestContext
+     * @return The cached body content as byte array
+     */
+    public static byte[] getBody(RequestContext request) {
+        byte[] cachedBody = (byte[]) request.getAttribute(RequestContext.Scope.REQUEST, CACHED_BODY_ATTRIBUTE);
+        return cachedBody != null ? cachedBody : new byte[0];
+    }
+
+    private static byte[] readInputStream(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        byte[] data = new byte[8192];
         int bytesRead;
-        while ((bytesRead = inputStream.read(buffer)) != -1) {
-            outputStream.write(buffer, 0, bytesRead);
+        
+        while ((bytesRead = inputStream.read(data, 0, data.length)) != -1) {
+            buffer.write(data, 0, bytesRead);
         }
-        return outputStream.toByteArray();
+        
+        return buffer.toByteArray();
     }
 }
-

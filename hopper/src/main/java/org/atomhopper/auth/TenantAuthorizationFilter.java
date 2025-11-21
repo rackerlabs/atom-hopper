@@ -53,21 +53,23 @@ public class TenantAuthorizationFilter implements Filter {
 
         Set<String> normalizedRoles = parseRoles(userRoles);
 
-        // Identity admin must never access identity feeds
+        // Identity admin must never access identity feeds - return 403 Forbidden
         if ("identity".equalsIgnoreCase(workspaceSegment) && normalizedRoles.contains("user-admin")) {
             LOG.warn("Identity user-admin {} denied access to identity feed {}", userId, path);
             return createForbiddenResponse(request);
         }
 
         if (enforceRoleBasedAccess && requestedTenant != null) {
+            // Check tenant scope first - if user is scoped to wrong tenant, return 401
             if (userTenant == null || !requestedTenant.equalsIgnoreCase(userTenant)) {
                 LOG.warn(String.format("User %s attempted to access tenant %s while scoped to %s",
                         userId, requestedTenant, userTenant));
                 return createUnauthorizedResponse(request);
             }
 
-            if (!isObserver(normalizedRoles)) {
-                LOG.warn(String.format("User %s with roles %s lacks observer access to tenant %s",
+            // Check role permissions - if user lacks proper role, return 403
+            if (!hasRequiredRole(normalizedRoles)) {
+                LOG.warn(String.format("User %s with roles %s lacks required access to tenant %s",
                         userId, normalizedRoles, requestedTenant));
                 return createForbiddenResponse(request);
             }
@@ -76,9 +78,10 @@ public class TenantAuthorizationFilter implements Filter {
         return chain.next(request);
     }
 
-    private boolean isObserver(Set<String> roles) {
+    private boolean hasRequiredRole(Set<String> roles) {
         for (String role : roles) {
-            if (role.toLowerCase().contains("observer")) {
+            String lowerRole = role.toLowerCase();
+            if (lowerRole.contains("observer") || lowerRole.contains("admin") || lowerRole.contains("service")) {
                 return true;
             }
         }
@@ -99,25 +102,29 @@ public class TenantAuthorizationFilter implements Filter {
     }
 
     private ResponseContext createForbiddenResponse(RequestContext request) {
-        // Create a proper 403 response with XML body
-        ResponseContext response = ProviderHelper.forbidden(request, 
-            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+        String errorBody = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
             "<error xmlns=\"http://www.w3.org/2005/Atom\">\n" +
             "  <message>Access denied. Insufficient privileges to access this resource.</message>\n" +
-            "</error>");
+            "</error>";
+        
+        ResponseContext response = ProviderHelper.forbidden(request, errorBody);
         response.setContentType("application/xml; charset=utf-8");
         response.setHeader("Cache-Control", "must-revalidate,no-cache,no-store");
+        response.setHeader("Content-Length", String.valueOf(errorBody.getBytes().length));
         return response;
     }
 
     private ResponseContext createUnauthorizedResponse(RequestContext request) {
-        ResponseContext response = ProviderHelper.unauthorized(request,
-            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+        String errorBody = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
             "<error xmlns=\"http://www.w3.org/2005/Atom\">\n" +
             "  <message>Invalid tenant scope for this token.</message>\n" +
-            "</error>");
+            "</error>";
+        
+        ResponseContext response = ProviderHelper.unauthorized(request, errorBody);
         response.setContentType("application/xml; charset=utf-8");
         response.setHeader("Cache-Control", "must-revalidate,no-cache,no-store");
+        response.setHeader("Content-Length", String.valueOf(errorBody.getBytes().length));
+        response.setHeader("WWW-Authenticate", "Keystone uri=" + System.getProperty("keystone.uri", "https://identity.api.rackspacecloud.com"));
         return response;
     }
 

@@ -114,6 +114,8 @@ public class CategoryValidationFilter implements Filter {
                         "</error>";
         ResponseContext response = ProviderHelper.badrequest(request, xmlBody);
         response.setContentType("application/xml; charset=utf-8");
+        response.setHeader("Content-Length", String.valueOf(xmlBody.getBytes().length));
+        response.setHeader("Cache-Control", "must-revalidate,no-cache,no-store");
         return response;
     }
 

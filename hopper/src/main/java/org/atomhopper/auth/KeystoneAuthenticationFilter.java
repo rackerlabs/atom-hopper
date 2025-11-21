@@ -102,14 +102,16 @@ public class KeystoneAuthenticationFilter implements Filter {
     }
 
     private ResponseContext createUnauthorizedResponse(RequestContext request, String authenticateHeader) {
-        ResponseContext response = ProviderHelper.unauthorized(request,
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                        "<error xmlns=\"http://www.w3.org/2005/Atom\">\n" +
-                        "  <message>Authentication required</message>\n" +
-                        "</error>");
+        String errorBody = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "<error xmlns=\"http://www.w3.org/2005/Atom\">\n" +
+                "  <message>Authentication required</message>\n" +
+                "</error>";
+        
+        ResponseContext response = ProviderHelper.unauthorized(request, errorBody);
         response.setContentType("application/xml; charset=utf-8");
         response.setHeader(WWW_AUTHENTICATE, authenticateHeader);
         response.setHeader("Cache-Control", "must-revalidate,no-cache,no-store");
+        response.setHeader("Content-Length", String.valueOf(errorBody.getBytes().length));
         return response;
     }
 
