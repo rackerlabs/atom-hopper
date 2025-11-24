@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 
@@ -22,9 +24,11 @@ public class AtomHopperVersionServlet extends HttpServlet {
     private Properties loadProperties() {
         Properties properties = new Properties();
         try {
-            InputStream inStream = getServletContext().getResourceAsStream(POM_PROPERTIES_LOCATION);
-            properties.load(inStream);
-            inStream.close();
+            try (InputStream inStream = getServletContext().getResourceAsStream(POM_PROPERTIES_LOCATION)) {
+                if (inStream != null) {
+                    properties.load(inStream);
+                }
+            }
         } catch (Exception e){
             LOG.error("Unable to load pom.properties", e);
         }

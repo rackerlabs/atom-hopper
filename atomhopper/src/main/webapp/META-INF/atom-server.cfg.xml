@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<atom-hopper-config xmlns="http://atomhopper.org/atom/hopper-config/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://atomhopper.org/atom/hopper-config/v1.0 ./../../config/atom-hopper-config.xsd">
+<atom-hopper-config xmlns="http://atomhopper.org/atom/hopper-config/v1.0" 
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+                    xsi:schemaLocation="http://atomhopper.org/atom/hopper-config/v1.0 ./../../config/atom-hopper-config.xsd">
+    
     <defaults>
         <author name="Atom Hopper" />
     </defaults>
@@ -20,8 +23,8 @@
         <categories-descriptor reference="workspace-categories-descriptor" />
         
         <feed title="events" resource="/events">
-            <feed-source reference="hibernate-feed-source" />
-            <publisher reference="hibernate-feed-publisher" />
+            <feed-source reference="jdbc-feed-source" />
+            <publisher reference="jdbc-feed-publisher" />
         </feed>
     </workspace>
 
@@ -30,23 +33,23 @@
         <categories-descriptor reference="workspace-categories-descriptor" />
         
         <feed title="usagetest1/events" resource="/usagetest1/events">
-            <feed-source reference="hibernate-feed-source" />
-            <publisher reference="hibernate-feed-publisher" />
+            <feed-source reference="jdbc-feed-source" />
+            <publisher reference="jdbc-feed-publisher" />
         </feed>
         
         <feed title="functest1/events" resource="/functest1/events">
-            <feed-source reference="hibernate-feed-source" />
-            <publisher reference="hibernate-feed-publisher" />
+            <feed-source reference="jdbc-feed-source" />
+            <publisher reference="jdbc-feed-publisher" />
         </feed>
     </workspace>
 
     <!-- Test workspaces for regression tests -->
-    <workspace title="Testing Namespace" resource="/namespace/">
+    <workspace title="Namespace" resource="/namespace/">
         <categories-descriptor reference="workspace-categories-descriptor" />
 
-        <feed title="Testing Feed" resource="/feed">
-            <feed-source reference="hibernate-feed-source" />
-            <publisher reference="hibernate-feed-publisher" />
+        <feed title="feed" resource="/feed">
+            <feed-source reference="jdbc-feed-source" />
+            <publisher reference="jdbc-feed-publisher" />
         </feed>
     </workspace>
 
@@ -54,8 +57,8 @@
         <categories-descriptor reference="workspace-categories-descriptor" />
 
         <feed title="feed1" resource="/feed1">
-            <feed-source reference="hibernate-feed-source" />
-            <publisher reference="hibernate-feed-publisher" />
+            <feed-source reference="jdbc-feed-source" />
+            <publisher reference="jdbc-feed-publisher" />
         </feed>
     </workspace>
 
@@ -63,8 +66,8 @@
         <categories-descriptor reference="workspace-categories-descriptor" />
 
         <feed title="feed2" resource="/feed2">
-            <feed-source reference="hibernate-feed-source" />
-            <publisher reference="hibernate-feed-publisher" />
+            <feed-source reference="jdbc-feed-source" />
+            <publisher reference="jdbc-feed-publisher" />
         </feed>
     </workspace>
 
@@ -72,8 +75,8 @@
         <categories-descriptor reference="workspace-categories-descriptor" />
 
         <feed title="feed3" resource="/feed3">
-            <feed-source reference="hibernate-feed-source" />
-            <publisher reference="hibernate-feed-publisher" />
+            <feed-source reference="jdbc-feed-source" />
+            <publisher reference="jdbc-feed-publisher" />
         </feed>
     </workspace>
     
@@ -81,8 +84,8 @@
         <categories-descriptor reference="workspace-categories-descriptor" />
 
         <feed title="feed4" resource="/feed4/[0-9]*">
-            <feed-source reference="hibernate-feed-source" />
-            <publisher reference="hibernate-feed-publisher" />
+            <feed-source reference="jdbc-feed-source" />
+            <publisher reference="jdbc-feed-publisher" />
         </feed>
     </workspace>
     
@@ -90,8 +93,8 @@
         <categories-descriptor reference="workspace-categories-descriptor" />
 
         <feed title="feed5" resource="/feed5/[0-9]*">
-            <feed-source reference="hibernate-feed-source" />
-            <publisher reference="hibernate-feed-publisher" />
+            <feed-source reference="jdbc-feed-source" />
+            <publisher reference="jdbc-feed-publisher" />
         </feed>
     </workspace>
     
@@ -99,8 +102,8 @@
         <categories-descriptor reference="workspace-categories-descriptor" />
 
         <feed title="feed6" resource="/feed6">
-            <feed-source reference="hibernate-feed-source" />
-            <publisher reference="hibernate-feed-publisher" />
+            <feed-source reference="jdbc-feed-source" />
+            <publisher reference="jdbc-feed-publisher" />
         </feed>
     </workspace>
 

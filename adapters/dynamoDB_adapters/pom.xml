@@ -5,14 +5,14 @@
     <parent>
         <artifactId>parent</artifactId>
         <groupId>org.atomhopper</groupId>
-        <version>1.2.35-SNAPSHOT</version>
+        <version>1.2.45</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
 
     <groupId>org.atomhopper.adapter</groupId>
-    <artifactId>dynamoDB_adapters</artifactId>
+    <artifactId>dynamodb-adapters</artifactId>
     <packaging>jar</packaging>
     <build>
         <plugins>

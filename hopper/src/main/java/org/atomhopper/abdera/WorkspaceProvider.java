@@ -19,6 +19,7 @@ import org.atomhopper.util.uri.template.URITemplate;
 import org.atomhopper.util.uri.template.URITemplateParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.abdera.protocol.server.ProviderHelper;
 
 public class WorkspaceProvider implements Provider {
 
@@ -104,8 +105,12 @@ public class WorkspaceProvider implements Provider {
                     ? (TemplateParameters) param
                     : new EnumKeyedTemplateParameters((Enum) key);
 
-            templateParameters.set(URITemplateParameter.HOST_DOMAIN, hostConfiguration.getDomain());
-            templateParameters.set(URITemplateParameter.HOST_SCHEME, hostConfiguration.getScheme());
+            // Dynamically determine domain and scheme based on request
+            String requestDomain = getRequestBasedDomain(request);
+            String requestScheme = getRequestBasedScheme(request);
+            
+            templateParameters.set(URITemplateParameter.HOST_DOMAIN, requestDomain);
+            templateParameters.set(URITemplateParameter.HOST_SCHEME, requestScheme);
 
             //This is what happens when you don't use enumerations :p
             if (resolvedTarget.getType() == TargetType.TYPE_SERVICE) {
@@ -160,10 +165,10 @@ public class WorkspaceProvider implements Provider {
                 transactionEnd(transaction, request, response);
             }
         } else {
-            response = ProviderHelper.notfound(request).setContentType(XML);
+            response = buildNotFoundResponse(request, "Requested workspace or feed was not found");
         }
 
-        return response != null ? response : ProviderHelper.badrequest(request).setContentType(XML);
+        return response != null ? response : buildBadRequestResponse(request, "Unable to process request");
     }
 
     private ResponseContext handleAdapterException(Exception ex, Transactional transaction, RequestContext request) {
@@ -181,7 +186,7 @@ public class WorkspaceProvider implements Provider {
         }
 
         transactionCompensate(transaction, request, ex);
-        return ProviderHelper.servererror(request, ex).setContentType(XML);
+        return buildServerErrorResponse(request, ex);
     }
 
     private void transactionCompensate(Transactional transactional, RequestContext request, Throwable e) {
@@ -215,6 +220,65 @@ public class WorkspaceProvider implements Provider {
         this.filters.addAll(Arrays.asList(filters));
     }
 
+    /**
+     * Determines the appropriate domain based on the incoming request.
+     * Uses the request's Host header if available, otherwise falls back to configured domain.
+     */
+    private String getRequestBasedDomain(RequestContext request) {
+        // Check if we should use request-based domain resolution
+        String domainMode = System.getProperty("AH_DOMAIN_MODE", System.getenv("AH_DOMAIN_MODE"));
+        if (!"request-based".equals(domainMode)) {
+            // Use configured domain for backward compatibility
+            return hostConfiguration.getDomain();
+        }
+
+        // Extract domain from request Host header
+        String hostHeader = request.getHeader("Host");
+        if (hostHeader != null && !hostHeader.trim().isEmpty()) {
+            return hostHeader.trim();
+        }
+
+        // Fallback to external domain if Host header is not available
+        String externalDomain = System.getProperty("AH_EXTERNAL_DOMAIN", System.getenv("AH_EXTERNAL_DOMAIN"));
+        return externalDomain != null ? externalDomain : hostConfiguration.getDomain();
+    }
+
+    /**
+     * Determines the appropriate scheme based on the incoming request.
+     * Uses the request's X-Forwarded-Proto header or scheme if available, otherwise falls back to configured scheme.
+     */
+    private String getRequestBasedScheme(RequestContext request) {
+        // Check if we should use request-based domain resolution
+        String domainMode = System.getProperty("AH_DOMAIN_MODE", System.getenv("AH_DOMAIN_MODE"));
+        if (!"request-based".equals(domainMode)) {
+            // Use configured scheme for backward compatibility
+            return hostConfiguration.getScheme();
+        }
+
+        // Check if we have a Host header - if not, use fallback scheme
+        String hostHeader = request.getHeader("Host");
+        if (hostHeader == null || hostHeader.trim().isEmpty()) {
+            String externalScheme = System.getProperty("AH_EXTERNAL_SCHEME", System.getenv("AH_EXTERNAL_SCHEME"));
+            return externalScheme != null ? externalScheme : hostConfiguration.getScheme();
+        }
+
+        // Check X-Forwarded-Proto header (common in load balancer setups)
+        String forwardedProto = request.getHeader("X-Forwarded-Proto");
+        if (forwardedProto != null && !forwardedProto.trim().isEmpty()) {
+            return forwardedProto.trim().toLowerCase();
+        }
+
+        // Extract scheme from request URI
+        String requestScheme = request.getUri().getScheme();
+        if (requestScheme != null && !requestScheme.trim().isEmpty()) {
+            return requestScheme.toLowerCase();
+        }
+
+        // Fallback to external scheme if no request info available
+        String externalScheme = System.getProperty("AH_EXTERNAL_SCHEME", System.getenv("AH_EXTERNAL_SCHEME"));
+        return externalScheme != null ? externalScheme : hostConfiguration.getScheme();
+    }
+
     @Override
     public void setRequestProcessors(Map<TargetType, RequestProcessor> requestProcessors) {
         this.requestProcessors.clear();
@@ -229,5 +293,36 @@ public class WorkspaceProvider implements Provider {
     @Override
     public Map<TargetType, RequestProcessor> getRequestProcessors() {
         return Collections.unmodifiableMap(this.requestProcessors);
+    }
+
+    private ResponseContext buildBadRequestResponse(RequestContext request, String message) {
+        return ProviderHelper.badrequest(request, buildErrorBody(message)).setContentType(XML);
+    }
+
+    private ResponseContext buildNotFoundResponse(RequestContext request, String message) {
+        return ProviderHelper.notfound(request, buildErrorBody(message)).setContentType(XML);
+    }
+
+    private ResponseContext buildServerErrorResponse(RequestContext request, Throwable throwable) {
+        return ProviderHelper.servererror(request, throwable).setContentType(XML);
+    }
+
+    private String buildErrorBody(String message) {
+        String safeMessage = escapeXml(message == null ? "Unknown error" : message);
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "<error xmlns=\"http://www.w3.org/2005/Atom\">\n" +
+                "  <message>" + safeMessage + "</message>\n" +
+                "</error>";
+    }
+
+    private String escapeXml(String text) {
+        if (text == null) {
+            return "";
+        }
+        return text.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&apos;");
     }
 }

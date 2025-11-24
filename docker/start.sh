@@ -7,7 +7,18 @@ then
     echo "Replacing application-context.xml with original config."
     mv $APP_CTX_PATH/application-context.xml.orig $APP_CTX_PATH/application-context.xml
 fi
+
+# Restore original atom-server.cfg.xml if it exists
+if [[ -e $APP_CTX_PATH/atom-server.cfg.xml.orig ]]
+then
+    echo "Replacing atom-server.cfg.xml with original config."
+    mv $APP_CTX_PATH/atom-server.cfg.xml.orig $APP_CTX_PATH/atom-server.cfg.xml
+fi
+
 echo "Database type selected:"$DB_TYPE
+echo "External domain configured:"$AH_EXTERNAL_DOMAIN
+echo "External scheme configured:"$AH_EXTERNAL_SCHEME
+echo "Domain mode:"$AH_DOMAIN_MODE
 
 #DB configuration
 if [[ $DB_TYPE != 'H2' ]] ; then
@@ -31,6 +42,35 @@ if [[ $DB_TYPE != 'H2' ]] ; then
         sed -i -e "s/:postgresql:\/\/localhost:5432/:postgresql:\/\/$DB_HOST/g" $APP_CTX_PATH/application-context.xml
     fi
 fi
+
+# Domain and Scheme configuration
+echo "Configuring domain and scheme..."
+
+# Backup original atom-server.cfg.xml if not already backed up
+if [[ ! -e $APP_CTX_PATH/atom-server.cfg.xml.orig ]]
+then
+    cp $APP_CTX_PATH/atom-server.cfg.xml $APP_CTX_PATH/atom-server.cfg.xml.orig
+fi
+
+# For request-based mode, we use external as fallback in config
+# The actual domain resolution happens at runtime based on request headers
+SELECTED_DOMAIN="$AH_EXTERNAL_DOMAIN"
+SELECTED_SCHEME="$AH_EXTERNAL_SCHEME"
+
+if [ "$AH_DOMAIN_MODE" = "request-based" ]; then
+    echo "Using request-based domain configuration"
+    echo "Fallback domain: $SELECTED_DOMAIN, fallback scheme: $SELECTED_SCHEME"
+    echo "Actual domains will be determined from incoming request Host headers"
+else
+    echo "Using static external domain configuration"
+    echo "Domain: $SELECTED_DOMAIN, scheme: $SELECTED_SCHEME"
+fi
+
+# Replace domain and scheme in atom-server.cfg.xml (used as fallback)
+sed -i "s/domain=\"[^\"]*\"/domain=\"${SELECTED_DOMAIN}\"/g" $APP_CTX_PATH/atom-server.cfg.xml
+sed -i "s/scheme=\"[^\"]*\"/scheme=\"${SELECTED_SCHEME}\"/g" $APP_CTX_PATH/atom-server.cfg.xml
+
+echo "Domain configuration completed."
 
 #Start tomcat server
 sh /opt/tomcat/bin/catalina.sh run
