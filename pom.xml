@@ -5,7 +5,7 @@
     <groupId>org.atomhopper</groupId>
     <artifactId>parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.2.44</version>
+    <version>1.2.45</version>
     <name>ATOM Hopper - ATOMpub Server Collection</name>
 
     <url>http://atomhopper.org/</url>
@@ -48,7 +48,7 @@
         <connection>scm:git:ssh://git@github.com/rackerlabs/atom-hopper.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/rackerlabs/atom-hopper.git</developerConnection>
         <url>https://github.com/rackerlabs/atom-hopper</url>
-        <tag>parent-1.2.44</tag>
+        <tag>parent-1.2.45</tag>
     </scm>
 
     <dependencyManagement>

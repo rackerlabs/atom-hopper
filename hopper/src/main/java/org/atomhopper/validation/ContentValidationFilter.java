@@ -57,59 +57,82 @@ public class ContentValidationFilter implements Filter {
             return createBadRequestResponse(request, "Content-Type header is required for POST/PUT requests");
         }
         
-        // Validate based on content type
-        if (normalizedContentType.contains("application/json")) {
-            return validateJsonContent(request, chain);
-        } else if (normalizedContentType.contains("application/xml") ||
-                normalizedContentType.contains("application/atom+xml")) {
-            return validateXmlContent(request, chain);
-        }
-        
-        // For other content types, let the request continue
-        return chain.next(request);
-    }
-
-    private ResponseContext validateXmlContent(RequestContext request, FilterChain chain) {
         try {
+            // Buffer the request first to enable multiple reads
             RequestContext bufferedRequest = RequestBodyCache.buffer(request);
-            byte[] content = RequestBodyCache.getBody(bufferedRequest);
-            if (content.length == 0) {
-                return createBadRequestResponse(bufferedRequest, "Request body is empty");
-            }
-
-            // Validate XML well-formedness
-            DocumentBuilder builder = DOCUMENT_BUILDER_FACTORY.newDocumentBuilder();
-            Document doc = builder.parse(new ByteArrayInputStream(content));
             
-            // Additional Atom-specific validations
-            String rootElement = doc.getDocumentElement().getLocalName();
-            if (!"entry".equals(rootElement) && !"feed".equals(rootElement)) {
-                return createBadRequestResponse(bufferedRequest, "Invalid Atom document. Root element must be 'entry' or 'feed'");
+            // Validate based on content type
+            if (normalizedContentType.contains("application/json")) {
+                return validateJsonContent(bufferedRequest, chain);
+            } else if (normalizedContentType.contains("application/xml") ||
+                    normalizedContentType.contains("application/atom+xml")) {
+                return validateXmlContent(bufferedRequest, chain);
             }
-
-            // Validate required Atom elements
-            if ("entry".equals(rootElement)) {
-                if (!hasRequiredAtomElements(doc)) {
-                    return createBadRequestResponse(bufferedRequest, "Invalid Atom entry. Missing required elements");
-                }
-            }
-
+            
+            // For other content types, let the buffered request continue
             return chain.next(bufferedRequest);
-        } catch (ParserConfigurationException e) {
-            LOG.error("XML parser configuration error", e);
-            return createBadRequestResponse(request, "XML parser configuration error");
-        } catch (SAXException e) {
-            LOG.warn("Invalid XML content: {}", e.getMessage());
-            return createBadRequestResponse(request, "Invalid XML: " + e.getMessage());
         } catch (IOException e) {
-            LOG.error("Error reading request content", e);
+            LOG.error("Error buffering request body", e);
             return createBadRequestResponse(request, "Error reading request content");
         }
     }
 
-    private ResponseContext validateJsonContent(RequestContext request, FilterChain chain) {
+    private ResponseContext validateXmlContent(RequestContext bufferedRequest, FilterChain chain) {
         try {
-            RequestContext bufferedRequest = RequestBodyCache.buffer(request);
+            byte[] content = RequestBodyCache.getBody(bufferedRequest);
+            
+            // Check for empty or null content
+            if (content == null || content.length == 0) {
+                return createBadRequestResponse(bufferedRequest, "Request body is empty");
+            }
+            
+            // Check for whitespace-only content
+            String contentStr = new String(content, "UTF-8").trim();
+            if (contentStr.isEmpty()) {
+                return createBadRequestResponse(bufferedRequest, "Request body contains only whitespace");
+            }
+
+            // Validate XML well-formedness with proper error handling
+            DocumentBuilder builder = DOCUMENT_BUILDER_FACTORY.newDocumentBuilder();
+            
+            // Use try-with-resources to ensure proper stream closing
+            try (ByteArrayInputStream inputStream = new ByteArrayInputStream(content)) {
+                // Ensure the stream has content before parsing
+                if (inputStream.available() == 0) {
+                    return createBadRequestResponse(bufferedRequest, "XML content stream is empty");
+                }
+                
+                    Document doc = builder.parse(inputStream);
+                
+                // Additional Atom-specific validations
+                String rootElement = doc.getDocumentElement().getLocalName();
+                if (!"entry".equals(rootElement) && !"feed".equals(rootElement)) {
+                    return createBadRequestResponse(bufferedRequest, "Invalid Atom document. Root element must be 'entry' or 'feed'");
+                }
+
+                // Validate required Atom elements
+                if ("entry".equals(rootElement)) {
+                    if (!hasRequiredAtomElements(doc)) {
+                        return createBadRequestResponse(bufferedRequest, "Invalid Atom entry. Missing required elements");
+                    }
+                }
+
+                return chain.next(bufferedRequest);
+            }
+        } catch (ParserConfigurationException e) {
+            LOG.error("XML parser configuration error", e);
+            return createBadRequestResponse(bufferedRequest, "XML parser configuration error");
+        } catch (SAXException e) {
+            LOG.warn("Invalid XML content: {}", e.getMessage());
+            return createBadRequestResponse(bufferedRequest, "Invalid XML: " + e.getMessage());
+        } catch (IOException e) {
+            LOG.error("Error reading request content", e);
+            return createBadRequestResponse(bufferedRequest, "Error reading request content");
+        }
+    }
+
+    private ResponseContext validateJsonContent(RequestContext bufferedRequest, FilterChain chain) {
+        try {
             byte[] content = RequestBodyCache.getBody(bufferedRequest);
             if (content.length == 0) {
                 return createBadRequestResponse(bufferedRequest, "Request body is empty");
@@ -123,9 +146,9 @@ public class ContentValidationFilter implements Filter {
             }
 
             return chain.next(bufferedRequest);
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOG.error("Error reading JSON content", e);
-            return createBadRequestResponse(request, "Error reading request content");
+            return createBadRequestResponse(bufferedRequest, "Error reading request content");
         }
     }
 

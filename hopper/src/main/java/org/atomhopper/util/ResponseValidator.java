@@ -76,7 +76,9 @@ public class ResponseValidator {
 
         try {
             DocumentBuilder builder = DOCUMENT_BUILDER_FACTORY.newDocumentBuilder();
-            builder.parse(new ByteArrayInputStream(xmlContent.getBytes("UTF-8")));
+            try (ByteArrayInputStream xmlStream = new ByteArrayInputStream(xmlContent.getBytes("UTF-8"))) {
+                builder.parse(xmlStream);
+            }
             return ValidationResult.success("XML is well-formed");
         } catch (ParserConfigurationException e) {
             LOG.error("Parser configuration error", e);

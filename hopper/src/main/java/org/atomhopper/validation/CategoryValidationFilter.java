@@ -49,32 +49,48 @@ public class CategoryValidationFilter implements Filter {
             return chain.next(request);
         }
 
-        RequestContext bufferedRequest = request;
         try {
-            bufferedRequest = RequestBodyCache.buffer(request);
+            RequestContext bufferedRequest = RequestBodyCache.buffer(request);
             byte[] content = RequestBodyCache.getBody(bufferedRequest);
-            if (content.length == 0) {
+            
+            // Check for empty or null content - skip validation but continue processing
+            if (content == null || content.length == 0) {
+                return chain.next(bufferedRequest);
+            }
+            
+            // Check for whitespace-only content
+            String contentStr = new String(content, "UTF-8").trim();
+            if (contentStr.isEmpty()) {
                 return chain.next(bufferedRequest);
             }
 
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true);
             DocumentBuilder builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(new ByteArrayInputStream(content));
+            
+            // Use try-with-resources to ensure proper stream closing
+            try (ByteArrayInputStream inputStream = new ByteArrayInputStream(content)) {
+                // Ensure the stream has content before parsing
+                if (inputStream.available() == 0) {
+                    LOG.warn("XML content stream is empty, skipping category validation");
+                    return chain.next(bufferedRequest);
+                }
+                
+                Document doc = builder.parse(inputStream);
 
-            ResponseContext validationResult = validateCategories(doc, bufferedRequest);
-            if (validationResult != null) {
-                return validationResult;
+                ResponseContext validationResult = validateCategories(doc, bufferedRequest);
+                if (validationResult != null) {
+                    return validationResult;
+                }
+
+                return chain.next(bufferedRequest);
             }
-
-            return chain.next(bufferedRequest);
 
         } catch (Exception e) {
             LOG.error("Error validating categories", e);
             // Let the request continue - validation errors will be caught by content validation
+            return chain.next(request);
         }
-
-        return chain.next(bufferedRequest);
     }
 
     private ResponseContext validateCategories(Document doc, RequestContext request) {

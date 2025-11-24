@@ -38,11 +38,12 @@ public class MonitorThread extends Thread {
 
         try {
             accept = socket.accept();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(accept.getInputStream()));
-            reader.readLine();
-            LOG.info("Stopping Atom Hopper...");
-            serverInstance.stop();
-            LOG.info("Atom Hopper has been stopped");
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(accept.getInputStream()))) {
+                reader.readLine();
+                LOG.info("Stopping Atom Hopper...");
+                serverInstance.stop();
+                LOG.info("Atom Hopper has been stopped");
+            }
             accept.close();
             socket.close();
         } catch (Exception e) {

@@ -27,10 +27,10 @@ public class AtomHopperHealthServlet extends HttpServlet {
     private Properties loadProperties() {
         Properties properties = new Properties();
         try {
-            InputStream inStream = getServletContext().getResourceAsStream(POM_PROPERTIES_LOCATION);
-            if (inStream != null) {
-                properties.load(inStream);
-                inStream.close();
+            try (InputStream inStream = getServletContext().getResourceAsStream(POM_PROPERTIES_LOCATION)) {
+                if (inStream != null) {
+                    properties.load(inStream);
+                }
             }
         } catch (Exception e){
             LOG.debug("Unable to load pom.properties, using defaults", e);
