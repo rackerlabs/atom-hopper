@@ -1,7 +1,7 @@
 #base tomcat 9 with openjdk 8
-FROM tomcat:9.0.41-jdk8 as tomcat
+FROM tomcat:9.0-jdk8 AS tomcat
 
-FROM adoptopenjdk/openjdk8:alpine-slim
+FROM amazoncorretto:8-alpine
 
 LABEL maintainer="AtomHopperTeam@rackspace.com" \
       #Atom Hopper version
@@ -26,7 +26,7 @@ RUN mkdir -p "${CATALINA_HOME}" "${AH_HOME}" /etc/atomhopper/ /var/log/atomhoppe
 WORKDIR ${AH_HOME}
 
 COPY --from=tomcat /usr/local/tomcat ${CATALINA_HOME}
-COPY docker/start.sh .
+COPY start.sh .
 
 RUN apk --no-cache add curl \
     && curl -o atomhopper.war https://maven.research.rackspacecloud.com/content/repositories/releases/org/atomhopper/atomhopper/${AH_VERSION}/atomhopper-${AH_VERSION}.war \

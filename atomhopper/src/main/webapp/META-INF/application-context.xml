@@ -16,6 +16,17 @@
     -->
 <!--        <bean name="json-filter"          class="org.apache.abdera.ext.json.JSONFilter"/> -->
 
+    <!-- Authentication and Authorization Filters -->
+    <bean name="keystone-auth-filter" class="org.atomhopper.auth.KeystoneAuthenticationFilter">
+        <property name="keystoneUri" value="${KEYSTONE_URI:https://staging.identity-internal.api.rackspacecloud.com}" />
+        <property name="adminToken" value="${KEYSTONE_ADMIN_TOKEN:}" />
+        <property name="cacheTimeout" value="${AUTH_CACHE_TIMEOUT:300}" />
+    </bean>
+    
+    <bean name="tenant-auth-filter" class="org.atomhopper.auth.TenantAuthorizationFilter">
+        <property name="enforceRoleBasedAccess" value="${ENFORCE_RBAC:true}" />
+    </bean>
+
     <!--    &lt;!&ndash; Hibernate &ndash;&gt;-->
     <!--    <bean name="feed-repository-bean" class="org.atomhopper.hibernate.HibernateFeedRepository">-->
     <!--        <constructor-arg>-->
