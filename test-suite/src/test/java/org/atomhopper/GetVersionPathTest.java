@@ -25,10 +25,13 @@ public class GetVersionPathTest extends JettyIntegrationTestHarness {
         private final HttpMethod getVersionMethod = getVersionPathMethod();
 
         @Test
-        public void shouldReturnHTTP200AndEmptyJSON() throws Exception {
+        public void shouldReturnHTTP200AndBuildInfo() throws Exception {
             assertEquals("Getting the version should return a 200", HttpStatus.SC_OK, httpClient.executeMethod(getVersionMethod));
-            // Since the test doesn't have the Maven version info, empty JSON will come back
-            assertTrue(new String(getVersionMethod.getResponseBody()).contains("{}"));
+            // Should return structured build info JSON
+            String responseBody = new String(getVersionMethod.getResponseBody());
+            assertTrue("Response should contain service field", responseBody.contains("\"service\":\"atomhopper\""));
+            assertTrue("Response should contain status field", responseBody.contains("\"status\":\"healthy\""));
+            assertTrue("Response should contain version field", responseBody.contains("\"version\""));
         }
     }
 }

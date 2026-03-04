@@ -1,11 +1,19 @@
 #base tomcat 9 with openjdk 8
 FROM tomcat:9.0.41-jdk8 as tomcat
 
+# Build stage
+FROM maven:3.8.4-openjdk-8-slim as builder
+
+WORKDIR /app
+COPY . .
+RUN mvn clean package -DskipTests
+
+# Runtime stage
 FROM adoptopenjdk/openjdk8:alpine-slim
 
 LABEL maintainer="AtomHopperTeam@rackspace.com" \
       #Atom Hopper version
-      version="1.2.33" \
+      version="1.2.46" \
       description="Docker image for Atom Hopper"
 
     #The database type
@@ -16,7 +24,7 @@ ENV DB_TYPE=H2 \
     DB_PASSWORD= \
     #Database Host:Port
     DB_HOST=h2 \
-    AH_VERSION=1.2.33 \
+    AH_VERSION=1.2.46 \
     CATALINA_HOME=/opt/tomcat \
     AH_HOME=/opt/atomhopper  \
     PATH=${PATH}:${CATALINA_HOME}/bin:${AH_HOME}
@@ -27,14 +35,12 @@ WORKDIR ${AH_HOME}
 
 COPY --from=tomcat /usr/local/tomcat ${CATALINA_HOME}
 COPY docker/start.sh .
+COPY --from=builder /app/atomhopper/target/atomhopper-${AH_VERSION}.war ${CATALINA_HOME}/webapps/ROOT.war
+COPY --from=builder /app/atomhopper/src/main/webapp/META-INF/application-context.xml /etc/atomhopper/
+COPY --from=builder /app/atomhopper/src/main/resources/META-INF/atom-server.cfg.xml /etc/atomhopper/
+COPY --from=builder /app/atomhopper/src/main/webapp/META-INF/template-logback.xml /etc/atomhopper/logback.xml
 
 RUN apk --no-cache add curl \
-    && curl -o atomhopper.war https://maven.research.rackspacecloud.com/content/repositories/releases/org/atomhopper/atomhopper/${AH_VERSION}/atomhopper-${AH_VERSION}.war \
-    && unzip atomhopper.war META-INF/application-context.xml META-INF/template-logback.xml WEB-INF/classes/META-INF/atom-server.cfg.xml -d . \
-    && mv META-INF/application-context.xml WEB-INF/classes/META-INF/atom-server.cfg.xml /etc/atomhopper/ \
-    && mv META-INF/template-logback.xml /etc/atomhopper/logback.xml \
-    && mv atomhopper.war ${CATALINA_HOME}/webapps/ROOT.war \
-    && rm -rf META-INF WEB-INF \
     && chmod +x ${AH_HOME}/start.sh 
 
 EXPOSE 8080
