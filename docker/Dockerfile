@@ -1,19 +1,19 @@
 #base tomcat 9 with openjdk 8
-FROM tomcat:9.0.41-jdk8 as tomcat
+FROM tomcat:9.0-jdk8 as tomcat
 
 # Build stage
-FROM maven:3.8.4-openjdk-8-slim as builder
+FROM maven:3.8-openjdk-8-slim as builder
 
 WORKDIR /app
 COPY . .
 RUN mvn clean package -DskipTests
 
 # Runtime stage
-FROM adoptopenjdk/openjdk8:alpine-slim
+FROM openjdk:8-jre-alpine
 
 LABEL maintainer="AtomHopperTeam@rackspace.com" \
       #Atom Hopper version
-      version="1.2.46" \
+      version="1.2.47" \
       description="Docker image for Atom Hopper"
 
     #The database type
@@ -24,7 +24,7 @@ ENV DB_TYPE=H2 \
     DB_PASSWORD= \
     #Database Host:Port
     DB_HOST=h2 \
-    AH_VERSION=1.2.46 \
+    AH_VERSION=1.2.47 \
     CATALINA_HOME=/opt/tomcat \
     AH_HOME=/opt/atomhopper  \
     PATH=${PATH}:${CATALINA_HOME}/bin:${AH_HOME}
