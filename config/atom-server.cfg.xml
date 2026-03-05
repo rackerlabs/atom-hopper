@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<atom-hopper-config xmlns="http://atomhopper.org/atom/hopper-config/v1.0">
+    <defaults>
+        <author name="AtomHopper" />
+    </defaults>
+    
+    <host domain="localhost:8080" scheme="http" />
+    
+    <workspace title="AtomHopper Test Workspace" resource="/events/">
+        <feed title="Events Feed" resource="/feed">
+            <feed-source reference="h2-feed-source" />
+            <publisher reference="h2-feed-publisher" />
+        </feed>
+    </workspace>
+</atom-hopper-config>

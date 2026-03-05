@@ -32,5 +32,13 @@ if [[ $DB_TYPE != 'H2' ]] ; then
     fi
 fi
 
-#Start tomcat server
+# Verify WAR file exists
+if [ -f "/opt/tomcat/webapps/atomhopper.war" ]; then
+    echo "AtomHopper WAR file found, starting Tomcat..."
+else
+    echo "ERROR: AtomHopper WAR file not found at /opt/tomcat/webapps/atomhopper.war"
+    exit 1
+fi
+
+# Start Tomcat server
 sh /opt/tomcat/bin/catalina.sh run
