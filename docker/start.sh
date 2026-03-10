@@ -1,44 +1,60 @@
-#!/bin/sh
+#!/bin/bash
+set -e
+
 export APP_CTX_PATH=/etc/atomhopper
-echo "using APP_CTX_PATH="$APP_CTX_PATH
+echo "Using APP_CTX_PATH=$APP_CTX_PATH"
+echo "Database type selected: $DB_TYPE"
 
-if [[ -e $APP_CTX_PATH/application-context.xml.orig ]]
-then
-    echo "Replacing application-context.xml with original config."
-    mv $APP_CTX_PATH/application-context.xml.orig $APP_CTX_PATH/application-context.xml
-fi
-echo "Database type selected:"$DB_TYPE
-
-#DB configuration
-if [[ $DB_TYPE != 'H2' ]] ; then
-    #Comment default H2 Database and backup the original file
-    sed -i.orig -e '/Start H2 Config/a <!--' -e '/End H2 Config/i -->' $APP_CTX_PATH/application-context.xml
-    
-    #Enable databse based on the DB_TYPE value
-    sed -i "/Start $DB_TYPE Config/{n;;d}" $APP_CTX_PATH/application-context.xml && sed -i "/Start $DB_TYPE Config/{n;n;n;n;n;n;;d}" $APP_CTX_PATH/application-context.xml
-    
-    #Remove databse username and password lines
-    sed -i "/Start $DB_TYPE Config/{n;n;n;n;N;;d}" $APP_CTX_PATH/application-context.xml
-
-    #Replace username and passowrd lines with env variable value
-    sed -i -e "/End $DB_TYPE Config/i <entry key=\"hibernate.connection.username\" value=\"${DB_USER}\" \/>" -e "/End ${DB_TYPE} Config/i <entry key=\"hibernate.connection.password\" value=\"${DB_PASSWORD}\" \/>" $APP_CTX_PATH/application-context.xml
-
-    #DB_HOST configuration
-    if [ "$DB_TYPE" = 'MySQL' ] ; then
-        sed -i -e "s/:mysql:\/\/localhost:8889/:mysql:\/\/$DB_HOST/g" $APP_CTX_PATH/application-context.xml
-    fi
-    if [ "$DB_TYPE" = 'PostgreSQL' ] ; then
-        sed -i -e "s/:postgresql:\/\/localhost:5432/:postgresql:\/\/$DB_HOST/g" $APP_CTX_PATH/application-context.xml
-    fi
-fi
-
-# Verify WAR file exists
-if [ -f "/opt/tomcat/webapps/atomhopper.war" ]; then
-    echo "AtomHopper WAR file found, starting Tomcat..."
-else
-    echo "ERROR: AtomHopper WAR file not found at /opt/tomcat/webapps/atomhopper.war"
+# Verify required files exist
+echo "Verifying required files..."
+if [ ! -f "$APP_CTX_PATH/application-context.xml" ]; then
+    echo "ERROR: application-context.xml not found at $APP_CTX_PATH"
     exit 1
 fi
 
+if [ ! -f "$APP_CTX_PATH/atom-server.cfg.xml" ]; then
+    echo "ERROR: atom-server.cfg.xml not found at $APP_CTX_PATH"
+    exit 1
+fi
+
+if [ ! -f "$CATALINA_HOME/webapps/atomhopper.war" ]; then
+    echo "ERROR: AtomHopper WAR file not found at $CATALINA_HOME/webapps/atomhopper.war"
+    exit 1
+fi
+
+echo "WAR file found: $(ls -la $CATALINA_HOME/webapps/atomhopper.war)"
+
+# For PostgreSQL, we don't need to modify the application-context.xml since it uses environment variables
+echo "Using PostgreSQL configuration with:"
+echo "  DB_HOST: $DB_HOST"
+echo "  DB_USER: $DB_USER"
+echo "  Database: atomhopper"
+
+# Wait for PostgreSQL to be ready (if DB_HOST is not localhost)
+if [ "$DB_HOST" != "localhost:5432" ] && [ "$DB_HOST" != "localhost" ]; then
+    echo "Waiting for PostgreSQL at $DB_HOST to be ready..."
+    # Extract host and port
+    DB_HOST_ONLY=$(echo $DB_HOST | cut -d: -f1)
+    DB_PORT=$(echo $DB_HOST | cut -d: -f2)
+    
+    # Simple connection test
+    for i in {1..30}; do
+        if nc -z $DB_HOST_ONLY $DB_PORT 2>/dev/null; then
+            echo "PostgreSQL is ready!"
+            break
+        fi
+        echo "Waiting for PostgreSQL... ($i/30)"
+        sleep 2
+    done
+fi
+
+# Ensure Tomcat can write to webapps directory
+chmod 755 $CATALINA_HOME/webapps
+chmod 644 $CATALINA_HOME/webapps/atomhopper.war
+
+echo "Starting Tomcat server..."
+echo "AtomHopper will be available at: http://localhost:8080/atomhopper"
+echo "Health check endpoint: http://localhost:8080/atomhopper/buildinfo"
+
 # Start Tomcat server
-sh /opt/tomcat/bin/catalina.sh run
+exec $CATALINA_HOME/bin/catalina.sh run

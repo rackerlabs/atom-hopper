@@ -1,49 +1,31 @@
-#base tomcat 9 with openjdk 8
-FROM tomcat:9.0-jdk8 as tomcat
-
 # Build stage
 FROM maven:3.8-openjdk-8-slim as builder
 
 WORKDIR /app
 COPY . .
-RUN mvn clean package -DskipTests
+RUN mvn clean install -DskipTests -pl hopper,adapters/hibernate,adapters/mongodb,adapters/postgres-adapter,adapters/migration,adapters/jdbc,adapters/dynamoDB_adapters && \
+    mvn clean package -DskipTests -pl atomhopper
 
-# Runtime stage
-FROM eclipse-temurin:8-jre
+# Runtime stage - Use Tomcat base image directly
+FROM tomcat:9.0-jdk8
 
 LABEL maintainer="AtomHopperTeam@rackspace.com" \
-      #Atom Hopper version
-      version="1.2.48" \
+      version="1.2.49" \
       description="Docker image for Atom Hopper"
 
-    #The database type
-ENV DB_TYPE=H2 \
-    #Database username
-    DB_USER=sa \
-    #Database password
-    DB_PASSWORD= \
-    #Database Host:Port
-    DB_HOST=h2 \
-    AH_VERSION=1.2.48 \
-    CATALINA_HOME=/opt/tomcat \
-    AH_HOME=/opt/atomhopper  \
-    PATH=${PATH}:${CATALINA_HOME}/bin:${AH_HOME}
+# Environment variables
+ENV AH_VERSION=1.2.49
 
-RUN mkdir -p "${CATALINA_HOME}" "${AH_HOME}" /etc/atomhopper/ /var/log/atomhopper/ "${CATALINA_HOME}/webapps"
-
-WORKDIR ${AH_HOME}
-
-COPY --from=tomcat /usr/local/tomcat ${CATALINA_HOME}
-COPY docker/start.sh .
+# Copy WAR file to Tomcat webapps directory
 COPY --from=builder /app/atomhopper/target/atomhopper-${AH_VERSION}.war ${CATALINA_HOME}/webapps/atomhopper.war
-COPY --from=builder /app/atomhopper/src/main/webapp/META-INF/application-context.xml /etc/atomhopper/
-COPY --from=builder /app/atomhopper/src/main/resources/META-INF/atom-server.cfg.xml /etc/atomhopper/
-COPY --from=builder /app/atomhopper/src/main/webapp/META-INF/template-logback.xml /etc/atomhopper/logback.xml
 
+# Install curl for health checks
 RUN apt-get update && apt-get install -y curl \
-    && chmod +x ${AH_HOME}/start.sh \
-    && rm -rf ${CATALINA_HOME}/webapps/ROOT \
-    && apt-get clean && rm -rf /var/lib/apt/lists/* 
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Verify WAR file was copied correctly
+RUN ls -la ${CATALINA_HOME}/webapps/atomhopper.war && \
+    echo "WAR file size: $(stat -c%s ${CATALINA_HOME}/webapps/atomhopper.war) bytes"
 
 EXPOSE 8080
 
@@ -51,4 +33,5 @@ EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=10s --start-period=120s --retries=3 \
     CMD curl -f http://localhost:8080/atomhopper/buildinfo || exit 1
 
-CMD ["/opt/atomhopper/start.sh"]
+# Use default Tomcat startup
+CMD ["catalina.sh", "run"]
