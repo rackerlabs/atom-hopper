@@ -12,7 +12,7 @@
             folder then use this setting:
             <param-value>/META-INF/application-context.xml</param-value>
         -->
-        <param-value>file:///etc/atomhopper/application-context.xml</param-value>
+        <param-value>/META-INF/application-context.xml</param-value>
     </context-param>
 
     <listener>
@@ -30,7 +30,7 @@
 
         <init-param>
             <param-name>config-location</param-name>
-            <param-value>file:///etc/atomhopper/atom-server.cfg.xml</param-value>
+            <param-value>classpath:/META-INF/atom-server.cfg.xml</param-value>
         </init-param>
 
         <init-param>

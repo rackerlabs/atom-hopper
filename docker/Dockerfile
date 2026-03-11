@@ -10,11 +10,11 @@ RUN mvn clean install -DskipTests -pl hopper,adapters/hibernate,adapters/mongodb
 FROM tomcat:9.0-jdk8
 
 LABEL maintainer="AtomHopperTeam@rackspace.com" \
-      version="1.2.49" \
+      version="1.2.52" \
       description="Docker image for Atom Hopper"
 
 # Environment variables
-ENV AH_VERSION=1.2.49
+ENV AH_VERSION=1.2.52
 
 # Copy WAR file to Tomcat webapps directory
 COPY --from=builder /app/atomhopper/target/atomhopper-${AH_VERSION}.war ${CATALINA_HOME}/webapps/atomhopper.war
