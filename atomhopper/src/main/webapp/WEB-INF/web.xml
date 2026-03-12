@@ -62,6 +62,11 @@
         <servlet-class>org.atomhopper.AtomHopperVersionServlet</servlet-class>
     </servlet>
 
+    <servlet id="atom-hopper-health">
+        <servlet-name>Atom-Hopper-Health</servlet-name>
+        <servlet-class>org.atomhopper.AtomHopperHealthServlet</servlet-class>
+    </servlet>
+
     <servlet id="atom-hopper-metrics">
         <servlet-name>Atom-Hopper-Metrics</servlet-name>
         <servlet-class>com.yammer.metrics.reporting.MetricsServlet</servlet-class>
@@ -70,6 +75,11 @@
             <param-value>/metrics</param-value>
         </init-param>
     </servlet>
+
+    <servlet-mapping id="atom-hopper-health-mapping">
+        <servlet-name>Atom-Hopper-Health</servlet-name>
+        <url-pattern>/health</url-pattern>
+    </servlet-mapping>
 
     <servlet-mapping id="atom-hopper-version-mapping">
         <servlet-name>Atom-Hopper-Version</servlet-name>

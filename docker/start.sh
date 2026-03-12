@@ -54,7 +54,8 @@ chmod 644 $CATALINA_HOME/webapps/atomhopper.war
 
 echo "Starting Tomcat server..."
 echo "AtomHopper will be available at: http://localhost:8080/atomhopper"
-echo "Health check endpoint: http://localhost:8080/atomhopper/buildinfo"
+echo "Health check endpoint: http://localhost:8080/atomhopper/health"
+echo "Build info endpoint: http://localhost:8080/atomhopper/buildinfo"
 
 # Start Tomcat server
 exec $CATALINA_HOME/bin/catalina.sh run
